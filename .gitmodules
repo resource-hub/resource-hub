@@ -1,0 +1,3 @@
+[submodule "resource-hub-core"]
+	path = resource-hub-core
+	url = git@gitlab.com:resource-hub/resource-hub-core.git
