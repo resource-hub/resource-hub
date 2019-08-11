@@ -3,7 +3,7 @@ stages:
   - test
 
 variables:
-  CONTAINER_IMAGE: registry.gitlab.com/campfireman/
+  CONTAINER_IMAGE: registry.gitlab.com/resource-hub/resource-hub
   CONTAINER_TEST_IMAGE: $CONTAINER_IMAGE:$CI_BUILD_REF_NAME
 
 build:

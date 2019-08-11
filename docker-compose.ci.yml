@@ -2,7 +2,7 @@ version: '3'
 
 services:
   app:
-    image: registry.gitlab.com/campfireman/devop:${CI_BUILD_REF_NAME}
+    image: registry.gitlab.com/resource-hub/resource-hub:${CI_BUILD_REF_NAME}
     command: bash -c "coverage run --source='.' manage.py test && coverage report"
     links:
       - postgres
