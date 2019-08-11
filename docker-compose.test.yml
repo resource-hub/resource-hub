@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  postgres:
+    restart: always
+    image: postgres:11-alpine
+    volumes:
+      - ./.dbdata:/var/lib/postgresql:rw
+    environment:
+      POSTGRES_USER: django
+      POSTGRES_PASSWORD: django
+      POSTGRES_DB: django
+
+  app:
+    build: ./
+    command: bash -c "coverage run --source='.' manage.py test && coverage report"
+    volumes:
+      - ./:/site:rw
+    depends_on:
+      - postgres
+    ports:
+      - "8000:8000"
+  
