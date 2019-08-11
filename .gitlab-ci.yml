@@ -23,4 +23,4 @@ test:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
     - docker pull $CONTAINER_TEST_IMAGE
     - docker-compose -f docker-compose.ci.yml -p ci up --abort-on-container-exit
-  coverage: '/TOTAL.*?(\d{1,2}.\d+%)/'
+  coverage: '/TOTAL.*\s(\d+)%/'
