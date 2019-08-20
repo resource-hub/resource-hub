@@ -13,7 +13,7 @@ services:
 
   app:
     build: ./
-    command: bash -c "coverage run --source='.' manage.py test && coverage report"
+    command: bash -c "cd src; coverage run --source='.' manage.py test && coverage report"
     volumes:
       - ./:/site:rw
     depends_on:
