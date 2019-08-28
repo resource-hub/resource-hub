@@ -1,7 +1,6 @@
-{% load static %}
+{% extends "__base.html" %}
 
-<link rel="stylesheet" type="text/css" href="{% static "semantic/semantic.min.css" %}">
-
+{% block content %}
 <div class="ui link cards">
   <div class="card">
     <div class="image">
@@ -73,3 +72,4 @@
     </div>
   </div>
 </div>
+{% endblock %}
