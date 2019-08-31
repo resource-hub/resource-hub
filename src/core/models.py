@@ -88,7 +88,7 @@ class Info(models.Model):
         null=True,
         on_delete=models.SET_NULL
     )
-    bank_account = models.OneToOneField(
+    bank_account_id = models.OneToOneField(
         BankAccount,
         null=True,
         on_delete=models.SET_NULL
@@ -174,11 +174,11 @@ class Person(models.Model):
     birth_date = models.DateField()
 
 
-# @receiver(post_save, sender=User)
-# def create_user_info(sender, instance, created, **kwargs):
-#     if created:
-#         Person.objects.create(user_id=instance)
-#     instance.save()
+@receiver(post_save, sender=User)
+def create_user_info(sender, instance, created, **kwargs):
+    if created:
+        Person.objects.create(user_id=instance)
+    instance.save()
 
 
 class Organization(models.Model):

@@ -6,7 +6,9 @@ app_name = 'core'
 urlpatterns = [
     path('', views.index, name='index'),
     path('register/', views.register, name='register'),
-    path('login/', auth.LoginView.as_view(template_name='core/login.html',
-                                          redirect_field_name=''), name="login"),
-    path('logout/', auth.LoginView.as_view(template_name='core/login.html'), name="logout"),
+    path('login/', views.custom_login, name='login'),
+    path('logout/', auth.LogoutView.as_view(
+        template_name='core/account/logout.html'), name='logout'),
+    path('profile/', views.profile, name='profile'),
+    path('terms/', views.profile, name='terms'),
 ]
