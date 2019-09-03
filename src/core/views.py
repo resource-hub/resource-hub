@@ -69,10 +69,10 @@ def custom_login(request):
 def profile(request):
     if request.user.is_authenticated:
         user_id = request.user.id
-        user_info = User.objects.select_related().get(user=user_id)
+        user_info = User.objects.select_related().get(id=user_id)
         form = UserBaseForm({'first_name': 'test'})
 
-        context = {'user_info': user_info, 'form': form}
+        context = {'form': form}
         return render(request, 'core/account/profile.html', context)
     else:
         return redirect(reverse('core:login'))
