@@ -1,8 +1,11 @@
 {% extends "__base.html" %}
+{% load i18n %}
 
 {% block content %}
 
-<h2 class="ui header">Account</h2>
+<h2 class="ui header">
+    {% trans 'Settings' %}
+</h2>
 <div class="ui secondary pointing menu">
     <a class="active item">
         Account
@@ -15,7 +18,17 @@
     </a>
 </div>
 <div class="ui segment">
-    <p></p>
+    <a class="ui red ribbon label">Overview</a>
+    {{ user_info.info }}
+    <h3>{{ user.first_name }} {{user.last_name }}</h3>
+    <form class="ui form" method="POST">
+        {% include "_form.html" with form=form %}
+        <p>
+            <button class="ui button green" type="submit">
+                {% trans 'Save' %}
+            </button>
+        </p>
+    </form>
 </div>
 
 {% endblock %}

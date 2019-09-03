@@ -10,10 +10,11 @@ class Address(models.Model):
     """ describe address """
 
     # Fields
-    street = models.CharField(max_length=50)
-    street_number = models.CharField(max_length=10)
-    postal_code = models.CharField(max_length=5)
-    city = models.CharField(max_length=100)
+    street = models.CharField(max_length=50, null=True, blank=True)
+    street_number = models.CharField(max_length=10, null=True, blank=True)
+    postal_code = models.CharField(max_length=5, null=True, blank=True)
+    city = models.CharField(max_length=100, null=True, blank=True)
+    country = models.CharField(max_length=50, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(
         User,
@@ -47,9 +48,9 @@ class BankAccount(models.Model):
     """ describes a bank account """
 
     # Fields
-    account_holder = models.CharField(max_length=100)
-    iban = models.CharField(max_length=40)
-    bic = models.CharField(max_length=11)
+    account_holder = models.CharField(max_length=100, null=True, blank=True)
+    iban = models.CharField(max_length=40, null=True, blank=True)
+    bic = models.CharField(max_length=11, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(
         User,
@@ -83,20 +84,20 @@ class Info(models.Model):
     """ entity specific information """
 
     # Fields
-    address_id = models.OneToOneField(
+    address = models.OneToOneField(
         Address,
         null=True,
         on_delete=models.SET_NULL
     )
-    bank_account_id = models.OneToOneField(
+    bank_account = models.OneToOneField(
         BankAccount,
         null=True,
         on_delete=models.SET_NULL
     )
-    image = models.ImageField()
+    image = models.ImageField(null=True, blank=True)
     telephone_private = models.CharField(max_length=20, null=True, blank=True)
     telephone_public = models.CharField(max_length=20, null=True, blank=True)
-    email_public = models.EmailField()
+    email_public = models.EmailField(null=True, blank=True)
     website = models.URLField(null=True, blank=True)
     info_text = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -127,11 +128,11 @@ class Location(models.Model):
     """ describing locations """
 
     # Fields
-    address_id = models.ForeignKey(
+    address = models.ForeignKey(
         Address,
         on_delete=models.CASCADE
     )
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(
@@ -161,11 +162,11 @@ class Person(models.Model):
     """ natural person """
 
     # Fields
-    user_id = models.OneToOneField(
+    user = models.OneToOneField(
         User,
         on_delete=models.CASCADE
     )
-    info_id = models.OneToOneField(
+    info = models.OneToOneField(
         Info,
         null=True,
         blank=True,
@@ -174,22 +175,15 @@ class Person(models.Model):
     birth_date = models.DateField()
 
 
-@receiver(post_save, sender=User)
-def create_user_info(sender, instance, created, **kwargs):
-    if created:
-        Person.objects.create(user_id=instance)
-    instance.save()
-
-
 class Organization(models.Model):
     """ juristic person"""
 
     # Fields
-    group_id = models.OneToOneField(
+    group = models.OneToOneField(
         Group,
         on_delete=models.CASCADE
     )
-    info_id = models.OneToOneField(
+    info = models.OneToOneField(
         Info,
         null=True,
         blank=True,

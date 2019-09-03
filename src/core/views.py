@@ -1,7 +1,9 @@
 from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
 from django.contrib.auth.views import LoginView
+from django.urls import reverse
 from core.forms import *
+from core.models import *
 
 
 def index(request):
@@ -16,19 +18,34 @@ def register(request):
         address_form = AddressForm(request.POST)
         bank_account_form = BankAccountForm(request.POST)
 
-        if user_base_form.is_valid and person_form.is_valid and info_form.is_valid and address_form.is_valid:
-            user_base_form.save()
-            person_form.save(commit=false)
-            person_form.user_id = user_base_form
+        if (user_base_form.is_valid() and
+                person_form.is_valid() and
+                info_form.is_valid() and
+                address_form.is_valid()):
+
+            new_user = user_base_form.save()
+            new_bank_account = bank_account_form.save()
+            new_address = address_form.save()
+
+            new_info = info_form.save(commit=False)
+            new_info.address = new_address
+            new_info.bank_account = new_bank_account
+            info_form.save()
+
+            new_person = person_form.save(commit=False)
+            new_person.user = new_user
+            new_person.info = new_info
             person_form.save()
+
+            # login and redirect
             username = user_base_form.cleaned_data.get('username')
             raw_password = user_base_form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
             login(request, user)
-            return redirect('/profile')
+            return redirect(reverse('core:profile'))
     else:
         if request.user.is_authenticated:
-            return redirect('/profile')
+            return redirect(reverse('core:profile'))
         else:
             user_base_form = UserBaseForm()
             person_form = PersonForm()
@@ -49,11 +66,20 @@ def register(request):
 
 def custom_login(request):
     if request.user.is_authenticated:
-        return redirect('/profile')
+        return redirect(reverse('core:profile'))
     else:
         return LoginView.as_view(
             template_name='core/account/login.html')(request)
 
 
 def profile(request):
-    return render(request, 'core/account/profile.html')
+    if request.user.is_authenticated:
+
+        user_id = request.user.id
+        user_info = Person.objects.select_related().get(user=user_id)
+        form = UserBaseForm({'first_name': 'test'})
+
+        context = {'user_info': user_info, 'form': form}
+        return render(request, 'core/account/profile.html', context)
+    else:
+        return redirect(reverse('core:login'))

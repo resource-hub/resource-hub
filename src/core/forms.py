@@ -22,19 +22,19 @@ class PersonForm(forms.ModelForm):
 class InfoForm(forms.ModelForm):
     class Meta:
         model = Info
-        exclude = ['address_id', 'bank_account_id',
+        exclude = ['address', 'bank_account',
                    'created_by', 'updated_by', ]
 
 
 class AddressForm(forms.ModelForm):
     class Meta:
         model = Address
-        exclude = ['address_id', 'bank_account_id',
+        exclude = ['address', 'bank_account',
                    'created_by', 'updated_by', ]
 
 
 class BankAccountForm(forms.ModelForm):
     class Meta:
         model = BankAccount
-        exclude = ['address_id', 'bank_account_id',
+        exclude = ['address', 'bank_account',
                    'created_by', 'updated_by', ]

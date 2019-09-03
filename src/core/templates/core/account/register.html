@@ -3,9 +3,10 @@
 
 {% block content %}
 <h2>{% trans 'Register' %}</h2>
-<form class="ui form" method="post">
+<form class="ui form" method="POST">
     {% csrf_token %}
     {% include "_form.html" with form=user_base_form %}
+    {% include "_form.html" with form=person_form %}
 
     <h3>{% trans 'Optional Information' %}</h3>
     <p>
@@ -19,7 +20,6 @@
             <b>{% trans 'Personal information' %}</b>
         </div>
         <div class="content">
-            {% include "_form.html" with form=person_form %}
             {% include "_form.html" with form=address_form %}
         </div>
         <div class="title">
