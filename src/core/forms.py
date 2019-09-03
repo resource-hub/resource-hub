@@ -1,20 +1,41 @@
+from datetime import datetime
+from schwifty import IBAN, BIC
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.utils.translation import ugettext_lazy as _
+from django.utils.dateparse import parse_datetime
 from core.models import *
 
 
 class UserBaseForm(UserCreationForm):
+    birth_date = forms.CharField(
+        widget=forms.widgets.DateTimeInput(attrs={"type": "date"}))
+
     class Meta:
         model = User
         fields = ('username', 'first_name', 'last_name',
                   'email', 'birth_date', 'password1', 'password2', )
 
     def clean(self):
-        email = self.cleaned_data.get('email')
-        if User.objects.filter(email=email).exists():
-            raise ValidationError("Email exists")
-        return self.cleaned_data
+        super().clean()
+
+    def clean_birth_date(self):
+        OLDEST_PERSON = 44694
+        MINIMUM_AGE = 5840
+        birth_date = datetime.strptime(
+            self.cleaned_data['birth_date'], '%Y-%m-%d')
+        now = datetime.now()
+        age = abs((now - birth_date).days)
+
+        if age > OLDEST_PERSON:
+            raise forms.ValidationError(
+                _('Are you older than the oldest person ever alive?'),
+                code='too-old')
+
+        if age < MINIMUM_AGE:
+            raise forms.ValidationError(
+                _('You have to be older than 16 to sign up'), code='too-young')
+        return self.cleaned_data['birth_date']
 
 
 class InfoForm(forms.ModelForm):
@@ -36,3 +57,23 @@ class BankAccountForm(forms.ModelForm):
         model = BankAccount
         exclude = ['address', 'bank_account',
                    'created_by', 'updated_by', ]
+
+    def clean_iban(self):
+        iban = self.cleaned_data['iban']
+        if iban:
+            try:
+                IBAN(iban)
+            except ValueError as e:
+                raise forms.ValidationError(
+                    _('Invalid IBAN: ') + str(e), code='invalid-iban')
+        return iban
+
+    def clean_bic(self):
+        bic = self.cleaned_data['bic']
+        if bic:
+            try:
+                BIC(bic)
+            except ValueError as e:
+                raise forms.ValidationError(
+                    _('Invalid BIC: ') + str(e), code='invalid-bic')
+        return bic
