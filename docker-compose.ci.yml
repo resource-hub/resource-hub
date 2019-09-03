@@ -14,5 +14,5 @@ services:
   app:
     image: registry.gitlab.com/resource-hub/resource-hub:${CI_BUILD_REF_NAME}
     command: bash -c "cd src; coverage run --source='.' manage.py test && coverage report"
-    links:
+    depends_on:
       - postgres
