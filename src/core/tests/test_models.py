@@ -7,18 +7,11 @@ from django.utils.dateparse import parse_date
 class TestUser(TestCase):
     @classmethod
     def setUpTestData(cls):
-        user = User.objects.create(
-            first_name='Test',
-            last_name='Face',
-            username='testmate'
-        )
         address = Address.objects.create(
             street='Test Street',
             street_number='12A',
             postal_code='12345',
             city='Test City',
-            created_by=user,
-            updated_by=user,
         )
         bank_account = BankAccount.objects.create(
             account_holder='Test Face',
@@ -30,13 +23,15 @@ class TestUser(TestCase):
             bank_account=bank_account,
             website='https://test.de'
         )
-        person = Person.objects.create(
-            user=user,
+        user = User.objects.create(
+            first_name='Test',
+            last_name='Face',
+            username='testmate',
+            birth_date=parse_date('2018-01-01'),
             info=info,
-            birth_date=parse_date('2018-01-01')
         )
 
     def test_person_first_name(self):
-        person = Person.objects.select_related().get(id=1)
-        first_name = person.user.first_name
+        user = User.objects.get(username='testmate')
+        first_name = user.first_name
         self.assertEqual('Test', first_name)

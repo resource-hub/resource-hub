@@ -1,22 +1,20 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
-from core.models import Person, Info, Address, BankAccount
+from core.models import *
 
 
 class UserBaseForm(UserCreationForm):
     class Meta:
         model = User
         fields = ('username', 'first_name', 'last_name',
-                  'email', 'password1', 'password2', )
+                  'email', 'birth_date', 'password1', 'password2', )
 
-
-class PersonForm(forms.ModelForm):
-
-    class Meta:
-        model = Person
-        fields = ('birth_date', )
+    def clean(self):
+        email = self.cleaned_data.get('email')
+        if User.objects.filter(email=email).exists():
+            raise ValidationError("Email exists")
+        return self.cleaned_data
 
 
 class InfoForm(forms.ModelForm):

@@ -1,16 +1,16 @@
 version: '3'
 
 services:
+  postgres:
+      restart: always
+      image: postgres:11-alpine
+      environment:
+        POSTGRES_USER: django
+        POSTGRES_PASSWORD: django
+        POSTGRES_DB: django
+
   app:
     image: registry.gitlab.com/resource-hub/resource-hub:${CI_BUILD_REF_NAME}
     command: bash -c "cd src; coverage run --source='.' manage.py test && coverage report"
     links:
       - postgres
-
-  postgres:
-    restart: always
-    image: postgres:11-alpine
-    environment:
-      POSTGRES_USER: django
-      POSTGRES_PASSWORD: django
-      POSTGRES_DB: django

@@ -40,6 +40,5 @@ class TestRegistration(TestCase):
         self.assertEqual(self.post_body['first_name'], user.first_name)
 
     def test_created_info(self):
-        id = user = User.objects.get(username=self.post_body['username']).id
-        person = Person.objects.select_related().get(user=id)
-        self.assertEqual(person.info.info_text, self.post_body['info_text'])
+        user = User.objects.get(username=self.post_body['username'])
+        self.assertEqual(user.info.info_text, self.post_body['info_text'])

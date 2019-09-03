@@ -12,18 +12,15 @@ def index(request):
 
 def register(request):
     if request.method == 'POST':
-        user_base_form = UserBaseForm(request.POST)
-        person_form = PersonForm(request.POST)
+        user_form = UserBaseForm(request.POST)
         info_form = InfoForm(request.POST)
         address_form = AddressForm(request.POST)
         bank_account_form = BankAccountForm(request.POST)
 
-        if (user_base_form.is_valid() and
-                person_form.is_valid() and
+        if (user_form.is_valid() and
                 info_form.is_valid() and
                 address_form.is_valid()):
 
-            new_user = user_base_form.save()
             new_bank_account = bank_account_form.save()
             new_address = address_form.save()
 
@@ -32,14 +29,13 @@ def register(request):
             new_info.bank_account = new_bank_account
             info_form.save()
 
-            new_person = person_form.save(commit=False)
-            new_person.user = new_user
-            new_person.info = new_info
-            person_form.save()
+            new_user = user_form.save(commit=False)
+            new_user.info = new_info
+            user_form.save()
 
             # login and redirect
-            username = user_base_form.cleaned_data.get('username')
-            raw_password = user_base_form.cleaned_data.get('password1')
+            username = user_form.cleaned_data.get('username')
+            raw_password = user_form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
             login(request, user)
             return redirect(reverse('core:profile'))
@@ -47,15 +43,13 @@ def register(request):
         if request.user.is_authenticated:
             return redirect(reverse('core:profile'))
         else:
-            user_base_form = UserBaseForm()
-            person_form = PersonForm()
+            user_form = UserBaseForm()
             info_form = InfoForm()
             address_form = AddressForm()
             bank_account_form = BankAccountForm()
 
     context = {
-        'user_base_form': user_base_form,
-        'person_form': person_form,
+        'user_form': user_form,
         'info_form': info_form,
         'address_form': address_form,
         'bank_account_form': bank_account_form,

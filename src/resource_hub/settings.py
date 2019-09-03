@@ -141,3 +141,5 @@ STATICFILES_DIRS = [
 
 # Custom settings
 LOGIN_REDIRECT_URL = '/profile/'
+
+AUTH_USER_MODEL = "core.User"

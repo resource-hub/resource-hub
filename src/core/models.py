@@ -1,9 +1,21 @@
 from django.db import models
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import AbstractUser, Group
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 # Create your models here.
+
+
+class User(AbstractUser):
+    """ natural person """
+    email = models.EmailField(unique=True)
+    birth_date = models.DateField()
+    info = models.OneToOneField(
+        'Info',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL
+    )
 
 
 class Address(models.Model):
@@ -15,13 +27,6 @@ class Address(models.Model):
     postal_code = models.CharField(max_length=5, null=True, blank=True)
     city = models.CharField(max_length=100, null=True, blank=True)
     country = models.CharField(max_length=50, null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    created_by = models.ForeignKey(
-        User,
-        related_name='address_created_by',
-        null=True,
-        on_delete=models.SET_NULL
-    )
     updated_at = models.DateTimeField(auto_now=True)
     updated_by = models.ForeignKey(
         User,
@@ -51,13 +56,6 @@ class BankAccount(models.Model):
     account_holder = models.CharField(max_length=100, null=True, blank=True)
     iban = models.CharField(max_length=40, null=True, blank=True)
     bic = models.CharField(max_length=11, null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    created_by = models.ForeignKey(
-        User,
-        related_name='bank_account_created_by',
-        null=True,
-        on_delete=models.SET_NULL
-    )
     updated_at = models.DateTimeField(auto_now=True)
     updated_by = models.ForeignKey(
         User,
@@ -100,13 +98,6 @@ class Info(models.Model):
     email_public = models.EmailField(null=True, blank=True)
     website = models.URLField(null=True, blank=True)
     info_text = models.TextField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    created_by = models.ForeignKey(
-        User,
-        related_name='info_created_by',
-        null=True,
-        on_delete=models.SET_NULL
-    )
     updated_at = models.DateTimeField(auto_now=True)
     updated_by = models.ForeignKey(
         User,
@@ -134,13 +125,6 @@ class Location(models.Model):
     )
     name = models.CharField(max_length=100, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    created_by = models.ForeignKey(
-        User,
-        related_name='location_created_by',
-        null=True,
-        on_delete=models.SET_NULL
-    )
     updated_at = models.DateTimeField(auto_now=True)
     updated_by = models.ForeignKey(
         User,
@@ -158,23 +142,6 @@ class Location(models.Model):
         return self.name
 
 
-class Person(models.Model):
-    """ natural person """
-
-    # Fields
-    user = models.OneToOneField(
-        User,
-        on_delete=models.CASCADE
-    )
-    info = models.OneToOneField(
-        Info,
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL
-    )
-    birth_date = models.DateField()
-
-
 class Organization(models.Model):
     """ juristic person"""
 
@@ -187,5 +154,12 @@ class Organization(models.Model):
         Info,
         null=True,
         blank=True,
+        on_delete=models.SET_NULL
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(
+        User,
+        related_name='organization_created_by',
+        null=True,
         on_delete=models.SET_NULL
     )
