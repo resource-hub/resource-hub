@@ -4,6 +4,8 @@ services:
   postgres:
     restart: always
     image: postgres:11-alpine
+    volumes:
+      - ./.dbdata:/var/lib/postgresql:rw
     environment:
       POSTGRES_USER: django
       POSTGRES_PASSWORD: django
