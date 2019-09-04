@@ -3,7 +3,7 @@ from schwifty import IBAN, BIC
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.utils.translation import ugettext_lazy as _
-from django.utils.dateparse import parse_datetime
+from django.utils.dateparse import parse_date
 from core.models import *
 
 
@@ -22,9 +22,9 @@ class UserBaseForm(UserCreationForm):
     def clean_birth_date(self):
         OLDEST_PERSON = 44694
         MINIMUM_AGE = 5840
-        birth_date = datetime.strptime(
-            self.cleaned_data['birth_date'], '%Y-%m-%d')
-        now = datetime.now()
+        birth_date = parse_date(
+            self.cleaned_data['birth_date'])
+        now = datetime.now().date()
         age = abs((now - birth_date).days)
 
         if age > OLDEST_PERSON:

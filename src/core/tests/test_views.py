@@ -13,7 +13,7 @@ class TestRegistration(TestCase):
             'password2': 'we8dlz49opd',
             'first_name': 'Peter',
             'last_name': 'Popper',
-            'birth_date': '05/31/1997',
+            'birth_date': '1997-05-31',
             'street': 'Test Str.',
             'street_number': '12',
             'postal_code': '12345',
