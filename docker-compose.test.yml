@@ -7,12 +7,14 @@ services:
     volumes:
       - ./.dbdata:/var/lib/postgresql:rw
     environment:
-      POSTGRES_USER: django
-      POSTGRES_PASSWORD: django
-      POSTGRES_DB: django
+      POSTGRES_USER: django_test
+      POSTGRES_PASSWORD: django_test
+      POSTGRES_DB: django_test
 
   app:
     build: ./
+    environment:
+      DJANGO_SETTINGS_MODULE: resource_hub.settings.test
     command: bash -c "cd src; coverage run --source='.' manage.py test && coverage report"
     volumes:
       - ./:/site:rw
