@@ -20,3 +20,10 @@ DATABASES = {
         'PORT': '',
     }
 }
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'webspace29.do.de'
+EMAIL_HOST_USER = 'web71p9'
+EMAIL_HOST_PASSWORD = 'zt8iFbBw'
+EMAIL_PORT = 587
+DEFAULT_FROM_EMAIL = 'Test Server <server@ture.dev>'

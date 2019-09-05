@@ -1,0 +1,17 @@
+{% load i18n %}
+
+<h3>
+    {% blocktrans %}
+    Hi {{ user.username }},
+    {% endblocktrans %}
+</h3>
+<p>
+    {% block content %}
+    {% endblock %}
+</p>
+<p>
+    {% blocktrans %}
+    With regards,
+    {% endblocktrans %}
+    <b>Resource Hub Team</b>
+</p>
