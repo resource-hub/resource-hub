@@ -30,7 +30,8 @@ def register(request):
 
         if (user_form.is_valid() and
                 info_form.is_valid() and
-                address_form.is_valid()):
+                address_form.is_valid() and
+                bank_account_form.is_valid()):
 
             new_bank_account = bank_account_form.save()
             new_address = address_form.save()

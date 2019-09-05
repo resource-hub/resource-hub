@@ -21,7 +21,7 @@ class UserBaseForm(UserCreationForm):
 
     def clean_birth_date(self):
         OLDEST_PERSON = 44694
-        MINIMUM_AGE = 5840
+        MINIMUM_AGE = 2555
         birth_date = parse_date(
             self.cleaned_data['birth_date'])
         now = datetime.now().date()
