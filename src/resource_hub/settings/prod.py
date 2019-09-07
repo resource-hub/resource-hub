@@ -1,19 +1,12 @@
 from .base import *
-from .prod_env import *
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-# Database
-# https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': DB_ENGINE,
-        'NAME': DB_NAME,
-        'USER': DB_USER,
-        'PASSWORD': DB_PW,
-        'HOST': DB_HOST,
-        'PORT': DB_PORT,
-    }
-}
+# SMTP Server settings
+EMAIL_USE_TLS = get_env_var('EMAIL_USE_TLS')
+EMAIL_HOST = get_env_var('EMAIL_HOST')
+EMAIL_HOST_USER = get_env_var('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = get_env_var('EMAIL_HOST_PASSWORD')
+EMAIL_PORT = get_env_var('EMAIL_PORT')
+DEFAULT_FROM_EMAIL = get_env_var('DEFAULT_FROM_EMAIL')

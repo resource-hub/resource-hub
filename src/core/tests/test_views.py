@@ -6,7 +6,7 @@ from core.models import *
 class TestRegistration(TestCase):
     def setUp(self):
         self.client = Client()
-        self.post_body = {
+        self.data = {
             'username': 'peterpopper',
             'email': 'test@ture.dev',
             'password1': 'we8dlz49opd',
@@ -30,15 +30,19 @@ class TestRegistration(TestCase):
         }
 
         self.response = self.client.post(
-            reverse('core:register'), self.post_body)
+            reverse('core:register'), self.data)
 
     def test_registration_status_code(self):
         self.assertEqual(self.response.status_code, 302)
 
     def test_created_user(self):
-        user = User.objects.get(username=self.post_body['username'])
-        self.assertEqual(self.post_body['first_name'], user.first_name)
+        user = User.objects.get(username=self.data['username'])
+        self.assertEqual(self.data['first_name'], user.first_name)
 
     def test_created_info(self):
-        user = User.objects.get(username=self.post_body['username'])
-        self.assertEqual(user.info.info_text, self.post_body['info_text'])
+        user = User.objects.get(username=self.data['username'])
+        self.assertEqual(user.info.info_text, self.data['info_text'])
+
+    def test_get_response(self):
+        self.client.post(reverse('core:register'), self.data)
+        self.assertEqual(self)

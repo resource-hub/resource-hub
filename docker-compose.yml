@@ -7,13 +7,15 @@ services:
     volumes:
       - ./.dbdata:/var/lib/postgresql:rw
     environment:
-      POSTGRES_USER: django
-      POSTGRES_PASSWORD: django
-      POSTGRES_DB: django
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PW}
+      POSTGRES_DB: ${DB_NAME}
 
   app:
     environment:
       DJANGO_SETTINGS_MODULE: resource_hub.settings.dev
+    env_file:
+      - .env
     build: ./
     command: bash -c 'cd src; python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000'
     volumes:

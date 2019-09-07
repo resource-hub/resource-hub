@@ -15,6 +15,23 @@ import os
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ImproperlyConfigured
 
+# Retrieve settings from environment
+# props go to Shabeer Ayar https://medium.com/@ayarshabeer/django-best-practice-settings-file-for-multiple-environments-6d71c6966ee2
+
+
+def get_env_var(setting):
+    try:
+        val = os.environ[setting]
+        return val
+    except KeyError:
+        error_msg = "ImproperlyConfigured: Set {0} environment variable".format(
+            setting)
+        raise ImproperlyConfigured(error_msg)
+
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = get_env_var('SECRET_KEY')
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(
     os.path.dirname(os.path.abspath(__file__))))
@@ -89,6 +106,20 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+# Database
+# https://docs.djangoproject.com/en/2.2/ref/settings/#databases
+
+DATABASES = {
+    'default': {
+        'ENGINE': get_env_var('DB_ENGINE'),
+        'NAME': get_env_var('DB_NAME'),
+        'USER': get_env_var('DB_USER'),
+        'PASSWORD': get_env_var('DB_PW'),
+        'HOST': get_env_var('DB_HOST'),
+        'PORT': get_env_var('DB_PORT'),
+    }
+}
 
 
 # Internationalization

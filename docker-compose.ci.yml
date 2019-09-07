@@ -5,13 +5,15 @@ services:
     restart: always
     image: postgres:11-alpine
     environment:
-      POSTGRES_USER: django_test
-      POSTGRES_PASSWORD: django_test
-      POSTGRES_DB: django_test
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PW}
+      POSTGRES_DB: ${DB_NAME}
 
   app:
     environment:
       DJANGO_SETTINGS_MODULE: resource_hub.settings.test
+    env_file:
+      TEST_ENV
     image: registry.gitlab.com/resource-hub/resource-hub:${CI_BUILD_REF_NAME}
     command: bash -c "cd src; coverage run --source='.' manage.py test && coverage report"
     links:

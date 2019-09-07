@@ -68,7 +68,8 @@ def register(request):
             try:
                 email.send(fail_silently=False)
             except SMTPException as e:
-                messages.add_message(request, messages.ERROR, str(e))
+                message = _('The activation-email could not be sent')
+                messages.add_message(request, messages.ERROR, message)
                 return redirect(reverse('core:login'))
 
             message = _(
