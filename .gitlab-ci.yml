@@ -45,4 +45,4 @@ demo:
     - cat $DEMO_ENV > demo.env
     - scp demo.env demo@${DEMO_SERVER_IP}:${DEMO_PATH}/.env
     - scp docker-compose.demo.yml demo@${DEMO_SERVER_IP}:${DEMO_PATH}/docker-compose.yml
-    - ssh demo@$DEMO_SERVER_IP "cd ${DEMO_PATH} && docker-compose -f docker-compose.yml -p demo up"
+    - ssh demo@$DEMO_SERVER_IP "cd ${DEMO_PATH} && docker-compose -f docker-compose.yml -p demo up -d"
