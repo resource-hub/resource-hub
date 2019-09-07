@@ -29,20 +29,23 @@ class TestRegistration(TestCase):
             'info_text': 'Hello this is me.',
         }
 
-        self.response = self.client.post(
-            reverse('core:register'), self.data)
-
-    def test_registration_status_code(self):
-        self.assertEqual(self.response.status_code, 302)
-
     def test_created_user(self):
+        response = self.client.post(
+            reverse('core:register'), self.data)
         user = User.objects.get(username=self.data['username'])
         self.assertEqual(self.data['first_name'], user.first_name)
 
     def test_created_info(self):
+        response = self.client.post(
+            reverse('core:register'), self.data)
         user = User.objects.get(username=self.data['username'])
         self.assertEqual(user.info.info_text, self.data['info_text'])
 
-    def test_get_response(self):
-        self.client.post(reverse('core:register'), self.data)
-        self.assertEqual(self)
+    def test_get_status_code(self):
+        response = self.client.get(reverse('core:register'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_post_status_code(self):
+        response = self.client.post(
+            reverse('core:register'), self.data)
+        self.assertEqual(response.status_code, 302)
