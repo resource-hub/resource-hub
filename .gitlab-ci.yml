@@ -1,6 +1,8 @@
 stages:
   - build
   - test
+  - release
+  - demo
 
 variables:
   CONTAINER_IMAGE: registry.gitlab.com/resource-hub/resource-hub
