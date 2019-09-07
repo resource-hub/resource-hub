@@ -4,7 +4,7 @@ services:
   app:
     image: registry.gitlab.com/resource-hub/resource-hub:master
     environment:
-      DJANGO_SETTINGS_MODULE: resource_hub.settings.prod
+      DJANGO_SETTINGS_MODULE: resource_hub.settings.demo
     env_file:
       .env
     command: bash -c "cd src; python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:${DJANGO_PORT}"
