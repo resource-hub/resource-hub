@@ -8,8 +8,6 @@ services:
     env_file:
       .env
     command: bash -c "cd src; python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:${DJANGO_PORT}"
-    volumes:
-      - ./:/site:rw
     ports:
       - "${DJANGO_PORT}:${DJANGO_PORT}"
     
