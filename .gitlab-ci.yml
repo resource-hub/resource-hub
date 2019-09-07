@@ -20,6 +20,7 @@ test:
   tags:
     - shell
   script:
+    - pwd
     - echo $TEST_ENV > .env
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
     - docker pull $CONTAINER_TEST_IMAGE
