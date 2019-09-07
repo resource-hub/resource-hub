@@ -10,4 +10,10 @@ services:
     command: bash -c "cd src; python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:${DJANGO_PORT}"
     ports:
       - "${DJANGO_PORT}:${DJANGO_PORT}"
+    networks:
+      - default
+      - public
     
+networks:
+  public:
+    external: true
