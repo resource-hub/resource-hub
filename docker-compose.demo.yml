@@ -2,7 +2,7 @@ version: '3'
 
 services:
   app:
-    image: registry.gitlab.com/resource-hub/resource-hub
+    image: registry.gitlab.com/resource-hub/resource-hub:master
     environment:
       DJANGO_SETTINGS_MODULE: resource_hub.settings.prod
     env_file:
