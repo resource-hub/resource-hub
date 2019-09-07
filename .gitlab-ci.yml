@@ -1,7 +1,6 @@
 stages:
   - build
   - test
-  - release
   - demo
 
 variables:
@@ -29,17 +28,6 @@ test:
     - docker-compose -f docker-compose.ci.yml -p ci up --abort-on-container-exit
   coverage: '/TOTAL.*\s(\d+)%/'
 
-release:
-  stage: release
-  tags:
-    - shell
-  only:
-    - master
-  script:
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
-    - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_IMAGE:staging
-    - docker push $CONTAINER_IMAGE:staging
-
 demo:
   stage: demo
   tags:
@@ -53,7 +41,8 @@ demo:
     - mkdir -p ~/.ssh
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
   script:
+    - ssh demo@$DEMO_SERVER_IP "cd ${DEMO_PATH} && docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com && docker pull $CONTAINER_TEST_IMAGE"
     - cat $DEMO_ENV > demo.env
     - scp demo.env demo@${DEMO_SERVER_IP}:${DEMO_PATH}/.env
-    - scp docker-compose.demo.yml demo@$DEMO_SERVER_IP:${DEMO_PATH}/docker-compose.yml
+    - scp docker-compose.demo.yml demo@${DEMO_SERVER_IP}:${DEMO_PATH}/docker-compose.yml
     - ssh demo@$DEMO_SERVER_IP "cd ${DEMO_PATH} && docker-compose -f docker-compose.yml -p demo up"
