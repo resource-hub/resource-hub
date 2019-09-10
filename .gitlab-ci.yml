@@ -6,7 +6,7 @@ stages:
 variables:
   CONTAINER_IMAGE: registry.gitlab.com/resource-hub/resource-hub
   CONTAINER_TEST_IMAGE: $CONTAINER_IMAGE:$CI_BUILD_REF_NAME
-  DEMO_PATH: /var/data/www/resource-hub-demo
+  DEMO_PATH: /var/www/resource-hub-demo
 
 build:
   stage: build

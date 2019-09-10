@@ -5,6 +5,9 @@ DEBUG = False
 
 ALLOWED_HOSTS = get_env_var('ALLOWED_HOSTS')
 
+STATIC_ROOT = get_env_var('STATIC_ROOT')
+MEDIA_ROOT = get_env_var('MEDIA_ROOT')
+
 # SMTP Server settings
 EMAIL_USE_TLS = get_env_var('EMAIL_USE_TLS')
 EMAIL_HOST = get_env_var('EMAIL_HOST')
