@@ -10,4 +10,3 @@ RUN apk add --no-cache linux-headers bash gcc \
 WORKDIR /site
 COPY ./ /site
 RUN pip install -U -r /site/requirements.txt
-CMD cd src && python manage.py migrate && uwsgi --ini=/site/uwsgi.ini
