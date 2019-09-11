@@ -1,2 +1,2 @@
 # Resource Hub
-Checkout the demo on https://demo.resouce-hub.eu/
+Checkout the demo on https://demo.resource-hub.eu/
