@@ -1,2 +1,2 @@
 # Resource Hub
-Checkout the demo on https://demo.resource-hub.eu/
+Checkout the latest stable build on https://demo.resource-hub.eu/
