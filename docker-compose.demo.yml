@@ -10,7 +10,7 @@ services:
     volumes:
       - /var/www/resource-hub-demo/static:/static
       - /var/www/resource-hub-demo/media:/media
-    command: bash -c "cd src; python3 manage.py collectstatic && python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:${DJANGO_PORT}"
+    command: bash -c "cd src; python3 manage.py collectstatic --noinput && python3 manage.py migrate && gunicorn --bind 0.0.0.0:${DJANGO_PORT} resource_hub.wsgi:application
     ports:
       - "${DJANGO_PORT}:${DJANGO_PORT}"
     network_mode: host
