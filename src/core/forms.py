@@ -79,7 +79,7 @@ class BankAccountForm(forms.ModelForm):
         return bic
 
 
-class EditBaseUserForm(UserCreationForm):
+class EditBaseUserForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'email', )
+        fields = ['first_name', 'last_name', 'email']

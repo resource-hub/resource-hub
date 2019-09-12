@@ -3,6 +3,10 @@ from .base import *
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# Media files
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 # SMTP Server settings
 EMAIL_USE_TLS = get_env_var('EMAIL_USE_TLS')
 EMAIL_HOST = get_env_var('EMAIL_HOST')

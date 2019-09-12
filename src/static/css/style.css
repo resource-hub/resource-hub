@@ -17,6 +17,69 @@ footer {
     margin-top: auto;
 }
 
+.navigation-bar {
+    position: fixed;
+    padding: 0 20px 0 20px;
+    background-color: white;
+    color: black;
+    width: 100%;
+    text-align: center;
+    -webkit-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.2);
+    box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.2);
+    height: 40px;
+    z-index: 3;
+}
+
+.navigation-bar>.left {
+    float: left;
+    padding-left: 0px;
+}
+
+.navigation-bar>.right {
+    float: right;
+    padding-right: 0px;
+}
+
+.ui.vertical.menu {
+    position: fixed;
+    top: 40px;
+    transition: width 0.3s, left 0.3s;
+    -webkit-box-shadow: 1px 0px 2px 0px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: 1px 0px 2px 0px rgba(0, 0, 0, 0.2);
+    box-shadow: 1px 0px 2px 0px rgba(0, 0, 0, 0.2);
+    z-index: 600;
+    width: 220px;
+    top: 40px;
+    bottom: 0;
+    left: 0;
+    margin: 0;
+}
+
+.ui.vertical.menu .item .menu a.item.active {
+    border-right-style: solid;
+    border-right-color: #1678c2;
+    border-radius: 0 !important;
+    margin: 0 -2px 0 0;
+    border-right-width: 2.5px;
+}
+
+.account-layout {
+    padding-left: 220px;
+}
+
+.wrapper {
+    width: 100%;
+}
+
+/* .ui.secondary.pointing.menu .active.item {
+    display: block;
+}
+
+.ui.secondary.pointing.menu .item {
+    display: none;
+} */
+
 /**
   *
   * Other   
@@ -24,7 +87,7 @@ footer {
   */
 
 .main.container {
-    margin-top: 5em;
+    margin-top: 4em;
 }
 
 .ui.footer {

@@ -80,7 +80,7 @@ def register(request):
         if request.user.is_authenticated:
             message = _('You are already logged in.')
             messages.add_message(request, messages.INFO, message)
-            return redirect(reverse('core:profile'))
+            return redirect(reverse('core:account'))
         else:
             user_form = UserBaseForm()
             info_form = InfoForm()
@@ -94,11 +94,11 @@ def register(request):
         'bank_account_form': bank_account_form,
     }
 
-    return render(request, 'core/account/register.html', context)
+    return render(request, 'core/register.html', context)
 
 
 def activate_account(request):
-    return render(request, 'core/account/activate_account.html')
+    return render(request, 'core/activate_account.html')
 
 
 def activate(request, uidb64, token):
@@ -114,7 +114,7 @@ def activate(request, uidb64, token):
         login(request, user)
         message = _('Your account has been activated successfully.')
         messages.add_message(request, messages.SUCCESS, message)
-        return redirect(reverse('core:profile'))
+        return redirect(reverse('core:account'))
     else:
         message = _('Your activation-link is invalid!')
         messages.add_message(request, messages.ERROR, message)
@@ -123,13 +123,20 @@ def activate(request, uidb64, token):
 
 def custom_login(request):
     if request.user.is_authenticated:
-        return redirect(reverse('core:profile'))
+        return redirect(reverse('core:account'))
     else:
         return LoginView.as_view(
-            template_name='core/account/login.html')(request)
+            template_name='core/login.html')(request)
 
 
-def profile(request):
+def account(request):
+    if request.user.is_authenticated:
+        return render(request, 'core/account/index.html')
+    else:
+        return redirect(reverse('core:login'))
+
+
+def account_settings(request):
     if request.user.is_authenticated:
         user = request.user
         user_info = User.objects.select_related().get(id=user.id)
@@ -140,6 +147,6 @@ def profile(request):
         })
 
         context = {'form': form}
-        return render(request, 'core/account/profile.html', context)
+        return render(request, 'core/account/settings.html', context)
     else:
         return redirect(reverse('core:login'))

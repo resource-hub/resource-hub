@@ -20,41 +20,29 @@
         {% include "_navigation.html" %}
     </header>
     <main id="main" role="main">
-        <div class="ui main container">
-            {% if messages %}
-            <div class="messages">
-                {% for message in messages %}
-                <div class="ui {% if message.tags %} {{ message.tags }}  {% endif %} message">
-                    <i class="close icon"></i>
-                    {{ message }}
-                </div>
-                {% endfor %}
-            </div>
-            {% endif %}
-
-            {% block content %}
-            {% endblock %}
-        </div>
+        {% block main %}
+        {% endblock %}
     </main>
     <footer>
-        {% include '_footer.html' %}
+        {% block footer %}
+        {% endblock %}
+        {% block javascript %}
+        <script src="{% static "js/jquery/jquery-3.4.1.min.js" %}" type="text/javascript"></script>
+        <script src="{% static "semantic/semantic.min.js" %}" type="text/javascript"></script>
+        <script type="text/javascript">
+            $('.message .close')
+                .on('click', function () {
+                    $(this)
+                        .closest('.message')
+                        .transition('fade')
+                        ;
+                })
+                ;
+        </script>
+        {% endblock %}
+        {% block scripts %}
+        {% endblock %}
     </footer>
-    {% block javascript %}
-    <script src="{% static "js/jquery/jquery-3.4.1.min.js" %}" type="text/javascript"></script>
-    <script src="{% static "semantic/semantic.min.js" %}" type="text/javascript"></script>
-    <script type="text/javascript">
-        $('.message .close')
-            .on('click', function () {
-                $(this)
-                    .closest('.message')
-                    .transition('fade')
-                    ;
-            })
-            ;
-    </script>
-    {% endblock %}
-    {% block scripts %}
-    {% endblock %}
 </body>
 
 </html>
