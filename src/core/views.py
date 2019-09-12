@@ -131,9 +131,13 @@ def custom_login(request):
 
 def profile(request):
     if request.user.is_authenticated:
-        user_id = request.user.id
-        user_info = User.objects.select_related().get(id=user_id)
-        form = UserBaseForm({'first_name': 'test'})
+        user = request.user
+        user_info = User.objects.select_related().get(id=user.id)
+        form = EditBaseUserForm({
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'email': user.email,
+        })
 
         context = {'form': form}
         return render(request, 'core/account/profile.html', context)
