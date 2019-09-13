@@ -1,0 +1,17 @@
+{% extends "core/__base.html" %}
+{% load i18n %}
+
+{% block content %}
+<h2>Login</h2>
+<form class="ui form" method="post">
+    {% csrf_token %}
+    {% include "_form.html" with form=form %}
+    <button class="ui positive right labeled icon button" type="submit">
+        {% trans 'Login' %}
+        <i class="sign-in icon"></i>
+    </button>
+    <a class="ui right floated grey button" href="{% url 'core:register' %}">
+        {% trans 'Forgot password?' %}
+    </a>
+</form>
+{% endblock %}

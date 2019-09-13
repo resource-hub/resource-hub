@@ -1,0 +1,29 @@
+{% extends "core/account/__account.html" %}
+{% load i18n %}
+
+{% block content %}
+<div id="secondary-menu" class="ui secondary pointing menu">
+    <a class="active item">
+        {% trans 'Overview' %}
+    </a>
+    <a class="item">
+        {% trans 'Settings' %}
+    </a>
+    <a class="item">
+        {% trans 'Edit Info' %}
+    </a>
+</div>
+
+<div class="content active">
+    <form class="ui form" method="POST">
+        {% include "_form.html" with form=form %}
+        <p>
+            <button class="ui positive right labeled icon button" type="submit">
+                {% trans 'Save' %}
+                <i class="save icon"></i>
+            </button>
+        </p>
+    </form>
+</div>
+
+{% endblock %}

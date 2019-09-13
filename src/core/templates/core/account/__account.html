@@ -1,0 +1,28 @@
+{% extends "__base.html" %}
+{% load i18n %}
+
+{% block main %}
+<div class="account-layout">
+    {% include "core/account/_sidebar.html" %}
+    <div class="wrapper">
+        <h2 class="ui header">
+            {% trans 'Account' %}
+        </h2>
+        <div class="main container">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function () {
+        $('#secondary-menu').children('.ui .item').on('click', function () {
+            $('#secondary-menu').children('.ui .item').removeClass('active');
+            $(this).addClass('active');
+        });
+    });
+</script>
+{% endblock %}
