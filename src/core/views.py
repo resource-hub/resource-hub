@@ -50,7 +50,7 @@ def register(request):
             subject = _('Activate your account')
             token_generator = TokenGenerator()
 
-            message = render_to_string('core/account/activation_mail.html', {
+            message = render_to_string('core/activation_mail.html', {
                 'user': new_user,
                 'domain': current_site.domain,
                 'uid': urlsafe_base64_encode(force_bytes(new_user.pk)),
