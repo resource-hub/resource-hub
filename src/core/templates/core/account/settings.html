@@ -3,27 +3,32 @@
 
 {% block content %}
 <div id="secondary-menu" class="ui secondary pointing menu">
-    <a class="active item">
+    <a class="active item" tab-id="overview">
         {% trans 'Overview' %}
     </a>
-    <a class="item">
+    <a class="item" tab-id="settings">
         {% trans 'Settings' %}
     </a>
-    <a class="item">
+    <a class="item" tab-id="">
         {% trans 'Edit Info' %}
     </a>
 </div>
 
-<div class="content active">
-    <form class="ui form" method="POST">
-        {% include "_form.html" with form=form %}
-        <p>
-            <button class="ui positive right labeled icon button" type="submit">
-                {% trans 'Save' %}
-                <i class="save icon"></i>
-            </button>
-        </p>
-    </form>
+<div class="ui segment tab-content">
+    <div id="overview" class="tab active">
+        {{ user.info.image }}
+    </div>
+    <div id="settings" class="tab">
+        <form class="ui form" method="POST">
+            {% include "_form.html" with form=form %}
+            <p>
+                <button class="ui positive right labeled icon button" type="submit">
+                    {% trans 'Save' %}
+                    <i class="save icon"></i>
+                </button>
+            </p>
+        </form>
+    </div>
 </div>
 
 {% endblock %}

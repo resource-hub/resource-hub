@@ -22,6 +22,10 @@
         $('#secondary-menu').children('.ui .item').on('click', function () {
             $('#secondary-menu').children('.ui .item').removeClass('active');
             $(this).addClass('active');
+
+            var id = '#' + $(this).attr('tab-id');
+            $('.tab-content').children('.tab').removeClass('active');
+            $(id).addClass('active');
         });
     });
 </script>

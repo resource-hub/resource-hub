@@ -30,7 +30,7 @@ footer {
     -moz-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.2);
     box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.2);
     height: 3.2em;
-    z-index: 3;
+    z-index: 700;
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
@@ -94,7 +94,7 @@ footer {
     box-shadow: 1px 0px 2px 0px rgba(0, 0, 0, 0.2);
     z-index: 600;
     width: 220px;
-    top: 3.3em;
+    top: 3.2em;
     bottom: 0;
     left: 0;
     margin: 0;
@@ -116,6 +116,14 @@ footer {
 
 .wrapper {
     width: 100%;
+}
+
+.tab {
+    display: none;
+}
+
+.active.tab {
+    display: block;
 }
 
 /* .ui.secondary.pointing.menu .active.item {
