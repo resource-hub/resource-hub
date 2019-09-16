@@ -1,0 +1,35 @@
+{% extends "core/account/__account.html" %}
+{% load i18n %}
+
+{% block content %}
+<div id="secondary-menu" class="ui secondary pointing menu">
+    <a class="active item" tab-id="overview">
+        {% trans 'Overview' %}
+    </a>
+    <a class="item" tab-id="bank-account">
+        {% trans 'Bank Account' %}
+    </a>
+    <a class="item" tab-id="address">
+        {% trans 'Address' %}
+    </a>
+    <a class="item" tab-id="profile">
+        {% trans 'Profile' %}
+    </a>
+</div>
+
+<div class="ui segment tab-content">
+    <div id="overview" class="tab active">
+        {{ user.info.image }}
+    </div>
+    <div id="bank-account" class="tab">
+
+    </div>
+    <div id="address" class="tab">
+
+    </div>
+    <div id="profile" class="tab">
+
+    </div>
+</div>
+
+{% endblock %}

@@ -1,15 +1,25 @@
+{% load i18n %}
 <aside>
     <div class="ui vertical menu">
         <div class="item">
             <div class="header">Account</div>
             <div class="menu">
-                <a class="item">Information</a>
+                {% url 'core:account-information' as url %}
+                <a class="item
+                    {% if request.path == url %}
+                    active
+                    {% endif %}
+                    " href="{{ url }}">
+                    {% trans 'Information' %}
+                </a>
                 {% url 'core:account-settings' as url %}
                 <a class="item
                 {% if request.path == url %}
                 active
                 {% endif %}
-                " href="{{ url }}">Settings</a>
+                " href="{{ url }}">
+                    {% trans 'Settings' %}
+                </a>
             </div>
         </div>
         <div class="item">

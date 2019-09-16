@@ -198,3 +198,8 @@ def change_password(request):
             return render(request, 'core/account/settings.html', context)
     else:
         return redirect(reverse('core:account-settings'))
+
+
+@login_required
+def account_information(request):
+    return render(request, 'core/account/information.html')
