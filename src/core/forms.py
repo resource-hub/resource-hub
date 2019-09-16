@@ -2,6 +2,7 @@ from datetime import datetime
 from schwifty import IBAN, BIC
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.hashers import check_password
 from django.utils.translation import ugettext_lazy as _
 from django.utils.dateparse import parse_date
 from core.models import *
@@ -79,7 +80,51 @@ class BankAccountForm(forms.ModelForm):
         return bic
 
 
-class EditBaseUserForm(forms.ModelForm):
-    class Meta:
-        model = User
-        fields = ['first_name', 'last_name', 'email']
+class EmailChangeForm(forms.Form):
+    old_email = forms.EmailField()
+    new_email1 = forms.EmailField(
+        label=_('New email-address')
+    )
+    new_email2 = forms.EmailField(
+        label=_('Repeat email-address confirmation')
+    )
+    password = forms.CharField(
+        label=_('Password'),
+        widget=forms.PasswordInput()
+    )
+
+    def clean_new_email2(self):
+        old_email = self.cleaned_data['old_email']
+        new_email1 = self.cleaned_data['new_email1']
+        new_email2 = self.cleaned_data['new_email2']
+
+        if new_email1 != new_email2:
+            raise forms.ValidationError(
+                _('The email-addresses do not match'),
+                code='not-matching-email'
+            )
+
+        if old_email == new_email2:
+            raise forms.ValidationError(
+                _('The new email is identical to the old one'),
+                code='identical-mail'
+            )
+
+        return new_email1
+
+    def clean_password(self):
+        email = self.cleaned_data['old_email']
+        sent_password = self.cleaned_data['password']
+        curr_password = User.objects.get(email=email).password
+
+        if check_password(sent_password, curr_password):
+            return sent_password
+        else:
+            raise forms.ValidationError(
+                _('The password is incorrect'), code='incorrect-password')
+
+    def save(self):
+        old_email = self.cleaned_data['old_email']
+        new_email = self.cleaned_data['new_email1']
+        user = User.objects.filter(email=old_email)
+        user.update(email=new_email)

@@ -3,24 +3,35 @@
 
 {% block content %}
 <div id="secondary-menu" class="ui secondary pointing menu">
-    <a class="active item" tab-id="overview">
-        {% trans 'Overview' %}
+    <a class="active item" tab-id="email">
+        {% trans 'Email' %}
     </a>
-    <a class="item" tab-id="settings">
-        {% trans 'Settings' %}
-    </a>
-    <a class="item" tab-id="">
-        {% trans 'Edit Info' %}
+    <a class="item" tab-id="password">
+        {% trans 'Password' %}
     </a>
 </div>
 
 <div class="ui segment tab-content">
-    <div id="overview" class="tab active">
-        {{ user.info.image }}
+    <div id="email" class="active tab">
+        <h3>
+            {% trans 'Change Email' %}
+        </h3>
+        <form class="ui form" method="POST" action="{% url 'core:change-email' %}">
+            {% include "_form.html" with form=email_form %}
+            <p>
+                <button class="ui positive right labeled icon button" type="submit">
+                    {% trans 'Save' %}
+                    <i class="save icon"></i>
+                </button>
+            </p>
+        </form>
     </div>
-    <div id="settings" class="tab">
-        <form class="ui form" method="POST">
-            {% include "_form.html" with form=form %}
+    <div id="password" class="tab">
+        <h3>
+            {% trans 'Change Password' %}
+        </h3>
+        <form class="ui form" method="POST" action="{% url 'core:change-password' %}">
+            {% include "_form.html" with form=password_form %}
             <p>
                 <button class="ui positive right labeled icon button" type="submit">
                     {% trans 'Save' %}

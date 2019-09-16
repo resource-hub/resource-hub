@@ -1,8 +1,10 @@
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, update_session_auth_hash
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import LoginView
+from django.contrib.auth.hashers import check_password
 from django.contrib import messages
 from django.contrib.sites.shortcuts import get_current_site
 from django.shortcuts import render, redirect
-from django.contrib.auth.views import LoginView
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_bytes, force_text
@@ -15,6 +17,8 @@ from smtplib import SMTPException
 from core.forms import *
 from core.models import *
 from core.tokens import TokenGenerator
+
+from django.contrib.auth.forms import PasswordChangeForm
 
 
 def index(request):
@@ -129,24 +133,68 @@ def custom_login(request):
             template_name='core/login.html')(request)
 
 
+# Internal account section
+
+@login_required
 def account(request):
-    if request.user.is_authenticated:
-        return render(request, 'core/account/index.html')
-    else:
-        return redirect(reverse('core:login'))
+    return render(request, 'core/account/index.html')
 
 
+@login_required
 def account_settings(request):
-    if request.user.is_authenticated:
-        user = request.user
-        user_info = User.objects.select_related().get(id=user.id)
-        form = EditBaseUserForm({
-            'first_name': user.first_name,
-            'last_name': user.last_name,
-            'email': user.email,
-        })
+    user = request.user
+    email_form = EmailChangeForm(initial={
+        'old_email': user.email,
+    })
+    password_form = PasswordChangeForm(user)
 
-        context = {'form': form}
-        return render(request, 'core/account/settings.html', context)
+    context = {
+        'email_form': email_form,
+        'password_form': password_form
+    }
+    return render(request, 'core/account/settings.html', context)
+
+
+@login_required
+def change_email(request):
+    if request.method == 'POST':
+        email_form = EmailChangeForm(request.POST)
+
+        if email_form.is_valid():
+            email_form.save()
+            message = _('Your email has been updated successfully.')
+            messages.add_message(request, messages.SUCCESS, message)
+            return redirect(reverse('core:account-settings'))
+        else:
+            password_form = ChangePasswordForm()
+            context = {
+                'email_form': email_form,
+                'password_form': password_form
+            }
+            return render(request, 'core/account/settings.html', context)
     else:
-        return redirect(reverse('core:login'))
+        return redirect(reverse('core:account-settings'))
+
+
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        user = request.user
+        password_form = PasswordChangeForm(user, request.POST)
+
+        if password_form.is_valid():
+            user = password_form.save()
+            update_session_auth_hash(request, user)
+
+            message = _('Your password has been updated successfully.')
+            messages.add_message(request, messages.SUCCESS, message)
+            return redirect(reverse('core:account-settings'))
+        else:
+            email_form = EmailChangeForm()
+            context = {
+                'email_form': email_form,
+                'password_form': password_form
+            }
+            return render(request, 'core/account/settings.html', context)
+    else:
+        return redirect(reverse('core:account-settings'))

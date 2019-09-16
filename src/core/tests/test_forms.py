@@ -52,9 +52,6 @@ class TestBankAccountForm(TestCase):
             for iban in f:
                 self.data['iban'] = iban
                 form = BankAccountForm(data=self.data)
-                if not form.is_valid():
-                    print(iban)
-
                 self.assertTrue(form.is_valid())
 
     def test_invalid_data(self):
@@ -63,7 +60,43 @@ class TestBankAccountForm(TestCase):
             for iban in f:
                 invalid_data['iban'] = iban
                 form = BankAccountForm(data=invalid_data)
-                if form.is_valid():
-                    print(iban)
-
                 self.assertFalse(form.is_valid())
+
+
+class TestEmailChangeForm(TestCase):
+    def setUp(self):
+        self.data = {
+            'username': 'peterpopper',
+            'password': 'we8dlz49opd',
+            'birth_date': '1997-01-01',
+            'old_email': 'test@test.de',
+            'new_email1': 'test2@test.de',
+            'new_email2': 'test2@test.de',
+        }
+        self.user = User.objects.create_user(
+            username=self.data['username'],
+            email=self.data['old_email'],
+            password=self.data['password'],
+            birth_date=self.data['birth_date'],
+        )
+
+    def test_valid_data(self):
+        form = EmailChangeForm(self.data)
+        self.assertTrue(form.is_valid())
+
+    def test_wrong_password(self):
+        invalid_data = self.data.copy()
+        invalid_data['password'] = 'x'
+        form = EmailChangeForm(invalid_data)
+        self.assertFalse(form.is_valid())
+
+    def test_non_matching_email(self):
+        invalid_data = self.data.copy()
+        invalid_data['new_email1'] = 'test@test.de'
+        form = EmailChangeForm(invalid_data)
+        self.assertFalse(form.is_valid())
+
+        invalid_data = self.data.copy()
+        invalid_data['new_email2'] = 'test@test.de'
+        form = EmailChangeForm(invalid_data)
+        self.assertFalse(form.is_valid())

@@ -31,16 +31,7 @@
         <script src="{% static "js/jquery/jquery-3.4.1.min.js" %}" type="text/javascript"></script>
         <script src="{% static "semantic/semantic.min.js" %}" type="text/javascript"></script>
         <script src="{% static "js/scroll-button.js" %}" type="text/javascript"></script>
-        <script type="text/javascript">
-            $(document).ready(function () {
-                $('.message .close')
-                    .on('click', function () {
-                        $(this)
-                            .closest('.message')
-                            .transition('fade');
-                    });
-            });
-        </script>
+        <script src="{% static "js/navigation.js" %}" type="text/javascript"></script>
         {% endblock %}
         {% block scripts %}
         {% endblock %}
