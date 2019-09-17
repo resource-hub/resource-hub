@@ -33,9 +33,20 @@
             $('#secondary-menu').children('.ui .item').removeClass('active');
             $(this).addClass('active');
 
-            var id = '#' + $(this).attr('tab-id');
+            var id = $(this).attr('tab-id');
+            var path = window.location.pathname.replace(/\/$/, '')
+            path = path.substr(0, path.lastIndexOf('/') + 1) + id + '/';
+            window.history.pushState(null, null, path);
+
+            id = '#' + id;
             $('.tab-content').children('.tab').removeClass('active');
             $(id).addClass('active');
+
+            function update_url() {
+                return (window.location.href.replace(/(\d+)(\.html)$/, function (str, p1, p2) {
+                    return ((Number(p1) + 1) + p2);
+                }));
+            }
         });
     });
 </script>

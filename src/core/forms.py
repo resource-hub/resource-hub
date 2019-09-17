@@ -81,6 +81,12 @@ class BankAccountForm(forms.ModelForm):
 
 
 class EmailChangeForm(forms.Form):
+    def __init__(self, user, *args, **kwargs):
+        if user is None:
+            raise ValueError('User object is none')
+        self.user = user
+        super(EmailChangeForm, self).__init__(*args, **kwargs)
+
     old_email = forms.EmailField()
     new_email1 = forms.EmailField(
         label=_('New email-address')
@@ -113,9 +119,8 @@ class EmailChangeForm(forms.Form):
         return new_email1
 
     def clean_password(self):
-        email = self.cleaned_data['old_email']
         sent_password = self.cleaned_data['password']
-        curr_password = User.objects.get(email=email).password
+        curr_password = User.objects.get(pk=self.user.id).password
 
         if check_password(sent_password, curr_password):
             return sent_password
@@ -124,7 +129,5 @@ class EmailChangeForm(forms.Form):
                 _('The password is incorrect'), code='incorrect-password')
 
     def save(self):
-        old_email = self.cleaned_data['old_email']
         new_email = self.cleaned_data['new_email1']
-        user = User.objects.filter(email=old_email)
-        user.update(email=new_email)
+        user = User.objects.filter(pk=self.user.id).update(email=new_email)

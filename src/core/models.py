@@ -92,7 +92,7 @@ class Info(models.Model):
         null=True,
         on_delete=models.SET_NULL
     )
-    image = models.ImageField(null=True, blank=True)
+    image = models.ImageField(null=True, blank=True, upload_to='images/')
     telephone_private = models.CharField(max_length=20, null=True, blank=True)
     telephone_public = models.CharField(max_length=20, null=True, blank=True)
     email_public = models.EmailField(null=True, blank=True)

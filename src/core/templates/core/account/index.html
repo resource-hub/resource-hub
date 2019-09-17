@@ -5,7 +5,17 @@
 
 
 <div>
-    <h3>Hi, {{ user.first_name }}</h3>
+    <div class="ui card">
+        <a class="image" href="#">
+            <img src="{{ user.info.image.url }}">
+        </a>
+        <div class="content">
+            <a class="header" href="#">{{ user.first_name }} {{user.last_name }}</a>
+            <div class="meta">
+                <a>Last Seen 2 days ago</a>
+            </div>
+        </div>
+    </div>
 
 </div>
 

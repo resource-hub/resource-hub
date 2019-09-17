@@ -81,22 +81,22 @@ class TestEmailChangeForm(TestCase):
         )
 
     def test_valid_data(self):
-        form = EmailChangeForm(self.data)
+        form = EmailChangeForm(self.user, self.data)
         self.assertTrue(form.is_valid())
 
     def test_wrong_password(self):
         invalid_data = self.data.copy()
         invalid_data['password'] = 'x'
-        form = EmailChangeForm(invalid_data)
+        form = EmailChangeForm(self.user, invalid_data)
         self.assertFalse(form.is_valid())
 
     def test_non_matching_email(self):
         invalid_data = self.data.copy()
         invalid_data['new_email1'] = 'test@test.de'
-        form = EmailChangeForm(invalid_data)
+        form = EmailChangeForm(self.user, invalid_data)
         self.assertFalse(form.is_valid())
 
         invalid_data = self.data.copy()
         invalid_data['new_email2'] = 'test@test.de'
-        form = EmailChangeForm(invalid_data)
+        form = EmailChangeForm(self.user, invalid_data)
         self.assertFalse(form.is_valid())

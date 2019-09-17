@@ -1,8 +1,9 @@
-from django.contrib.auth import login, authenticate, update_session_auth_hash
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.views import LoginView
-from django.contrib.auth.hashers import check_password
 from django.contrib import messages
+from django.contrib.auth import login, authenticate, update_session_auth_hash
+from django.contrib.auth.views import LoginView
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.hashers import check_password
+from django.contrib.auth.decorators import login_required
 from django.contrib.sites.shortcuts import get_current_site
 from django.shortcuts import render, redirect
 from django.urls import reverse
@@ -12,13 +13,12 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
 from django.http import HttpResponse
+from django.forms.models import model_to_dict
 from smtplib import SMTPException
 
 from core.forms import *
 from core.models import *
 from core.tokens import TokenGenerator
-
-from django.contrib.auth.forms import PasswordChangeForm
 
 
 def index(request):
@@ -141,65 +141,88 @@ def account(request):
 
 
 @login_required
-def account_settings(request):
+def account_settings(request, scope):
     user = request.user
-    email_form = EmailChangeForm(initial={
+    email_form = EmailChangeForm(user, initial={
         'old_email': user.email,
     })
     password_form = PasswordChangeForm(user)
 
+    if request.method == 'POST':
+        if scope == 'email':
+            email_form = EmailChangeForm(user, request.POST)
+
+            if email_form.is_valid():
+                email_form.save()
+                message = _('Your email has been updated successfully.')
+                messages.add_message(request, messages.SUCCESS, message)
+                return redirect(reverse('core:account-settings', kwargs={'scope': 'email'}))
+
+        elif scope == 'password':
+            password_form = PasswordChangeForm(user, request.POST)
+
+            if password_form.is_valid():
+                user = password_form.save()
+                update_session_auth_hash(request, user)
+
+                message = _('Your password has been updated successfully.')
+                messages.add_message(request, messages.SUCCESS, message)
+                return redirect(reverse('core:account-settings', kwargs={'scope': 'password'}))
+
     context = {
         'email_form': email_form,
-        'password_form': password_form
+        'password_form': password_form,
+        scope: 'active',
     }
     return render(request, 'core/account/settings.html', context)
 
 
 @login_required
-def change_email(request):
+def account_information(request, scope):
+    user = request.user
+    info = model_to_dict(user.info)
+    address = model_to_dict(user.info.address)
+    bank_account = model_to_dict(user.info.bank_account)
+
+    info_form = InfoForm(initial=info)
+    address_form = AddressForm(initial=address)
+    bank_account_form = BankAccountForm(initial=bank_account)
+
     if request.method == 'POST':
-        email_form = EmailChangeForm(request.POST)
+        if scope == 'info':
+            info_form = InfoForm(
+                request.POST, request.FILES, instance=user.info)
 
-        if email_form.is_valid():
-            email_form.save()
-            message = _('Your email has been updated successfully.')
-            messages.add_message(request, messages.SUCCESS, message)
-            return redirect(reverse('core:account-settings'))
-        else:
-            password_form = ChangePasswordForm()
-            context = {
-                'email_form': email_form,
-                'password_form': password_form
-            }
-            return render(request, 'core/account/settings.html', context)
-    else:
-        return redirect(reverse('core:account-settings'))
+            if info_form.is_valid():
+                info_form.save()
+                message = _('Your information has been updated')
+                messages.add_message(request, messages.SUCCESS, message)
+                return redirect(reverse('core:account-information', kwargs={'scope': 'info'}))
 
+        elif scope == 'address':
+            address_form = AddressForm(
+                request.POST, instance=user.info.address)
 
-@login_required
-def change_password(request):
-    if request.method == 'POST':
-        user = request.user
-        password_form = PasswordChangeForm(user, request.POST)
+            if address_form.is_valid():
+                address_form.save()
+                message = _('Your address has been updated')
+                messages.add_message(request, messages.SUCCESS, message)
+                return redirect(reverse('core:account-information', kwargs={'scope': 'address'}))
 
-        if password_form.is_valid():
-            user = password_form.save()
-            update_session_auth_hash(request, user)
+        elif scope == 'bank_account':
+            bank_account_form = BankAccountForm(
+                request.POST, instance=user.info.bank_account)
 
-            message = _('Your password has been updated successfully.')
-            messages.add_message(request, messages.SUCCESS, message)
-            return redirect(reverse('core:account-settings'))
-        else:
-            email_form = EmailChangeForm()
-            context = {
-                'email_form': email_form,
-                'password_form': password_form
-            }
-            return render(request, 'core/account/settings.html', context)
-    else:
-        return redirect(reverse('core:account-settings'))
+            if bank_account_form.is_valid():
+                bank_account_form.save()
+                message = _('Your bank information has been updated')
+                messages.add_message(request, messages.SUCCESS, message)
+                return redirect(reverse('core:account-information', kwargs={'scope': 'bank_account'}))
 
-
-@login_required
-def account_information(request):
-    return render(request, 'core/account/information.html')
+    context = {
+        'info_form': info_form,
+        'address_form': address_form,
+        'bank_account_form': bank_account_form,
+        scope: 'active',
+    }
+    return render(request, 'core/account/information.html', context)

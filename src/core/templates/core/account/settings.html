@@ -2,42 +2,39 @@
 {% load i18n %}
 
 {% block content %}
+{% url 'core:account-settings' as url %}
 <div id="secondary-menu" class="ui secondary pointing menu">
-    <a class="active item" tab-id="email">
+    <a class="{{ email }} item" tab-id="email">
         {% trans 'Email' %}
     </a>
-    <a class="item" tab-id="password">
+    <a class="{{ password }} item" tab-id="password">
         {% trans 'Password' %}
     </a>
 </div>
 
 <div class="ui segment tab-content">
-    <div id="email" class="active tab">
+    <div id="email" class="{{ email }} tab">
         <h3>
             {% trans 'Change Email' %}
         </h3>
-        <form class="ui form" method="POST" action="{% url 'core:change-email' %}">
+        <form class="ui form" method="POST" action="{{ url }}">
             {% include "_form.html" with form=email_form %}
-            <p>
-                <button class="ui positive right labeled icon button" type="submit">
-                    {% trans 'Save' %}
-                    <i class="save icon"></i>
-                </button>
-            </p>
+            <button class="ui positive right labeled icon button" type="submit">
+                {% trans 'Save' %}
+                <i class="save icon"></i>
+            </button>
         </form>
     </div>
-    <div id="password" class="tab">
+    <div id="password" class="{{ password }} tab">
         <h3>
             {% trans 'Change Password' %}
         </h3>
-        <form class="ui form" method="POST" action="{% url 'core:change-password' %}">
+        <form class="ui form" method="POST" action="{{ url }}">
             {% include "_form.html" with form=password_form %}
-            <p>
-                <button class="ui positive right labeled icon button" type="submit">
-                    {% trans 'Save' %}
-                    <i class="save icon"></i>
-                </button>
-            </p>
+            <button class="ui positive right labeled icon button" type="submit">
+                {% trans 'Save' %}
+                <i class="save icon"></i>
+            </button>
         </form>
     </div>
 </div>

@@ -2,33 +2,55 @@
 {% load i18n %}
 
 {% block content %}
+{% url 'core:account-information' as url %}
 <div id="secondary-menu" class="ui secondary pointing menu">
-    <a class="active item" tab-id="overview">
-        {% trans 'Overview' %}
+    <a class="{{ info }} item" tab-id="info">
+        {% trans 'Profile' %}
     </a>
-    <a class="item" tab-id="bank-account">
-        {% trans 'Bank Account' %}
-    </a>
-    <a class="item" tab-id="address">
+    <a class="{{ address }} item" tab-id="address">
         {% trans 'Address' %}
     </a>
-    <a class="item" tab-id="profile">
-        {% trans 'Profile' %}
+    <a class="{{ bank_account }} item" tab-id="bank_account">
+        {% trans 'Bank Account' %}
     </a>
 </div>
 
 <div class="ui segment tab-content">
-    <div id="overview" class="tab active">
-        {{ user.info.image }}
+    <div id="info" class="{{ info }} tab">
+        <h3>
+            {% trans 'Edit profile' %}
+        </h3>
+        <form class="ui form" method="POST" action="{{ url }}" enctype="multipart/form-data">
+            {% include '_form.html' with form=info_form %}
+            <button class="ui positive right labeled icon button" type="submit">
+                {% trans 'Save' %}
+                <i class="save icon"></i>
+            </button>
+        </form>
     </div>
-    <div id="bank-account" class="tab">
-
+    <div id="address" class="{{ address }} tab">
+        <h3>
+            {% trans 'Edit Address' %}
+        </h3>
+        <form class="ui form" method="POST" action="{{ url }}">
+            {% include '_form.html' with form=address_form %}
+            <button class="ui positive right labeled icon button" type="submit">
+                {% trans 'Save' %}
+                <i class="save icon"></i>
+            </button>
+        </form>
     </div>
-    <div id="address" class="tab">
-
-    </div>
-    <div id="profile" class="tab">
-
+    <div id="bank_account" class="{{ bank_account }} tab">
+        <h3>
+            {% trans 'Edit bank information' %}
+        </h3>
+        <form class="ui form" method="POST" action="{{ url }}">
+            {% include '_form.html' with form=bank_account_form %}
+            <button class="ui positive right labeled icon button" type="submit">
+                {% trans 'Save' %}
+                <i class="save icon"></i>
+            </button>
+        </form>
     </div>
 </div>
 
