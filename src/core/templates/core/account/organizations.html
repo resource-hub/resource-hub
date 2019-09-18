@@ -1,0 +1,42 @@
+{% extends 'core/account/__account.html' %}
+{% load i18n %}
+
+{% block content %}
+<div id="secondary-menu" class="ui secondary pointing menu">
+    <a class="{{ overview }} item" tab-id="overview">
+        {% trans 'Overview' %}
+    </a>
+    <a class="{{ create }} item" tab-id="create">
+        {% trans 'Create' %}
+    </a>
+</div>
+
+<div class="ui segment tab-content">
+    <div id="overview" class="{{ overview }} tab">
+        <h3>
+            {% trans 'Your organizations' %}
+        </h3>
+        <div>
+
+            {% for organization in organization_list %}
+            {{ organization }}
+            {% endfor %}
+        </div>
+    </div>
+    <div id="create" class="{{ create }} tab">
+        <h3>
+            {% trans 'Create organization' %}
+        </h3>
+        <form class="ui form" method="POST" action="{{ url }}">
+            {% include '_form.html' with form=group_form %}
+            {% include '_form.html' with form=address_form %}
+            {% include '_form.html' with form=bank_account_form %}
+            {% include '_form.html' with form=info_form %}
+            <button class="ui positive right labeled icon button" type="submit">
+                {% trans 'Create' %}
+                <i class="users icon"></i>
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

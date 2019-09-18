@@ -23,9 +23,13 @@
         <div class="item">
             <div class="header">Organisations</div>
             <div class="menu">
-                <a class="item">Rails</a>
-                <a class="item">Python</a>
-                <a class="item">PHP</a>
+                <a class="item
+                {% if '/organizations/' in request.path %}
+                    active
+                    {% endif %}
+                " href="{% url 'core:organizations' scope='overview' %}">
+                    {% trans 'General' %}
+                </a>
             </div>
         </div>
         <div class="item">

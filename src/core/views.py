@@ -101,10 +101,6 @@ def register(request):
     return render(request, 'core/register.html', context)
 
 
-def activate_account(request):
-    return render(request, 'core/activate_account.html')
-
-
 def activate(request, uidb64, token):
     token_generator = TokenGenerator()
     try:
@@ -226,3 +222,57 @@ def account_information(request, scope):
         scope: 'active',
     }
     return render(request, 'core/account/information.html', context)
+
+
+def organizations(request, scope):
+    user = request.user
+    group_form = GroupForm()
+    info_form = InfoForm()
+    address_form = AddressForm()
+    bank_account_form = BankAccountForm()
+
+    if request.method == 'POST':
+        if scope == 'create':
+            group_form = GroupForm(request.POST)
+            info_form = InfoForm(request.POST)
+            address_form = AddressForm(request.POST)
+            bank_account_form = BankAccountForm(request.POST)
+
+            if (group_form.is_valid() and
+                    info_form.is_valid() and
+                    address_form.is_valid() and
+                    bank_account_form.is_valid()):
+
+                new_group = group_form.save()
+                new_address = address_form.save()
+                new_bank_account = bank_account_form.save()
+
+                new_info = info_form.save(commit=False)
+                new_info.address = new_address
+                new_info.bank_account = new_bank_account
+                new_info = new_info.save()
+
+                new_organization = Organization.objects.create(
+                    group=new_group,
+                    info=new_info,
+                    created_by=user
+                )
+                new_organization.group.user_set.add(user)
+
+                message = _('The organization has been created')
+                messages.add_message(request, messages.SUCCESS, message)
+                return redirect(reverse('core:organizations', kwargs={'scope': 'overview'}))
+
+    organization_list = []
+    for group in user.groups.all():
+        organization_list.append(group.name)
+
+    context = {
+        'organization_list': organization_list,
+        'group_form': group_form,
+        'info_form': info_form,
+        'address_form': address_form,
+        'bank_account_form': bank_account_form,
+        scope: 'active',
+    }
+    return render(request, 'core/account/organizations.html', context)

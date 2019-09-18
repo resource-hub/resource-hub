@@ -5,4 +5,6 @@ $(document).ready(function () {
                 .closest('.message')
                 .transition('fade');
         });
+
+    $('.ui.dropdown').dropdown();
 });

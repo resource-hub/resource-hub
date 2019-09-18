@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, Group
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from imagekit.models import ImageSpecField
+from imagekit.processors import ResizeToFill
 
 # Create your models here.
 
@@ -92,7 +94,16 @@ class Info(models.Model):
         null=True,
         on_delete=models.SET_NULL
     )
-    image = models.ImageField(null=True, blank=True, upload_to='images/')
+    image = models.ImageField(null=True, blank=True,
+                              upload_to='images/')
+    thumbnail = ImageSpecField(source='image',
+                                      processors=[ResizeToFill(100, 100)],
+                                      format='PNG',
+                                      options={'quality': 60})
+    thumbnail_small = ImageSpecField(source='image',
+                                     processors=[ResizeToFill(40, 40)],
+                                     format='PNG',
+                                     options={'quality': 60})
     telephone_private = models.CharField(max_length=20, null=True, blank=True)
     telephone_public = models.CharField(max_length=20, null=True, blank=True)
     email_public = models.EmailField(null=True, blank=True)

@@ -39,6 +39,15 @@ class UserBaseForm(UserCreationForm):
         return self.cleaned_data['birth_date']
 
 
+class GroupForm(forms.ModelForm):
+    name = forms.CharField(max_length=100, label=_(
+        'Organization name'), help_text=_('Please include your legal form'))
+
+    class Meta:
+        model = Group
+        fields = ['name', ]
+
+
 class InfoForm(forms.ModelForm):
     class Meta:
         model = Info
@@ -92,7 +101,7 @@ class EmailChangeForm(forms.Form):
         label=_('New email-address')
     )
     new_email2 = forms.EmailField(
-        label=_('Repeat email-address confirmation')
+        label=_('New email-address confirmation')
     )
     password = forms.CharField(
         label=_('Password'),
