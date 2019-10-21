@@ -153,19 +153,24 @@ class Location(models.Model):
         return self.name
 
 
-class Organization(models.Model):
+class Admin(Group):
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+class Organization(Group):
     """ juristic person"""
 
-    # Fields
-    group = models.OneToOneField(
-        Group,
-        on_delete=models.CASCADE
-    )
     info = models.OneToOneField(
         Info,
         null=True,
         blank=True,
-        on_delete=models.SET_NULL
+        on_delete=models.SET_NULL,
+    )
+    admins = models.OneToOneField(
+        Admin,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
     )
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(

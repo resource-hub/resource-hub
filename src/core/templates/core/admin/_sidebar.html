@@ -1,0 +1,46 @@
+{% load i18n %}
+<aside>
+    <div class="ui vertical menu">
+        <div class="item">
+            <div class="header">Account</div>
+            <div class="menu">
+                <a class="item
+                    {% if '/account/profile/' in request.path %}
+                    active
+                    {% endif %}
+                    " href="{% url 'core:account_profile' scope='info' %}">
+                    {% trans 'Profile' %}
+                </a>
+                <a class="item
+                {% if '/settings/' in request.path %}
+                active
+                {% endif %}
+                " href="{% url 'core:account_settings' scope='email' %}">
+                    {% trans 'Settings' %}
+                </a>
+            </div>
+        </div>
+        <div class="item">
+            <div class="header">
+                {% trans 'Organizations' %}
+            </div>
+            <div class="menu">
+                <a class="item
+                {{ request.path }}
+                {% if '/admin/organizations/' == request.path %}
+                    active
+                    {% endif %}
+                " href="{% url 'core:organizations' %}">
+                    {% trans 'Overview' %}
+                </a>
+                <a class="item
+                {% if '/organizations/register' in request.path %}
+                    active
+                    {% endif %}
+                " href="{% url 'core:organizations_register' %}">
+                    {% trans 'Register' %}
+                </a>
+            </div>
+        </div>
+    </div>
+</aside>

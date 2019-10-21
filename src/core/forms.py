@@ -39,12 +39,12 @@ class UserBaseForm(UserCreationForm):
         return self.cleaned_data['birth_date']
 
 
-class GroupForm(forms.ModelForm):
+class OrganizationForm(forms.ModelForm):
     name = forms.CharField(max_length=100, label=_(
         'Organization name'), help_text=_('Please include your legal form'))
 
     class Meta:
-        model = Group
+        model = Organization
         fields = ['name', ]
 
 

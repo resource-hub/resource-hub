@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'core.apps.CoreConfig',
     'rooms.apps.RoomsConfig',
     'imagekit',
+    'django_tables2',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -156,7 +157,7 @@ STATICFILES_DIRS = [
 MEDIA_URL = '/media/'
 
 # Custom settings
-LOGIN_REDIRECT_URL = '/account/'
+LOGIN_REDIRECT_URL = '/admin/'
 LOGIN_URL = '/login/'
 
 AUTH_USER_MODEL = "core.User"

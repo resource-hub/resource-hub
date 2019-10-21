@@ -1,8 +1,9 @@
-{% extends "core/account/__account.html" %}
+{% extends "core/admin/__base.html" %}
 {% load i18n %}
 
 {% block content %}
-{% url 'core:account-settings' as url %}
+{% url 'core:account_settings' as url %}
+<h2>Settings</h2>
 <div id="secondary-menu" class="ui secondary pointing menu">
     <a class="{{ email }} item" tab-id="email">
         {% trans 'Email' %}

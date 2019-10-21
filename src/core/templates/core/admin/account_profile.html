@@ -1,8 +1,9 @@
-{% extends "core/account/__account.html" %}
+{% extends "core/admin/__base.html" %}
 {% load i18n %}
 
 {% block content %}
-{% url 'core:account-information' as url %}
+{% url 'core:account_information' as url %}
+<h2>Profile</h2>
 <div id="secondary-menu" class="ui secondary pointing menu">
     <a class="{{ info }} item" tab-id="info">
         {% trans 'Profile' %}

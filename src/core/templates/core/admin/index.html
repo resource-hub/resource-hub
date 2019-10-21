@@ -1,0 +1,20 @@
+{% extends "core/admin/__base.html" %}
+{% load i18n %}
+
+{% block content %}
+
+<div>
+    <div class="ui placeholder segment">
+        <div class="ui icon header">
+            <i class="hand peace outline icon"></i>
+            Hey, {{ user.first_name }}! {% trans 'What do you want to do?' %}
+        </div>
+    </div>
+    <div class="ui segment">
+        <p class="">
+            <i class="info circle icon"></i> Lorem ima;lkdsjf;lsakjfdalskdjf
+        </p>
+    </div>
+</div>
+
+{% endblock %}
