@@ -11,6 +11,8 @@ from core.models import *
 class UserBaseForm(UserCreationForm):
     birth_date = forms.CharField(
         widget=forms.widgets.DateTimeInput(attrs={"type": "date"}))
+    name_public = forms.BooleanField(help_text=_(
+        'Display your name to other users so they can find you'), initial=True)
 
     class Meta:
         model = User
@@ -140,3 +142,33 @@ class EmailChangeForm(forms.Form):
     def save(self):
         new_email = self.cleaned_data['new_email1']
         user = User.objects.filter(pk=self.user.id).update(email=new_email)
+
+
+class OrganizationMemberAddForm(forms.Form):
+    def __init__(self, organization_id,  *args, **kwargs):
+        self.organization_id = organization_id
+        super(OrganizationMemberAddForm, self).__init__(*args, **kwargs)
+
+    username = forms.CharField(
+        max_length=128,
+        required=True,
+
+        widget=forms.TextInput(
+            attrs={'class': 'prompt', 'id': 'search', 'autofocus': 'autofocus'}),
+    )
+
+    def clean_username(self):
+        username = self.cleaned_data['username']
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            raise forms.ValidationError(
+                _('The user does not exist.'), code='user-not-exists')
+
+        try:
+            Organization.objects.get(
+                pk=self.organization_id, members__username=username)
+            raise forms.ValidationError(
+                _('User is already a member'), code='user-already-member')
+        except Organization.DoesNotExist:
+            return username

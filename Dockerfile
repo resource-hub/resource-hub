@@ -9,4 +9,4 @@ RUN apk add --no-cache linux-headers bash gcc \
 
 WORKDIR /site
 COPY ./ /site
-RUN pip install -U -r /site/requirements.txt
+RUN pip3 install -U -r /site/requirements.txt

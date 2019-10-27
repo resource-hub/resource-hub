@@ -18,7 +18,7 @@ from smtplib import SMTPException
 
 from core.forms import *
 from core.models import *
-from core.tables import OrganizationsTable
+from core.tables import OrganizationsTable, MembersTable
 from core.tokens import TokenGenerator
 
 
@@ -227,9 +227,8 @@ def account_settings(request, scope):
 
 @login_required
 def organizations(request):
-    organizations = Organization.objects.all(
-    ).select_related(
-    ).filter(user=request.user.id)
+    user = request.user
+    organizations = Organization.objects.all().filter(members__pk=user.id)
 
     if organizations:
         data = []
@@ -278,7 +277,8 @@ def organizations_register(request):
 
             new_organization.info = new_info
             new_organization.save()
-            new_organization.user_set.add(user)
+            new_organization.members.add(user, through_defaults={
+                                         'role': OrganizationMember.ADMIN})
 
             message = _('The organization has been registered')
             messages.add_message(request, messages.SUCCESS, message)
@@ -352,4 +352,54 @@ def organizations_profile(request, id, scope):
 
 @login_required
 def organizations_members(request, id):
-    organizations = Organizations.objects.get(pk=id).select_related()
+    user = request.user
+    organization = Organization.objects.get(id=id)
+    members = organization.members.select_related().all()
+
+    if members:
+        data = []
+        for m in members:
+            membership = OrganizationMember.objects.get(
+                organization=organization,
+                user=m
+            )
+            data.append({
+                'username': m.username,
+                'first_name': m.first_name,
+                'last_name': m.last_name,
+                'role': membership.get_role_display(),
+            })
+        members_table = MembersTable(data)
+    else:
+        members_table = None
+
+    context = {
+        'members_table': members_table,
+        'organization': organization,
+    }
+    return render(request, 'core/admin/organizations_members.html', context)
+
+
+@login_required
+def organizations_members_add(request, id):
+    organization = Organization.objects.get(id=id)
+    member_add_form = OrganizationMemberAddForm(organization_id=id)
+
+    if request.method == 'POST':
+        member_add_form = OrganizationMemberAddForm(id,
+                                                    request.POST)
+
+        if member_add_form.is_valid():
+            username = member_add_form.cleaned_data['username']
+            user = User.objects.get(username=username)
+            organization.members.add(user)
+
+            message = _('User has been added to ' + organization.name)
+            messages.add_message(request, messages.SUCCESS, message)
+            return redirect(reverse('core:organizations_members', kwargs={'id': id}))
+
+    context = {
+        'member_add_form': member_add_form,
+        'organization': organization,
+    }
+    return render(request, 'core/admin/organizations_members_add.html', context)

@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'core.apps.CoreConfig',
     'rooms.apps.RoomsConfig',
     'imagekit',
+    'rest_framework',
     'django_tables2',
     'django.contrib.admin',
     'django.contrib.auth',

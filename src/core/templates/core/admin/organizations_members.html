@@ -1,0 +1,37 @@
+{% extends "core/admin/__base.html" %}
+{% load i18n %}
+{% load django_tables2 %}
+
+{% block content %}
+<a class="ui labeled icon button" href="{% url 'core:organizations' %}">
+    <i class="left arrow icon"></i>
+    {% trans 'Back' %}
+</a>
+
+<h2>
+    {{ organization.name }}
+</h2>
+
+<div class="ui segment tab-content">
+    <div>
+        <a class="ui labeled icon right floated green button"
+            href="{% url 'core:organizations_members_add' id=organization.id %}">
+            <i class="plus icon"></i>
+            {% trans 'Add' %}
+        </a>
+        <h3 class="inline">
+            {% trans 'Members' %}
+        </h3>
+
+    </div>
+    <div>
+        {% if members_table %}
+        {% render_table members_table %}
+        {% else %}
+        <p>
+            {% trans 'No associated members found' %}
+        </p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

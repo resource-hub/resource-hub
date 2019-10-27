@@ -1,0 +1,65 @@
+{% extends "core/admin/__base.html" %}
+{% load i18n %}
+{% load django_tables2 %}
+
+{% block content %}
+<a class="ui labeled icon button" href="{% url 'core:organizations_members' id=organization.id %}">
+    <i class="left arrow icon"></i>
+    {% trans 'Back' %}
+</a>
+
+<h2>
+    {{ organization.name }}
+</h2>
+
+<div class="ui segment tab-content">
+
+
+    <form class="ui form" method="POST" action="">
+        <div class="ui search">
+            {% include "_form.html" with form=member_add_form %}
+            <div class="results"></div>
+        </div>
+        <p>
+            <button class="ui positive right labeled icon button" type="submit">
+                {% trans 'Add user' %}
+                <i class="plus icon"></i>
+            </button>
+        </p>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $('.ui.search')
+        .search({
+            minCharacters: 2,
+            apiSettings: {
+                onResponse: function (result) {
+                    var
+                        response = {
+                            results: []
+                        }
+                        ;
+                    console.log(result);
+                    // translate GitHub API response to work with search
+                    $.each(result, function (index, user) {
+                        var username = user.username;
+                        var full_name = user.first_name + ' ' + user.last_name;
+
+                        // add result to category
+                        response.results.push({
+                            title: user.username,
+                            description: full_name,
+                            url: user.html_url
+                        });
+                    });
+                    return response;
+                },
+                url: '//localhost:8000/api/user/search/?search={query}'
+            }
+        })
+        ;
+</script>
+{% endblock %}

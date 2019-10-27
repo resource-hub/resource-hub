@@ -1,7 +1,7 @@
 from django.urls import path, include
 from django.conf.urls import url
 import django.contrib.auth.views as auth
-from . import views
+from . import views, api
 
 app_name = 'core'
 urlpatterns = [
@@ -30,4 +30,12 @@ urlpatterns = [
     url(r'^admin/organizations/profile/(?P<id>\w{0,50})/(?P<scope>\w{0,50})/$',
         views.organizations_profile,
         name='organizations_profile'),
+    url(r'^admin/organizations/members/(?P<id>\w{0,50})/$',
+        views.organizations_members,
+        name='organizations_members'),
+    url(r'^admin/organizations/members/add/(?P<id>\w{0,50})/$',
+        views.organizations_members_add,
+        name='organizations_members_add'),
+
+    url(r'^api/user/search/$', api.UserSearch.as_view()),
 ]
