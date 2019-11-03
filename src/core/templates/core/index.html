@@ -1,76 +1,46 @@
 {% extends "core/__base.html" %}
+{% load i18n %}
+{% block extra_head %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
+  integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+  crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
+  integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
+  crossorigin=""></script>
+{% endblock %}
+
+{% block not_in_container %}
+<div id="map">
+
+</div>
+{% endblock %}
 
 {% block content %}
+<h1>{% trans 'Welcome!' %}</h1>
+<p>
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+  aliqua. Id porta nibh venenatis cras sed felis eget velit aliquet. Ipsum a arcu cursus vitae congue. In ante metus
+  dictum at tempor. Porta non pulvinar neque laoreet suspendisse interdum consectetur. Potenti nullam ac tortor vitae
+  purus faucibus ornare suspendisse. Sodales ut etiam sit amet nisl. Nulla facilisi morbi tempus iaculis urna. Nec dui
+  nunc mattis enim. Sem fringilla ut morbi tincidunt augue. Egestas erat imperdiet sed euismod nisi porta lorem mollis.
+</p>
+<p>
+  Ultrices in iaculis nunc sed augue lacus. Faucibus et molestie ac feugiat sed lectus vestibulum mattis. Non
+  consectetur a erat nam. Tempus urna et pharetra pharetra massa massa ultricies mi. Imperdiet dui accumsan sit amet
+  nulla. Suspendisse potenti nullam ac tortor vitae. Augue neque gravida in fermentum et sollicitudin ac orci. Urna id
+  volutpat lacus laoreet non curabitur gravida arcu. Lacus vel facilisis volutpat est velit egestas dui. Non diam
+  phasellus vestibulum lorem sed risus ultricies tristique. Quis vel eros donec ac odio tempor orci. Lacus suspendisse
+  faucibus interdum posuere lorem ipsum dolor sit.
+</p>
 
-<div class="ui link cards">
-  <div class="card">
-    <div class="image">
-      <img src="/images/avatar2/large/matthew.png">
-    </div>
-    <div class="content">
-      <div class="header">Matt Giampietro</div>
-      <div class="meta">
-        <a>Friends</a>
-      </div>
-      <div class="description">
-        Matthew is an interior designer living in New York.
-      </div>
-    </div>
-    <div class="extra content">
-      <span class="right floated">
-        Joined in 2013
-      </span>
-      <span>
-        <i class="user icon"></i>
-        75 Friends
-      </span>
-    </div>
-  </div>
-  <div class="card">
-    <div class="image">
-      <img src="/images/avatar2/large/molly.png">
-    </div>
-    <div class="content">
-      <div class="header">Molly</div>
-      <div class="meta">
-        <span class="date">Coworker</span>
-      </div>
-      <div class="description">
-        Molly is a personal assistant living in Paris.
-      </div>
-    </div>
-    <div class="extra content">
-      <span class="right floated">
-        Joined in 2011
-      </span>
-      <span>
-        <i class="user icon"></i>
-        35 Friends
-      </span>
-    </div>
-  </div>
-  <div class="card">
-    <div class="image">
-      <img src="/images/avatar2/large/elyse.png">
-    </div>
-    <div class="content">
-      <div class="header">Elyse</div>
-      <div class="meta">
-        <a>Coworker</a>
-      </div>
-      <div class="description">
-        Elyse is a copywriter working in New York.
-      </div>
-    </div>
-    <div class="extra content">
-      <span class="right floated">
-        Joined in 2014
-      </span>
-      <span>
-        <i class="user icon"></i>
-        151 Friends
-      </span>
-    </div>
-  </div>
-</div>
+<script>
+  var mymap = L.map('map').setView([52.37052, 9.73322], 13.5);
+
+  L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+    maxZoom: 18,
+    id: 'mapbox.streets',
+    accessToken: 'pk.eyJ1IjoibWFyay13ZXlkZSIsImEiOiJjazJndDIxaGYwM3YzM25tbHF5N2RzdGVrIn0.h7bmBdLCV3oOyyo54EjEhA'
+  }).addTo(mymap);
+</script>
 {% endblock %}

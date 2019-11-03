@@ -5,8 +5,6 @@ from django.test import TestCase
 from django.forms import ValidationError
 from core.forms import *
 
-# Create your tests here.
-
 
 class TestUserBaseForm(TestCase):
     def setUp(self):

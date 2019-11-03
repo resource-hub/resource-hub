@@ -6,15 +6,11 @@ from django.dispatch import receiver
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
 
-# Create your models here.
-
 
 class User(AbstractUser):
     """ natural person """
     email = models.EmailField(unique=True)
     birth_date = models.DateField()
-    name_public = models.BooleanField(verbose_name=_(
-        'First and last name public'), default=True)
     info = models.OneToOneField(
         'Info',
         null=True,
@@ -204,5 +200,25 @@ class OrganizationMember(models.Model):
         max_length=3,
         choices=ORGANIZATION_ROLES,
         default=MEMBER,
+        null=False
     )
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('organization', 'user',)
+
+    def is_admin(user, organization):
+        role = OrganizationMember.objects.get(
+            user=user, organization=organization).role
+
+        if role == OrganizationMember.ADMIN:
+            return True
+        else:
+            return False
+
+    def get_role(user, organization):
+        role = OrganizationMember.objects.get(
+            organization=organization,
+            user=user
+        ).get_role_display()
+        return role

@@ -11,8 +11,6 @@ from core.models import *
 class UserBaseForm(UserCreationForm):
     birth_date = forms.CharField(
         widget=forms.widgets.DateTimeInput(attrs={"type": "date"}))
-    name_public = forms.BooleanField(help_text=_(
-        'Display your name to other users so they can find you'), initial=True)
 
     class Meta:
         model = User
@@ -145,8 +143,8 @@ class EmailChangeForm(forms.Form):
 
 
 class OrganizationMemberAddForm(forms.Form):
-    def __init__(self, organization_id,  *args, **kwargs):
-        self.organization_id = organization_id
+    def __init__(self, organization,  *args, **kwargs):
+        self.organization = organization
         super(OrganizationMemberAddForm, self).__init__(*args, **kwargs)
 
     username = forms.CharField(
@@ -156,6 +154,7 @@ class OrganizationMemberAddForm(forms.Form):
         widget=forms.TextInput(
             attrs={'class': 'prompt', 'id': 'search', 'autofocus': 'autofocus'}),
     )
+    role = forms.ChoiceField(choices=OrganizationMember.ORGANIZATION_ROLES)
 
     def clean_username(self):
         username = self.cleaned_data['username']
@@ -167,8 +166,21 @@ class OrganizationMemberAddForm(forms.Form):
 
         try:
             Organization.objects.get(
-                pk=self.organization_id, members__username=username)
+                pk=self.organization.id, members__username=username)
             raise forms.ValidationError(
                 _('User is already a member'), code='user-already-member')
         except Organization.DoesNotExist:
             return username
+
+    def clean_role(self):
+        role = self.cleaned_data['role']
+        print(role)
+        return role
+
+    def save(self):
+        username = self.cleaned_data['username']
+        role = self.cleaned_data['role']
+        print(role)
+
+        user = User.objects.get(username=username)
+        self.organization.members.add(user, through_defaults={'role': role})

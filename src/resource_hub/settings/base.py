@@ -162,3 +162,14 @@ LOGIN_REDIRECT_URL = '/admin/'
 LOGIN_URL = '/login/'
 
 AUTH_USER_MODEL = "core.User"
+
+# django REST plugin settings
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    )
+}

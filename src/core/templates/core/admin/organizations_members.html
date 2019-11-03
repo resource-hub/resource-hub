@@ -3,7 +3,7 @@
 {% load django_tables2 %}
 
 {% block content %}
-<a class="ui labeled icon button" href="{% url 'core:organizations' %}">
+<a class="ui labeled icon button back-button">
     <i class="left arrow icon"></i>
     {% trans 'Back' %}
 </a>
@@ -34,4 +34,34 @@
         {% endif %}
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $('.user').on('input', function (e) {
+        e.preventDefault();
+        //select row and table
+        var row = $(this);
+
+        //get data from hidden input fields
+
+
+        var values = {
+
+        };
+
+        //save updated values to object
+        if (updates.hasOwnProperty(pid)) {
+            updates[pid] = values;
+        } else {
+            updates = Object.assign({ [pid]: values }, updates)
+        }
+
+        //display save button
+        if ($('#save-btn').hasClass('no-display')) {
+            $('#save-btn').removeClass('no-display');
+        }
+
+    });
+</script>
 {% endblock %}

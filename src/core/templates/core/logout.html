@@ -1,6 +1,18 @@
 {% extends "core/__base.html" %}
-
+{% load i18n %}
 {% block content %}
-<p>Logged out!</p>
-<a href="{% url 'core:login'%}">Click here to login again.</a>
+
+
+
+
+<div class="ui placeholder segment">
+    <div class="ui icon header">
+        <i class="sign out alternate icon"></i>
+        <p>{% trans 'Logged out!' %}</p>
+        <a href="{% url 'core:login'%}">
+            {% trans 'Click here to log in again' %}
+        </a>
+    </div>
+</div>
+
 {% endblock %}

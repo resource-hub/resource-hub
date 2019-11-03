@@ -8,8 +8,8 @@
 {% endif %}
 
 {% for field in form %}
-<p>
-    {{ field.label_tag }}<br>
+<div class="field">
+    {{ field.label_tag }}
     {{ field }}
     {% if field.help_text %}
     <small style="color: grey">{{ field.help_text }}</small>
@@ -17,5 +17,5 @@
     {% for error in field.errors %}
     <div class="ui pointing red basic label">{{ error }}</div>
     {% endfor %}
-</p>
+</div>
 {% endfor %}

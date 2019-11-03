@@ -20,6 +20,7 @@ from core.forms import *
 from core.models import *
 from core.tables import OrganizationsTable, MembersTable
 from core.tokens import TokenGenerator
+from core.decorators import organization_admin_required
 
 
 def index(request):
@@ -233,9 +234,11 @@ def organizations(request):
     if organizations:
         data = []
         for o in organizations:
+            role = OrganizationMember.get_role(user, o)
             data.append({
                 'name': o.name,
-                'profile': o.id,
+                'role': role,
+                'id': o.id,
             })
         organizations_table = OrganizationsTable(data)
     else:
@@ -294,7 +297,21 @@ def organizations_register(request):
 
 
 @login_required
-def organizations_profile(request, id, scope):
+def organizations_profile(request, id):
+    user = request.user
+    organization = get_object_or_404(Organization, pk=id)
+
+    context = {
+        'organization': organization,
+        'is_admin': OrganizationMember.is_admin(user, organization),
+    }
+
+    return render(request, 'core/admin/organizations_profile.html', context)
+
+
+@login_required
+@organization_admin_required
+def organizations_profile_edit(request, id, scope):
     organization = get_object_or_404(Organization, pk=id)
 
     info = model_to_dict(organization.info)
@@ -314,8 +331,8 @@ def organizations_profile(request, id, scope):
                 info_form.save()
                 message = _('Your information has been updated')
                 messages.add_message(request, messages.SUCCESS, message)
-                return redirect(reverse('core:organizations_profile', kwargs={'scope': 'info',
-                                                                              'id': id, }))
+                return redirect(reverse('core:organizations_profile_edit', kwargs={'scope': 'info',
+                                                                                   'id': id, }))
 
         elif scope == 'address':
             address_form = AddressForm(
@@ -325,8 +342,8 @@ def organizations_profile(request, id, scope):
                 address_form.save()
                 message = _('Your address has been updated')
                 messages.add_message(request, messages.SUCCESS, message)
-                return redirect(reverse('core:organizations_profile', kwargs={'scope': 'address',
-                                                                              'id': id, }))
+                return redirect(reverse('core:organizations_profile_edit', kwargs={'scope': 'address',
+                                                                                   'id': id, }))
 
         elif scope == 'bank_account':
             bank_account_form = BankAccountForm(
@@ -336,9 +353,9 @@ def organizations_profile(request, id, scope):
                 bank_account_form.save()
                 message = _('Your bank information has been updated')
                 messages.add_message(request, messages.SUCCESS, message)
-                return redirect(reverse('core:organizations_profile',
-                                        kwargs={'scope': 'bank_account',
-                                                'id': id, }))
+                return redirect(reverse('core:organizations_profile_edit',
+                                        kwargs={
+                                            'id': id, }))
 
     context = {
         'organization_name': organization.name,
@@ -347,27 +364,26 @@ def organizations_profile(request, id, scope):
         'bank_account_form': bank_account_form,
         scope: 'active',
     }
-    return render(request, 'core/admin/organizations_profile.html', context)
+    return render(request, 'core/admin/organizations_profile_edit.html', context)
 
 
 @login_required
+@organization_admin_required
 def organizations_members(request, id):
     user = request.user
-    organization = Organization.objects.get(id=id)
+    organization = get_object_or_404(Organization, pk=id)
     members = organization.members.select_related().all()
 
     if members:
         data = []
         for m in members:
-            membership = OrganizationMember.objects.get(
-                organization=organization,
-                user=m
-            )
+            role = OrganizationMember.get_role(m, organization)
             data.append({
+                'id': m.id,
                 'username': m.username,
                 'first_name': m.first_name,
                 'last_name': m.last_name,
-                'role': membership.get_role_display(),
+                'role': role,
             })
         members_table = MembersTable(data)
     else:
@@ -381,18 +397,17 @@ def organizations_members(request, id):
 
 
 @login_required
+@organization_admin_required
 def organizations_members_add(request, id):
-    organization = Organization.objects.get(id=id)
-    member_add_form = OrganizationMemberAddForm(organization_id=id)
+    organization = get_object_or_404(Organization, pk=id)
+    member_add_form = OrganizationMemberAddForm(organization=organization)
 
     if request.method == 'POST':
-        member_add_form = OrganizationMemberAddForm(id,
+        member_add_form = OrganizationMemberAddForm(organization,
                                                     request.POST)
 
         if member_add_form.is_valid():
-            username = member_add_form.cleaned_data['username']
-            user = User.objects.get(username=username)
-            organization.members.add(user)
+            member_add_form.save()
 
             message = _('User has been added to ' + organization.name)
             messages.add_message(request, messages.SUCCESS, message)

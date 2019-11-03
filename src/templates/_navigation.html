@@ -9,6 +9,20 @@
         <a class="item" href="{% url 'core:index' %}">
             {% trans 'Home' %}
         </a>
+        <div class="ui dropdown">
+            {% get_current_language as LANGUAGE_CODE %}
+            {% get_language_info for LANGUAGE_CODE as CURRENT_LANG %}
+            <span class="text">{{ CURRENT_LANG.name }}</span>
+            <i class="dropdown icon"></i>
+            <div class="menu">
+                {% get_available_languages as LANGUAGES %}
+                {% for lang in LANGUAGES %}
+                <option class="item">
+                    <span class="text">{{ lang.1 }}</span>
+                </option>
+                {% endfor %}
+            </div>
+        </div>
     </div>
     <div class="right">
 

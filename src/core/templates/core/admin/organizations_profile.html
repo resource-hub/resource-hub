@@ -1,62 +1,50 @@
-{% extends "core/admin/__base.html" %}
+{% extends 'core/admin/__base.html' %}
 {% load i18n %}
+{% load static %}
 
 {% block content %}
-{% url 'core:organization_profile' as url %}
-<a class="ui labeled icon button" href="{% url 'core:organizations' %}">
+<a class="ui labeled icon button back-button">
     <i class="left arrow icon"></i>
     {% trans 'Back' %}
 </a>
-<h2>{{ organization_name }}</h2>
-<div id="secondary-menu" class="ui secondary pointing menu">
-    <a class="{{ info }} item" tab-id="info">
-        {% trans 'Profile' %}
-    </a>
-    <a class="{{ address }} item" tab-id="address">
-        {% trans 'Address' %}
-    </a>
-    <a class="{{ bank_account }} item" tab-id="bank_account">
-        {% trans 'Bank Account' %}
-    </a>
-</div>
-
+<h2>
+    {% trans 'Profile' %}
+</h2>
 <div class="ui segment tab-content">
-    <div id="info" class="{{ info }} tab">
-        <h3>
-            {% trans 'Edit profile' %}
-        </h3>
-        <form class="ui form" method="POST" action="{{ url }}" enctype="multipart/form-data">
-            {% include '_form.html' with form=info_form %}
-            <button class="ui positive right labeled icon button" type="submit">
-                {% trans 'Save' %}
-                <i class="save icon"></i>
-            </button>
-        </form>
-    </div>
-    <div id="address" class="{{ address }} tab">
-        <h3>
-            {% trans 'Edit Address' %}
-        </h3>
-        <form class="ui form" method="POST" action="{{ url }}">
-            {% include '_form.html' with form=address_form %}
-            <button class="ui positive right labeled icon button" type="submit">
-                {% trans 'Save' %}
-                <i class="save icon"></i>
-            </button>
-        </form>
-    </div>
-    <div id="bank_account" class="{{ bank_account }} tab">
-        <h3>
-            {% trans 'Edit bank information' %}
-        </h3>
-        <form class="ui form" method="POST" action="{{ url }}">
-            {% include '_form.html' with form=bank_account_form %}
-            <button class="ui positive right labeled icon button" type="submit">
-                {% trans 'Save' %}
-                <i class="save icon"></i>
-            </button>
-        </form>
+    <div class="ui stackable two column grid">
+        <div class="four wide column">
+            <div class="ui container center aligned">
+                <img width="100" height="100" src="
+                    {% if organization.info.thumbnail %}
+                    {{ organization.info.thumbnail.url }}
+                    {% else %}
+                    {% static 'default.png' %}
+                    {% endif %}
+                    ">
+
+                {% if is_admin %}
+                <div class="ui compact menu">
+                    <a class="item" href="{% url 'core:organizations_members' id=organization.id %}">
+                        <i class="users icon"></i>
+                        {% trans 'Users' %}
+                    </a>
+                    <a class="item" href="{% url 'core:organizations_profile_edit' id=organization.id scope='info' %}">
+                        <i class="edit icon"></i>
+                        {% trans 'Profile' %}
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+
+        </div>
+        <div class="twelve wide column">
+            <h3>
+                {{ organization.name }}
+            </h3>
+            <p>
+                {{ organization.info.info_text |safe }}
+            </p>
+        </div>
     </div>
 </div>
-
 {% endblock %}

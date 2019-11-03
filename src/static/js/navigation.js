@@ -7,4 +7,9 @@ $(document).ready(function () {
         });
 
     $('.ui.dropdown').dropdown();
+
+    $('.back-button').click(function () {
+        parent.history.back();
+        return false;
+    });
 });
