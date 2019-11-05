@@ -12,4 +12,15 @@ $(document).ready(function () {
         parent.history.back();
         return false;
     });
+
+    $('#language').on('change', function () {
+        console.log($(this).serialize());
+        //$(this).submit();
+
+    });
+    $('.lang').on('click', function () {
+        var val = $(this).val();
+        $('#language').val(val);
+        $('#language-form').submit();
+    });
 });

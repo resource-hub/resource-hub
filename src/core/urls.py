@@ -14,6 +14,8 @@ urlpatterns = [
         views.activate, name='activate'),
     path('terms/', views.admin, name='terms'),
     path('support/', views.support, name='support'),
+    path('language/', views.language, name='language'),
+    path('i18n/', include('django.conf.urls.i18n')),
 
     path('admin/', views.admin, name='admin'),
     url(r'^admin/account/profile/(?P<scope>\w{0,50})/$',

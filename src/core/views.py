@@ -50,6 +50,10 @@ def support(request):
     return render(request, 'core/support.html', context)
 
 
+def language(request):
+    return render(request, 'core/language.html')
+
+
 def register(request):
     if request.method == 'POST':
         user_form = UserBaseForm(request.POST)
