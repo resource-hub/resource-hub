@@ -1,0 +1,14 @@
+{% load i18n %}
+<style>
+    #support {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        z-index: 100;
+    }
+</style>
+
+<a id="support" title="Get support" class="ui small positive left labeled icon button" href="{% url 'core:support' %}">
+    {% trans 'Report' %}
+    <i class="bug icon"></i>
+</a>
