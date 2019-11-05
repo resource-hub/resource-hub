@@ -202,7 +202,7 @@ class ReportIssueForm(forms.Form):
             'Short description of the problem or the feature you want to see implemented'),
     )
 
-    def save(self):
+    def post(self):
         title = self.cleaned_data['title']
         description = self.cleaned_data['description']
 
@@ -211,3 +211,7 @@ class ReportIssueForm(forms.Form):
         payload = {"title": title, "description": description}
         headers = {"PRIVATE-TOKEN": API_TOKEN, "Accept-Charset": "UTF-8"}
         r = requests.post(URL, data=payload, headers=headers)
+
+        if r.status_code != 201:
+            raise IOError(
+                'Issue not successfully created. POST request exited with: ' + r.status_code)

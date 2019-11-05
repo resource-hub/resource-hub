@@ -33,9 +33,14 @@ def support(request):
         issue_form = ReportIssueForm(request.POST)
 
         if issue_form.is_valid():
-            issue_form.save()
-            message = _('Your issue has been posted!')
-            messages.add_message(request, messages.SUCCESS, message)
+            try:
+                issue_form.post()
+                message = _('Your issue has been posted!')
+                messages.add_message(request, messages.SUCCESS, message)
+            except IOError:
+                message = _('Your issue could not be posted!')
+                messages.add_message(request, messages.ERROR, message)
+
             return redirect(reverse('core:support'))
 
     context = {
