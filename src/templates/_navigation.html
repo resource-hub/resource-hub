@@ -9,7 +9,7 @@
         <a class="item" href="{% url 'core:index' %}">
             {% trans 'Home' %}
         </a>
-        <div class="ui dropdown">
+        <div class="ui dropdown item">
             {% get_current_language as LANGUAGE_CODE %}
             {% get_language_info for LANGUAGE_CODE as CURRENT_LANG %}
             <span class="text">{{ CURRENT_LANG.name }}</span>

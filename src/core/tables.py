@@ -41,5 +41,5 @@ class MembersTable(tables.Table):
 
         row_attrs = {
             "class": "user",
-            "id": A('id'),
+            "id": lambda record: record['id'],
         }
