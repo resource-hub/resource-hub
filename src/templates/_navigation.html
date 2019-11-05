@@ -9,6 +9,9 @@
         <a class="item" href="{% url 'core:index' %}">
             {% trans 'Home' %}
         </a>
+        <a class="item" href="{% url 'rooms:index' %}">
+            {% trans 'Rooms' %}
+        </a>
         <div class="ui pointing dropdown item">
             {% get_current_language as LANGUAGE_CODE %}
             {% get_language_info for LANGUAGE_CODE as CURRENT_LANG %}
