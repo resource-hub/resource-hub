@@ -27,6 +27,24 @@ def index(request):
     return render(request, 'core/index.html')
 
 
+def support(request):
+    issue_form = ReportIssueForm()
+    if request.method == 'POST':
+        issue_form = ReportIssueForm(request.POST)
+
+        if issue_form.is_valid():
+            issue_form.save()
+            message = _('Your issue has been posted!')
+            messages.add_message(request, messages.SUCCESS, message)
+            return redirect(reverse('core:support'))
+
+    context = {
+        'issue_form': issue_form,
+    }
+
+    return render(request, 'core/support.html', context)
+
+
 def register(request):
     if request.method == 'POST':
         user_form = UserBaseForm(request.POST)

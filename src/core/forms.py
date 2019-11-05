@@ -1,11 +1,15 @@
 from datetime import datetime
+import requests
 from schwifty import IBAN, BIC
+
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.hashers import check_password
 from django.utils.translation import ugettext_lazy as _
 from django.utils.dateparse import parse_date
+
 from core.models import *
+from django.conf import settings
 
 
 class UserBaseForm(UserCreationForm):
@@ -184,3 +188,26 @@ class OrganizationMemberAddForm(forms.Form):
 
         user = User.objects.get(username=username)
         self.organization.members.add(user, through_defaults={'role': role})
+
+
+class ReportIssueForm(forms.Form):
+    title = forms.CharField(
+        max_length=128,
+        help_text=_(
+            'In what part of the software is the issue or your request?'),
+    )
+    description = forms.CharField(
+        widget=forms.Textarea,
+        help_text=_(
+            'Short description of the problem or the feature you want to see implemented'),
+    )
+
+    def save(self):
+        title = self.cleaned_data['title']
+        description = self.cleaned_data['description']
+
+        URL = "https://gitlab.com/api/v4/projects/13767519/issues"
+        API_TOKEN = settings.API_TOKEN
+        payload = {"title": title, "description": description}
+        headers = {"PRIVATE-TOKEN": API_TOKEN, "Accept-Charset": "UTF-8"}
+        r = requests.post(URL, data=payload, headers=headers)

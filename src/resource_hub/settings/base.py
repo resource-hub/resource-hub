@@ -173,3 +173,5 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     )
 }
+
+API_TOKEN = get_env_var('API_TOKEN')
