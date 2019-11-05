@@ -9,7 +9,7 @@
         <a class="item" href="{% url 'core:index' %}">
             {% trans 'Home' %}
         </a>
-        <div class="ui dropdown item">
+        <div class="ui pointing dropdown item">
             {% get_current_language as LANGUAGE_CODE %}
             {% get_language_info for LANGUAGE_CODE as CURRENT_LANG %}
             <span class="text">{{ CURRENT_LANG.name_local }}</span>
@@ -28,9 +28,8 @@
     </div>
     </div>
     <div class="right">
-
         {% if user.is_authenticated %}
-        <div class="item">
+        <div>
             <img width="30" height="30" src="
                 {% if user.info.thumbnail_small %}
                 {{ user.info.thumbnail_small.url }}
@@ -39,10 +38,8 @@
                 {% endif %}
                 ">
         </div>
-        <div class="ui pointing dropdown item">
-
+        <div class="ui pointing dropdown item" style="margin-top: 9px;">
             <span>
-
                 {{ user.first_name }}
             </span>
             <i class="dropdown icon"></i>

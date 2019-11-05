@@ -54,11 +54,13 @@ footer {
 .navigation-bar>.left {
     float: left;
     padding-left: 0px;
+    display: inherit;
 }
 
 .navigation-bar>.right {
     float: right;
     padding-right: 0px;
+    display: inherit;
 }
 
 .navigation-bar>.left>.item, .navigation-bar>.right>.item {
