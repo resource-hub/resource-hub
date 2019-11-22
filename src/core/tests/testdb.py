@@ -46,6 +46,7 @@ def create_users():
             new_user = user_form.save(commit=False)
             new_user.info = new_info
             new_user.save()
+            Actor.objects.create(user=new_user)
         else:
             print("{} not created".format(name))
             print("{} {} {} {}".format(user_form.errors, info_form.errors,

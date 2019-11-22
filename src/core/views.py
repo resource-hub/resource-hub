@@ -78,6 +78,7 @@ def register(request):
             new_user.info = new_info
             new_user.is_active = False
             new_user.save()
+            Actor.objects.create(user=new_user)
 
             current_site = get_current_site(request)
             subject = _('Activate your account')
@@ -319,6 +320,7 @@ def organizations_register(request):
             new_organization.save()
             new_organization.members.add(user, through_defaults={
                                          'role': OrganizationMember.ADMIN})
+            Actor.objects.create(user=user, organization=new_organization)
 
             message = _('The organization has been registered')
             messages.add_message(request, messages.SUCCESS, message)

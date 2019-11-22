@@ -178,16 +178,15 @@ class OrganizationMemberAddForm(forms.Form):
 
     def clean_role(self):
         role = self.cleaned_data['role']
-        print(role)
         return role
 
     def save(self):
         username = self.cleaned_data['username']
         role = self.cleaned_data['role']
-        print(role)
 
         user = User.objects.get(username=username)
         self.organization.members.add(user, through_defaults={'role': role})
+        Actor.objects.create(user=user, organization=self.organization)
 
 
 class ReportIssueForm(forms.Form):
