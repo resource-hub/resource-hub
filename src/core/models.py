@@ -147,7 +147,7 @@ class Location(models.Model):
     name = models.CharField(max_length=128, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     latitude = models.DecimalField(max_digits=9, decimal_places=6)
-    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
     updated_at = models.DateTimeField(auto_now=True)
     updated_by = models.ForeignKey(
         User,
