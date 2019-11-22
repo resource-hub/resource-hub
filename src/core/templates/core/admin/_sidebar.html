@@ -42,5 +42,18 @@
                 </a>
             </div>
         </div>
+        <div class="item">
+            <div class="header">
+                {% trans 'Rooms' %}
+            </div>
+            <div class="menu">
+                <a class="item" href="{% url 'rooms:manage' %}">
+                    {% trans 'Overview' %}
+                </a>
+                <a class="item" href="{% url 'rooms:create' %}">
+                    {% trans 'Create' %}
+                </a>
+            </div>
+        </div>
     </div>
 </aside>
