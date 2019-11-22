@@ -1,5 +1,23 @@
 /**
   *
+  * semantic ui overrides   
+  *
+  */
+
+.ui.dimmer {
+    z-index: 10002 !important;
+}
+
+.ui.dimmer .ui.workaround.loader:before {
+    border-color: rgba(0, 0, 0, .1) !important;
+}
+
+.ui.dimmer .ui.workaround.loader:after {
+    border-color: #767676 transparent transparent !important;
+}
+
+/**
+  *
   * Tag specific   
   *
   */
@@ -37,7 +55,7 @@ footer {
     -moz-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.2);
     box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.2);
     height: 3.2em;
-    z-index: 99999;
+    z-index: 1001;
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;

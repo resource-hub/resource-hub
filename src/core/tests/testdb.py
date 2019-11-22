@@ -103,8 +103,8 @@ def create_organizations():
 
 
 def main():
-    print("hello")
-    create_test_users()
+    create_users()
+    create_organizations()
 
 
 if __name__ == "__main__":

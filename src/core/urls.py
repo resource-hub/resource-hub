@@ -16,6 +16,7 @@ urlpatterns = [
     path('support/', views.support, name='support'),
     path('language/', views.language, name='language'),
     path('i18n/', include('django.conf.urls.i18n')),
+    path('role', views.set_role, name='set_role'),
 
     path('admin/', views.admin, name='admin'),
     url(r'^admin/account/profile/(?P<scope>\w{0,50})/$',
@@ -45,6 +46,7 @@ urlpatterns = [
         name='organizations_members_add'),
 
     url(r'^api/user/search/$', api_ajax.UserSearch.as_view()),
+    url(r'^api/user/roles/$', api_ajax.UserRoles.as_view()),
     url(r'^api/organization/member/role/$',
         api_ajax.OrganizationMemberChangeRole.as_view()),
 ]

@@ -18,6 +18,13 @@ class User(AbstractUser):
         on_delete=models.SET_NULL
     )
 
+    class Role:
+        USER = 'usr'
+        ORGANIZATION = 'org'
+
+        def is_user(request):
+            return request.session['role'] == USER
+
 
 class Address(models.Model):
     """ describe address """
@@ -139,6 +146,8 @@ class Location(models.Model):
     )
     name = models.CharField(max_length=128, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
     updated_at = models.DateTimeField(auto_now=True)
     updated_by = models.ForeignKey(
         User,
@@ -222,3 +231,15 @@ class OrganizationMember(models.Model):
             user=user
         ).get_role_display()
         return role
+
+
+class Actor(models.Model):
+    """ existing combinations of users and organizations """
+
+    # fields
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    organization = models.ForeignKey(
+        Organization, on_delete=models.CASCADE, null=True)
+
+    class Meta:
+        unique_together = ('user', 'organization',)

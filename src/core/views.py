@@ -152,10 +152,20 @@ def activate(request, uidb64, token):
 
 def custom_login(request):
     if request.user.is_authenticated:
+        # set inital role always as user
+        request.session['role'] = User.Role.USER
         return redirect(reverse('core:admin'))
     else:
         return LoginView.as_view(
             template_name='core/login.html')(request)
+
+
+@login_required
+def set_role(request):
+    if request.method == "POST":
+
+        return
+    return
 
 
 # Internal admin section

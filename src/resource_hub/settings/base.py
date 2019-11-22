@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'rooms.apps.RoomsConfig',
     'imagekit',
     'rest_framework',
+    'django_extensions',
     'django_tables2',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -174,4 +175,5 @@ REST_FRAMEWORK = {
     )
 }
 
+# general purpose constants
 API_TOKEN = get_env_var('API_TOKEN')

@@ -48,7 +48,7 @@
             <i class="dropdown icon"></i>
             <div class="menu">
                 <a class="item" href="{% url 'core:admin' %}"> <i class="sliders horizontal icon"></i> Admin</a>
-                <a class="item" href="{% url 'core:admin' %}"><i class="address card outline icon"></i> Change role</a>
+                <a id="role" class="item"><i class="address card outline icon"></i> Change role</a>
                 <div class="divider"></div>
                 <div class="item">
                     <a class="ui red button" href="{% url 'core:logout' %}">
@@ -76,3 +76,30 @@
     <input id="language" type="hidden" name="language">
     {% csrf_token %}
 </form>
+
+<div id="select-roles" class="ui modal">
+    <i class="close icon"></i>
+    <div class="header">
+        {% trans 'Choose role' %}
+    </div>
+
+    <div class="content">
+        <div class="description">
+            <div class="ui header">
+                {% trans '' %}
+            </div>
+            <div id="role-loader" class="ui active workaround centered inline loader"></div>
+            <form class="ui form" action="{% url 'core:set_role' %}" method="POST">
+                {% csrf_token %}
+                <div class="field">
+                    <label for="organization">{% trans 'Organizations' %}</label>
+                    <select id="role-list" name="organization"></select>
+                </div>
+                <button type="submit" class="ui positive right labeled icon button">
+                    {% trans 'Choose' %}
+                    <i class="checkmark icon"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
