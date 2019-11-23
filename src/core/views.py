@@ -289,7 +289,7 @@ def organizations(request):
 
 
 @login_required
-def organizations_register(request):
+def organizations_create(request):
     user = request.user
     organization_form = OrganizationForm()
     info_form = InfoForm()
@@ -339,7 +339,7 @@ def organizations_register(request):
         'address_form': address_form,
         'bank_account_form': bank_account_form,
     }
-    return render(request, 'core/admin/organizations_register.html', context)
+    return render(request, 'core/admin/organizations_create.html', context)
 
 
 @login_required
