@@ -34,7 +34,7 @@
                     {% trans 'Overview' %}
                 </a>
                 <a class="item
-                {% if '/organizations/register' in request.path %}
+                {% if '/organizations/create' in request.path %}
                     active
                     {% endif %}
                 " href="{% url 'core:organizations_create' %}">
