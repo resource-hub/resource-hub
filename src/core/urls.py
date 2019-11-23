@@ -1,24 +1,24 @@
-from django.urls import path, include
+from django.urls import include
 from django.conf.urls import url
 import django.contrib.auth.views as auth
 from . import views, api_ajax
 
 app_name = 'core'
 urlpatterns = [
-    path('', views.index, name='index'),
-    path('register/', views.register, name='register'),
-    path('login/', views.custom_login, name='login'),
-    path('logout/', auth.LogoutView.as_view(
+    url(r'^$', views.index, name='index'),
+    url(r'^register/$', views.register, name='register'),
+    url(r'^login/$', views.custom_login, name='login'),
+    url(r'^logout/$', auth.LogoutView.as_view(
         template_name='core/logout.html'), name='logout'),
     url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         views.activate, name='activate'),
-    path('terms/', views.admin, name='terms'),
-    path('support/', views.support, name='support'),
-    path('language/', views.language, name='language'),
-    path('i18n/', include('django.conf.urls.i18n')),
-    path('role', views.set_role, name='set_role'),
+    url(r'^terms/$', views.admin, name='terms'),
+    url(r'^support/$', views.support, name='support'),
+    url(r'^language/$', views.language, name='language'),
+    url(r'^i18n/', include('django.conf.urls.i18n')),
+    url(r'^role/$', views.set_role, name='set_role'),
 
-    path('admin/', views.admin, name='admin'),
+    url(r'^admin/', views.admin, name='admin'),
     url(r'^admin/account/profile/(?P<scope>\w{0,50})/$',
         views.account_profile,
         name='account_profile'),
