@@ -285,7 +285,7 @@ def organizations_manage(request):
     context = {
         'organizations_table': organizations_table,
     }
-    return render(request, 'core/admin/organizations.html', context)
+    return render(request, 'core/admin/organizations_manage.html', context)
 
 
 @login_required
