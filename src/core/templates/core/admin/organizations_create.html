@@ -3,12 +3,9 @@
 
 {% block content %}
 <h2>
-    {% trans 'Register' %}
+    {% trans 'Create Organization' %}
 </h2>
 <div class="ui segment tab-content">
-    <h3>
-        {% trans 'Create organization' %}
-    </h3>
     <form class="ui form" method="POST" action="{{ url }}" enctype="multipart/form-data">
         {% include '_form.html' with form=organization_form %}
         {% include '_form.html' with form=address_form %}
