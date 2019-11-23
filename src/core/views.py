@@ -265,7 +265,7 @@ def account_settings(request, scope):
 
 
 @login_required
-def organizations(request):
+def organizations_manage(request):
     user = request.user
     organizations = Organization.objects.all().filter(members__pk=user.id)
 
@@ -331,7 +331,7 @@ def organizations_create(request):
 
             message = _('The organization has been registered')
             messages.add_message(request, messages.SUCCESS, message)
-            return redirect(reverse('core:organizations'))
+            return redirect(reverse('core:organizations_manage'))
 
     context = {
         'organization_form': organization_form,

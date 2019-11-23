@@ -27,11 +27,11 @@
             <div class="menu">
                 <a class="item
                 {{ request.path }}
-                {% if '/admin/organizations/' == request.path %}
+                {% if '/admin/organizations/manage' in request.path %}
                     active
                     {% endif %}
-                " href="{% url 'core:organizations' %}">
-                    {% trans 'Overview' %}
+                " href="{% url 'core:organizations_manage' %}">
+                    {% trans 'Manage' %}
                 </a>
                 <a class="item
                 {% if '/organizations/create' in request.path %}
