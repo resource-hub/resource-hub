@@ -196,10 +196,12 @@ class OrganizationMember(models.Model):
     # model constants
     MEMBER = 'mem'
     ADMIN = 'adm'
+    OWNER = 'own'
 
     ORGANIZATION_ROLES = [
         (MEMBER, _('Member')),
         (ADMIN, _('Administrator')),
+        (OWNER, _('Owner')),
     ]
 
     # fields
@@ -216,11 +218,8 @@ class OrganizationMember(models.Model):
     class Meta:
         unique_together = ('organization', 'user',)
 
-    def is_admin(user, organization):
-        role = OrganizationMember.objects.get(
-            user=user, organization=organization).role
-
-        if role == OrganizationMember.ADMIN:
+    def is_admin(self):
+        if self.role == OrganizationMember.ADMIN or self.role == OrganizationMember.OWNER:
             return True
         else:
             return False

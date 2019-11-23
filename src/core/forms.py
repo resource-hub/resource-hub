@@ -177,6 +177,7 @@ class OrganizationMemberAddForm(forms.Form):
             return username
 
     def clean_role(self):
+        # todo: clean role
         role = self.cleaned_data['role']
         return role
 
@@ -186,7 +187,11 @@ class OrganizationMemberAddForm(forms.Form):
 
         user = User.objects.get(username=username)
         self.organization.members.add(user, through_defaults={'role': role})
-        Actor.objects.create(user=user, organization=self.organization)
+        member = OrganizationMember.objects.get(
+            organization=self.organization, user=user)
+        # create actor object if user is allowed to act for organization
+        if member.is_admin():
+            Actor.objects.create(user=user, organization=self.organization)
 
 
 class ReportIssueForm(forms.Form):

@@ -24,11 +24,12 @@
 
                 {% if is_admin %}
                 <div class="ui compact menu">
-                    <a class="item" href="{% url 'core:organizations_members' id=organization.id %}">
+                    <a class="item" href="{% url 'core:organizations_members' organization_id=organization.id %}">
                         <i class="users icon"></i>
                         {% trans 'Users' %}
                     </a>
-                    <a class="item" href="{% url 'core:organizations_profile_edit' id=organization.id scope='info' %}">
+                    <a class="item"
+                        href="{% url 'core:organizations_profile_edit' organization_id=organization.id scope='info' %}">
                         <i class="edit icon"></i>
                         {% trans 'Profile' %}
                     </a>

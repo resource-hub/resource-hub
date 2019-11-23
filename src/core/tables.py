@@ -9,7 +9,7 @@ class OrganizationsTable(tables.Table):
         'core:organizations_profile',
         verbose_name=_('Name'),
         kwargs={
-            'id': A('id'),
+            'organization_id': A('organization_id'),
         }
     )
     role = tables.Column(verbose_name=_('Your role'))

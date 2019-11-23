@@ -15,7 +15,7 @@
 <div class="ui segment tab-content">
     <div>
         <a class="ui labeled icon right floated green button"
-            href="{% url 'core:organizations_members_add' id=organization.id %}">
+            href="{% url 'core:organizations_members_add' organization_id=organization.id %}">
             <i class="plus icon"></i>
             {% trans 'Add' %}
         </a>

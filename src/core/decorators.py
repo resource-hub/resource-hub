@@ -1,4 +1,5 @@
 from django.core.exceptions import PermissionDenied
+from django.shortcuts import get_object_or_404
 
 from core.models import User, OrganizationMember
 
@@ -6,9 +7,11 @@ from core.models import User, OrganizationMember
 def organization_admin_required(function):
     def wrap(request, *args, **kwargs):
         user = request.user
-        organization_id = kwargs['id']
+        organization_id = kwargs['organization_id']
+        member = get_object_or_404(
+            OrganizationMember, organization__id=organization_id, user=user)
 
-        if OrganizationMember.is_admin(user, organization_id):
+        if member.is_admin():
             return function(request, *args, **kwargs)
         else:
             raise PermissionDenied

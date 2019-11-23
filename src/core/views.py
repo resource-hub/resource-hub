@@ -276,7 +276,7 @@ def organizations(request):
             data.append({
                 'name': o.name,
                 'role': role,
-                'id': o.id,
+                'organization_id': o.id,
             })
         organizations_table = OrganizationsTable(data)
     else:
@@ -318,9 +318,16 @@ def organizations_register(request):
 
             new_organization.info = new_info
             new_organization.save()
-            new_organization.members.add(user, through_defaults={
-                                         'role': OrganizationMember.ADMIN})
-            Actor.objects.create(user=user, organization=new_organization)
+
+            membership = OrganizationMemberAddForm(
+                new_organization,
+                {
+                    'username': user.username,
+                    'role': OrganizationMember.OWNER
+                }
+            )
+            print(membership.is_valid())
+            membership.save()
 
             message = _('The organization has been registered')
             messages.add_message(request, messages.SUCCESS, message)
@@ -336,13 +343,15 @@ def organizations_register(request):
 
 
 @login_required
-def organizations_profile(request, id):
+def organizations_profile(request, organization_id):
     user = request.user
-    organization = get_object_or_404(Organization, pk=id)
+    organization = get_object_or_404(Organization, pk=organization_id)
+    member = get_object_or_404(
+        OrganizationMember, organization__id=organization_id, user=user)
 
     context = {
         'organization': organization,
-        'is_admin': OrganizationMember.is_admin(user, organization),
+        'is_admin': member.is_admin(),
     }
 
     return render(request, 'core/admin/organizations_profile.html', context)
@@ -350,8 +359,8 @@ def organizations_profile(request, id):
 
 @login_required
 @organization_admin_required
-def organizations_profile_edit(request, id, scope):
-    organization = get_object_or_404(Organization, pk=id)
+def organizations_profile_edit(request, organization_id, scope):
+    organization = get_object_or_404(Organization, pk=organization_id)
 
     info = model_to_dict(organization.info)
     address = model_to_dict(organization.info.address)
@@ -371,7 +380,7 @@ def organizations_profile_edit(request, id, scope):
                 message = _('Your information has been updated')
                 messages.add_message(request, messages.SUCCESS, message)
                 return redirect(reverse('core:organizations_profile_edit', kwargs={'scope': 'info',
-                                                                                   'id': id, }))
+                                                                                   'organization_id': organization_id, }))
 
         elif scope == 'address':
             address_form = AddressForm(
@@ -382,7 +391,7 @@ def organizations_profile_edit(request, id, scope):
                 message = _('Your address has been updated')
                 messages.add_message(request, messages.SUCCESS, message)
                 return redirect(reverse('core:organizations_profile_edit', kwargs={'scope': 'address',
-                                                                                   'id': id, }))
+                                                                                   'organization_id': organization_id, }))
 
         elif scope == 'bank_account':
             bank_account_form = BankAccountForm(
@@ -394,7 +403,7 @@ def organizations_profile_edit(request, id, scope):
                 messages.add_message(request, messages.SUCCESS, message)
                 return redirect(reverse('core:organizations_profile_edit',
                                         kwargs={
-                                            'id': id, }))
+                                            'organization_id': organization_id, }))
 
     context = {
         'organization_name': organization.name,
@@ -408,9 +417,9 @@ def organizations_profile_edit(request, id, scope):
 
 @login_required
 @organization_admin_required
-def organizations_members(request, id):
+def organizations_members(request, organization_id):
     user = request.user
-    organization = get_object_or_404(Organization, pk=id)
+    organization = get_object_or_404(Organization, pk=organization_id)
     members = organization.members.select_related().all()
 
     if members:
@@ -437,8 +446,8 @@ def organizations_members(request, id):
 
 @login_required
 @organization_admin_required
-def organizations_members_add(request, id):
-    organization = get_object_or_404(Organization, pk=id)
+def organizations_members_add(request, organization_id):
+    organization = get_object_or_404(Organization, pk=organization_id)
     member_add_form = OrganizationMemberAddForm(organization=organization)
 
     if request.method == 'POST':
@@ -450,7 +459,7 @@ def organizations_members_add(request, id):
 
             message = _('User has been added to ' + organization.name)
             messages.add_message(request, messages.SUCCESS, message)
-            return redirect(reverse('core:organizations_members', kwargs={'id': id}))
+            return redirect(reverse('core:organizations_members', kwargs={'organization_id': organization_id}))
 
     context = {
         'member_add_form': member_add_form,
