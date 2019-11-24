@@ -1,0 +1,27 @@
+{% extends 'core/admin/__base.html' %}
+{% load i18n %}
+{% load django_tables2 %}
+
+{% block content %}
+<h2>
+    {% trans 'Overview' %}
+</h2>
+<div class="ui segment tab-content">
+    <h3>
+        {% trans 'Your organizations' %}
+    </h3>
+    <div>
+        {% if organizations_table %}
+        {% render_table organizations_table %}
+        {% else %}
+        <p>
+            {% trans 'No associated organizations found' %}
+        </p>
+        <a class="ui positive right labeled icon button" href="{% url 'core:organizations_create' %}">
+            {% trans 'Create one!' %}
+            <i class="child icon"></i>
+        </a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

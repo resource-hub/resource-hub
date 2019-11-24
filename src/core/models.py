@@ -242,3 +242,18 @@ class Actor(models.Model):
 
     class Meta:
         unique_together = ('user', 'organization',)
+
+    def __init__(self, *args, **kwargs):
+        super(Actor, self).__init__(*args, **kwargs)
+        if self.organization is None:
+            self.construct_as_user()
+        else:
+            self.construct_as_organisation()
+
+    def construct_as_user(self):
+        self.is_user = True
+        self.name = self.user.first_name
+
+    def construct_as_organisation(self):
+        self.is_user = False
+        self.name = self.organization.name
