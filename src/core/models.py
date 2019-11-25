@@ -114,6 +114,12 @@ class Info(models.Model):
         format='PNG',
         options={'quality': 60}
     )
+    thumbnail_large = ImageSpecField(
+        source='image',
+        processors=[ResizeToFill(300, 300)],
+        format='PNG',
+        options={'quality': 90}
+    )
     telephone_private = models.CharField(max_length=20, null=True, blank=True)
     telephone_public = models.CharField(max_length=20, null=True, blank=True)
     email_public = models.EmailField(null=True, blank=True)

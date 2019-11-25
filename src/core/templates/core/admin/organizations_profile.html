@@ -10,13 +10,13 @@
 <h2>
     {% trans 'Profile' %}
 </h2>
-<div class="ui segment tab-content">
+<div class="ui piled segment tab-content">
     <div class="ui stackable two column grid">
         <div class="four wide column">
             <div class="ui container center aligned">
-                <img width="100" height="100" src="
-                    {% if organization.info.thumbnail %}
-                    {{ organization.info.thumbnail.url }}
+                <img width="100%" height="auto" src="
+                    {% if organization.info.thumbnail_large %}
+                    {{ organization.info.thumbnail_large.url }}
                     {% else %}
                     {% static 'default.png' %}
                     {% endif %}
@@ -26,7 +26,7 @@
                 <div class="ui compact menu">
                     <a class="item" href="{% url 'core:organizations_members' organization_id=organization.id %}">
                         <i class="users icon"></i>
-                        {% trans 'Users' %}
+                        {% trans 'Members' %}
                     </a>
                     <a class="item"
                         href="{% url 'core:organizations_profile_edit' organization_id=organization.id scope='info' %}">
@@ -42,9 +42,29 @@
             <h3>
                 {{ organization.name }}
             </h3>
-            <p>
-                {{ organization.info.info_text |safe }}
-            </p>
+
+            <div class="ui raised segment">
+                <a class="ui teal ribbon label">Overview</a><span><em>{% trans 'joined' %}
+                        {{ organization.created_at | date:'Y'}}</em></span>
+                <div class="ui container">
+                    <label class="ui tiny header">{% trans 'Description' %}</label>
+                    <p>
+                        {{ organization.info.info_text |safe }}
+                    </p>
+                    <label class="ui tiny header">{% trans 'Telephone (public)' %}</label>
+                    <p>
+                        {{ organization.info.telephone_public }}
+                    </p>
+                    <label class="ui tiny header">{% trans 'Email (public)' %}</label>
+                    <p>
+                        {{ organization.info.email_public }}
+                    </p>
+                    <label class="ui tiny header">{% trans 'Website' %}</label>
+                    <p>
+                        <a href="{{ organization.info.website }}">{{ organization.info.website }}</a>
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
