@@ -239,7 +239,6 @@ class Actor(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     organization = models.ForeignKey(
         Organization, on_delete=models.CASCADE, null=True)
-    name = ""
 
     class Meta:
         unique_together = ('user', 'organization',)
@@ -254,7 +253,9 @@ class Actor(models.Model):
     def construct_as_user(self):
         self.is_user = True
         self.name = self.user.first_name
+        self.info = self.user.info
 
     def construct_as_organisation(self):
         self.is_user = False
         self.name = self.organization.name
+        self.info = self.organization.info

@@ -24,6 +24,7 @@ class UserRoles(APIView):
         result = []
         for actor in roles:
             actor = actor.__dict__
+            del actor['info']
             del actor['_state']
             result.append(actor)
 
