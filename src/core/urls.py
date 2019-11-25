@@ -13,7 +13,7 @@ urlpatterns = [
     url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         views.activate, name='activate'),
     url(r'^terms/$', views.admin, name='terms'),
-    url(r'^support/$', views.support, name='support'),
+    url(r'^support/$', views.Support.as_view(), name='support'),
     url(r'^language/$', views.language, name='language'),
     url(r'^i18n/', include('django.conf.urls.i18n')),
     url(r'^set_role/$', views.set_role, name='set_role'),

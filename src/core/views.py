@@ -15,6 +15,7 @@ from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.views import View
 
 from core.decorators import organization_admin_required
 from core.forms import *
@@ -27,9 +28,17 @@ def index(request):
     return render(request, 'core/index.html')
 
 
-def support(request):
+class Support(View):
     issue_form = ReportIssueForm()
-    if request.method == 'POST':
+    context = {
+        'issue_form': issue_form,
+    }
+    template_name = 'core/support.html'
+
+    def get(self, request):
+        return render(request, self.template_name, self.context)
+
+    def post(self, request):
         issue_form = ReportIssueForm(request.POST)
 
         if issue_form.is_valid():
@@ -40,14 +49,13 @@ def support(request):
             except IOError:
                 message = _('Your issue could not be posted!')
                 messages.add_message(request, messages.ERROR, message)
+                self.context['issue_form'] = issue_form
+                return render(request, self.template_name, self.context)
 
             return redirect(reverse('core:support'))
-
-    context = {
-        'issue_form': issue_form,
-    }
-
-    return render(request, 'core/support.html', context)
+        else:
+            self.context['issue_form'] = issue_form
+            return render(request, self.template_name, self.context)
 
 
 def language(request):
