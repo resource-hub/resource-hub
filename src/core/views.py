@@ -5,22 +5,22 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.decorators import login_required
 from django.contrib.sites.shortcuts import get_current_site
+from django.core.mail import EmailMultiAlternatives
+from django.forms.models import model_to_dict
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
+from smtplib import SMTPException
+from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.template.loader import render_to_string
-from django.core.mail import EmailMultiAlternatives
-from django.http import HttpResponse, HttpResponseRedirect
-from django.forms.models import model_to_dict
-from smtplib import SMTPException
 
+from core.decorators import organization_admin_required
 from core.forms import *
 from core.models import *
 from core.tables import OrganizationsTable, MembersTable
 from core.tokens import TokenGenerator
-from core.decorators import organization_admin_required
 
 
 def index(request):
