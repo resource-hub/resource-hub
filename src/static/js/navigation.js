@@ -35,13 +35,15 @@ $(document).ready(function () {
             dataType: "JSON"
         }).done(function (list) {
             $('#role-loader').removeClass('active').addClass('disabled');
+            $('#role-form').removeClass('hidden');
             var list_items = '';
+            console.log(list)
             if (list.length > 0) {
-                $.each(list, function (key, organization) {
-                    list_items += '<option value="' + organization.id + '">' + organization.name + '</option>';
+                $.each(list, function (key, actor) {
+                    list_items += '<option value="' + actor.id + '">' + actor.name + '</option>';
                 });
             } else {
-                list_items += '<option>No organizations found</option>';
+                list_items += '<option>No roles found</option>';
             }
             $('#role-list').html(list_items);
         });

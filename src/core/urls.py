@@ -16,7 +16,7 @@ urlpatterns = [
     url(r'^support/$', views.support, name='support'),
     url(r'^language/$', views.language, name='language'),
     url(r'^i18n/', include('django.conf.urls.i18n')),
-    url(r'^role/$', views.set_role, name='set_role'),
+    url(r'^set_role/$', views.set_role, name='set_role'),
 
     url(r'^admin/$', views.admin, name='admin'),
     url(r'^admin/account/profile/(?P<scope>\w{0,50})/$',

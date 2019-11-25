@@ -89,11 +89,11 @@
                 {% trans '' %}
             </div>
             <div id="role-loader" class="ui active workaround centered inline loader"></div>
-            <form class="ui form" action="{% url 'core:set_role' %}" method="POST">
+            <form id="role-form" class="ui hidden form" action="{% url 'core:set_role' %}" method="POST">
                 {% csrf_token %}
                 <div class="field">
-                    <label for="organization">{% trans 'Organizations' %}</label>
-                    <select id="role-list" name="organization"></select>
+                    <label for="actor">{% trans 'Role' %}</label>
+                    <select id="role-list" name="actor_id"></select>
                 </div>
                 <button type="submit" class="ui positive right labeled icon button">
                     {% trans 'Choose' %}

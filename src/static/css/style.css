@@ -166,6 +166,10 @@ footer {
     height: 75vh;
 }
 
+.hidden {
+    display: none;
+}
+
 /* .ui.secondary.pointing.menu .active.item {
     display: block;
 }

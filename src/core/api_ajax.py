@@ -1,8 +1,11 @@
+from django.forms.models import model_to_dict
+
 from rest_framework import status, filters, generics
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from core.models import User, Organization, OrganizationMember
+
+from core.models import User, Actor
 from core.serializers import UserSerializer
 
 
@@ -17,9 +20,14 @@ class UserSearch(generics.ListCreateAPIView):
 class UserRoles(APIView):
     def get(self, request, format=None):
         user = request.user
-        organizations = Organization.objects.filter(
-            organizationmember__user=user, organizationmember__role=OrganizationMember.ADMIN)
-        return Response(organizations.values())
+        roles = Actor.objects.filter(user=user)
+        result = []
+        for actor in roles:
+            actor = actor.__dict__
+            del actor['_state']
+            result.append(actor)
+
+        return Response(result)
 
 
 class OrganizationMemberChangeRole(APIView):

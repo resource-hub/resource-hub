@@ -239,6 +239,7 @@ class Actor(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     organization = models.ForeignKey(
         Organization, on_delete=models.CASCADE, null=True)
+    name = ""
 
     class Meta:
         unique_together = ('user', 'organization',)

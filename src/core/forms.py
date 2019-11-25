@@ -194,6 +194,32 @@ class OrganizationMemberAddForm(forms.Form):
             Actor.objects.create(user=user, organization=self.organization)
 
 
+class RoleChangeForm(forms.Form):
+    actor_id = forms.IntegerField()
+
+    def __init__(self, user, *args, **kwargs):
+        super(RoleChangeForm, self).__init__(*args, **kwargs)
+        self.user = user
+
+    def clean_actor_id(self):
+        actor_id = self.cleaned_data['actor_id']
+        try:
+            actor = Actor.objects.get(pk=actor_id)
+        except Actor.DoesNotExist:
+            raise forms.ValidationError(
+                _('Actor does not exist'), code='actor-not-exists')
+
+        if actor.user.id != self.user.id:
+            raise forms.ValidationError(
+                _('Actor not associated with user'), code='actor-user-not-associated')
+        return actor_id
+
+    def save(self, request):
+        actor_id = self.cleaned_data['actor_id']
+        request.session['actor_id'] = actor_id
+        return request
+
+
 class ReportIssueForm(forms.Form):
     title = forms.CharField(
         max_length=128,

@@ -12,7 +12,7 @@ from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.forms.models import model_to_dict
 from smtplib import SMTPException
 
@@ -161,10 +161,15 @@ def custom_login(request):
 
 @login_required
 def set_role(request):
+    user = request.user
     if request.method == "POST":
-
-        return
-    return
+        role_change_form = RoleChangeForm(user, request.POST)
+        if role_change_form.is_valid():
+            role_change_form.save(request)
+        else:
+            messages.add_message(request, messages.ERROR,
+                                 role_change_form.errors)
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 # Internal admin section
