@@ -122,24 +122,25 @@ class Register(View):
             return render(request, 'core/register.html', user_form.get_forms())
 
 
-def activate(request, uidb64, token):
-    token_generator = TokenGenerator()
-    try:
-        uid = force_text(urlsafe_base64_decode(uidb64))
-        user = User.objects.get(pk=uid)
-    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
-        user = None
-    if user is not None and token_generator.check_token(user, token):
-        user.is_active = True
-        user.save()
-        login(request, user)
-        message = _('Your account has been activated successfully.')
-        messages.add_message(request, messages.SUCCESS, message)
-        return redirect(reverse('core:admin'))
-    else:
-        message = _('Your activation-link is invalid!')
-        messages.add_message(request, messages.ERROR, message)
-        return redirect(reverse('core:login'))
+class Activate(View):
+    def get(self, request, uidb64, token):
+        token_generator = TokenGenerator()
+        try:
+            uid = force_text(urlsafe_base64_decode(uidb64))
+            user = User.objects.get(pk=uid)
+        except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+            user = None
+        if user is not None and token_generator.check_token(user, token):
+            user.is_active = True
+            user.save()
+            login(request, user)
+            message = _('Your account has been activated successfully.')
+            messages.add_message(request, messages.SUCCESS, message)
+            return redirect(reverse('core:admin'))
+        else:
+            message = _('Your activation-link is invalid!')
+            messages.add_message(request, messages.ERROR, message)
+            return redirect(reverse('core:login'))
 
 
 def custom_login(request):
