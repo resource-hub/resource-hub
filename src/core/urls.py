@@ -43,10 +43,10 @@ urlpatterns = [
         views.organizations_profile_edit,
         name='organizations_profile_edit'),
     url(r'^admin/organizations/manage/members/(?P<organization_id>\w{0,50})/$',
-        views.organizations_members,
+        views.OrganizationMembers.as_view(),
         name='organizations_members'),
     url(r'^admin/organizations/manage/members/add/(?P<organization_id>\w{0,50})/$',
-        views.organizations_members_add,
+        views.OrganizationMembersAdd.as_view(),
         name='organizations_members_add'),
 
     url(r'^api/user/search/$', api_ajax.UserSearch.as_view()),

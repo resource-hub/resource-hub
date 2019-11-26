@@ -159,20 +159,20 @@ class UserFormManager():
         return new_user
 
 
-class UserProfileFormManager():
-    def __init__(self, request):
+class ProfileFormManager():
+    def __init__(self, request, entity):
         self.is_valid = True
         self.request = request
-        self.user = request.user
-        self.info_form = InfoForm(initial=model_to_dict(self.user.info))
+        self.entity = entity
+        self.info_form = InfoForm(initial=model_to_dict(self.entity.info))
         self.address_form = AddressForm(
-            initial=model_to_dict(self.user.info.address))
+            initial=model_to_dict(self.entity.info.address))
         self.bank_account_form = BankAccountForm(
-            initial=model_to_dict(self.user.info.bank_account))
+            initial=model_to_dict(self.entity.info.bank_account))
 
     def change_info(self):
         self.info_form = InfoForm(
-            self.request.POST, self.request.FILES, instance=self.user.info)
+            self.request.POST, self.request.FILES, instance=self.entity.info)
 
         if self.info_form.is_valid():
             self.info_form.save()
@@ -181,7 +181,7 @@ class UserProfileFormManager():
 
     def change_address(self):
         self.address_form = AddressForm(
-            self.request.POST, instance=self.user.info.address)
+            self.request.POST, instance=self.entity.info.address)
 
         if self.address_form.is_valid():
             self.address_form.save()
@@ -190,7 +190,7 @@ class UserProfileFormManager():
 
     def change_bank_account(self):
         self.bank_account_form = BankAccountForm(
-            self.request.POST, instance=self.user.info.bank_account)
+            self.request.POST, instance=self.entity.info.bank_account)
 
         if self.bank_account_form.is_valid():
             self.bank_account_form.save()

@@ -176,13 +176,14 @@ class Admin(View):
 @method_decorator(login_required, name='dispatch')
 class AccountProfile(View):
     template_name = 'core/admin/account_profile.html'
+    redirect_url = 'core:account_profile'
 
     def get(self, request, scope):
-        profile_form = UserProfileFormManager(request)
+        profile_form = ProfileFormManager(request, request.user)
         return render(request, self.template_name, profile_form.get_forms(scope))
 
     def post(self, request, scope):
-        profile_form = UserProfileFormManager(request)
+        profile_form = ProfileFormManager(request, request.user)
         if scope == 'info':
             profile_form.change_info()
             message = _('Your info has been updated')
@@ -195,7 +196,7 @@ class AccountProfile(View):
 
         if profile_form.is_valid:
             messages.add_message(request, messages.SUCCESS, message)
-            return redirect(reverse('core:account_profile', kwargs={'scope': scope}))
+            return redirect(reverse(self.redirect_url, kwargs={'scope': scope}))
         else:
             return render(request, self.template_name, profile_form.get_forms(scope))
 
@@ -286,6 +287,12 @@ class OrganizationsProfile(View):
         return render(request, 'core/admin/organizations_profile.html', context)
 
 
+@method_decorator([login_required, organization_admin_required], name='dispatch')
+class OrganizationProfileEdit(AccountProfile):
+    template_name = 'core/admin/organizations_profile_edit.html'
+    redirect_url = 'core:organizations_profile_edit'
+
+
 @login_required
 @organization_admin_required
 def organizations_profile_edit(request, organization_id, scope):
@@ -344,54 +351,62 @@ def organizations_profile_edit(request, organization_id, scope):
     return render(request, 'core/admin/organizations_profile_edit.html', context)
 
 
-@login_required
-@organization_admin_required
-def organizations_members(request, organization_id):
-    user = request.user
-    organization = get_object_or_404(Organization, pk=organization_id)
-    members = organization.members.select_related().all()
+@method_decorator([login_required, organization_admin_required], name='dispatch')
+class OrganizationMembers(View):
+    def get(self, request):
+        user = request.user
+        organization = get_object_or_404(Organization, pk=organization_id)
+        members = organization.members.select_related().all()
 
-    if members:
-        data = []
-        for m in members:
-            role = OrganizationMember.get_role(m, organization)
-            data.append({
-                'id': m.id,
-                'username': m.username,
-                'first_name': m.first_name,
-                'last_name': m.last_name,
-                'role': role,
-            })
-        members_table = MembersTable(data)
-    else:
-        members_table = None
+        if members:
+            data = []
+            for m in members:
+                role = OrganizationMember.get_role(m, organization)
+                data.append({
+                    'id': m.id,
+                    'username': m.username,
+                    'first_name': m.first_name,
+                    'last_name': m.last_name,
+                    'role': role,
+                })
+            members_table = MembersTable(data)
+        else:
+            members_table = None
 
-    context = {
-        'members_table': members_table,
-        'organization': organization,
-    }
-    return render(request, 'core/admin/organizations_members.html', context)
+        context = {
+            'members_table': members_table,
+            'organization': organization,
+        }
+        return render(request, 'core/admin/organizations_members.html', context)
 
 
-@login_required
-@organization_admin_required
-def organizations_members_add(request, organization_id):
-    organization = get_object_or_404(Organization, pk=organization_id)
-    member_add_form = OrganizationMemberAddForm(organization=organization)
+@method_decorator([login_required, organization_admin_required], name='dispatch')
+class OrganizationMembersAdd(View):
+    template_name = 'core/admin/organizations_members_add.html'
 
-    if request.method == 'POST':
+    def get(self, request, organization_id):
+        organization = get_object_or_404(Organization, pk=organization_id)
+        member_add_form = OrganizationMemberAddForm(organization=organization)
+
+        context = {
+            'member_add_form': member_add_form,
+            'organization': organization,
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request, organization_id):
+        organization = get_object_or_404(Organization, pk=organization_id)
         member_add_form = OrganizationMemberAddForm(organization,
                                                     request.POST)
-
         if member_add_form.is_valid():
             member_add_form.save()
 
             message = _('User has been added to ' + organization.name)
             messages.add_message(request, messages.SUCCESS, message)
             return redirect(reverse('core:organizations_members', kwargs={'organization_id': organization_id}))
-
-    context = {
-        'member_add_form': member_add_form,
-        'organization': organization,
-    }
-    return render(request, 'core/admin/organizations_members_add.html', context)
+        else:
+            context = {
+                'member_add_form': member_add_form,
+                'organization': organization,
+            }
+            return render(request, self.template_name, context)
