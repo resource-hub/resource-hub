@@ -6,7 +6,7 @@ from . import views, api_ajax
 app_name = 'core'
 urlpatterns = [
     url(r'^$', views.index, name='index'),
-    url(r'^register/$', views.register, name='register'),
+    url(r'^register/$', views.Register.as_view(), name='register'),
     url(r'^login/$', views.custom_login, name='login'),
     url(r'^logout/$', auth.LogoutView.as_view(
         template_name='core/logout.html'), name='logout'),

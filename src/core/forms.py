@@ -93,6 +93,50 @@ class BankAccountForm(forms.ModelForm):
         return bic
 
 
+class UserFormManager():
+    def __init__(self, request=None):
+        if request is None:
+            self.user_form = UserBaseForm()
+            self.info_form = InfoForm()
+            self.address_form = AddressForm()
+            self.bank_account_form = BankAccountForm()
+        else:
+            self.user_form = UserBaseForm(request.POST)
+            self.info_form = InfoForm(request.POST, request.FILES)
+            self.address_form = AddressForm(request.POST)
+            self.bank_account_form = BankAccountForm(request.POST)
+
+    def get_forms(self):
+        return {
+            'user_form': self.user_form,
+            'info_form': self.info_form,
+            'address_form': self.address_form,
+            'bank_account_form': self.bank_account_form,
+        }
+
+    def is_valid(self):
+        return (self.user_form.is_valid() and
+                self.info_form.is_valid() and
+                self.address_form.is_valid() and
+                self.bank_account_form.is_valid())
+
+    def save(self):
+        new_bank_account = self.bank_account_form.save()
+        new_address = self.address_form.save()
+
+        new_info = self.info_form.save(commit=False)
+        new_info.address = new_address
+        new_info.bank_account = new_bank_account
+        new_info.save()
+
+        new_user = self.user_form.save(commit=False)
+        new_user.info = new_info
+        new_user.is_active = False
+        new_user.save()
+        Actor.objects.create(user=new_user)
+        return new_user
+
+
 class EmailChangeForm(forms.Form):
     def __init__(self, user, *args, **kwargs):
         if user is None:

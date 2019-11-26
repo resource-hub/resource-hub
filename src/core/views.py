@@ -1,3 +1,5 @@
+from smtplib import SMTPException
+
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, update_session_auth_hash
 from django.contrib.auth.views import LoginView
@@ -9,7 +11,6 @@ from django.core.mail import EmailMultiAlternatives
 from django.forms.models import model_to_dict
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
-from smtplib import SMTPException
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
@@ -62,31 +63,23 @@ def language(request):
     return render(request, 'core/language.html')
 
 
-def register(request):
-    if request.method == 'POST':
-        user_form = UserBaseForm(request.POST)
-        info_form = InfoForm(request.POST, request.FILES)
-        address_form = AddressForm(request.POST)
-        bank_account_form = BankAccountForm(request.POST)
+class Register(View):
+    template_name = 'core/register.html'
 
-        if (user_form.is_valid() and
-                info_form.is_valid() and
-                address_form.is_valid() and
-                bank_account_form.is_valid()):
+    def get(self, request):
+        if request.user.is_authenticated:
+            message = _('You are already logged in.')
+            messages.add_message(request, messages.INFO, message)
+            return redirect(reverse('core:admin'))
+        else:
+            user_form = UserFormManager()
+            return render(request, 'core/register.html', user_form.get_forms())
 
-            new_bank_account = bank_account_form.save()
-            new_address = address_form.save()
+    def post(self, request):
+        user_form = UserFormManager(request)
 
-            new_info = info_form.save(commit=False)
-            new_info.address = new_address
-            new_info.bank_account = new_bank_account
-            new_info.save()
-
-            new_user = user_form.save(commit=False)
-            new_user.info = new_info
-            new_user.is_active = False
-            new_user.save()
-            Actor.objects.create(user=new_user)
+        if (user_form.is_valid()):
+            new_user = user_form.save()
 
             current_site = get_current_site(request)
             subject = _('Activate your account')
@@ -99,7 +92,7 @@ def register(request):
                 'token': token_generator.make_token(new_user),
             })
 
-            recipient = user_form.cleaned_data.get('email')
+            recipient = new_user.email
             email = EmailMultiAlternatives(
                 subject,
                 message,
@@ -118,25 +111,9 @@ def register(request):
                 'Please confirm your email address to complete the registration')
             messages.add_message(request, messages.SUCCESS, message)
             return redirect(reverse('core:login'))
-    else:
-        if request.user.is_authenticated:
-            message = _('You are already logged in.')
-            messages.add_message(request, messages.INFO, message)
-            return redirect(reverse('core:admin'))
+
         else:
-            user_form = UserBaseForm()
-            info_form = InfoForm()
-            address_form = AddressForm()
-            bank_account_form = BankAccountForm()
-
-    context = {
-        'user_form': user_form,
-        'info_form': info_form,
-        'address_form': address_form,
-        'bank_account_form': bank_account_form,
-    }
-
-    return render(request, 'core/register.html', context)
+            return render(request, 'core/register.html', user_form.get_forms())
 
 
 def activate(request, uidb64, token):
