@@ -24,7 +24,7 @@ urlpatterns = [
 
     url(r'^admin/$', views.Admin.as_view(), name='admin'),
     url(r'^admin/account/profile/(?P<scope>\w{0,50})/$',
-        views.account_profile,
+        views.AccountProfile.as_view(),
         name='account_profile'),
     url(r'^admin/account/settings/(?P<scope>\w{0,50})/$',
         views.account_settings,

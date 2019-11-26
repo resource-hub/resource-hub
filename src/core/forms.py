@@ -3,13 +3,14 @@ import requests
 from schwifty import IBAN, BIC
 
 from django import forms
+from django.conf import settings
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.hashers import check_password
+from django.forms import model_to_dict
 from django.utils.translation import ugettext_lazy as _
 from django.utils.dateparse import parse_date
 
 from core.models import *
-from django.conf import settings
 
 
 class UserBaseForm(UserCreationForm):
@@ -135,6 +136,53 @@ class UserFormManager():
         new_user.save()
         Actor.objects.create(user=new_user)
         return new_user
+
+
+class UserProfileFormManager():
+    def __init__(self, request):
+        self.is_valid = True
+        self.request = request
+        self.user = request.user
+        self.info_form = InfoForm(initial=model_to_dict(self.user.info))
+        self.address_form = AddressForm(
+            initial=model_to_dict(self.user.info.address))
+        self.bank_account_form = BankAccountForm(
+            initial=model_to_dict(self.user.info.bank_account))
+
+    def change_info(self):
+        self.info_form = InfoForm(
+            self.request.POST, self.request.FILES, instance=self.user.info)
+
+        if self.info_form.is_valid():
+            self.info_form.save()
+        else:
+            self.is_valid = False
+
+    def change_address(self):
+        self.address_form = AddressForm(
+            self.request.POST, instance=self.user.info.address)
+
+        if self.address_form.is_valid():
+            self.address_form.save()
+        else:
+            self.is_valid = False
+
+    def change_bank_account(self):
+        self.bank_account_form = BankAccountForm(
+            self.request.POST, instance=self.user.info.bank_account)
+
+        if self.bank_account_form.is_valid():
+            self.bank_account_form.save()
+        else:
+            self.is_valid = False
+
+    def get_forms(self, scope):
+        return {
+            'info_form': self.info_form,
+            'address_form': self.address_form,
+            'bank_account_form': self.bank_account_form,
+            scope: 'active',
+        }
 
 
 class EmailChangeForm(forms.Form):

@@ -173,6 +173,32 @@ class Admin(View):
         return render(request, 'core/admin/index.html')
 
 
+@method_decorator(login_required, name='dispatch')
+class AccountProfile(View):
+    template_name = 'core/admin/account_profile.html'
+
+    def get(self, request, scope):
+        profile_form = UserProfileFormManager(request)
+        return render(request, self.template_name, profile_form.get_forms(scope))
+
+    def post(self, request, scope):
+        profile_form = UserProfileFormManager(request)
+        if scope == 'info':
+            profile_form.change_info()
+        elif scope == 'address':
+            profile_form.change_address()
+
+        elif scope == 'bank_account':
+            profile_form.change_bank_account()
+
+        if profile_form.is_valid:
+            message = _('Your profile has been updated')
+            messages.add_message(request, messages.SUCCESS, message)
+            return redirect(reverse('core:account_profile', kwargs={'scope': scope}))
+        else:
+            return render(request, self.template_name, profile_form.get_forms(scope))
+
+
 @login_required
 def account_profile(request, scope):
     user = request.user
