@@ -37,7 +37,7 @@ urlpatterns = [
         views.OrganizationCreate.as_view(),
         name='organizations_create'),
     url(r'^admin/organizations/manage/profile/(?P<organization_id>\w{0,50})/$',
-        views.organizations_profile,
+        views.OrganizationsProfile.as_view(),
         name='organizations_profile'),
     url(r'^admin/organizations/manage/profile/edit/(?P<organization_id>\w{0,50})/(?P<scope>\w{0,50})/$',
         views.organizations_profile_edit,
