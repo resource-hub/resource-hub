@@ -97,6 +97,7 @@ class Register(View):
                 'token': token_generator.make_token(new_user),
             })
 
+            ### job queue ? ###
             recipient = new_user.email
             email = EmailMultiAlternatives(
                 subject,
@@ -111,6 +112,7 @@ class Register(View):
                 message = _('The activation-email could not be sent')
                 messages.add_message(request, messages.ERROR, message)
                 return redirect(reverse('core:login'))
+            ### end ###
 
             message = _(
                 'Please confirm your email address to complete the registration')
@@ -248,58 +250,24 @@ class OrganizationsManage(View):
         return render(request, 'core/admin/organizations_manage.html', context)
 
 
-@login_required
-def organizations_create(request):
-    user = request.user
-    organization_form = OrganizationForm()
-    info_form = InfoForm()
-    address_form = AddressForm()
-    bank_account_form = BankAccountForm()
+@method_decorator(login_required, name='dispatch')
+class OrganizationCreate(View):
+    template_name = 'core/admin/organizations_create.html'
 
-    if request.method == 'POST':
-        organization_form = OrganizationForm(request.POST)
-        info_form = InfoForm(request.POST, request.FILES)
-        address_form = AddressForm(request.POST)
-        bank_account_form = BankAccountForm(request.POST)
+    def get(self, request):
+        organization_form = OrganizationFormManager()
+        return render(request, self.template_name, organization_form.get_forms())
 
-        if (organization_form.is_valid() and
-                info_form.is_valid() and
-                address_form.is_valid() and
-                bank_account_form.is_valid()):
+    def post(self, request):
+        organization_form = OrganizationFormManager(request)
 
-            new_organization = organization_form.save(commit=False)
-            new_address = address_form.save()
-            new_bank_account = bank_account_form.save()
-
-            new_info = info_form.save(commit=False)
-            new_info.address = new_address
-            new_info.bank_account = new_bank_account
-            new_info.save()
-
-            new_organization.info = new_info
-            new_organization.save()
-
-            membership = OrganizationMemberAddForm(
-                new_organization,
-                {
-                    'username': user.username,
-                    'role': OrganizationMember.OWNER
-                }
-            )
-            print(membership.is_valid())
-            membership.save()
-
+        if organization_form.is_valid():
+            organization_form.save()
             message = _('The organization has been registered')
             messages.add_message(request, messages.SUCCESS, message)
             return redirect(reverse('core:organizations_manage'))
-
-    context = {
-        'organization_form': organization_form,
-        'info_form': info_form,
-        'address_form': address_form,
-        'bank_account_form': bank_account_form,
-    }
-    return render(request, 'core/admin/organizations_create.html', context)
+        else:
+            return render(request, self.template_name, organization_form.get_forms())
 
 
 @login_required

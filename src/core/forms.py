@@ -95,30 +95,26 @@ class BankAccountForm(forms.ModelForm):
         return bic
 
 
-class UserFormManager():
+class InfoFormManager():
     def __init__(self, request=None):
         if request is None:
-            self.user_form = UserBaseForm()
             self.info_form = InfoForm()
             self.address_form = AddressForm()
             self.bank_account_form = BankAccountForm()
         else:
-            self.user_form = UserBaseForm(request.POST)
             self.info_form = InfoForm(request.POST, request.FILES)
             self.address_form = AddressForm(request.POST)
             self.bank_account_form = BankAccountForm(request.POST)
 
     def get_forms(self):
         return {
-            'user_form': self.user_form,
             'info_form': self.info_form,
             'address_form': self.address_form,
             'bank_account_form': self.bank_account_form,
         }
 
     def is_valid(self):
-        return (self.user_form.is_valid() and
-                self.info_form.is_valid() and
+        return (self.info_form.is_valid() and
                 self.address_form.is_valid() and
                 self.bank_account_form.is_valid())
 
@@ -130,6 +126,30 @@ class UserFormManager():
         new_info.address = new_address
         new_info.bank_account = new_bank_account
         new_info.save()
+
+        return new_info
+
+
+class UserFormManager():
+    def __init__(self, request=None):
+        if request is None:
+            self.user_form = UserBaseForm()
+            self.info_form = InfoFormManager()
+        else:
+            self.user_form = UserBaseForm(request.POST)
+            self.info_form = InfoFormManager(request)
+
+    def get_forms(self):
+        forms = self.info_form.get_forms()
+        forms['user_form'] = self.user_form
+        return forms
+
+    def is_valid(self):
+        return (self.user_form.is_valid() and
+                self.info_form.is_valid())
+
+    def save(self):
+        new_info = self.info_form.save()
 
         new_user = self.user_form.save(commit=False)
         new_user.info = new_info
@@ -272,6 +292,48 @@ class UserAccountFormManager():
             'password_form': self.password_form,
             scope: 'active',
         }
+
+
+class OrganizationFormManager():
+    def __init__(self, request=None):
+        if request is None:
+            self.organization_form = OrganizationForm()
+            self.info_form = InfoFormManager()
+        else:
+            self.request = request
+            self.organization_form = OrganizationForm(request.POST)
+            self.info_form = InfoFormManager(request)
+
+    def get_forms(self):
+        forms = self.info_form.get_forms()
+        forms['organization_form'] = self.organization_form
+        return forms
+
+    def is_valid(self):
+        return (self.organization_form.is_valid() and
+                self.info_form.is_valid())
+
+    def save(self):
+        user = self.request.user
+        new_info = self.info_form.save()
+
+        new_organization = self.organization_form.save(commit=False)
+        new_organization.info = new_info
+        new_organization.save()
+
+        membership = OrganizationMemberAddForm(
+            new_organization,
+            {
+                'username': user.username,
+                'role': OrganizationMember.OWNER
+            }
+        )
+        if membership.is_valid():
+            membership.save()
+        else:
+            raise ValidationError("Invalid Membership form")
+
+        return new_organization
 
 
 class OrganizationMemberAddForm(forms.Form):
