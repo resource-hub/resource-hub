@@ -200,6 +200,7 @@ class AccountProfile(View):
             return render(request, self.template_name, profile_form.get_forms(scope))
 
 
+@method_decorator(login_required, name='dispatch')
 class AccountSettings(View):
     template_name = 'core/admin/account_settings.html'
 
@@ -222,43 +223,6 @@ class AccountSettings(View):
             return redirect(reverse('core:account_settings', kwargs={'scope': scope}))
         else:
             return render(request, self.template_name, account_form.get_forms())
-
-
-@login_required
-def account_settings(request, scope):
-    user = request.user
-    email_form = EmailChangeForm(user, initial={
-        'old_email': user.email,
-    })
-    password_form = PasswordChangeForm(user)
-
-    if request.method == 'POST':
-        if scope == 'email':
-            email_form = EmailChangeForm(user, request.POST)
-
-            if email_form.is_valid():
-                email_form.save()
-                message = _('Your email has been updated successfully.')
-                messages.add_message(request, messages.SUCCESS, message)
-                return redirect(reverse('core:account_settings', kwargs={'scope': 'email'}))
-
-        elif scope == 'password':
-            password_form = PasswordChangeForm(user, request.POST)
-
-            if password_form.is_valid():
-                user = password_form.save()
-                update_session_auth_hash(request, user)
-
-                message = _('Your password has been updated successfully.')
-                messages.add_message(request, messages.SUCCESS, message)
-                return redirect(reverse('core:account_settings', kwargs={'scope': 'password'}))
-
-    context = {
-        'email_form': email_form,
-        'password_form': password_form,
-        scope: 'active',
-    }
-    return render(request, 'core/admin/account_settings.html', context)
 
 
 @login_required
