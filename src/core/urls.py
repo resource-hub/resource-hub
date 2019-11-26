@@ -15,7 +15,7 @@ urlpatterns = [
         views.activate, name='activate'),
     url(r'^terms/$', views.admin, name='terms'),
     url(r'^support/$', views.Support.as_view(), name='support'),
-    url(r'^language/$', views.language, name='language'),
+    url(r'^language/$', views.Language.as_view(), name='language'),
     url(r'^i18n/', include('django.conf.urls.i18n')),
     url(r'^set_role/$', views.set_role, name='set_role'),
 

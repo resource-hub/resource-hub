@@ -64,8 +64,9 @@ class Support(View):
             return render(request, self.template_name, self.context)
 
 
-def language(request):
-    return render(request, 'core/language.html')
+class Language(View):
+    def get(self, request):
+        return render(request, 'core/language.html')
 
 
 class Register(View):
