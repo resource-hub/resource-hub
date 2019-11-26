@@ -36,10 +36,10 @@ class Home(View):
 
 
 class Support(View):
+    template_name = 'core/support.html'
     context = {
         'issue_form': ReportIssueForm(),
     }
-    template_name = 'core/support.html'
 
     def get(self, request):
         return render(request, self.template_name, self.context)
