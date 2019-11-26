@@ -3,6 +3,8 @@ from django.conf.urls import url
 import django.contrib.auth.views as auth
 from . import views, api_ajax
 
+from django.contrib.auth.views import LoginView
+
 app_name = 'core'
 urlpatterns = [
     url(r'^$', views.index, name='index'),
@@ -17,7 +19,7 @@ urlpatterns = [
     url(r'^support/$', views.Support.as_view(), name='support'),
     url(r'^language/$', views.Language.as_view(), name='language'),
     url(r'^i18n/', include('django.conf.urls.i18n')),
-    url(r'^set_role/$', views.set_role, name='set_role'),
+    url(r'^set_role/$', views.SetRole.as_view(), name='set_role'),
 
     url(r'^admin/$', views.admin, name='admin'),
     url(r'^admin/account/profile/(?P<scope>\w{0,50})/$',

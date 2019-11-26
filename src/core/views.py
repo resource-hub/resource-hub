@@ -151,11 +151,11 @@ def custom_login(request):
             template_name='core/login.html')(request)
 
 
-@login_required
-def set_role(request):
-    user = request.user
-    if request.method == "POST":
+class SetRole(View):
+    def post(self, request):
+        user = request.user
         role_change_form = RoleChangeForm(user, request.POST)
+
         if role_change_form.is_valid():
             role_change_form.save(request)
         else:

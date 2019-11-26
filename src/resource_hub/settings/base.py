@@ -161,8 +161,8 @@ STATICFILES_DIRS = [
 MEDIA_URL = '/media/'
 
 # Custom settings
-LOGIN_REDIRECT_URL = '/admin/'
-LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = 'core:admin'
+LOGIN_URL = 'core:login'
 
 AUTH_USER_MODEL = "core.User"
 
