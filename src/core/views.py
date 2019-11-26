@@ -26,7 +26,12 @@ from core.tokens import TokenGenerator
 
 
 def index(request):
-    return render(request, 'core/index.html')
+    return redirect(reverse('core:home'))
+
+
+class Home(View):
+    def get(self, request):
+        return render(request, 'core/home.html')
 
 
 class Support(View):
