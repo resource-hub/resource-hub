@@ -238,6 +238,41 @@ class EmailChangeForm(forms.Form):
         user = User.objects.filter(pk=self.user.id).update(email=new_email)
 
 
+class UserAccountFormManager():
+    def __init__(self, request):
+        self.request = request
+        self.user = request.user
+        self.email_form = EmailChangeForm(self.user, initial={
+            'old_email': user.email,
+        })
+        self.password_form = PasswordChangeForm(self.user)
+        self.is_valid = True
+
+    def change_email(self):
+        self.email_form = EmailChangeForm(self.user, self.request)
+
+        if self.email_form.is_valid():
+            self.email_form.save()
+        else:
+            self.is_valid = False
+
+    def change_password(self):
+        self.password_form = PasswordChangeForm(self.user, self.request.POST)
+
+        if self.password_form.is_valid():
+            update_session_auth_hash(request, user)
+            self.password_form.save()
+        else:
+            self.is_valid = False
+
+    def get_forms(scope):
+        return {
+            'email_form': self.email_form,
+            'password_form': self.password_form,
+            scope: 'active',
+        }
+
+
 class OrganizationMemberAddForm(forms.Form):
     def __init__(self, organization,  *args, **kwargs):
         self.organization = organization

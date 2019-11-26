@@ -200,6 +200,30 @@ class AccountProfile(View):
             return render(request, self.template_name, profile_form.get_forms(scope))
 
 
+class AccountSettings(View):
+    template_name = 'core/admin/account_settings.html'
+
+    def get(self, request, scope):
+        account_form = UserAccountFormManager(request)
+        return render(request, self.template_name, account_form.get_forms())
+
+    def post(self, request, scope):
+        account_form = UserAccountFormManager(request)
+
+        if scope == 'email':
+            account_form.change_email()
+            message = _('Your email has been updated successfully.')
+        elif scope == 'password':
+            account_form.change_password()
+            message = _('Your password has been updated successfully.')
+
+        if account_form.is_valid:
+            messages.add_message(request, messages.SUCCESS, message)
+            return redirect(reverse('core:account_settings', kwargs={'scope': scope}))
+        else:
+            return render(request, self.template_name, account_form.get_forms())
+
+
 @login_required
 def account_settings(request, scope):
     user = request.user
