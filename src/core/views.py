@@ -36,9 +36,8 @@ class Home(View):
 
 
 class Support(View):
-    issue_form = ReportIssueForm()
     context = {
-        'issue_form': issue_form,
+        'issue_form': ReportIssueForm(),
     }
     template_name = 'core/support.html'
 
