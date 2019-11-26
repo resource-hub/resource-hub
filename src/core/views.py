@@ -13,6 +13,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.urls import reverse
+from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -151,6 +152,7 @@ def custom_login(request):
             template_name='core/login.html')(request)
 
 
+@method_decorator(login_required, name='dispatch')
 class SetRole(View):
     def post(self, request):
         user = request.user
