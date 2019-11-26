@@ -185,14 +185,15 @@ class AccountProfile(View):
         profile_form = UserProfileFormManager(request)
         if scope == 'info':
             profile_form.change_info()
+            message = _('Your info has been updated')
         elif scope == 'address':
             profile_form.change_address()
-
+            message = _('Your address has been updated')
         elif scope == 'bank_account':
             profile_form.change_bank_account()
+            message = _('Your bank account has been updated')
 
         if profile_form.is_valid:
-            message = _('Your profile has been updated')
             messages.add_message(request, messages.SUCCESS, message)
             return redirect(reverse('core:account_profile', kwargs={'scope': scope}))
         else:
