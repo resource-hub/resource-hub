@@ -200,57 +200,6 @@ class AccountProfile(View):
 
 
 @login_required
-def account_profile(request, scope):
-    user = request.user
-    info = model_to_dict(user.info)
-    address = model_to_dict(user.info.address)
-    bank_account = model_to_dict(user.info.bank_account)
-
-    info_form = InfoForm(initial=info)
-    address_form = AddressForm(initial=address)
-    bank_account_form = BankAccountForm(initial=bank_account)
-
-    if request.method == 'POST':
-        if scope == 'info':
-            info_form = InfoForm(
-                request.POST, request.FILES, instance=user.info)
-
-            if info_form.is_valid():
-                info_form.save()
-                message = _('Your information has been updated')
-                messages.add_message(request, messages.SUCCESS, message)
-                return redirect(reverse('core:account_profile', kwargs={'scope': 'info'}))
-
-        elif scope == 'address':
-            address_form = AddressForm(
-                request.POST, instance=user.info.address)
-
-            if address_form.is_valid():
-                address_form.save()
-                message = _('Your address has been updated')
-                messages.add_message(request, messages.SUCCESS, message)
-                return redirect(reverse('core:account_profile', kwargs={'scope': 'address'}))
-
-        elif scope == 'bank_account':
-            bank_account_form = BankAccountForm(
-                request.POST, instance=user.info.bank_account)
-
-            if bank_account_form.is_valid():
-                bank_account_form.save()
-                message = _('Your bank information has been updated')
-                messages.add_message(request, messages.SUCCESS, message)
-                return redirect(reverse('core:account_profile', kwargs={'scope': 'bank_account'}))
-
-    context = {
-        'info_form': info_form,
-        'address_form': address_form,
-        'bank_account_form': bank_account_form,
-        scope: 'active',
-    }
-    return render(request, 'core/admin/account_profile.html', context)
-
-
-@login_required
 def account_settings(request, scope):
     user = request.user
     email_form = EmailChangeForm(user, initial={
