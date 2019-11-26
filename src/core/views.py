@@ -287,21 +287,6 @@ class OrganizationsProfile(View):
 
 
 @login_required
-def organizations_profile(request, organization_id):
-    user = request.user
-    organization = get_object_or_404(Organization, pk=organization_id)
-    member = get_object_or_404(
-        OrganizationMember, organization__id=organization_id, user=user)
-
-    context = {
-        'organization': organization,
-        'is_admin': member.is_admin(),
-    }
-
-    return render(request, 'core/admin/organizations_profile.html', context)
-
-
-@login_required
 @organization_admin_required
 def organizations_profile_edit(request, organization_id, scope):
     organization = get_object_or_404(Organization, pk=organization_id)
