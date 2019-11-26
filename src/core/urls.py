@@ -15,13 +15,14 @@ urlpatterns = [
         template_name='core/logout.html'), name='logout'),
     url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         views.Activate.as_view(), name='activate'),
-    url(r'^terms/$', views.admin, name='terms'),
+    # todo termns an conditions
+    url(r'^terms/$', views.Admin.as_view(), name='terms'),
     url(r'^support/$', views.Support.as_view(), name='support'),
     url(r'^language/$', views.Language.as_view(), name='language'),
     url(r'^i18n/', include('django.conf.urls.i18n')),
     url(r'^set_role/$', views.SetRole.as_view(), name='set_role'),
 
-    url(r'^admin/$', views.admin, name='admin'),
+    url(r'^admin/$', views.Admin.as_view(), name='admin'),
     url(r'^admin/account/profile/(?P<scope>\w{0,50})/$',
         views.account_profile,
         name='account_profile'),

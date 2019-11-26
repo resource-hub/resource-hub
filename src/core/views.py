@@ -167,10 +167,10 @@ class SetRole(View):
 
 
 # Internal admin section
-
-@login_required
-def admin(request):
-    return render(request, 'core/admin/index.html')
+@method_decorator(login_required, name='dispatch')
+class Admin(View):
+    def get(self, request):
+        return render(request, 'core/admin/index.html')
 
 
 @login_required
