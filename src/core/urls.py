@@ -27,11 +27,11 @@ urlpatterns = [
         views.AccountProfile.as_view(),
         name='account_profile'),
     url(r'^admin/account/settings/(?P<scope>\w{0,50})/$',
-        views.account_settings,
+        views.AccountSettings.as_view(),
         name='account_settings'),
 
     url(r'^admin/organizations/manage$',
-        views.organizations_manage,
+        views.OrganizationsManage.as_view(),
         name='organizations_manage'),
     url(r'^admin/organizations/create/$',
         views.organizations_create,

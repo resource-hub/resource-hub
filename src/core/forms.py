@@ -4,7 +4,8 @@ from schwifty import IBAN, BIC
 
 from django import forms
 from django.conf import settings
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from django.contrib.auth.hashers import check_password
 from django.forms import model_to_dict
 from django.utils.translation import ugettext_lazy as _
@@ -243,13 +244,13 @@ class UserAccountFormManager():
         self.request = request
         self.user = request.user
         self.email_form = EmailChangeForm(self.user, initial={
-            'old_email': user.email,
+            'old_email': self.user.email,
         })
         self.password_form = PasswordChangeForm(self.user)
         self.is_valid = True
 
     def change_email(self):
-        self.email_form = EmailChangeForm(self.user, self.request)
+        self.email_form = EmailChangeForm(self.user, self.request.POST)
 
         if self.email_form.is_valid():
             self.email_form.save()
@@ -260,12 +261,12 @@ class UserAccountFormManager():
         self.password_form = PasswordChangeForm(self.user, self.request.POST)
 
         if self.password_form.is_valid():
-            update_session_auth_hash(request, user)
+            update_session_auth_hash(self.request, self.user)
             self.password_form.save()
         else:
             self.is_valid = False
 
-    def get_forms(scope):
+    def get_forms(self, scope):
         return {
             'email_form': self.email_form,
             'password_form': self.password_form,

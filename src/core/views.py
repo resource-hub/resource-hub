@@ -1,9 +1,8 @@
 from smtplib import SMTPException
 
 from django.contrib import messages
-from django.contrib.auth import login, authenticate, update_session_auth_hash
+from django.contrib.auth import login, authenticate
 from django.contrib.auth.views import LoginView
-from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.decorators import login_required
 from django.contrib.sites.shortcuts import get_current_site
@@ -205,7 +204,7 @@ class AccountSettings(View):
 
     def get(self, request, scope):
         account_form = UserAccountFormManager(request)
-        return render(request, self.template_name, account_form.get_forms())
+        return render(request, self.template_name, account_form.get_forms(scope))
 
     def post(self, request, scope):
         account_form = UserAccountFormManager(request)
@@ -221,31 +220,32 @@ class AccountSettings(View):
             messages.add_message(request, messages.SUCCESS, message)
             return redirect(reverse('core:account_settings', kwargs={'scope': scope}))
         else:
-            return render(request, self.template_name, account_form.get_forms())
+            return render(request, self.template_name, account_form.get_forms(scope))
 
 
-@login_required
-def organizations_manage(request):
-    user = request.user
-    organizations = Organization.objects.all().filter(members__pk=user.id)
+@method_decorator(login_required, name='dispatch')
+class OrganizationsManage(View):
+    def get(self, request):
+        user = request.user
+        organizations = Organization.objects.all().filter(members__pk=user.id)
 
-    if organizations:
-        data = []
-        for o in organizations:
-            role = OrganizationMember.get_role(user, o)
-            data.append({
-                'name': o.name,
-                'role': role,
-                'organization_id': o.id,
-            })
-        organizations_table = OrganizationsTable(data)
-    else:
-        organizations_table = None
+        if organizations:
+            data = []
+            for o in organizations:
+                role = OrganizationMember.get_role(user, o)
+                data.append({
+                    'name': o.name,
+                    'role': role,
+                    'organization_id': o.id,
+                })
+            organizations_table = OrganizationsTable(data)
+        else:
+            organizations_table = None
 
-    context = {
-        'organizations_table': organizations_table,
-    }
-    return render(request, 'core/admin/organizations_manage.html', context)
+        context = {
+            'organizations_table': organizations_table,
+        }
+        return render(request, 'core/admin/organizations_manage.html', context)
 
 
 @login_required
