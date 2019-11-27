@@ -288,72 +288,39 @@ class OrganizationsProfile(View):
 
 
 @method_decorator([login_required, organization_admin_required], name='dispatch')
-class OrganizationProfileEdit(AccountProfile):
+class OrganizationProfileEdit(View):
     template_name = 'core/admin/organizations_profile_edit.html'
     redirect_url = 'core:organizations_profile_edit'
 
+    def get(self, request, organization_id, scope):
+        organization = get_object_or_404(Organization, pk=organization_id)
+        profile_form = ProfileFormManager(request, organization)
+        return render(request, self.template_name, profile_form.get_forms(scope))
 
-@login_required
-@organization_admin_required
-def organizations_profile_edit(request, organization_id, scope):
-    organization = get_object_or_404(Organization, pk=organization_id)
-
-    info = model_to_dict(organization.info)
-    address = model_to_dict(organization.info.address)
-    bank_account = model_to_dict(organization.info.bank_account)
-
-    info_form = InfoForm(initial=info)
-    address_form = AddressForm(initial=address)
-    bank_account_form = BankAccountForm(initial=bank_account)
-
-    if request.method == 'POST':
+    def post(self, request, organization_id, scope):
+        organization = get_object_or_404(Organization, pk=organization_id)
+        profile_form = ProfileFormManager(request, organization)
         if scope == 'info':
-            info_form = InfoForm(
-                request.POST, request.FILES, instance=organization.info)
-
-            if info_form.is_valid():
-                info_form.save()
-                message = _('Your information has been updated')
-                messages.add_message(request, messages.SUCCESS, message)
-                return redirect(reverse('core:organizations_profile_edit', kwargs={'scope': 'info',
-                                                                                   'organization_id': organization_id, }))
-
+            profile_form.change_info()
+            message = _('Your info has been updated')
         elif scope == 'address':
-            address_form = AddressForm(
-                request.POST, instance=organization.info.address)
-
-            if address_form.is_valid():
-                address_form.save()
-                message = _('Your address has been updated')
-                messages.add_message(request, messages.SUCCESS, message)
-                return redirect(reverse('core:organizations_profile_edit', kwargs={'scope': 'address',
-                                                                                   'organization_id': organization_id, }))
-
+            profile_form.change_address()
+            message = _('Your address has been updated')
         elif scope == 'bank_account':
-            bank_account_form = BankAccountForm(
-                request.POST, instance=organization.info.bank_account)
+            profile_form.change_bank_account()
+            message = _('Your bank account has been updated')
 
-            if bank_account_form.is_valid():
-                bank_account_form.save()
-                message = _('Your bank information has been updated')
-                messages.add_message(request, messages.SUCCESS, message)
-                return redirect(reverse('core:organizations_profile_edit',
-                                        kwargs={
-                                            'organization_id': organization_id, }))
-
-    context = {
-        'organization_name': organization.name,
-        'info_form': info_form,
-        'address_form': address_form,
-        'bank_account_form': bank_account_form,
-        scope: 'active',
-    }
-    return render(request, 'core/admin/organizations_profile_edit.html', context)
+        if profile_form.is_valid:
+            messages.add_message(request, messages.SUCCESS, message)
+            return redirect(reverse(self.redirect_url, kwargs={'organization_id': organization_id,
+                                                               'scope': scope}))
+        else:
+            return render(request, self.template_name, profile_form.get_forms(scope))
 
 
 @method_decorator([login_required, organization_admin_required], name='dispatch')
 class OrganizationMembers(View):
-    def get(self, request):
+    def get(self, request, organization_id):
         user = request.user
         organization = get_object_or_404(Organization, pk=organization_id)
         members = organization.members.select_related().all()

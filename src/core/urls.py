@@ -40,7 +40,7 @@ urlpatterns = [
         views.OrganizationsProfile.as_view(),
         name='organizations_profile'),
     url(r'^admin/organizations/manage/profile/edit/(?P<organization_id>\w{0,50})/(?P<scope>\w{0,50})/$',
-        views.organizations_profile_edit,
+        views.OrganizationProfileEdit.as_view(),
         name='organizations_profile_edit'),
     url(r'^admin/organizations/manage/members/(?P<organization_id>\w{0,50})/$',
         views.OrganizationMembers.as_view(),
