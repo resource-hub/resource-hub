@@ -5,18 +5,27 @@ from django.test import TestCase
 from django.forms import ValidationError
 from core.forms import *
 
+DATA = {
+    'username': 'peterpopper',
+    'email': 'test@ture.dev',
+    'password': 'we8dlz49opd',
+    'password1': 'we8dlz49opd',
+    'password2': 'we8dlz49opd',
+    'first_name': 'Peter',
+    'last_name': 'Popper',
+    'birth_date': '1997-05-31',
+    'old_email': 'test@test.de',
+    'new_email1': 'test2@test.de',
+    'new_email2': 'test2@test.de',
+    'account_holder': 'Peter Popper',
+    'iban': 'DE12500105170648489890',
+    'bic': 'INGDDEFFXXX',
+}
+
 
 class TestUserBaseForm(TestCase):
     def setUp(self):
-        self.data = {
-            'username': 'peterpopper',
-            'email': 'test@ture.dev',
-            'password1': 'we8dlz49opd',
-            'password2': 'we8dlz49opd',
-            'first_name': 'Peter',
-            'last_name': 'Popper',
-            'birth_date': '1997-05-31',
-        }
+        self.data = DATA
 
     def test_valid_data(self):
         form = UserBaseForm(data=self.data)
@@ -38,11 +47,7 @@ class TestUserBaseForm(TestCase):
 
 class TestBankAccountForm(TestCase):
     def setUp(self):
-        self.data = {
-            'account_holder': 'Peter Popper',
-            'iban': 'DE12500105170648489890',
-            'bic': 'INGDDEFFXXX',
-        }
+        self.data = DATA
         self.path = os.path.dirname(os.path.abspath(__file__))
 
     def test_valid_data(self):
@@ -63,14 +68,7 @@ class TestBankAccountForm(TestCase):
 
 class TestEmailChangeForm(TestCase):
     def setUp(self):
-        self.data = {
-            'username': 'peterpopper',
-            'password': 'we8dlz49opd',
-            'birth_date': '1997-01-01',
-            'old_email': 'test@test.de',
-            'new_email1': 'test2@test.de',
-            'new_email2': 'test2@test.de',
-        }
+        self.data = DATA
         self.user = User.objects.create_user(
             username=self.data['username'],
             email=self.data['old_email'],

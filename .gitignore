@@ -7,3 +7,4 @@ db.sqlite3
 .dbdata
 .env
 src/media
+a.out
