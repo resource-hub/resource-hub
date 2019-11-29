@@ -153,7 +153,6 @@ class UserFormManager():
 
         new_user = self.user_form.save(commit=False)
         new_user.info = new_info
-        new_user.is_active = False
         new_user.save()
         Actor.objects.create(user=new_user)
         return new_user

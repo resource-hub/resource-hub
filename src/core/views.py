@@ -85,6 +85,8 @@ class Register(View):
 
         if (user_form.is_valid()):
             new_user = user_form.save()
+            new_user.is_active = False
+            new_user.save()
 
             current_site = get_current_site(request)
             subject = _('Activate your account')
@@ -260,6 +262,7 @@ class OrganizationCreate(View):
         return render(request, self.template_name, organization_form.get_forms())
 
     def post(self, request):
+        print(request.FILES)
         organization_form = OrganizationFormManager(request)
 
         if organization_form.is_valid():
