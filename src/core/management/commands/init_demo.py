@@ -27,12 +27,12 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         if options['users']:
-            testdb.create_users()
+            demodb.create_users()
 
         if options['organizations']:
-            testdb.create_organizations()
+            demodb.create_organizations()
 
         if options['full']:
-            testdb.create_users()
-            testdb.create_organizations()
+            demodb.create_users()
+            demodb.create_organizations()
             self.stdout.write(self.style.SUCCESS('Demo database initialized'))
