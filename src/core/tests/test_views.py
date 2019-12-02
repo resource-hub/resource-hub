@@ -168,11 +168,21 @@ class TestAccountProfile(TestCase):
             self.assertEqual(response.status_code, 200)
 
 
-class OrganizationsManage(TestCase):
+class TestOrganizationsManage(TestCase):
     def setUp(self):
         self.client = Client()
         register_test_user(self.client)
 
     def test_status_code(self):
         response = self.client.get(reverse('core:organizations_manage'))
+        self.assertEqual(response.status_code, 200)
+
+
+class TestOrganizationCreate(TestCase):
+    def setUp(self):
+        self.client = Client()
+        register_test_user(self.client)
+
+    def test_status_code(self):
+        response = self.client.get(reverse('core:organizations_create'))
         self.assertEqual(response.status_code, 200)

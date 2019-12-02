@@ -7,6 +7,7 @@ from django.contrib.auth.hashers import check_password
 from django.contrib.auth.decorators import login_required
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMultiAlternatives
+from django.db import transaction
 from django.forms.models import model_to_dict
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound, Http404
 from django.shortcuts import render, redirect, get_object_or_404
@@ -84,9 +85,10 @@ class Register(View):
         user_form = UserFormManager(request)
 
         if (user_form.is_valid()):
-            new_user = user_form.save()
-            new_user.is_active = False
-            new_user.save()
+            with transaction.atomic():
+                new_user = user_form.save()
+                new_user.is_active = False
+                new_user.save()
 
             current_site = get_current_site(request)
             subject = _('Activate your account')
@@ -280,7 +282,8 @@ class OrganizationCreate(View):
         organization_form = OrganizationFormManager(request)
 
         if organization_form.is_valid():
-            organization_form.save()
+            with transaction.atomic():
+                organization_form.save()
             message = _('The organization has been registered')
             messages.add_message(request, messages.SUCCESS, message)
             return redirect(reverse('core:organizations_manage'))
