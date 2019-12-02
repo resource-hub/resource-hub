@@ -140,6 +140,20 @@ class TestAdmin(TestCase):
         self.assertEqual(response.status_code, 200)
 
 
+class TestAccountSettings(TestCase):
+    def setUp(self):
+        self.client = Client()
+        register_test_user(self.client)
+
+    def test_status_code(self):
+        scope = ['email', 'password', ]
+
+        for s in scope:
+            response = self.client.get(
+                reverse('core:account_settings', kwargs={'scope': s}))
+            self.assertEqual(response.status_code, 200)
+
+
 class TestAccountProfile(TestCase):
     def setUp(self):
         self.client = Client()
@@ -154,15 +168,11 @@ class TestAccountProfile(TestCase):
             self.assertEqual(response.status_code, 200)
 
 
-class TestAccountSettings(TestCase):
+class OrganizationsManage(TestCase):
     def setUp(self):
         self.client = Client()
         register_test_user(self.client)
 
     def test_status_code(self):
-        scope = ['email', 'password', ]
-
-        for s in scope:
-            response = self.client.get(
-                reverse('core:account_settings', kwargs={'scope': s}))
-            self.assertEqual(response.status_code, 200)
+        response = self.client.get(reverse('core:organizations_manage'))
+        self.assertEqual(response.status_code, 200)
