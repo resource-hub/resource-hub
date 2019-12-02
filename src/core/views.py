@@ -92,7 +92,7 @@ class Register(View):
             subject = _('Activate your account')
             token_generator = TokenGenerator()
 
-            message = render_to_string('core/activation_mail.html', context={
+            message = render_to_string('core/mail_activation.html', context={
                 'user': new_user,
                 'domain': current_site.domain,
                 'uid': urlsafe_base64_encode(force_bytes(new_user.pk)),
