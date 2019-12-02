@@ -92,7 +92,7 @@ class Register(View):
             subject = _('Activate your account')
             token_generator = TokenGenerator()
 
-            message = render_to_string('core/activation_mail.html', {
+            message = render_to_string('core/activation_mail.html', context={
                 'user': new_user,
                 'domain': current_site.domain,
                 'uid': urlsafe_base64_encode(force_bytes(new_user.pk)),
@@ -176,6 +176,31 @@ class Admin(View):
 
 
 @method_decorator(login_required, name='dispatch')
+class AccountSettings(View):
+    template_name = 'core/admin/account_settings.html'
+
+    def get(self, request, scope):
+        account_form = UserAccountFormManager(request)
+        return render(request, self.template_name, account_form.get_forms(scope))
+
+    def post(self, request, scope):
+        account_form = UserAccountFormManager(request)
+
+        if scope == 'email':
+            account_form.change_email()
+            message = _('Your email has been updated successfully.')
+        elif scope == 'password':
+            account_form.change_password()
+            message = _('Your password has been updated successfully.')
+
+        if account_form.is_valid:
+            messages.add_message(request, messages.SUCCESS, message)
+            return redirect(reverse('core:account_settings', kwargs={'scope': scope}))
+        else:
+            return render(request, self.template_name, account_form.get_forms(scope))
+
+
+@method_decorator(login_required, name='dispatch')
 class AccountProfile(View):
     template_name = 'core/admin/account_profile.html'
     redirect_url = 'core:account_profile'
@@ -201,31 +226,6 @@ class AccountProfile(View):
             return redirect(reverse(self.redirect_url, kwargs={'scope': scope}))
         else:
             return render(request, self.template_name, profile_form.get_forms(scope))
-
-
-@method_decorator(login_required, name='dispatch')
-class AccountSettings(View):
-    template_name = 'core/admin/account_settings.html'
-
-    def get(self, request, scope):
-        account_form = UserAccountFormManager(request)
-        return render(request, self.template_name, account_form.get_forms(scope))
-
-    def post(self, request, scope):
-        account_form = UserAccountFormManager(request)
-
-        if scope == 'email':
-            account_form.change_email()
-            message = _('Your email has been updated successfully.')
-        elif scope == 'password':
-            account_form.change_password()
-            message = _('Your password has been updated successfully.')
-
-        if account_form.is_valid:
-            messages.add_message(request, messages.SUCCESS, message)
-            return redirect(reverse('core:account_settings', kwargs={'scope': scope}))
-        else:
-            return render(request, self.template_name, account_form.get_forms(scope))
 
 
 @method_decorator(login_required, name='dispatch')
