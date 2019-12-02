@@ -262,7 +262,6 @@ class OrganizationCreate(View):
         return render(request, self.template_name, organization_form.get_forms())
 
     def post(self, request):
-        print(request.FILES)
         organization_form = OrganizationFormManager(request)
 
         if organization_form.is_valid():
