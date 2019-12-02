@@ -146,7 +146,7 @@ class TestAccountProfile(TestCase):
         register_test_user(self.client)
 
     def test_status_code(self):
-        scope = ['info', 'address', 'bank_account']
+        scope = ['info', 'address', 'bank_account', ]
 
         for s in scope:
             response = self.client.get(
@@ -160,9 +160,9 @@ class TestAccountSettings(TestCase):
         register_test_user(self.client)
 
     def test_status_code(self):
-        response = self.client.get(
-            reverse('core:account_settings', kwargs={'scope': 'email'}))
-        self.assertEqual(response.status_code, 200)
-        response = self.client.get(
-            reverse('core:account_settings', kwargs={'scope': 'password'}))
-        self.assertEqual(response.status_code, 200)
+        scope = ['email', 'password', ]
+
+        for s in scope:
+            response = self.client.get(
+                reverse('core:account_settings', kwargs={'scope': s}))
+            self.assertEqual(response.status_code, 200)

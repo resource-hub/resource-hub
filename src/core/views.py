@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMultiAlternatives
 from django.forms.models import model_to_dict
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound, Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -175,9 +175,23 @@ class Admin(View):
         return render(request, 'core/admin/index.html')
 
 
+class ScopeView(View):
+    legal_scope = []
+
+    def scope_is_valid(self, scope):
+        return scope in self.legal_scope
+
+    def dispatch(self, *args, **kwargs):
+        if self.scope_is_valid(kwargs['scope']):
+            return super(ScopeView, self).dispatch(*args, **kwargs)
+        else:
+            raise Http404
+
+
 @method_decorator(login_required, name='dispatch')
-class AccountSettings(View):
+class AccountSettings(ScopeView):
     template_name = 'core/admin/account_settings.html'
+    legal_scope = ['email', 'password', ]
 
     def get(self, request, scope):
         account_form = UserAccountFormManager(request)
@@ -201,9 +215,10 @@ class AccountSettings(View):
 
 
 @method_decorator(login_required, name='dispatch')
-class AccountProfile(View):
+class AccountProfile(ScopeView):
     template_name = 'core/admin/account_profile.html'
     redirect_url = 'core:account_profile'
+    legal_scope = ['info', 'address', 'bank_account', ]
 
     def get(self, request, scope):
         profile_form = ProfileFormManager(request, request.user)
@@ -293,6 +308,7 @@ class OrganizationsProfile(View):
 class OrganizationProfileEdit(View):
     template_name = 'core/admin/organizations_profile_edit.html'
     redirect_url = 'core:organizations_profile_edit'
+    legal_scope = ['info', 'address', 'bank_account']
 
     def get(self, request, organization_id, scope):
         organization = get_object_or_404(Organization, pk=organization_id)
