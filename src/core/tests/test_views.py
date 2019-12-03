@@ -33,48 +33,47 @@ DATA = {
 }
 
 
-def register_test_user(client):
-    response = client.post(
-        reverse('core:register'), DATA)
+class TestView():
+    view_name = 'empty'
+    kwargs = None
 
-    user = User.objects.get(username=DATA['username'])
-    user.is_active = True
-    user.save()
-    client.login(username=DATA['username'], password=DATA['password'])
-    return user
-
-
-class TestHome(TestCase):
     def setUp(self):
         self.client = Client()
+        self.user = self.register_test_user()
+
+    def register_test_user(self):
+        response = self.client.post(
+            reverse('core:register'), DATA)
+
+        user = User.objects.get(username=DATA['username'])
+        user.is_active = True
+        user.save()
+        self.client.login(username=DATA['username'], password=DATA['password'])
+        return user
 
     def test_status_code(self):
-        response = self.client.get(reverse('core:home'))
+        response = self.client.get(reverse(self.view_name, kwargs=self.kwargs))
         self.assertEqual(response.status_code, 200)
 
 
-class TestSupport(TestCase):
+class TestHome(TestView, TestCase):
+    view_name = 'core:home'
+
+
+class TestSupport(TestView, TestCase):
+    view_name = 'core:support'
+
+
+class TestLanguage(TestView, TestCase):
+    view_name = 'core:language'
+
+
+class TestRegistration(TestView, TestCase):
+    view_name = 'core:register'
+
     def setUp(self):
         self.client = Client()
-
-    def test_status_code(self):
-        response = self.client.get(reverse('core:support'))
-        self.assertEqual(response.status_code, 200)
-
-
-class TestLanguage(TestCase):
-    def setUp(self):
-        self.client = Client()
-
-    def test_status_code(self):
-        response = self.client.get(reverse('core:language'))
-        self.assertEqual(response.status_code, 200)
-
-
-class TestRegistration(TestCase):
-    def setUp(self):
         self.data = DATA.copy()
-        self.client = Client()
 
     def test_created_user(self):
         response = self.client.post(
@@ -88,25 +87,19 @@ class TestRegistration(TestCase):
         user = User.objects.get(username=self.data['username'])
         self.assertEqual(user.info.info_text, self.data['info_text'])
 
-    def test_get_status_code(self):
-        response = self.client.get(reverse('core:register'))
-        self.assertEqual(response.status_code, 200)
-
     def test_post_status_code(self):
         response = self.client.post(
             reverse('core:register'), self.data)
         self.assertEqual(response.status_code, 302)
 
 
-class TestActivate(TestCase):
-    def setUp(self):
-        self.client = Client()
+class TestActivate(TestView, TestCase):
+    view_name = 'core:activate'
 
     def test_status_code(self):
-        user = register_test_user(self.client)
-        response = self.client.get(reverse('core:activate', kwargs={
-            'uidb64': urlsafe_base64_encode(force_bytes(user.pk)),
-            'token': TokenGenerator().make_token(user),
+        response = self.client.get(reverse(self.view_name, kwargs={
+            'uidb64': urlsafe_base64_encode(force_bytes(self.user.pk)),
+            'token': TokenGenerator().make_token(self.user),
         }))
         self.assertEqual(response.status_code, 302)
 
@@ -120,31 +113,19 @@ class TestCustomLogin(TestCase):
         self.assertEqual(response.status_code, 200)
 
 
-class TestSetRole(TestCase):
-    def setUp(self):
-        self.client = Client()
-        register_test_user(self.client)
+class TestSetRole(TestView, TestCase):
+    view_name = 'core:set_role'
 
     def test_status_code(self):
-        response = self.client.post(reverse('core:set_role'))
+        response = self.client.post(reverse(self.view_name))
         self.assertEqual(response.status_code, 302)
 
 
-class TestAdmin(TestCase):
-    def setUp(self):
-        self.client = Client()
-        register_test_user(self.client)
-
-    def test_status_code(self):
-        response = self.client.get(reverse('core:admin'))
-        self.assertEqual(response.status_code, 200)
+class TestAdmin(TestView, TestCase):
+    view_name = 'core:admin'
 
 
-class TestAccountSettings(TestCase):
-    def setUp(self):
-        self.client = Client()
-        register_test_user(self.client)
-
+class TestAccountSettings(TestView, TestCase):
     def test_status_code(self):
         scope = ['email', 'password', ]
 
@@ -154,11 +135,7 @@ class TestAccountSettings(TestCase):
             self.assertEqual(response.status_code, 200)
 
 
-class TestAccountProfile(TestCase):
-    def setUp(self):
-        self.client = Client()
-        register_test_user(self.client)
-
+class TestAccountProfile(TestView, TestCase):
     def test_status_code(self):
         scope = ['info', 'address', 'bank_account', ]
 
@@ -168,21 +145,9 @@ class TestAccountProfile(TestCase):
             self.assertEqual(response.status_code, 200)
 
 
-class TestOrganizationsManage(TestCase):
-    def setUp(self):
-        self.client = Client()
-        register_test_user(self.client)
-
-    def test_status_code(self):
-        response = self.client.get(reverse('core:organizations_manage'))
-        self.assertEqual(response.status_code, 200)
+class TestOrganizationsManage(TestView, TestCase):
+    view_name = 'core:organizations_manage'
 
 
-class TestOrganizationCreate(TestCase):
-    def setUp(self):
-        self.client = Client()
-        register_test_user(self.client)
-
-    def test_status_code(self):
-        response = self.client.get(reverse('core:organizations_create'))
-        self.assertEqual(response.status_code, 200)
+class TestOrganizationsCreate(TestView, TestCase):
+    view_name = 'core:organizations_create'
