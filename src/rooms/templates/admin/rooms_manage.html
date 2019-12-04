@@ -1,0 +1,27 @@
+{% extends 'core/admin/__base.html' %}
+{% load i18n %}
+{% load django_tables2 %}
+
+{% block content %}
+<h2>
+    {% trans 'Manage' %}
+</h2>
+<div class="ui segment tab-content">
+    <h3>
+        {% trans 'Your rooms' %}
+    </h3>
+    <div>
+        {% if rooms_table %}
+        {% render_table rooms_table %}
+        {% else %}
+        <p>
+            {% trans 'No associated rooms found' %}
+        </p>
+        <a class="ui positive right labeled icon button" href="{% url 'rooms:create' %}">
+            {% trans 'Create one!' %}
+            <i class="child icon"></i>
+        </a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
