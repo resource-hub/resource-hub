@@ -15,13 +15,13 @@ django-extensions==2.2.5
 django-imagekit==4.0.2
 django-tables2==2.2.1
 djangorestframework==3.10.3
-gunicorn==20.0.4
 hyperlink==19.0.0
 idna==2.8
 incremental==17.5.0
 iso3166==1.0
 pilkit==2.0
 Pillow==6.2.1
+pip-autoremove==0.9.1
 psycopg2-binary==2.8.4
 pyasn1==0.4.8
 pyasn1-modules==0.2.7
