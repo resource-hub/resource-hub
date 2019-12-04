@@ -1,0 +1,27 @@
+{% extends 'core/admin/__base.html' %}
+{% load i18n %}
+{% load django_tables2 %}
+
+{% block content %}
+<h2>
+    {% trans 'Manage' %}
+</h2>
+<div class="ui segment tab-content">
+    <h3>
+        {% trans 'Your locations' %}
+    </h3>
+    <div>
+        {% if locations_table%}
+        {% render_table locations_table %}
+        {% else %}
+        <p>
+            {% trans 'No associated locations found' %}
+        </p>
+        <a cfass="ui positive right labeled icon button" href="{% url 'core:locations_create' %}">
+            {% trans 'Create one!' %}
+            <i class="child icon"></i>
+        </a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

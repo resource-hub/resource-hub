@@ -44,6 +44,19 @@
         </div>
         <div class="item">
             <div class="header">
+                {% trans 'Locations' %}
+            </div>
+            <div class="menu">
+                <a class="item" href="{% url 'core:locations_manage' %}">
+                    {% trans 'Overview' %}
+                </a>
+                <a class="item" href="{% url 'core:locations_create' %}">
+                    {% trans 'Create' %}
+                </a>
+            </div>
+        </div>
+        <div class="item">
+            <div class="header">
                 {% trans 'Rooms' %}
             </div>
             <div class="menu">

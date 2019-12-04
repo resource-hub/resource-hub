@@ -43,3 +43,12 @@ class MembersTable(tables.Table):
             "class": "user",
             "id": lambda record: record['id'],
         }
+
+
+class LocationsTable(tables.Table):
+    name = tables.Column(verbose_name=_('Name'))
+
+    class Meta:
+        attrs = {
+            "class": "ui selectable celled table"
+        }
