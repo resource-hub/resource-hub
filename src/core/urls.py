@@ -1,4 +1,4 @@
-from django.urls import include
+from django.urls import include, reverse
 from django.conf.urls import url
 import django.contrib.auth.views as auth
 from . import views, api_ajax
@@ -9,12 +9,22 @@ app_name = 'core'
 urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^home/$', views.Home.as_view(), name='home'),
+
     url(r'^register/$', views.Register.as_view(), name='register'),
     url(r'^login/$', views.custom_login, name='login'),
     url(r'^logout/$', auth.LogoutView.as_view(
         template_name='core/logout.html'), name='logout'),
+    url(r'^password/reset/$', auth.PasswordResetView.as_view(
+        template_name='core/password_reset.html', success_url='/password/reset/done/', email_template_name='core/mail_password_reset.html'), name='password_reset'),
+    url(r'^password/reset/done/$', auth.PasswordResetDoneView.as_view(
+        template_name='core/password_reset_done.html', ), name='password_reset_done'),
+    url(r'^password/reset/confirm/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$', auth.PasswordResetConfirmView.as_view(
+        template_name='core/password_reset_confirm.html', success_url='/password/reset/complete/'), name='password_reset_confirm'),
+    url(r'password/reset/complete/$', auth.PasswordResetCompleteView.as_view(
+        template_name='core/password_reset_complete.html')),
     url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         views.Activate.as_view(), name='activate'),
+
     # todo termns an conditions
     url(r'^terms/$', views.Admin.as_view(), name='terms'),
     url(r'^support/$', views.Support.as_view(), name='support'),

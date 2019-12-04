@@ -7,8 +7,9 @@ from django.contrib.auth.hashers import check_password
 from django.contrib.auth.decorators import login_required
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMultiAlternatives
+from django.db import transaction
 from django.forms.models import model_to_dict
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound, Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -84,13 +85,16 @@ class Register(View):
         user_form = UserFormManager(request)
 
         if (user_form.is_valid()):
-            new_user = user_form.save()
+            with transaction.atomic():
+                new_user = user_form.save()
+                new_user.is_active = False
+                new_user.save()
 
             current_site = get_current_site(request)
             subject = _('Activate your account')
             token_generator = TokenGenerator()
 
-            message = render_to_string('core/activation_mail.html', {
+            message = render_to_string('core/mail_activation.html', context={
                 'user': new_user,
                 'domain': current_site.domain,
                 'uid': urlsafe_base64_encode(force_bytes(new_user.pk)),
@@ -173,10 +177,50 @@ class Admin(View):
         return render(request, 'core/admin/index.html')
 
 
+class ScopeView(View):
+    legal_scope = []
+
+    def scope_is_valid(self, scope):
+        return scope in self.legal_scope
+
+    def dispatch(self, *args, **kwargs):
+        if self.scope_is_valid(kwargs['scope']):
+            return super(ScopeView, self).dispatch(*args, **kwargs)
+        else:
+            raise Http404
+
+
 @method_decorator(login_required, name='dispatch')
-class AccountProfile(View):
+class AccountSettings(ScopeView):
+    template_name = 'core/admin/account_settings.html'
+    legal_scope = ['email', 'password', ]
+
+    def get(self, request, scope):
+        account_form = UserAccountFormManager(request)
+        return render(request, self.template_name, account_form.get_forms(scope))
+
+    def post(self, request, scope):
+        account_form = UserAccountFormManager(request)
+
+        if scope == 'email':
+            account_form.change_email()
+            message = _('Your email has been updated successfully.')
+        elif scope == 'password':
+            account_form.change_password()
+            message = _('Your password has been updated successfully.')
+
+        if account_form.is_valid:
+            messages.add_message(request, messages.SUCCESS, message)
+            return redirect(reverse('core:account_settings', kwargs={'scope': scope}))
+        else:
+            return render(request, self.template_name, account_form.get_forms(scope))
+
+
+@method_decorator(login_required, name='dispatch')
+class AccountProfile(ScopeView):
     template_name = 'core/admin/account_profile.html'
     redirect_url = 'core:account_profile'
+    legal_scope = ['info', 'address', 'bank_account', ]
 
     def get(self, request, scope):
         profile_form = ProfileFormManager(request, request.user)
@@ -199,31 +243,6 @@ class AccountProfile(View):
             return redirect(reverse(self.redirect_url, kwargs={'scope': scope}))
         else:
             return render(request, self.template_name, profile_form.get_forms(scope))
-
-
-@method_decorator(login_required, name='dispatch')
-class AccountSettings(View):
-    template_name = 'core/admin/account_settings.html'
-
-    def get(self, request, scope):
-        account_form = UserAccountFormManager(request)
-        return render(request, self.template_name, account_form.get_forms(scope))
-
-    def post(self, request, scope):
-        account_form = UserAccountFormManager(request)
-
-        if scope == 'email':
-            account_form.change_email()
-            message = _('Your email has been updated successfully.')
-        elif scope == 'password':
-            account_form.change_password()
-            message = _('Your password has been updated successfully.')
-
-        if account_form.is_valid:
-            messages.add_message(request, messages.SUCCESS, message)
-            return redirect(reverse('core:account_settings', kwargs={'scope': scope}))
-        else:
-            return render(request, self.template_name, account_form.get_forms(scope))
 
 
 @method_decorator(login_required, name='dispatch')
@@ -263,7 +282,8 @@ class OrganizationCreate(View):
         organization_form = OrganizationFormManager(request)
 
         if organization_form.is_valid():
-            organization_form.save()
+            with transaction.atomic():
+                organization_form.save()
             message = _('The organization has been registered')
             messages.add_message(request, messages.SUCCESS, message)
             return redirect(reverse('core:organizations_manage'))
@@ -291,6 +311,7 @@ class OrganizationsProfile(View):
 class OrganizationProfileEdit(View):
     template_name = 'core/admin/organizations_profile_edit.html'
     redirect_url = 'core:organizations_profile_edit'
+    legal_scope = ['info', 'address', 'bank_account']
 
     def get(self, request, organization_id, scope):
         organization = get_object_or_404(Organization, pk=organization_id)
