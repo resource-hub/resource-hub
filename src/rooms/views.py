@@ -53,9 +53,9 @@ class Create(View):
             new_room.owner = request.actor
             new_room.save()
 
-            message = _('The room has been created')
+            message = ('The room has been created')
             messages.add_message(request, messages.SUCCESS, message)
-            return redirect(reverse('room:manage'))
+            return redirect(reverse('rooms:manage'))
 
         context = {
             'room_form': room_form,

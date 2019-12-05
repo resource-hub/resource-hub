@@ -22,7 +22,7 @@ from django.views import View
 from core.decorators import organization_admin_required
 from core.forms import *
 from core.models import *
-from core.tables import OrganizationsTable, MembersTable
+from core.tables import OrganizationsTable, MembersTable, LocationsTable
 from core.tokens import TokenGenerator
 
 
@@ -398,3 +398,58 @@ class OrganizationMembersAdd(View):
                 'organization': organization,
             }
             return render(request, self.template_name, context)
+
+
+@method_decorator(login_required, name='dispatch')
+class LocationCreate(View):
+    def get(self, request):
+        location_form = LocationForm()
+        address_form = AddressForm()
+        context = {
+            'location_form': location_form,
+            'address_form': address_form,
+        }
+        return render(request, 'core/admin/locations_create.html', context)
+
+    def post(self, request):
+        location_form = LocationForm(request.POST)
+        address_form = AddressForm(request.POST)
+
+        if address_form.is_valid():
+            new_address = address_form.save()
+            if location_form.is_valid():
+                new_location = location_form.save(commit=False)
+                new_location.address = new_address
+                new_location.save()
+
+                message = _('The location has been created')
+                messages.add_message(request, messages.SUCCESS, message)
+                return redirect(reverse('core:locations_manage'))
+
+        context = {
+            'location_form': location_form,
+            'address_form': address_form,
+        }
+        return render(request, 'core/admin/locations_create.html', context)
+
+
+@method_decorator(login_required, name='dispatch')
+class LocationManage(View):
+    def get(self, request):
+        locations = Location.objects.all()
+
+        if locations:
+            data = []
+            for l in locations:
+                data.append({
+                    'name': l.name,
+                    'id': l.id,
+                })
+            locations_table = LocationsTable(data)
+        else:
+            locations_table = None
+
+        context = {
+            'locations_table': locations_table,
+        }
+        return render(request, 'core/admin/locations_manage.html', context)

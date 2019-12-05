@@ -1,9 +1,7 @@
-from django.urls import include, reverse
+from django.urls import include
 from django.conf.urls import url
 import django.contrib.auth.views as auth
 from . import views, api_ajax
-
-from django.contrib.auth.views import LoginView
 
 app_name = 'core'
 urlpatterns = [
@@ -58,6 +56,12 @@ urlpatterns = [
     url(r'^admin/organizations/manage/members/add/(?P<organization_id>\w{0,50})/$',
         views.OrganizationMembersAdd.as_view(),
         name='organizations_members_add'),
+
+    url(r'^admin/locations/create/$', views.LocationCreate.as_view(),
+        name='locations_create'),
+    url(r'^admin/locations/manage/$', views.LocationManage.as_view(),
+        name='locations_manage'),
+
 
     url(r'^api/user/search/$', api_ajax.UserSearch.as_view()),
     url(r'^api/user/roles/$', api_ajax.UserRoles.as_view()),

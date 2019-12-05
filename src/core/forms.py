@@ -409,6 +409,13 @@ class RoleChangeForm(forms.Form):
         return request
 
 
+class LocationForm(forms.ModelForm):
+    class Meta:
+        model = Location
+        exclude = ['address','updated_at', 'updated_by']
+
+
+
 class ReportIssueForm(forms.Form):
     title = forms.CharField(
         max_length=128,
