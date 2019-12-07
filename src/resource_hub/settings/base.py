@@ -170,5 +170,26 @@ REST_FRAMEWORK = {
     )
 }
 
+
+# caching
+CACHES = {
+    "default": {
+        "BACKEND": 'redis_cache.RedisCache',
+        "LOCATION": get_env_var('REDIS_LOCATION'),
+        "KEY_PREFIX": get_env_var("REDIS_KEY_PREFIX")
+    }
+}
+CACHE_TTL = 60 * 15
+
+# redis queue
+RQ_QUEUES = {
+    'high': {
+        'USE_REDIS_CACHE': 'default',
+    },
+    'low': {
+        'USE_REDIS_CACHE': 'default',
+    },
+}
+
 # general purpose constants
-API_TOKEN = get_env_var('API_TOKEN')
+MAP_API_TOKEN = get_env_var('MAP_API_TOKEN')

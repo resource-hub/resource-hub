@@ -24,12 +24,20 @@ from core.forms import *
 from core.models import *
 from core.tables import OrganizationsTable, MembersTable, LocationsTable
 from core.tokens import TokenGenerator
+from core.tasks import Tasks
+
+
+from django.conf import settings
+from django.core.cache.backends.base import DEFAULT_TIMEOUT
+from django.views.decorators.cache import cache_page
+CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
 
 
 def index(request):
     return redirect(reverse('core:home'))
 
 
+@method_decorator(cache_page(CACHE_TTL), name='dispatch')
 class Home(View):
     def get(self, request):
         return render(request, 'core/home.html')
@@ -103,20 +111,21 @@ class Register(View):
 
             ### job queue ? ###
             recipient = new_user.email
-            email = EmailMultiAlternatives(
-                subject,
-                message,
-                to=[recipient],
-            )
-            email.attach_alternative(message, 'text/html')
+            # email = EmailMultiAlternatives(
+            #     subject,
+            #     message,
+            #     to=[recipient],
+            # )
+            # email.attach_alternative(message, 'text/html')
 
-            try:
-                email.send(fail_silently=False)
-            except SMTPException as e:
-                message = _('The activation-email could not be sent')
-                messages.add_message(request, messages.ERROR, message)
-                return redirect(reverse('core:login'))
+            # try:
+            #     email.send(fail_silently=False)
+            # except SMTPException as e:
+            #     message = _('The activation-email could not be sent')
+            #     messages.add_message(request, messages.ERROR, message)
+            #     return redirect(reverse('core:login'))
             ### end ###
+            Tasks.send_mail(subject, message, recipient)
 
             message = _(
                 'Please confirm your email address to complete the registration')

@@ -412,8 +412,7 @@ class RoleChangeForm(forms.Form):
 class LocationForm(forms.ModelForm):
     class Meta:
         model = Location
-        exclude = ['address','updated_at', 'updated_by']
-
+        exclude = ['address', 'updated_at', 'updated_by']
 
 
 class ReportIssueForm(forms.Form):
@@ -433,9 +432,9 @@ class ReportIssueForm(forms.Form):
         description = self.cleaned_data['description']
 
         URL = "https://gitlab.com/api/v4/projects/13767519/issues"
-        API_TOKEN = settings.API_TOKEN
+        MAP_API_TOKEN = settings.MAP_API_TOKEN
         payload = {"title": title, "description": description}
-        headers = {"PRIVATE-TOKEN": API_TOKEN, "Accept-Charset": "UTF-8"}
+        headers = {"PRIVATE-TOKEN": MAP_API_TOKEN, "Accept-Charset": "UTF-8"}
         r = requests.post(URL, data=payload, headers=headers)
 
         if r.status_code != 201:
