@@ -30,7 +30,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(
     os.path.dirname(os.path.abspath(__file__))))
 PROJECT_DIR = os.path.join(BASE_DIR, 'resource_hub')
 
-ALLOWED_HOSTS = get_env_var('ALLOWED_HOSTS')
+ALLOWED_HOSTS = []
+ALLOWED_HOSTS.append(get_env_var('ALLOWED_HOSTS'))
 ROOT_URLCONF = 'resource_hub.urls'
 WSGI_APPLICATION = 'resource_hub.wsgi.application'
 ASGI_APPLICATION = 'resource_hub.asgi.application'
