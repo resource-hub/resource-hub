@@ -1,6 +1,11 @@
 version: '3'
 
 services:
+  redis:
+    image: redis:alpine
+    container_name: redis
+    command: redis-server
+  
   app:
     image: registry.gitlab.com/resource-hub/resource-hub:master
     environment:
@@ -10,6 +15,10 @@ services:
     volumes:
       - /var/www/resource-hub-demo/static:/static
       - /var/www/resource-hub-demo/media:/media
+    depends_on:
+      - redis
+    links:
+      - redis
     command: bash -c "cd src; python3 manage.py collectstatic --noinput && python3 manage.py migrate && daphne -b 0.0.0.0 -p ${DJANGO_PORT} resource_hub.asgi:application"
     ports:
       - "${DJANGO_PORT}:${DJANGO_PORT}"

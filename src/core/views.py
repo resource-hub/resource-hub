@@ -24,7 +24,7 @@ from core.forms import *
 from core.models import *
 from core.tables import OrganizationsTable, MembersTable, LocationsTable
 from core.tokens import TokenGenerator
-from core.tasks import Tasks
+from core.jobs import send_mail
 
 
 from django.conf import settings
@@ -109,23 +109,8 @@ class Register(View):
                 'token': token_generator.make_token(new_user),
             })
 
-            ### job queue ? ###
             recipient = new_user.email
-            # email = EmailMultiAlternatives(
-            #     subject,
-            #     message,
-            #     to=[recipient],
-            # )
-            # email.attach_alternative(message, 'text/html')
-
-            # try:
-            #     email.send(fail_silently=False)
-            # except SMTPException as e:
-            #     message = _('The activation-email could not be sent')
-            #     messages.add_message(request, messages.ERROR, message)
-            #     return redirect(reverse('core:login'))
-            ### end ###
-            Tasks.send_mail(subject, message, recipient)
+            send_mail(subject, message, [recipient])
 
             message = _(
                 'Please confirm your email address to complete the registration')

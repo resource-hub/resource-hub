@@ -22,31 +22,33 @@ def get_env_var(setting):
         raise ImproperlyConfigured(error_msg)
 
 
-# SECURITY WARNING: keep the secret key used in production secret!
+# General settings
+
 SECRET_KEY = get_env_var('SECRET_KEY')
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(
     os.path.dirname(os.path.abspath(__file__))))
 PROJECT_DIR = os.path.join(BASE_DIR, 'resource_hub')
 
+ALLOWED_HOSTS = get_env_var('ALLOWED_HOSTS')
+ROOT_URLCONF = 'resource_hub.urls'
+WSGI_APPLICATION = 'resource_hub.wsgi.application'
+ASGI_APPLICATION = 'resource_hub.asgi.application'
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
-
-
-ALLOWED_HOSTS = []
-
+MAP_API_TOKEN = get_env_var('MAP_API_TOKEN')
 
 # Application definition
 
 INSTALLED_APPS = [
+    # project apps
     'core.apps.CoreConfig',
     'rooms.apps.RoomsConfig',
+    # third party
     'imagekit',
     'rest_framework',
     'django_extensions',
     'django_tables2',
+    # native apps
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -56,6 +58,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    # native middleware
     'django.middleware.security.SecurityMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -64,10 +67,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # custom middleware
     'core.middleware.ActorMiddleware',
 ]
 
-ROOT_URLCONF = 'resource_hub.urls'
 
 TEMPLATES = [
     {
@@ -86,10 +89,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'resource_hub.wsgi.application'
 
 # Password validation
-# https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -107,7 +108,6 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # Database
-# https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
 DATABASES = {
     'default': {
@@ -122,7 +122,6 @@ DATABASES = {
 
 
 # Internationalization
-# https://docs.djangoproject.com/en/2.2/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
@@ -145,7 +144,6 @@ LOCALE_PATHS = (
 
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
@@ -154,6 +152,7 @@ STATICFILES_DIRS = [
 MEDIA_URL = '/media/'
 
 # Custom settings
+
 LOGIN_REDIRECT_URL = 'core:admin'
 LOGIN_URL = 'core:login'
 
@@ -171,7 +170,8 @@ REST_FRAMEWORK = {
 }
 
 
-# caching
+# caching settings
+
 CACHES = {
     "default": {
         "BACKEND": 'redis_cache.RedisCache',
@@ -181,15 +181,13 @@ CACHES = {
 }
 CACHE_TTL = 60 * 15
 
-# redis queue
-RQ_QUEUES = {
-    'high': {
-        'USE_REDIS_CACHE': 'default',
-    },
-    'low': {
-        'USE_REDIS_CACHE': 'default',
-    },
-}
+# redis queue WAIT FOR DJANGO 3.0 SUPPORT
 
-# general purpose constants
-MAP_API_TOKEN = get_env_var('MAP_API_TOKEN')
+# RQ_QUEUES = {
+#     'high': {
+#         'USE_REDIS_CACHE': 'default',
+#     },
+#     'low': {
+#         'USE_REDIS_CACHE': 'default',
+#     },
+# }

@@ -12,7 +12,7 @@ services:
       POSTGRES_DB: ${DB_NAME}
 
   redis:
-    image: redis:latest
+    image: redis:alpine
     container_name: redis
     command: redis-server
 
@@ -22,7 +22,7 @@ services:
     env_file:
       - .env
     build: ./
-    command: bash -c 'cd src; python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver --settings=resource_hub.settings.dev 0.0.0.0:8000'
+    command: bash -c 'cd src; python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver --settings=resource_hub.settings.dev 0.0.0.0:${DJANGO_PORT}'
     volumes:
       - ./:/site:rw
     depends_on:
@@ -31,5 +31,5 @@ services:
     links:
       - redis
     ports:
-      - "8000:8000"
+      - "${DJANGO_PORT}:${DJANGO_PORT}"
   
