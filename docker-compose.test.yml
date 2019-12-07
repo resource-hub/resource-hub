@@ -3,11 +3,18 @@ version: '3'
 services:
   postgres:
     restart: always
-    image: postgres:11-alpine
+    image: postgres:alpine
+    volumes:
+      - ./.dbdata:/var/lib/postgresql:rw
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PW}
       POSTGRES_DB: ${DB_NAME}
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    command: redis-server
 
   app:
     environment:
