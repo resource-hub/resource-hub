@@ -1,7 +1,12 @@
 from django.urls import include
 from django.conf.urls import url
 import django.contrib.auth.views as auth
+from django.views.i18n import JavaScriptCatalog
 from . import views, api_ajax
+
+js_info_dict = {
+    'packages': ('recurrence', ),
+}
 
 app_name = 'core'
 urlpatterns = [
@@ -28,6 +33,9 @@ urlpatterns = [
     url(r'^support/$', views.Support.as_view(), name='support'),
     url(r'^language/$', views.Language.as_view(), name='language'),
     url(r'^i18n/', include('django.conf.urls.i18n')),
+    url(r'^jsi18n/$', JavaScriptCatalog.as_view(), js_info_dict),
+    url(r'^jsi18n.js$', JavaScriptCatalog.as_view(
+        packages=['recurrence']), name='jsi18n'),
     url(r'^set_role/$', views.SetRole.as_view(), name='set_role'),
 
     url(r'^admin/$', views.Admin.as_view(), name='admin'),

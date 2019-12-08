@@ -1,5 +1,7 @@
-from django.contrib.postgres.fields import ArrayField
+import uuid
+
 from django.db import models
+from recurrence.fields import RecurrenceField
 
 from core.models import Location, Actor, User
 
@@ -69,6 +71,7 @@ class Event(models.Model):
     end_date = models.DateTimeField()
     start_time = models.TimeField()
     end_time = models.TimeField()
+    recurrences = RecurrenceField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(
         Actor,
@@ -112,58 +115,58 @@ class EventException(models.Model):
 
     # Metadata
     class Meta:
-        ordering = ['start']
+        ordering = ['start_date']
 
     # Methods
     def __str__(self):
         return self.name
 
 
-class RecurrenceRule(models.Model):
-    # constants
-    SUNDAY = 'SU'
-    MONDAY = 'MO'
-    TUESDAY = 'TU'
-    WEDNESDAY = 'WE'
-    THURSDAY = 'TH'
-    FRIDAY = 'FR'
-    SATURDAY = 'SA'
+# class RecurrenceRule(models.Model):
+#     # constants
+#     SUNDAY = 'SU'
+#     MONDAY = 'MO'
+#     TUESDAY = 'TU'
+#     WEDNESDAY = 'WE'
+#     THURSDAY = 'TH'
+#     FRIDAY = 'FR'
+#     SATURDAY = 'SA'
 
-    WEEKDAYS = [
-        (SUNDAY, _('Sunday')),
-        (MONDAY, _('Monday')),
-        (TUESDAY, _('Tuesday')),
-        (WEDNESDAY, _('Wednesdy')),
-        (THURSDAY, _('Thursday')),
-        (FRIDAY, _('Friday')),
-        (SATURDAY, _('Saturday')),
-    ]
+#     WEEKDAYS = [
+#         (SUNDAY, _('Sunday')),
+#         (MONDAY, _('Monday')),
+#         (TUESDAY, _('Tuesday')),
+#         (WEDNESDAY, _('Wednesdy')),
+#         (THURSDAY, _('Thursday')),
+#         (FRIDAY, _('Friday')),
+#         (SATURDAY, _('Saturday')),
+#     ]
 
-    FREQUENCY_TYPES = [
-        ('YEARLY', _('yearly')),
-        ('MONTHLY', _('monthly')),
-        ('WEEKLY', _('weekly')),
-        ('DAILY', _('daily')),
-        ('HOURLY', _('hourly')),
-    ]
+#     FREQUENCY_TYPES = [
+#         ('YEARLY', _('yearly')),
+#         ('MONTHLY', _('monthly')),
+#         ('WEEKLY', _('weekly')),
+#         ('DAILY', _('daily')),
+#         ('HOURLY', _('hourly')),
+#     ]
 
-    # fields
-    event = models.OneToOneField(Event, on_delete=models.CASCADE)
-    frequency = models.CharField(choices=FREQUENCY_TYPES)
-    interval = models.IntegerField(null=True)
+#     # fields
+#     event = models.OneToOneField(Event, on_delete=models.CASCADE)
+#     frequency = models.CharField(choices=FREQUENCY_TYPES)
+#     interval = models.IntegerField(null=True)
 
-    by_month = models.IntegerField(null=True)
-    by_month_day = models.IntegerField(null=True)
-    by_day = models.CharField(choices=WEEKDAYS)
-    by_set_pos = models.IntegerField(null=True)
+#     by_month = models.IntegerField(null=True)
+#     by_month_day = models.IntegerField(null=True)
+#     by_day = models.CharField(choices=WEEKDAYS)
+#     by_set_pos = models.IntegerField(null=True)
 
-    count = models.IntegerField(null=True)
-    until = models.DateField(null=True)
+#     count = models.IntegerField(null=True)
+#     until = models.DateField(null=True)
 
-    # Metadata
-    class Meta:
-        ordering = ['event']
+#     # Metadata
+#     class Meta:
+#         ordering = ['event']
 
-    # Methods
-    def __str__(self):
-        return self.name
+#     # Methods
+#     def __str__(self):
+#         return self.name

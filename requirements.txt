@@ -14,6 +14,7 @@ Django==3.0
 django-appconf==1.0.3
 django-extensions==2.2.5
 django-imagekit==4.0.2
+django-recurrence==1.10.1
 django-redis-cache==2.1.0
 django-rq==2.2.0
 django-tables2==2.2.1
@@ -33,6 +34,7 @@ pydot==1.4.1
 PyHamcrest==1.9.0
 pyOpenSSL==19.1.0
 pyparsing==2.4.5
+python-dateutil==2.8.1
 pytz==2019.3
 redis==3.3.11
 requests==2.22.0

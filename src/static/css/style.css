@@ -16,6 +16,10 @@
     border-color: #767676 transparent transparent !important;
 }
 
+.recurrence-widget {
+    float: none !important;
+}
+
 /**
   *
   * Tag specific   

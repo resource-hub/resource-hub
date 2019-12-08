@@ -5,7 +5,7 @@ from django.utils.decorators import method_decorator
 from django.contrib import messages
 from django.urls import reverse
 
-from rooms.forms import RoomForm
+from rooms.forms import RoomForm, EventForm
 from rooms.models import Room
 from rooms.tables import RoomsTable
 
@@ -14,8 +14,18 @@ def index(request):
     return render(request, 'rooms/index.html')
 
 
+class EventsCreate(View):
+    def get(self, request):
+        event_form = EventForm()
+        context = {
+            'event_form': event_form
+        }
+        return render(request, 'rooms/events_create.html', context)
+
+
+# Admin section
 @method_decorator(login_required, name='dispatch')
-class Manage(View):
+class RoomsManage(View):
     def get(self, request):
         rooms = Room.objects.all().filter(owner__pk=request.actor.id)
 
@@ -37,7 +47,7 @@ class Manage(View):
 
 
 @method_decorator(login_required, name='dispatch')
-class Create(View):
+class RoomsCreate(View):
     def get(self, request):
         room_form = RoomForm()
         context = {

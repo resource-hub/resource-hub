@@ -11,3 +11,4 @@ a.out
 cov
 .coverage
 *.save
+.idea

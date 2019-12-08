@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'django_tables2',
     'django_rq',
+    'recurrence',
     # native apps
     'django.contrib.admin',
     'django.contrib.auth',
