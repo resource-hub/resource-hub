@@ -10,7 +10,7 @@ from imagekit.processors import ResizeToFill
 class User(AbstractUser):
     """ natural person """
     email = models.EmailField(unique=True)
-    birth_date = models.DateField()
+    birth_date = models.DateField(null=True)
     info = models.OneToOneField(
         'Info',
         null=True,

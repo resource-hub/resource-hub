@@ -15,20 +15,31 @@ services:
     image: redis:alpine
     command: redis-server
 
+  worker:
+    environment:
+      DJANGO_SETTINGS_MODULE: resource_hub.settings.dev
+    env_file:
+      - .env
+    build: ./
+    command: bash -c 'cd src && python3 manage.py rqworker high low'
+
   app:
     environment:
       DJANGO_SETTINGS_MODULE: resource_hub.settings.dev
     env_file:
       - .env
     build: ./
-    command: bash -c 'cd src; python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver --settings=resource_hub.settings.dev 0.0.0.0:${DJANGO_PORT}'
+    command: bash -c 'cd src && python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver --settings=resource_hub.settings.dev 0.0.0.0:${DJANGO_PORT}'
     volumes:
       - ./:/site:rw
     depends_on:
       - postgres
       - redis
+      - worker
     links:
       - redis
     ports:
       - "${DJANGO_PORT}:${DJANGO_PORT}"
+
+  
   

@@ -37,9 +37,9 @@ def index(request):
     return redirect(reverse('core:home'))
 
 
-@method_decorator(cache_page(CACHE_TTL), name='dispatch')
 class Home(View):
     def get(self, request):
+        send_mail.delay("testit", "helloo", ["test@ture.dev"])
         return render(request, 'core/home.html')
 
 
@@ -110,7 +110,7 @@ class Register(View):
             })
 
             recipient = new_user.email
-            send_mail(subject, message, [recipient])
+            send_mail.delay(subject, message, [recipient])
 
             message = _(
                 'Please confirm your email address to complete the registration')

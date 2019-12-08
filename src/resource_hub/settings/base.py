@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_extensions',
     'django_tables2',
+    'django_rq',
     # native apps
     'django.contrib.admin',
     'django.contrib.auth',
@@ -177,18 +178,21 @@ CACHES = {
     "default": {
         "BACKEND": 'redis_cache.RedisCache',
         "LOCATION": get_env_var('REDIS_LOCATION'),
-        "KEY_PREFIX": get_env_var("REDIS_KEY_PREFIX")
+        "KEY_PREFIX": get_env_var("REDIS_KEY_PREFIX"),
     }
 }
 CACHE_TTL = 60 * 15
 
-# redis queue WAIT FOR DJANGO 3.0 SUPPORT
+# redis queue
 
-# RQ_QUEUES = {
-#     'high': {
-#         'USE_REDIS_CACHE': 'default',
-#     },
-#     'low': {
-#         'USE_REDIS_CACHE': 'default',
-#     },
-# }
+RQ_QUEUES = {
+    'high': {
+        'USE_REDIS_CACHE': 'default',
+    },
+    'low': {
+        'USE_REDIS_CACHE': 'default',
+    },
+    'default': {
+        'USE_REDIS_CACHE': 'default',
+    },
+}

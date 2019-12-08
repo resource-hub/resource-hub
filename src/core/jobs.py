@@ -1,6 +1,8 @@
 from django.core.mail import EmailMultiAlternatives
+from django_rq import job
 
 
+@job('high')
 def send_mail(subject, message, recipient):
     email = EmailMultiAlternatives(
         subject,
