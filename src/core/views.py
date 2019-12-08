@@ -27,19 +27,12 @@ from core.tokens import TokenGenerator
 from core.jobs import send_mail
 
 
-from django.conf import settings
-from django.core.cache.backends.base import DEFAULT_TIMEOUT
-from django.views.decorators.cache import cache_page
-CACHE_TTL = getattr(settings, 'CACHE_TTL', DEFAULT_TIMEOUT)
-
-
 def index(request):
     return redirect(reverse('core:home'))
 
 
 class Home(View):
     def get(self, request):
-        send_mail.delay("testit", "helloo", ["test@ture.dev"])
         return render(request, 'core/home.html')
 
 
