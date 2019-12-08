@@ -7,11 +7,11 @@ services:
     network_mode: host
 
   worker:
+    image: registry.gitlab.com/resource-hub/resource-hub:master
     environment:
       DJANGO_SETTINGS_MODULE: resource_hub.settings.demo
     env_file:
       - .env
-    build: ./
     command: bash -c 'cd src && python3 manage.py rqworker high low'
     network_mode: host
   
