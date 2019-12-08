@@ -4,8 +4,6 @@ services:
   postgres:
     restart: always
     image: postgres:alpine
-    volumes:
-      - ./.dbdata:/var/lib/postgresql:rw
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PW}
