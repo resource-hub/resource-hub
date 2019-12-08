@@ -33,7 +33,7 @@ class Manage(View):
         context = {
             'rooms_table': rooms_table,
         }
-        return render(request, 'admin/rooms_manage.html', context)
+        return render(request, 'rooms/admin/rooms_manage.html', context)
 
 
 @method_decorator(login_required, name='dispatch')
@@ -43,7 +43,7 @@ class Create(View):
         context = {
             'room_form': room_form,
         }
-        return render(request, 'admin/rooms_create.html', context)
+        return render(request, 'rooms/admin/rooms_create.html', context)
 
     def post(self, request):
         room_form = RoomForm(request.POST)
@@ -60,4 +60,4 @@ class Create(View):
         context = {
             'room_form': room_form,
         }
-        return render(request, 'admin/room_create.html', context)
+        return render(request, 'rooms/admin/room_create.html', context)

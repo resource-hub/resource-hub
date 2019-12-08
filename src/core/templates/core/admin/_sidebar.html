@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load hook_tags %}
 <aside>
     <div class="ui vertical menu">
         <div class="item">
@@ -55,18 +56,6 @@
                 </a>
             </div>
         </div>
-        <div class="item">
-            <div class="header">
-                {% trans 'Rooms' %}
-            </div>
-            <div class="menu">
-                <a class="item" href="{% url 'rooms:manage' %}">
-                    {% trans 'Overview' %}
-                </a>
-                <a class="item" href="{% url 'rooms:create' %}">
-                    {% trans 'Create' %}
-                </a>
-            </div>
-        </div>
+        {% hook 'admin_sidebar' %}
     </div>
 </aside>
