@@ -5,6 +5,15 @@ services:
     image: redis:alpine
     command: redis-server
     network_mode: host
+
+  worker:
+    environment:
+      DJANGO_SETTINGS_MODULE: resource_hub.settings.dev
+    env_file:
+      - .env
+    build: ./
+    command: bash -c 'cd src && python3 manage.py rqworker high low'
+    network_mode: host
   
   app:
     image: registry.gitlab.com/resource-hub/resource-hub:master
@@ -13,11 +22,11 @@ services:
     env_file:
       .env
     volumes:
-      - /var/www/resource-hub-demo/static:/static
-      - /var/www/resource-hub-demo/media:/media
+      - ${DEMO_PATH}/static:/static
+      - ${DEMO_PATH}/media:/media
     depends_on:
       - redis
-    command: bash -c "cd src; python3 manage.py collectstatic --noinput && python3 manage.py migrate && daphne -b 0.0.0.0 -p ${DJANGO_PORT} resource_hub.asgi:application"
+    command: bash -c "cd src && python3 manage.py collectstatic --noinput && python3 manage.py migrate && daphne -b 0.0.0.0 -p ${DJANGO_PORT} resource_hub.asgi:application"
     ports:
       - "${DJANGO_PORT}:${DJANGO_PORT}"
     network_mode: host
