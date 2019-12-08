@@ -5,7 +5,8 @@ DEBUG = False
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 
-ALLOWED_HOSTS = get_env_var('ALLOWED_HOSTS')
+ALLOWED_HOSTS = [get_env_var('ALLOWED_HOSTS')]
+ADMINS = [('Admin', get_env_var('ADMIN_EMAIL'))]
 
 STATIC_ROOT = get_env_var('STATIC_ROOT')
 MEDIA_ROOT = get_env_var('MEDIA_ROOT')
