@@ -1,5 +1,6 @@
 {% load i18n %}
 {% load static %}
+{% load hook_tags %}
 
 <nav class="navigation-bar">
     <div class="left">
@@ -9,9 +10,7 @@
         <a class="item" href="{% url 'core:home' %}">
             {% trans 'Home' %}
         </a>
-        <a class="item" href="{% url 'rooms:index' %}">
-            {% trans 'Rooms' %}
-        </a>
+        {% hook 'navigation_bar' %}
         <div class="ui pointing dropdown item">
             {% get_current_language as LANGUAGE_CODE %}
             {% get_language_info for LANGUAGE_CODE as CURRENT_LANG %}

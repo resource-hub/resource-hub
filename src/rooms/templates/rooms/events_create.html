@@ -6,7 +6,6 @@
     <form class="ui form" method="POST" action="{% url 'rooms:events_create' %}">
         {% csrf_token %}
         {% include '_form.html' with form=event_form %}
-        <br>
         <div class="field">
             <button class="ui positive right labeled icon button" type="submit">
                 {% trans 'Create Event' %}
