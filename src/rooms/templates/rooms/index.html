@@ -1,4 +1,75 @@
 {% extends 'core/__base.html' %}
-
+{% load i18n %}
 {% block content %}
+<div class="ui segment">
+    <h5>Filters <i class="filter icon"></i></h5>
+    <div class="ui icon input">
+        <input id="search-room" type="text" placeholder="{% trans 'Search...' %}">
+        <i class="search icon"></i>
+    </div>
+</div>
+<div id="room-feed" class="ui link cards">
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script id="room-item-template" type="text/template">
+    <div class="link card">
+        <div class="content">
+          <img class="ui avatar image" src="%actor_tumbnail%"> %actor_name%
+        </div>
+        <div class="image">
+          <img class="thumbnail" src="%room_thumbnail%">
+        </div>
+        <div class="ui placeholder">
+            <div class="square image"></div>
+         </div>
+        <div class="content">
+            <div class="header">%name%</div>
+            <p>%description%</p>
+        </div>
+        <div class="extra content">
+          <a class="ui positive button">Book Now</a>
+        </div>
+      </div>
+</script>
+
+<script>
+    $(document).ready(() => {
+        function create_feed(data) {
+            var template = document.getElementById("room-item-template");
+            var templateHtml = template.innerHTML;
+            $.ajax({
+                'url': "{% url 'rooms:api_room_feed' %}",
+                'type': 'GET',
+                'dataType': 'JSON'
+            }).done((data) => {
+                var feed = "";
+
+                for (i in data) {
+                    feed += templateHtml.replace(/%room_thumbnail%/g, data[i]['thumbnail'])
+                        .replace(/%name%/g, data[i]['name'])
+                        .replace(/%description%/g, data[i]['description']);
+                }
+                $('#room-feed').html(feed);
+                $('.thumbnail').on('load', () => {
+                    $('.placeholder').hide();
+                });
+            });
+
+        }
+
+        create_feed();
+
+        $('#search-room').on('input', () => {
+            var val = $(this).val().trim();
+            val = val.replace(/\s+/g, '');
+
+            if (val.length % 3 == 0) { //for checking 3 characters
+                console.log('yes');
+            }
+        })
+    })
+</script>
 {% endblock %}

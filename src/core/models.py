@@ -101,7 +101,7 @@ class Info(models.Model):
         on_delete=models.SET_NULL
     )
     image = models.ImageField(null=True, blank=True,
-                              upload_to='images/')
+                              upload_to='images/', default='/static/default.png')
     thumbnail = ImageSpecField(
         source='image',
         processors=[ResizeToFill(100, 100)],
@@ -154,6 +154,14 @@ class Location(models.Model):
     description = models.TextField(null=True, blank=True)
     latitude = models.DecimalField(max_digits=9, decimal_places=6, default=0)
     longitude = models.DecimalField(max_digits=9, decimal_places=6, default=0)
+    image = models.ImageField(null=True, blank=True,
+                              upload_to='images/')
+    thumbnail = ImageSpecField(
+        source='image',
+        processors=[ResizeToFill(400, 300)],
+        format='PNG',
+        options={'quality': 60}
+    )
     updated_at = models.DateTimeField(auto_now=True)
     updated_by = models.ForeignKey(
         User,
@@ -265,3 +273,19 @@ class Actor(models.Model):
         self.is_user = False
         self.name = self.organization.name
         self.info = self.organization.info
+
+
+class Gallery(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(Actor, on_delete=models.CASCADE)
+
+
+class GalleryImage(models.Model):
+    image = models.ImageField(null=False, blank=True,
+                              upload_to='images/')
+    thumbnail = ImageSpecField(
+        source='image',
+        processors=[ResizeToFill(300, 300)],
+        format='JPEG',
+        options={'quality': 70}
+    )

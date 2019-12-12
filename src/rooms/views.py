@@ -1,15 +1,19 @@
-from django.shortcuts import render, redirect
-from django.views import View
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from django.contrib import messages
+from django.shortcuts import render, redirect
 from django.urls import reverse
+from django.views import View
+from django.views.decorators.cache import cache_page
 
 from rooms.forms import RoomForm, EventForm
 from rooms.models import Room
 from rooms.tables import RoomsTable
 
+TTL = 60 * 5
 
+
+# @cache_page(TTL)
 def index(request):
     return render(request, 'rooms/index.html')
 
@@ -56,7 +60,7 @@ class RoomsCreate(View):
         return render(request, 'rooms/admin/rooms_create.html', context)
 
     def post(self, request):
-        room_form = RoomForm(request.POST)
+        room_form = RoomForm(request.POST, request.FILES)
 
         if room_form.is_valid():
             new_room = room_form.save(commit=False)
@@ -70,4 +74,4 @@ class RoomsCreate(View):
         context = {
             'room_form': room_form,
         }
-        return render(request, 'rooms/admin/room_create.html', context)
+        return render(request, 'rooms/admin/rooms_create.html', context)
