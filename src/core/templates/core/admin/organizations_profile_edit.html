@@ -2,12 +2,12 @@
 {% load i18n %}
 
 {% block content %}
-{% url 'core:organization_profile' as url %}
-<a class="ui labeled icon button back-button">
+<a class="ui labeled icon button back-button"
+    href="{% url 'core:organizations_profile' organization_id=organization.id%}">
     <i class="left arrow icon"></i>
     {% trans 'Back' %}
 </a>
-<h2>{{ organization_name }}</h2>
+<h2>{{ organization.name }}</h2>
 <div id="secondary-menu" class="ui secondary pointing menu">
     <a class="{{ info }} item" tab-id="info">
         {% trans 'Profile' %}
@@ -25,7 +25,7 @@
         <h3>
             {% trans 'Edit profile' %}
         </h3>
-        <form class="ui form" method="POST" action="{{ url }}" enctype="multipart/form-data">
+        <form class="ui form" method="POST" enctype="multipart/form-data">
             {% include '_form.html' with form=actor_form %}
             <button class="ui positive right labeled icon button" type="submit">
                 {% trans 'Save' %}
@@ -37,7 +37,7 @@
         <h3>
             {% trans 'Edit Address' %}
         </h3>
-        <form class="ui form" method="POST" action="{{ url }}">
+        <form class="ui form" method="POST">
             {% include '_form.html' with form=address_form %}
             <button class="ui positive right labeled icon button" type="submit">
                 {% trans 'Save' %}
@@ -49,7 +49,7 @@
         <h3>
             {% trans 'Edit bank information' %}
         </h3>
-        <form class="ui form" method="POST" action="{{ url }}">
+        <form class="ui form" method="POST">
             {% include '_form.html' with form=bank_account_form %}
             <button class="ui positive right labeled icon button" type="submit">
                 {% trans 'Save' %}

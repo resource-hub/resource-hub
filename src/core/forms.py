@@ -12,6 +12,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.dateparse import parse_date
 
 from core.models import *
+from core.widgets import UISearchField
 
 
 class ActorForm(forms.ModelForm):
@@ -362,9 +363,7 @@ class OrganizationMemberAddForm(forms.Form):
     username = forms.CharField(
         max_length=128,
         required=True,
-
-        widget=forms.TextInput(
-            attrs={'class': 'prompt', 'id': 'search', 'autofocus': 'autofocus'}),
+        widget=UISearchField,
     )
     role = forms.ChoiceField(choices=OrganizationMember.ORGANIZATION_ROLES)
 

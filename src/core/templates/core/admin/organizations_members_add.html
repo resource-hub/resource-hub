@@ -3,7 +3,8 @@
 {% load django_tables2 %}
 
 {% block content %}
-<a class="ui labeled icon button back-button">
+<a class="ui labeled icon button back-button"
+    href="{% url 'core:organizations_members' organization_id=organization.id %}">
     <i class="left arrow icon"></i>
     {% trans 'Back' %}
 </a>
@@ -12,14 +13,11 @@
     {{ organization.name }}
 </h2>
 
-<div class="ui segment tab-content">
+<div class=" ui segment tab-content">
 
 
     <form class="ui form" method="POST" action="">
-        <div class="ui search">
-            {% include "_form.html" with form=member_add_form %}
-            <div class="results"></div>
-        </div>
+        {% include "_form.html" with form=member_add_form %}
         <p>
             <button class="ui positive right labeled icon button" type="submit">
                 {% trans 'Add user' %}

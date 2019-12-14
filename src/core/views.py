@@ -304,7 +304,9 @@ class OrganizationProfileEdit(View):
     def get(self, request, organization_id, scope):
         organization = get_object_or_404(Organization, pk=organization_id)
         profile_form = ProfileFormManager(request, organization)
-        return render(request, self.template_name, profile_form.get_forms(scope))
+        context = profile_form.get_forms(scope)
+        context['organization'] = organization
+        return render(request, self.template_name, context)
 
     def post(self, request, organization_id, scope):
         organization = get_object_or_404(Organization, pk=organization_id)

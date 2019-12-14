@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block content %}
-<a class="ui labeled icon button back-button">
+<a class="ui labeled icon button back-button" href="{% url 'core:organizations_manage' %}">
     <i class="left arrow icon"></i>
     {% trans 'Back' %}
 </a>
