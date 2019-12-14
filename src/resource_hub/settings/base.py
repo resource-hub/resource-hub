@@ -40,6 +40,7 @@ WSGI_APPLICATION = 'resource_hub.wsgi.application'
 ASGI_APPLICATION = 'resource_hub.asgi.application'
 
 MAP_API_TOKEN = get_env_var('MAP_API_TOKEN')
+GITLAB_TOKEN = get_env_var('GITLAB_TOKEN')
 
 # Application definition
 
@@ -89,7 +90,9 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                # custom preprocessors
                 'core.context_processors.actor',
+                'core.context_processors.map_api_token',
             ],
         },
     },

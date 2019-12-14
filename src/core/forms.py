@@ -455,9 +455,9 @@ class ReportIssueForm(forms.Form):
         description = self.cleaned_data['description']
 
         URL = "https://gitlab.com/api/v4/projects/13767519/issues"
-        MAP_API_TOKEN = settings.MAP_API_TOKEN
+        GITLAB_TOKEN = settings.GITLAB_TOKEN
         payload = {"title": title, "description": description}
-        headers = {"PRIVATE-TOKEN": MAP_API_TOKEN, "Accept-Charset": "UTF-8"}
+        headers = {"PRIVATE-TOKEN": GITLAB_TOKEN, "Accept-Charset": "UTF-8"}
         r = requests.post(URL, data=payload, headers=headers)
 
         if r.status_code != 201:
