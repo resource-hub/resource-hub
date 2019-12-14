@@ -7,23 +7,60 @@ from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
 
 
-class User(AbstractUser):
+class Actor(models.Model):
+    """ existing combinations of users and organizations """
+
+    # Fields
+    name = models.CharField(max_length=128, null=True)
+    address = models.OneToOneField(
+        'Address',
+        null=True,
+        on_delete=models.SET_NULL
+    )
+    bank_account = models.OneToOneField(
+        'BankAccount',
+        null=True,
+        on_delete=models.SET_NULL
+    )
+    image = models.ImageField(null=True, blank=True,
+                              upload_to='images/', )
+    thumbnail = ImageSpecField(
+        source='image',
+        processors=[ResizeToFill(100, 100)],
+        format='PNG',
+        options={'quality': 60}
+    )
+    thumbnail_small = ImageSpecField(
+        source='image',
+        processors=[ResizeToFill(40, 40)],
+        format='PNG',
+        options={'quality': 60}
+    )
+    thumbnail_large = ImageSpecField(
+        source='image',
+        processors=[ResizeToFill(300, 300)],
+        format='PNG',
+        options={'quality': 90}
+    )
+    telephone_private = models.CharField(max_length=20, null=True, blank=True)
+    telephone_public = models.CharField(max_length=20, null=True, blank=True)
+    email_public = models.EmailField(null=True, blank=True)
+    website = models.URLField(null=True, blank=True)
+    info_text = models.TextField(null=True, blank=True)
+
+    # Metadata
+    class Meta:
+        ordering = ['id']
+
+    # Methods
+    def __str__(self):
+        return str(self.name)
+
+
+class User(AbstractUser, Actor):
     """ natural person """
     email = models.EmailField(unique=True)
     birth_date = models.DateField(null=True)
-    info = models.OneToOneField(
-        'Info',
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL
-    )
-
-    class Role:
-        USER = 'usr'
-        ORGANIZATION = 'org'
-
-        def is_user(request):
-            return request.session['role'] == USER
 
 
 class Address(models.Model):
@@ -86,62 +123,6 @@ class BankAccount(models.Model):
         )
 
 
-class Info(models.Model):
-    """ entity specific information """
-
-    # Fields
-    address = models.OneToOneField(
-        Address,
-        null=True,
-        on_delete=models.SET_NULL
-    )
-    bank_account = models.OneToOneField(
-        BankAccount,
-        null=True,
-        on_delete=models.SET_NULL
-    )
-    image = models.ImageField(null=True, blank=True,
-                              upload_to='images/', default='/static/default.png')
-    thumbnail = ImageSpecField(
-        source='image',
-        processors=[ResizeToFill(100, 100)],
-        format='PNG',
-        options={'quality': 60}
-    )
-    thumbnail_small = ImageSpecField(
-        source='image',
-        processors=[ResizeToFill(40, 40)],
-        format='PNG',
-        options={'quality': 60}
-    )
-    thumbnail_large = ImageSpecField(
-        source='image',
-        processors=[ResizeToFill(300, 300)],
-        format='PNG',
-        options={'quality': 90}
-    )
-    telephone_private = models.CharField(max_length=20, null=True, blank=True)
-    telephone_public = models.CharField(max_length=20, null=True, blank=True)
-    email_public = models.EmailField(null=True, blank=True)
-    website = models.URLField(null=True, blank=True)
-    info_text = models.TextField(null=True, blank=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    updated_by = models.ForeignKey(
-        User,
-        null=True,
-        related_name='info_updated_by',
-        on_delete=models.SET_NULL
-    )
-
-    # Metadata
-    class Meta:
-        ordering = ['id']
-
-    # Methods
-    def __str__(self):
-        return 'Info'
-
-
 class Location(models.Model):
     """ describing locations """
 
@@ -162,6 +143,7 @@ class Location(models.Model):
         format='PNG',
         options={'quality': 60}
     )
+    owner = models.ForeignKey(Actor, on_delete=models.CASCADE)
     updated_at = models.DateTimeField(auto_now=True)
     updated_by = models.ForeignKey(
         User,
@@ -179,17 +161,10 @@ class Location(models.Model):
         return self.name
 
 
-class Organization(models.Model):
+class Organization(Actor):
     """ juristic person"""
 
     # fields
-    name = models.CharField(max_length=128, unique=True, null=False)
-    info = models.OneToOneField(
-        Info,
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-    )
     members = models.ManyToManyField(User, through='OrganizationMember')
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(
@@ -201,16 +176,16 @@ class Organization(models.Model):
 
     # Methods
     def __str__(self):
-        return self.name
+        return super().name
 
 
 class OrganizationMember(models.Model):
     """ member of organization """
 
     # model constants
-    MEMBER = 'mem'
-    ADMIN = 'adm'
-    OWNER = 'own'
+    MEMBER = 0
+    ADMIN = 1
+    OWNER = 2
 
     ORGANIZATION_ROLES = [
         (MEMBER, _('Member')),
@@ -221,8 +196,7 @@ class OrganizationMember(models.Model):
     # fields
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    role = models.CharField(
-        max_length=3,
+    role = models.IntegerField(
         choices=ORGANIZATION_ROLES,
         default=MEMBER,
         null=False
@@ -246,41 +220,13 @@ class OrganizationMember(models.Model):
         return role
 
 
-class Actor(models.Model):
-    """ existing combinations of users and organizations """
-
-    # fields
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    organization = models.ForeignKey(
-        Organization, on_delete=models.CASCADE, null=True)
-
-    class Meta:
-        unique_together = ('user', 'organization',)
-
-    def __init__(self, *args, **kwargs):
-        super(Actor, self).__init__(*args, **kwargs)
-        if self.organization is None:
-            self.construct_as_user()
-        else:
-            self.construct_as_organisation()
-
-    def construct_as_user(self):
-        self.is_user = True
-        self.name = self.user.first_name
-        self.info = self.user.info
-
-    def construct_as_organisation(self):
-        self.is_user = False
-        self.name = self.organization.name
-        self.info = self.organization.info
-
-
 class Gallery(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
-    created_by = models.ForeignKey(Actor, on_delete=models.CASCADE)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
 class GalleryImage(models.Model):
+    gallery = models.ForeignKey(Gallery, on_delete=models.CASCADE)
     image = models.ImageField(null=False, blank=True,
                               upload_to='images/')
     thumbnail = ImageSpecField(

@@ -84,8 +84,8 @@ class TestRegistration(TestView, TestCase):
     def test_created_info(self):
         response = self.client.post(
             reverse('core:register'), self.data)
-        user = User.objects.get(username=self.data['username'])
-        self.assertEqual(user.info.info_text, self.data['info_text'])
+        user = Actor.objects.get(user__username=self.data['username'])
+        self.assertEqual(user.info_text, self.data['info_text'])
 
     def test_post_status_code(self):
         response = self.client.post(

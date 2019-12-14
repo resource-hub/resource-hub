@@ -8,9 +8,9 @@
 <div class="ui segment tab-content">
     <form class="ui form" method="POST" action="{{ url }}" enctype="multipart/form-data">
         {% include '_form.html' with form=organization_form %}
+        {% include '_form.html' with form=actor_form %}
         {% include '_form.html' with form=address_form %}
         {% include '_form.html' with form=bank_account_form %}
-        {% include '_form.html' with form=info_form %}
         <button class="ui positive right labeled icon button" type="submit">
             {% trans 'Create' %}
             <i class="users icon"></i>

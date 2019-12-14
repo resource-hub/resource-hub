@@ -74,8 +74,6 @@ class Event(models.Model):
     tags = models.ManyToManyField(EventTag)
     category = models.ForeignKey(
         EventCategory, on_delete=models.SET_NULL, null=True)
-    parent_event = models.ForeignKey(
-        'self', on_delete=models.CASCADE, null=True)
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
     is_public = models.BooleanField()
     recurrences = RecurrenceField(null=True)
@@ -109,79 +107,3 @@ class Event(models.Model):
     # Methods
     def __str__(self):
         return self.name
-
-
-# class EventException(models.Model):
-#     # fields
-#     event = models.ForeignKey(Event, on_delete=models.CASCADE)
-#     is_rescheduled = models.BooleanField()
-#     is_canceled = models.BooleanField()
-#     start_date = models.DateField()
-#     end_date = models.DateField()
-#     start_time = models.TimeField()
-#     end_time = models.TimeField()
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     created_by = models.ForeignKey(
-#         Actor,
-#         on_delete=models.SET_NULL,
-#         null=True,
-#         related_name='event_exception_created_by'
-#     )
-
-#     # Metadata
-#     class Meta:
-#         ordering = ['start_date']
-
-#     # Methods
-#     def __str__(self):
-#         return self.name
-
-
-# class RecurrenceRule(models.Model):
-#     # constants
-#     SUNDAY = 'SU'
-#     MONDAY = 'MO'
-#     TUESDAY = 'TU'
-#     WEDNESDAY = 'WE'
-#     THURSDAY = 'TH'
-#     FRIDAY = 'FR'
-#     SATURDAY = 'SA'
-
-#     WEEKDAYS = [
-#         (SUNDAY, _('Sunday')),
-#         (MONDAY, _('Monday')),
-#         (TUESDAY, _('Tuesday')),
-#         (WEDNESDAY, _('Wednesdy')),
-#         (THURSDAY, _('Thursday')),
-#         (FRIDAY, _('Friday')),
-#         (SATURDAY, _('Saturday')),
-#     ]
-
-#     FREQUENCY_TYPES = [
-#         ('YEARLY', _('yearly')),
-#         ('MONTHLY', _('monthly')),
-#         ('WEEKLY', _('weekly')),
-#         ('DAILY', _('daily')),
-#         ('HOURLY', _('hourly')),
-#     ]
-
-#     # fields
-#     event = models.OneToOneField(Event, on_delete=models.CASCADE)
-#     frequency = models.CharField(choices=FREQUENCY_TYPES)
-#     interval = models.IntegerField(null=True)
-
-#     by_month = models.IntegerField(null=True)
-#     by_month_day = models.IntegerField(null=True)
-#     by_day = models.CharField(choices=WEEKDAYS)
-#     by_set_pos = models.IntegerField(null=True)
-
-#     count = models.IntegerField(null=True)
-#     until = models.DateField(null=True)
-
-#     # Metadata
-#     class Meta:
-#         ordering = ['event']
-
-#     # Methods
-#     def __str__(self):
-#         return self.name

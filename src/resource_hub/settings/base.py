@@ -4,6 +4,7 @@ Django 3.0
 """
 
 import os
+import sys
 
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ImproperlyConfigured
@@ -23,6 +24,9 @@ def get_env_var(setting):
 
 
 # General settings
+
+TESTING = False
+TEST_RUNNER = 'core.tests.runners.MyTestSuiteRunner'
 
 SECRET_KEY = get_env_var('SECRET_KEY')
 

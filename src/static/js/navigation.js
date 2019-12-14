@@ -1,3 +1,7 @@
+function remove_loader(name) {
+    $(name).removeClass('active').addClass('disabled');
+}
+
 $(document).ready(function () {
     // allow system messages to be closed
     $('.message .close')
@@ -22,6 +26,7 @@ $(document).ready(function () {
         $('#language-form').submit();
     });
 
+
     // display role selection modal and get list of roles
     $('#role').on('click', function (e) {
         var url = window.location.origin + '/api/user/roles/';
@@ -34,7 +39,7 @@ $(document).ready(function () {
             type: "GET",
             dataType: "JSON"
         }).done(function (list) {
-            $('#role-loader').removeClass('active').addClass('disabled');
+            remove_loader('#role-loader');
             $('#role-form').removeClass('hidden');
             var list_items = '';
             if (list.length > 0) {

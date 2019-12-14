@@ -2,7 +2,7 @@ from django.urls import include
 from django.conf.urls import url
 import django.contrib.auth.views as auth
 from django.views.i18n import JavaScriptCatalog
-from . import views, api_ajax
+from . import views, api
 
 js_info_dict = {
     'packages': ('recurrence', ),
@@ -71,8 +71,8 @@ urlpatterns = [
         name='locations_manage'),
 
 
-    url(r'^api/user/search/$', api_ajax.UserSearch.as_view()),
-    url(r'^api/user/roles/$', api_ajax.UserRoles.as_view()),
+    url(r'^api/user/search/$', api.UserSearch.as_view()),
+    url(r'^api/user/roles/$', api.UserRoles.as_view()),
     url(r'^api/organization/member/role/$',
-        api_ajax.OrganizationMemberChangeRole.as_view()),
+        api.OrganizationMemberChangeRole.as_view()),
 ]

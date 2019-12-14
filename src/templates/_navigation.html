@@ -33,8 +33,8 @@
         {% if user.is_authenticated %}
         <div>
             <img width="30" height="30" src="
-                {% if actor.info.thumbnail_small %}
-                {{ actor.info.thumbnail_small.url }}
+                {% if actor.thumbnail_small %}
+                {{ actor.thumbnail_small.url }}
                 {% else %}
                 {% static 'default.png' %}
                 {% endif %}

@@ -33,7 +33,8 @@ def index(request):
 
 class Home(View):
     def get(self, request):
-        return render(request, 'core/home.html')
+        context = {'userform': ActorForm()}
+        return render(request, 'core/home.html', context)
 
 
 class Support(View):
@@ -282,7 +283,7 @@ class OrganizationCreate(View):
 class OrganizationsProfile(View):
     def get(self, request, organization_id):
         user = request.user
-        organization = get_object_or_404(Organization, pk=organization_id)
+        organization = get_object_or_404(Actor, pk=organization_id)
         member = get_object_or_404(
             OrganizationMember, organization__id=organization_id, user=user)
 

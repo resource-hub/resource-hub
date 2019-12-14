@@ -15,8 +15,8 @@
         <div class="four wide column">
             <div class="ui container center aligned">
                 <img width="100%" height="auto" src="
-                    {% if organization.info.thumbnail_large %}
-                    {{ organization.info.thumbnail_large.url }}
+                    {% if organization.thumbnail_large %}
+                    {{ organization.thumbnail_large.url }}
                     {% else %}
                     {% static 'default.png' %}
                     {% endif %}
@@ -49,19 +49,19 @@
                 <div class="ui container">
                     <label class="ui tiny header">{% trans 'Description' %}</label>
                     <p>
-                        {{ organization.info.info_text |safe }}
+                        {{ organization.info_text |safe }}
                     </p>
                     <label class="ui tiny header">{% trans 'Telephone (public)' %}</label>
                     <p>
-                        {{ organization.info.telephone_public }}
+                        {{ organization.telephone_public }}
                     </p>
                     <label class="ui tiny header">{% trans 'Email (public)' %}</label>
                     <p>
-                        {{ organization.info.email_public }}
+                        {{ organization.email_public }}
                     </p>
                     <label class="ui tiny header">{% trans 'Website' %}</label>
                     <p>
-                        <a href="{{ organization.info.website }}">{{ organization.info.website }}</a>
+                        <a href="{{ organization.website }}">{{ organization.website }}</a>
                     </p>
                 </div>
             </div>

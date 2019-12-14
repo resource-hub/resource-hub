@@ -14,14 +14,22 @@ from django.utils.dateparse import parse_date
 from core.models import *
 
 
+class ActorForm(forms.ModelForm):
+    class Meta:
+        model = Actor
+        fields = ['image', 'telephone_public', 'telephone_private',
+                  'email_public', 'website', 'info_text']
+
+
 class UserBaseForm(UserCreationForm):
     birth_date = forms.CharField(
         widget=forms.widgets.DateTimeInput(attrs={"type": "date"}))
 
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'last_name',
-                  'email', 'birth_date', 'password1', 'password2', )
+        fields = ['username', 'first_name', 'last_name',
+                  'email', 'birth_date', 'password1', 'password2', 'image', 'telephone_public', 'telephone_private',
+                  'email_public', 'website', 'info_text']
 
     def clean(self):
         super().clean()
@@ -51,14 +59,8 @@ class OrganizationForm(forms.ModelForm):
 
     class Meta:
         model = Organization
-        fields = ['name', ]
-
-
-class InfoForm(forms.ModelForm):
-    class Meta:
-        model = Info
-        exclude = ['address', 'bank_account',
-                   'created_by', 'updated_by', ]
+        fields = ['name', 'image', 'telephone_public', 'telephone_private',
+                  'email_public', 'website', 'info_text']
 
 
 class AddressForm(forms.ModelForm):
@@ -95,26 +97,26 @@ class BankAccountForm(forms.ModelForm):
         return bic
 
 
-class InfoFormManager():
+class ActorFormManager():
     def __init__(self, request=None):
         if request is None:
-            self.info_form = InfoForm()
+            self.actor_form = ActorForm()
             self.address_form = AddressForm()
             self.bank_account_form = BankAccountForm()
         else:
-            self.info_form = InfoForm(request.POST, request.FILES)
+            self.actor_form = ActorForm(request.POST, request.FILES)
             self.address_form = AddressForm(request.POST)
             self.bank_account_form = BankAccountForm(request.POST)
 
     def get_forms(self):
         return {
-            'info_form': self.info_form,
+            'actor_form': self.actor_form,
             'address_form': self.address_form,
             'bank_account_form': self.bank_account_form,
         }
 
     def is_valid(self):
-        return (self.info_form.is_valid() and
+        return (self.actor_form.is_valid() and
                 self.address_form.is_valid() and
                 self.bank_account_form.is_valid())
 
@@ -122,39 +124,47 @@ class InfoFormManager():
         new_bank_account = self.bank_account_form.save()
         new_address = self.address_form.save()
 
-        new_info = self.info_form.save(commit=False)
-        new_info.address = new_address
-        new_info.bank_account = new_bank_account
-        new_info.save()
+        new_actor = self.actor_form.save(commit=False)
+        new_actor.address = new_address
+        new_actor.bank_account = new_bank_account
+        new_actor.save()
 
-        return new_info
+        return new_actor
 
 
 class UserFormManager():
     def __init__(self, request=None):
         if request is None:
             self.user_form = UserBaseForm()
-            self.info_form = InfoFormManager()
+            self.address_form = AddressForm()
+            self.bank_account_form = BankAccountForm()
         else:
-            self.user_form = UserBaseForm(request.POST)
-            self.info_form = InfoFormManager(request)
+            self.user_form = UserBaseForm(request.POST, request.FILES)
+            self.address_form = AddressForm(request.POST)
+            self.bank_account_form = BankAccountForm(request.POST)
 
     def get_forms(self):
-        forms = self.info_form.get_forms()
-        forms['user_form'] = self.user_form
-        return forms
+        return {
+            'user_form': self.user_form,
+            'address_form': self.address_form,
+            'bank_account_form': self.bank_account_form,
+        }
 
     def is_valid(self):
         return (self.user_form.is_valid() and
-                self.info_form.is_valid())
+                self.address_form.is_valid() and
+                self.bank_account_form.is_valid())
 
     def save(self):
-        new_info = self.info_form.save()
+        new_bank_account = self.bank_account_form.save()
+        new_address = self.address_form.save()
 
         new_user = self.user_form.save(commit=False)
-        new_user.info = new_info
+        new_user.name = new_user.first_name + ' ' + new_user.last_name
+        new_user.address = new_address
+        new_user.bank_account = new_bank_account
         new_user.save()
-        Actor.objects.create(user=new_user)
+
         return new_user
 
 
@@ -163,24 +173,24 @@ class ProfileFormManager():
         self.is_valid = True
         self.request = request
         self.entity = entity
-        self.info_form = InfoForm(initial=model_to_dict(self.entity.info))
+        self.actor_form = ActorForm(initial=model_to_dict(self.entity))
         self.address_form = AddressForm(
-            initial=model_to_dict(self.entity.info.address))
+            initial=model_to_dict(self.entity.address))
         self.bank_account_form = BankAccountForm(
-            initial=model_to_dict(self.entity.info.bank_account))
+            initial=model_to_dict(self.entity.bank_account))
 
     def change_info(self):
-        self.info_form = InfoForm(
-            self.request.POST, self.request.FILES, instance=self.entity.info)
+        self.actor_form = ActorForm(
+            self.request.POST, self.request.FILES, instance=self.entity)
 
-        if self.info_form.is_valid():
-            self.info_form.save()
+        if self.actor_form.is_valid():
+            self.actor_form.save()
         else:
             self.is_valid = False
 
     def change_address(self):
         self.address_form = AddressForm(
-            self.request.POST, instance=self.entity.info.address)
+            self.request.POST, instance=self.entity.address)
 
         if self.address_form.is_valid():
             self.address_form.save()
@@ -189,7 +199,7 @@ class ProfileFormManager():
 
     def change_bank_account(self):
         self.bank_account_form = BankAccountForm(
-            self.request.POST, instance=self.entity.info.bank_account)
+            self.request.POST, instance=self.entity.bank_account)
 
         if self.bank_account_form.is_valid():
             self.bank_account_form.save()
@@ -198,7 +208,7 @@ class ProfileFormManager():
 
     def get_forms(self, scope):
         return {
-            'info_form': self.info_form,
+            'actor_form': self.actor_form,
             'address_form': self.address_form,
             'bank_account_form': self.bank_account_form,
             scope: 'active',
@@ -297,27 +307,36 @@ class OrganizationFormManager():
     def __init__(self, request=None):
         if request is None:
             self.organization_form = OrganizationForm()
-            self.info_form = InfoFormManager()
+            self.address_form = AddressForm()
+            self.bank_account_form = BankAccountForm()
         else:
             self.request = request
-            self.organization_form = OrganizationForm(request.POST)
-            self.info_form = InfoFormManager(request)
+            self.organization_form = OrganizationForm(
+                request.POST, request.FILES)
+            self.address_form = AddressForm(request.POST)
+            self.bank_account_form = BankAccountForm(request.POST)
 
     def get_forms(self):
-        forms = self.info_form.get_forms()
-        forms['organization_form'] = self.organization_form
-        return forms
+        return {
+            'organization_form': self.organization_form,
+            'address_form': self.address_form,
+            'bank_account_form': self.bank_account_form,
+        }
 
     def is_valid(self):
         return (self.organization_form.is_valid() and
-                self.info_form.is_valid())
+                self.address_form.is_valid() and
+                self.bank_account_form.is_valid())
 
     def save(self):
         user = self.request.user
-        new_info = self.info_form.save()
+        new_bank_account = self.bank_account_form.save()
+        new_address = self.address_form.save()
 
         new_organization = self.organization_form.save(commit=False)
-        new_organization.info = new_info
+        new_organization.name = self.organization_form.cleaned_data['name']
+        new_organization.bank_account = new_bank_account
+        new_organization.address = new_address
         new_organization.save()
 
         membership = OrganizationMemberAddForm(
@@ -392,15 +411,20 @@ class RoleChangeForm(forms.Form):
 
     def clean_actor_id(self):
         actor_id = self.cleaned_data['actor_id']
+
         try:
             actor = Actor.objects.get(pk=actor_id)
         except Actor.DoesNotExist:
             raise forms.ValidationError(
                 _('Actor does not exist'), code='actor-not-exists')
 
-        if actor.user.id != self.user.id:
-            raise forms.ValidationError(
-                _('Actor not associated with user'), code='actor-user-not-associated')
+        if actor_id != self.user.id:
+            try:
+                OrganizationMember.objects.get(organization=actor_id,
+                                               user=self.user, role__gte=OrganizationMember.ADMIN)
+            except OrganizationMember.DoesNotExist:
+                raise forms.ValidationError(
+                    _('Actor not associated with user'), code='actor-user-not-associated')
         return actor_id
 
     def save(self, request):

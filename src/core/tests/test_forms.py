@@ -79,25 +79,25 @@ class TestBankAccountForm(TestCase):
                 self.assertFalse(form.is_valid())
 
 
-class TestInfoFormManager(TestCase):
+class TestActorFormManager(TestCase):
     def setUp(self):
         self.data = DATA.copy()
 
     def test_empty_form(self):
-        forms = InfoFormManager().get_forms()
-        self.assertTrue('info_form' in forms)
+        forms = ActorFormManager().get_forms()
+        self.assertTrue('actor_form' in forms)
         self.assertTrue('address_form' in forms)
         self.assertTrue('bank_account_form' in forms)
 
     def test_valid_data(self):
         request = HttpRequest()
         request.POST = self.data
-        info_form = InfoFormManager(request)
-        self.assertTrue(info_form.is_valid())
+        actor_form = ActorFormManager(request)
+        self.assertTrue(actor_form.is_valid())
 
-        new_info = info_form.save()
-        info = Info.objects.get(pk=1)
-        self.assertEqual(new_info, info)
+        new_actor = actor_form.save()
+        actor = Actor.objects.get(pk=1)
+        self.assertEqual(new_actor, actor)
 
 
 class TestEmailChangeForm(TestCase):
