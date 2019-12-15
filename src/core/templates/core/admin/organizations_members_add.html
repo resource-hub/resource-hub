@@ -35,26 +35,14 @@
             minCharacters: 2,
             apiSettings: {
                 onResponse: function (result) {
-                    var
-                        response = {
-                            results: []
-                        }
-                        ;
-                    // translate GitHub API response to work with search
-                    $.each(result, function (index, user) {
-                        var username = user.username;
-                        var full_name = user.first_name + ' ' + user.last_name;
-
-                        // add result to category
-                        response.results.push({
-                            title: user.username,
-                            description: full_name,
-                            url: user.html_url
-                        });
-                    });
-                    return response;
+                    return { results: Object.values(result) };
                 },
                 url: '{% url "core:api_search_users" %}?search={query}'
+            },
+            fields: {
+                title: 'username',
+                description: 'full_name',
+                url: 'html_url'
             }
         })
         ; </script>
