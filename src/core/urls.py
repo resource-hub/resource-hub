@@ -71,7 +71,7 @@ urlpatterns = [
         name='locations_manage'),
 
 
-    url(r'^api/user/search/$', api.UserSearch.as_view()),
+    url(r'^api/user/search/$', api.UserSearch.as_view(), name='api_search_users'),
     url(r'^api/user/roles/$', api.UserRoles.as_view()),
     url(r'^api/organization/member/role/$',
         api.OrganizationMemberChangeRole.as_view()),
