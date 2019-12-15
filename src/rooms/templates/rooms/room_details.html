@@ -1,0 +1,18 @@
+{% extends 'core/__base.html' %}
+{% load i18n %}
+
+{% block content %}
+<h2>{{ room.name }}</h2>
+<div class="ui two column grid">
+    <div class="column">
+        <div class="fluid container">
+            <img src="{{ room.thumbnail_original.url }}" width="100%">
+        </div>
+    </div>
+    <div class="column">
+        <p>
+            {{ room.description }}
+        </p>
+    </div>
+</div>
+{% endblock %}

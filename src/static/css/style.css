@@ -20,6 +20,10 @@
     float: none !important;
 }
 
+.card {
+    color: inherit !important;
+}
+
 /**
   *
   * Tag specific   

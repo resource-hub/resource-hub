@@ -2,7 +2,7 @@ from django.db.models import Q
 from django.forms.models import model_to_dict
 
 from rest_framework import status, filters, generics
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -39,6 +39,8 @@ class OrganizationMemberChangeRole(APIView):
         return Response(data)
 
 
+@authentication_classes([])
+@permission_classes([])
 class LocationFeed(generics.ListCreateAPIView):
     http_method_names = ['get']
     queryset = Location.objects.all()

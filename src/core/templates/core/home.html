@@ -1,12 +1,10 @@
 {% extends "core/__base.html" %}
 {% load i18n %}
+{% load static %}
+
 {% block extra_head %}
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
-  integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
-  crossorigin="" />
-<script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
-  integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
-  crossorigin=""></script>
+<link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %}">
+<script src="{% static 'leaflet/leaflet.js' %}"></script>
 {% endblock %}
 
 {% block not_in_container %}
@@ -43,6 +41,12 @@
     accessToken: '{{ MAP_API_TOKEN }}'
   }).addTo(map);
 
+  var marker = L.icon({
+    iconUrl: '{% static "marker.png" %}',
+    iconSize: [23, 40],
+    iconAnchor: [11.5, 39],
+    popupAnchor: [0, -40]
+  });
 </script>
 {% endblock %}
 
@@ -60,6 +64,7 @@
         .replace(/%description%/g, location.description);
       L.marker([location.latitude, location.longitude],
         {
+          icon: marker,
           title: location.name,
           clickable: true,
         }

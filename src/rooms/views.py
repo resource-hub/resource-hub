@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.views import View
 from django.views.decorators.cache import cache_page
@@ -75,3 +75,10 @@ class RoomsCreate(View):
             'room_form': room_form,
         }
         return render(request, 'rooms/admin/rooms_create.html', context)
+
+
+class RoomDetails(View):
+    def get(self, request, room_id):
+        room = get_object_or_404(Room, pk=room_id)
+        context = {'room': room}
+        return render(request, 'rooms/room_details.html', context)

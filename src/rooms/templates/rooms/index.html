@@ -18,12 +18,19 @@
 {% block scripts %}
 <script id="room-item-template" type="text/template">
     <div class="column">
-        <div class="ui fluid card">
+        <a id='card' class="ui fluid card" href="%room_link%" target="_blank">
             <div class="content">
-            <img class="ui avatar image" src="%owner_thumbnail%"> %owner_name%
+                <img class="ui avatar image" src="%owner_thumbnail%"> %owner_name%
             </div>
-            <div class="image">
-            <img class="thumbnail" src="%room_thumbnail%">
+            <div class="blurring dimmable image">
+                <div class="ui dimmer">
+                    <div class="content">
+                        <div class="center">
+                            <div class="ui inverted button">{% trans 'Details' %}</div>
+                        </div>
+                    </div>
+                </div>
+                <img class="thumbnail" src="%room_thumbnail%">
             </div>
             <div class="ui placeholder">
                 <div class="square image"></div>
@@ -32,7 +39,7 @@
                 <div class="header">%name%</div>
                 <p>%description%</p>
             </div>
-        </div>
+        </a>
     </div>
 </script>
 
@@ -50,17 +57,19 @@
 
                 for (i in data) {
                     feed += templateHtml
+                        .replace(/%room_link%/g, data[i]['room_link'])
                         .replace(/%owner_name%/g, data[i].owner['name'])
                         .replace(/%owner_thumbnail%/g, data[i].owner['thumbnail'])
                         .replace(/%room_thumbnail%/g, data[i]['thumbnail'])
                         .replace(/%name%/g, data[i]['name'])
-                        .replace(/%description%/g, data[i]['description']);
+                        .replace(/%description%/g, data[i]['description_short']);
                 }
                 remove_loader('#feed-loader');
                 $('#room-feed').html(feed);
                 $('.thumbnail').on('load', () => {
                     $('.placeholder').hide();
                 });
+                $('.fluid.card .image').dimmer({ on: 'hover' });
             });
 
         }
@@ -75,6 +84,7 @@
                 console.log('yes');
             }
         });
+
     })
 </script>
 {% endblock %}
