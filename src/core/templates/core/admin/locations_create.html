@@ -16,3 +16,42 @@
     </form>
 </div>
 {% endblock %}
+
+{% block scripts %}
+<script>
+    $('.ui.search')
+        .search({
+            minCharacters: 5,
+            apiSettings: {
+                onResponse: function (result) {
+                    return { results: result.features };
+                },
+                url: 'https://api.mapbox.com/geocoding/v5/mapbox.places/{query}.json?access_token={{ MAP_API_TOKEN}}',
+
+            },
+            fields: {
+                title: 'place_name',
+                description: '',
+                url: 'html_url'
+            },
+
+            onSelect: function (result, response) {
+                var long = result.geometry.coordinates[0];
+                var lat = result.geometry.coordinates[1];
+                var street = result.text;
+                var street_number = result.address;
+                var postal_code = result.context[1].text;
+                var city = result.context[2].text;
+                var country = result.context[4].text;
+
+                $('#id_longitude').val(long);
+                $('#id_latitude').val(lat);
+                $('#id_street').val(street);
+                $('#id_street_number').val(street_number);
+                $('#id_postal_code').val(postal_code);
+                $('#id_city').val(city);
+                $('#id_country').val(country);
+            }
+        })
+        ; </script>
+{% endblock %}

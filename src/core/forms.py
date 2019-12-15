@@ -433,9 +433,19 @@ class RoleChangeForm(forms.Form):
 
 
 class LocationForm(forms.ModelForm):
+    search = forms.CharField(widget=UISearchField, required=False)
+
     class Meta:
         model = Location
-        exclude = ['address', 'updated_at', 'updated_by']
+        fields = ['name', 'description', 'image',
+                  'search', 'latitude', 'longitude']
+
+    def save(self, owner, commit=True):
+        new_location = super(LocationForm, self).save(commit=False)
+        new_location.owner = owner
+        if commit:
+            new_location.save()
+        return new_location
 
 
 class ReportIssueForm(forms.Form):

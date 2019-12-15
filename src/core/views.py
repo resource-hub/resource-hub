@@ -408,7 +408,8 @@ class LocationCreate(View):
         if address_form.is_valid():
             new_address = address_form.save()
             if location_form.is_valid():
-                new_location = location_form.save(commit=False)
+                owner = request.actor
+                new_location = location_form.save(owner, commit=False)
                 new_location.address = new_address
                 new_location.save()
 
