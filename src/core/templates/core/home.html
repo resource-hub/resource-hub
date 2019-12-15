@@ -7,6 +7,8 @@
 <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
   integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
   crossorigin=""></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
 {% endblock %}
 
 {% block not_in_container %}
@@ -43,5 +45,13 @@
     id: 'mapbox.streets',
     accessToken: '{{ MAP_API_TOKEN }}'
   }).addTo(mymap);
+
+  var options = {
+
+  }
+  geocoder = new L.Control.Geocoder.mapbox('{{ MAP_API_TOKEN }}');
+  geocoder.geocode("Windthorststr. 3-4 Hannover", (result) => {
+    console.log(result);
+  });
 </script>
 {% endblock %}
