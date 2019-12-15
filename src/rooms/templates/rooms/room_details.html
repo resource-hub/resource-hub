@@ -1,18 +1,42 @@
 {% extends 'core/__base.html' %}
 {% load i18n %}
+{% load static %}
+
+{% block extra_head %}
+<link href="{% static 'fullcalendar/main.min.css' %}" rel="stylesheet">
+<link href="{% static 'fullcalendar/daygrid/main.min.css' %}" rel="stylesheet">
+<script src="{% static 'fullcalendar/main.min.js' %}"></script>
+<script src="{% static 'fullcalendar/daygrid/main.min.js' %}"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var calendarEl = document.getElementById('calendar');
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            plugins: ['dayGrid']
+        });
+
+        calendar.render();
+    });
+</script>
+{% endblock %}
 
 {% block content %}
-<h2>{{ room.name }}</h2>
-<div class="ui two column grid">
+<div class="ui stackable two column grid">
     <div class="column">
-        <div class="fluid container">
-            <img src="{{ room.thumbnail_original.url }}" width="100%">
-        </div>
-    </div>
-    <div class="column">
+        <h2>{{ room.name }}</h2>
         <p>
             {{ room.description }}
         </p>
     </div>
+    <div class="column">
+        <div id='calendar'></div>
+    </div>
 </div>
+<div class="">
+    <img src="{{ room.thumbnail_original.url }}" width="100%">
+</div>
+{% endblock %}
+
+{% block scripts %}
 {% endblock %}
