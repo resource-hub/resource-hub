@@ -6,8 +6,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from core.models import User, Actor, OrganizationMember
-from core.serializers import UserSerializer, ActorSerializerMinimal
+from core.models import User, Actor, Location, OrganizationMember
+from core.serializers import UserSerializer, ActorSerializerMinimal, LocationSerializer
 
 
 class UserSearch(generics.ListCreateAPIView):
@@ -37,3 +37,9 @@ class OrganizationMemberChangeRole(APIView):
         data = request.POST
         print(data)
         return Response(data)
+
+
+class LocationFeed(generics.ListCreateAPIView):
+    http_method_names = ['get']
+    queryset = Location.objects.all()
+    serializer_class = LocationSerializer

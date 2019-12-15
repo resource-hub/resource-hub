@@ -7,8 +7,6 @@
 <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
   integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
   crossorigin=""></script>
-<link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
-<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
 {% endblock %}
 
 {% block not_in_container %}
@@ -35,23 +33,39 @@
   phasellus vestibulum lorem sed risus ultricies tristique. Quis vel eros donec ac odio tempor orci. Lacus suspendisse
   faucibus interdum posuere lorem ipsum dolor sit.
 </p>
-
 <script>
-  var mymap = L.map('map').setView([52.37052, 9.73322], 13.5);
+  var map = L.map('map').setView([52.3783212, 9.72492], 13.5);
 
   L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-    maxZoom: 18,
+    maxZoom: 20,
     id: 'mapbox.streets',
     accessToken: '{{ MAP_API_TOKEN }}'
-  }).addTo(mymap);
+  }).addTo(map);
 
-  var options = {
+</script>
+{% endblock %}
 
-  }
-  geocoder = new L.Control.Geocoder.mapbox('{{ MAP_API_TOKEN }}');
-  geocoder.geocode("Windthorststr. 3-4 Hannover", (result) => {
-    console.log(result);
-  });
+{% block scripts %}
+<script id="pop-up-template" type="text/tempate">
+<h5>%name%</h5>
+<p>%description%</p>
+</script>
+<script>
+  $.get('{% url "core:api_locations_search" %}', function (data) {
+    var popup_template = document.getElementById("pop-up-template").innerHTML;
+    $.each(data, function (i, location) {
+      var popup = popup_template
+        .replace(/%name%/g, location.name)
+        .replace(/%description%/g, location.description);
+      L.marker([location.latitude, location.longitude],
+        {
+          title: location.name,
+          clickable: true,
+        }
+      ).bindPopup(popup).addTo(map);
+    })
+  })
+
 </script>
 {% endblock %}

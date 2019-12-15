@@ -1,4 +1,4 @@
-from core.models import User, Actor
+from core.models import User, Actor, Location
 from rest_framework import serializers
 
 
@@ -25,3 +25,10 @@ class ActorSerializerMinimal(serializers.ModelSerializer):
     class Meta:
         model = Actor
         fields = ['id', 'name', 'thumbnail']
+
+
+class LocationSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Location
+        fields = ['name', 'description', 'latitude', 'longitude', ]

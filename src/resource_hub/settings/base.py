@@ -26,6 +26,7 @@ def get_env_var(setting):
 # General settings
 
 TESTING = False
+DEBUG = True
 TEST_RUNNER = 'core.tests.runners.MyTestSuiteRunner'
 
 SECRET_KEY = get_env_var('SECRET_KEY')
@@ -181,9 +182,10 @@ REST_FRAMEWORK = {
 
 # caching settings
 
+backend = 'redis_cache.RedisCache' if DEBUG else 'django.core.cache.backends.dummy.DummyCache'
 CACHES = {
     "default": {
-        "BACKEND": 'redis_cache.RedisCache',
+        "BACKEND": backend,
         "LOCATION": get_env_var('REDIS_LOCATION'),
         "KEY_PREFIX": get_env_var("REDIS_KEY_PREFIX"),
     }
@@ -194,12 +196,15 @@ CACHE_TTL = 60 * 15
 
 RQ_QUEUES = {
     'high': {
-        'USE_REDIS_CACHE': 'default',
+        "LOCATION": get_env_var('REDIS_LOCATION'),
+        "KEY_PREFIX": get_env_var("REDIS_KEY_PREFIX"),
     },
     'low': {
-        'USE_REDIS_CACHE': 'default',
+        "LOCATION": get_env_var('REDIS_LOCATION'),
+        "KEY_PREFIX": get_env_var("REDIS_KEY_PREFIX"),
     },
     'default': {
-        'USE_REDIS_CACHE': 'default',
+        "LOCATION": get_env_var('REDIS_LOCATION'),
+        "KEY_PREFIX": get_env_var("REDIS_KEY_PREFIX"),
     },
 }

@@ -75,4 +75,6 @@ urlpatterns = [
     url(r'^api/user/roles/$', api.UserRoles.as_view()),
     url(r'^api/organization/member/role/$',
         api.OrganizationMemberChangeRole.as_view()),
+    url(r'api/location/search/$', api.LocationFeed.as_view(),
+        name='api_locations_search')
 ]
