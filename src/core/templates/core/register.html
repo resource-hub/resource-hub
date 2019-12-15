@@ -38,12 +38,14 @@
                     {% trans 'Show the terms and conditions' %}
                 </a>
             </p>
-            <input type="checkbox" name="terms" required>
-            <label for="terms">
-                <b>
-                    {% trans 'I fully understand and agree to the given terms and conditions.' %}
-                </b>
-            </label>
+            <div class="ui slider checkbox">
+                <input type="checkbox" name="terms" required>
+                <label for="terms">
+                    <b>
+                        {% trans 'I fully understand and agree to the given terms and conditions.' %}
+                    </b>
+                </label>
+            </div>
         </p>
         <p>
             <button class="ui positive right labeled icon button" type="submit">

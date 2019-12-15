@@ -1,5 +1,9 @@
-from django.forms.widgets import TextInput
+from django.forms.widgets import TextInput, CheckboxInput
 
 
 class UISearchField(TextInput):
-    template_name = 'core/ui_search_widget.html'
+    template_name = 'core/widgets/search_field.html'
+
+
+class UICheckboxSlider(CheckboxInput):
+    template_name = 'core/widgets/checkbox_slider.html'

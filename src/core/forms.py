@@ -363,7 +363,7 @@ class OrganizationMemberAddForm(forms.Form):
     username = forms.CharField(
         max_length=128,
         required=True,
-        widget=UISearchField,
+        widget=UISearchField(attrs={'autofocus': 'autofocus'}),
     )
     role = forms.ChoiceField(choices=OrganizationMember.ORGANIZATION_ROLES)
 
