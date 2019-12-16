@@ -29,5 +29,6 @@ if settings.DEBUG:
                           document_root=settings.MEDIA_ROOT)
 
 urlpatterns += [
-    path('django-rq/', include('django_rq.urls'))
+    path('django-rq/', include('django_rq.urls')),
+    path('summernote/', include('django_summernote.urls')),
 ]

@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'django_tables2',
     'django_rq',
+    'django_summernote',
     'recurrence',
     # native apps
     'django.contrib.admin',
