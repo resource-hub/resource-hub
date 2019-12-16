@@ -183,29 +183,27 @@ REST_FRAMEWORK = {
 
 # caching settings
 
-backend = 'redis_cache.RedisCache' if DEBUG else 'django.core.cache.backends.dummy.DummyCache'
 CACHES = {
     "default": {
-        "BACKEND": backend,
+        "BACKEND": 'django_redis.cache.RedisCache',
         "LOCATION": get_env_var('REDIS_LOCATION'),
         "KEY_PREFIX": get_env_var("REDIS_KEY_PREFIX"),
-    }
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
 }
 CACHE_TTL = 60 * 15
 
 # redis queue
-
 RQ_QUEUES = {
     'high': {
-        "LOCATION": get_env_var('REDIS_LOCATION'),
-        "KEY_PREFIX": get_env_var("REDIS_KEY_PREFIX"),
+        'USE_REDIS_CACHE': 'default',
     },
     'low': {
-        "LOCATION": get_env_var('REDIS_LOCATION'),
-        "KEY_PREFIX": get_env_var("REDIS_KEY_PREFIX"),
+        'USE_REDIS_CACHE': 'default',
     },
     'default': {
-        "LOCATION": get_env_var('REDIS_LOCATION'),
-        "KEY_PREFIX": get_env_var("REDIS_KEY_PREFIX"),
+        'USE_REDIS_CACHE': 'default',
     },
 }

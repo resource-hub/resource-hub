@@ -12,3 +12,4 @@ cov
 .coverage
 *.save
 .idea
+purge.sh

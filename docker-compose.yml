@@ -21,7 +21,7 @@ services:
     env_file:
       - .env
     build: ./
-    command: bash -c 'cd src && python3 manage.py rqworker high low'
+    command: bash -c 'cd src && python3 manage.py rqworker default high low'
 
   app:
     environment:
@@ -40,6 +40,3 @@ services:
       - redis
     ports:
       - "${DJANGO_PORT}:${DJANGO_PORT}"
-
-  
-  

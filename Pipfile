@@ -21,7 +21,6 @@ django-appconf = "*"
 django-extensions = "*"   
 django-imagekit = "*" 
 django-recurrence = "*"   
-django-redis-cache = "*"  
 django-rq = "*"   
 django-tables2 = "*"  
 djangorestframework = "*" 
@@ -56,6 +55,7 @@ service_identity = "*"
 Twisted = "*" 
 zope = {interface = "*"}
 django-summernote = {git = "https://github.com/summernote/django-summernote.git",ref = "702b574920342766f56262725d87125719156878"}
+django-redis = "*"
 
 [requires]
 python_version = "*"
