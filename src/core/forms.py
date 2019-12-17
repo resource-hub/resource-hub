@@ -11,11 +11,15 @@ from django.forms import model_to_dict
 from django.utils.translation import ugettext_lazy as _
 from django.utils.dateparse import parse_date
 
+from django_summernote.widgets import SummernoteWidget
+
 from core.models import *
 from core.widgets import UISearchField
 
 
 class ActorForm(forms.ModelForm):
+    info_text = forms.CharField(widget=SummernoteWidget())
+
     class Meta:
         model = Actor
         fields = ['image', 'telephone_public', 'telephone_private',
@@ -25,6 +29,7 @@ class ActorForm(forms.ModelForm):
 class UserBaseForm(UserCreationForm):
     birth_date = forms.CharField(
         widget=forms.widgets.DateTimeInput(attrs={"type": "date"}))
+    info_text = forms.CharField(widget=SummernoteWidget())
 
     class Meta:
         model = User
@@ -57,6 +62,7 @@ class UserBaseForm(UserCreationForm):
 class OrganizationForm(forms.ModelForm):
     name = forms.CharField(max_length=100, label=_(
         'Organization name'), help_text=_('Please include your legal form'))
+    info_text = forms.CharField(widget=SummernoteWidget())
 
     class Meta:
         model = Organization

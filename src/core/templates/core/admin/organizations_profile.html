@@ -39,31 +39,26 @@
 
         </div>
         <div class="twelve wide column">
-            <h3>
+            <h2>
                 {{ organization.name }}
-            </h3>
-
-            <div class="ui segment">
-                <a class="ui teal ribbon label">Overview</a><span><em>{% trans 'joined' %}
-                        {{ organization.created_at | date:'Y'}}</em></span>
-                <div class="ui container">
-                    <label class="ui tiny header">{% trans 'Description' %}</label>
-                    <p>
-                        {{ organization.info_text |safe }}
-                    </p>
-                    <label class="ui tiny header">{% trans 'Telephone (public)' %}</label>
-                    <p>
-                        {{ organization.telephone_public }}
-                    </p>
-                    <label class="ui tiny header">{% trans 'Email (public)' %}</label>
-                    <p>
-                        {{ organization.email_public }}
-                    </p>
-                    <label class="ui tiny header">{% trans 'Website' %}</label>
-                    <p>
-                        <a href="{{ organization.website }}">{{ organization.website }}</a>
-                    </p>
-                </div>
+            </h2>
+            <div class="ui container">
+                <label class="ui tiny header">{% trans 'Description' %}</label>
+                <p>
+                    {{ organization.info_text |safe }}
+                </p>
+                <label class="ui tiny header">{% trans 'Telephone (public)' %}</label>
+                <p>
+                    {{ organization.telephone_public }}
+                </p>
+                <label class="ui tiny header">{% trans 'Email (public)' %}</label>
+                <p>
+                    {{ organization.email_public }}
+                </p>
+                <label class="ui tiny header">{% trans 'Website' %}</label>
+                <p>
+                    <a href="{{ organization.website }}">{{ organization.website }}</a>
+                </p>
             </div>
         </div>
     </div>

@@ -168,7 +168,6 @@ LOGIN_REDIRECT_URL = 'core:admin'
 LOGIN_URL = 'core:login'
 
 AUTH_USER_MODEL = "core.User"
-
 # django REST plugin settings
 
 REST_FRAMEWORK = {
@@ -206,4 +205,22 @@ RQ_QUEUES = {
     'default': {
         'USE_REDIS_CACHE': 'default',
     },
+}
+
+
+# summernote
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+SUMMERNOTE_THEME = 'lite'
+SUMMERNOTE_CONFIG = {
+    'iframe': True,
+    'summernote': {
+        'airMode': False,
+
+        'width': '100%',
+        'height': '480',
+    },
+
+    'css': (
+        '/static/css/summernote.css',
+    ),
 }

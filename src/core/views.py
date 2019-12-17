@@ -18,6 +18,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views import View
+from django.views.decorators.clickjacking import xframe_options_exempt
 
 from core.decorators import organization_admin_required
 from core.forms import *
@@ -71,9 +72,11 @@ class Language(View):
         return render(request, 'core/language.html')
 
 
+@method_decorator(xframe_options_exempt, name='dispatch')
 class Register(View):
     template_name = 'core/register.html'
 
+    @xframe_options_exempt
     def get(self, request):
         if request.user.is_authenticated:
             message = _('You are already logged in.')
