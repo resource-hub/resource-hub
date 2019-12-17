@@ -439,7 +439,9 @@ class RoleChangeForm(forms.Form):
 
 
 class LocationForm(forms.ModelForm):
-    search = forms.CharField(widget=UISearchField, required=False)
+    search = forms.CharField(widget=UISearchField, required=False, help_text=_(
+        'You can use this search field for the address to autofill the location data!'))
+    description = forms.CharField(widget=SummernoteWidget())
 
     class Meta:
         model = Location
