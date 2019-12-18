@@ -5,6 +5,6 @@ Checkout the latest stable build on https://demo.resource-hub.eu/
 * Download and install Docker and Docker-Compose for your OS: https://docs.docker.com/
 * Run:
 ```bash
-cd /path/to/resource-hub/src
+cd /path/to/resource-hub
 sudo docker-compose up
 ```
