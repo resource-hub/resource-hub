@@ -4,10 +4,16 @@
 {% block content %}
 <div class="ui segment">
     <h5>Filters <i class="filter icon"></i></h5>
-    <div class="ui icon input">
-        <input id="search-room" type="text" placeholder="{% trans 'Search...' %}">
-        <i class="search icon"></i>
-    </div>
+    <form class="ui form" id="filter-form">
+        <div class="ui icon input">
+            <input id="search-room" name="search_query" type="text" placeholder="{% trans 'Search...' %}">
+            <i class="search icon"></i>
+        </div>
+        <button class="ui right floated positive right labeled icon button" type="submit">
+            {% trans 'Filter' %}
+            <i class="filter icon"></i>
+        </button>
+    </form>
 </div>
 <div id="feed-loader" class="ui active centered inline loader"></div>
 <div id="room-feed" class="ui stackable three column cards grid">
@@ -18,7 +24,7 @@
 {% block scripts %}
 <script id="room-item-template" type="text/template">
     <div class="column">
-        <a id='card' class="ui fluid card" href="%room_link%" target="_blank">
+        <a id='card' class="ui fluid card" href="%room_link%">
             <div class="content">
                 <img class="ui avatar image" src="%owner_thumbnail%"> %owner_name%
             </div>
@@ -37,7 +43,7 @@
             </div>
             <div class="content">
                 <div class="header">%name%</div>
-                <p>%description%</p>
+                <p><i class="map marker alternate icon"></i>%address_string%</p>
             </div>
         </a>
     </div>
@@ -45,11 +51,11 @@
 
 <script>
     $(document).ready(() => {
-        function create_feed(data) {
+        function create_feed(query) {
             var template = document.getElementById("room-item-template");
             var templateHtml = template.innerHTML;
             $.ajax({
-                'url': "{% url 'rooms:api_room_feed' %}",
+                'url': "{% url 'rooms:api_room_feed' %}?search=" + query,
                 'type': 'GET',
                 'dataType': 'JSON'
             }).done((data) => {
@@ -62,7 +68,7 @@
                         .replace(/%owner_thumbnail%/g, data[i].owner['thumbnail'])
                         .replace(/%room_thumbnail%/g, data[i]['thumbnail'])
                         .replace(/%name%/g, data[i]['name'])
-                        .replace(/%description%/g, data[i]['description_short']);
+                        .replace(/%address_string%/g, data[i].location.address['address_string']);
                 }
                 remove_loader('#feed-loader');
                 $('#room-feed').html(feed);
@@ -74,7 +80,7 @@
 
         }
 
-        create_feed();
+        create_feed("");
 
         $('#search-room').on('input', () => {
             var val = $(this).val().trim();
@@ -84,6 +90,12 @@
                 console.log('yes');
             }
         });
+
+        $('#filter-form').on('submit', function (e) {
+            e.preventDefault();
+            var query = $(this).find("input[name='search_query']").val();
+            create_feed(query);
+        })
 
     })
 </script>

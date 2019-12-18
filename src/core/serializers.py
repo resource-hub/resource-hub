@@ -1,4 +1,4 @@
-from core.models import User, Actor, Location
+from core.models import User, Actor, Location, Address
 from rest_framework import serializers
 
 
@@ -27,8 +27,21 @@ class ActorSerializerMinimal(serializers.ModelSerializer):
         fields = ['id', 'name', 'thumbnail']
 
 
+class AddressSerializer(serializers.ModelSerializer):
+    address_string = serializers.SerializerMethodField()
+
+    def get_address_string(self, obj):
+        return "{} {}, {} {}".format(obj.street, obj.street_number, obj.postal_code, obj.city)
+
+    class Meta:
+        model = Address
+        fields = ['street', 'street_number',
+                  'postal_code', 'city', 'address_string']
+
+
 class LocationSerializer(serializers.ModelSerializer):
+    address = AddressSerializer()
 
     class Meta:
         model = Location
-        fields = ['name', 'description', 'latitude', 'longitude', ]
+        fields = ['name', 'description', 'latitude', 'longitude', 'address', ]

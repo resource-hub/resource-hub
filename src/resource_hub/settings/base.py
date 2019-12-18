@@ -26,22 +26,30 @@ def get_env_var(setting):
 # General settings
 
 TESTING = False
+
 DEBUG = True
+
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+
 TEST_RUNNER = 'core.tests.runners.MyTestSuiteRunner'
 
 SECRET_KEY = get_env_var('SECRET_KEY')
 
 BASE_DIR = os.path.dirname(os.path.dirname(
     os.path.dirname(os.path.abspath(__file__))))
+
 PROJECT_DIR = os.path.join(BASE_DIR, 'resource_hub')
 
 ALLOWED_HOSTS = []
+
 ROOT_URLCONF = 'resource_hub.urls'
+
 WSGI_APPLICATION = 'resource_hub.wsgi.application'
 ASGI_APPLICATION = 'resource_hub.asgi.application'
 
 MAP_API_TOKEN = get_env_var('MAP_API_TOKEN')
 GITLAB_TOKEN = get_env_var('GITLAB_TOKEN')
+
 
 # Application definition
 
@@ -118,6 +126,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
 # Database
 
 DATABASES = {
@@ -162,12 +171,15 @@ STATICFILES_DIRS = [
 ]
 MEDIA_URL = '/media/'
 
+
 # Custom settings
 
 LOGIN_REDIRECT_URL = 'core:admin'
 LOGIN_URL = 'core:login'
 
 AUTH_USER_MODEL = "core.User"
+
+
 # django REST plugin settings
 
 REST_FRAMEWORK = {
@@ -194,7 +206,9 @@ CACHES = {
 }
 CACHE_TTL = 60 * 15
 
+
 # redis queue
+
 RQ_QUEUES = {
     'high': {
         'USE_REDIS_CACHE': 'default',
@@ -209,7 +223,7 @@ RQ_QUEUES = {
 
 
 # summernote
-X_FRAME_OPTIONS = 'SAMEORIGIN'
+
 SUMMERNOTE_THEME = 'lite'
 SUMMERNOTE_CONFIG = {
     'iframe': True,

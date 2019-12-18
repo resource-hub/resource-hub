@@ -23,7 +23,7 @@ class Actor(models.Model):
         on_delete=models.SET_NULL
     )
     image = models.ImageField(null=True, blank=True,
-                              upload_to='images/', )
+                              upload_to='images/', default='images/default.png')
     thumbnail = ImageSpecField(
         source='image',
         processors=[ResizeToFill(100, 100)],

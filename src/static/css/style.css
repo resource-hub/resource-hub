@@ -24,6 +24,10 @@
     color: inherit !important;
 }
 
+.ui.message {
+    margin: 0 0 1.5em 0 !important;
+}
+
 /**
   *
   * Tag specific   
