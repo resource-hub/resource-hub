@@ -9,6 +9,7 @@
     <form class="ui form" method="POST" action="{{ url }}" enctype="multipart/form-data">
         {% include '_form.html' with form=location_form %}
         {% include '_form.html' with form=address_form %}
+        {% include 'core/_identity.html' with actor=actor %}
         <button class="ui positive right labeled icon button" type="submit">
             {% trans 'Create' %}
             <i class="users icon"></i>
