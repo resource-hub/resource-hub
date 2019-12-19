@@ -17,16 +17,6 @@ TTL = 60 * 5
 def index(request):
     return render(request, 'rooms/index.html')
 
-
-class EventsCreate(View):
-    def get(self, request):
-        event_form = EventForm()
-        context = {
-            'event_form': event_form
-        }
-        return render(request, 'rooms/events_create.html', context)
-
-
 # Admin section
 @method_decorator(login_required, name='dispatch')
 class RoomsManage(View):
@@ -82,3 +72,9 @@ class RoomDetails(View):
         room = get_object_or_404(Room, pk=room_id)
         context = {'room': room}
         return render(request, 'rooms/room_details.html', context)
+
+
+class RoomEventsCreate(View):
+    def get(self, request, room_id):
+        context = {'event_form': EventForm()}
+        return render(request, 'rooms/room_events_create.html', context)

@@ -1,0 +1,22 @@
+{% extends 'core/__base.html' %}
+{% load i18n %}
+
+{% block content %}
+<h2>
+    {% trans 'Create event' %}
+</h2>
+<form class="ui form" method="POST">
+    {% csrf_token %}
+    {% include '_form.html' with form=event_form %}
+    {% include 'core/_identity.html' with actor=actor %}
+    <button class="ui positive right labeled icon button" type="submit">
+        {% trans 'Create Event' %}
+        <i class="calendar alternate outline icon"></i>
+    </button>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% url 'core:jsi18n' %}"></script>
+{{ event_form.media }}
+{% endblock %}
