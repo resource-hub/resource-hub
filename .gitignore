@@ -7,7 +7,7 @@ db.sqlite3
 .dbdata
 .env
 src/media/*
-!src/media/default.png
+!src/media/images/default.png
 a.out
 cov
 .coverage
