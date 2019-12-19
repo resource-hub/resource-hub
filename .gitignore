@@ -6,7 +6,8 @@ db.sqlite3
 .vscode
 .dbdata
 .env
-src/media
+src/media/*
+!src/media/default.png
 a.out
 cov
 .coverage

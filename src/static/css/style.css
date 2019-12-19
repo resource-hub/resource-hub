@@ -182,6 +182,10 @@ footer {
     display: none;
 }
 
+.spacer {
+    margin-top: 1em;
+}
+
 /* .ui.secondary.pointing.menu .active.item {
     display: block;
 }
