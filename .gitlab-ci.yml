@@ -44,7 +44,7 @@ demo:
     - ssh demo@${DEMO_SERVER_IP} "cd ${DEMO_PATH} && docker login -u gitlab-ci-token -p ${CI_JOB_TOKEN} registry.gitlab.com && docker pull ${CONTAINER_TEST_IMAGE}"
     - cat ${DEMO_ENV} > demo.env
     - scp demo.env demo@${DEMO_SERVER_IP}:${DEMO_PATH}/.env
-    - ssh demo@${DEMO_SERVER_IP} "chmod 600 demo.env"
+    - ssh demo@${DEMO_SERVER_IP} "chmod 600 .env"
     - rm demo.env
     - scp docker-compose.demo.yml demo@${DEMO_SERVER_IP}:${DEMO_PATH}/docker-compose.yml
     - ssh demo@${DEMO_SERVER_IP} "cd ${DEMO_PATH} && docker-compose stop && docker-compose -f docker-compose.yml -p demo up -d --force-recreate --build"
