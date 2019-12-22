@@ -20,3 +20,11 @@ class RoomSerializer(serializers.ModelSerializer):
         model = Room
         fields = ['id', 'name', 'description', 'room_link', 'location',
                   'price_per_h', 'max_price_per_d', 'thumbnail', 'owner']
+
+
+class EventSerializer(serializers.ModelSerializer):
+    organizer = ActorSerializerMinimal(read_only=True)
+
+    class Meta:
+        model = Event
+        fields = ['id', 'name', 'description', 'organizer', ]

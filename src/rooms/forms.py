@@ -19,11 +19,25 @@ class EventForm(forms.ModelForm):
     thumbnail_original = forms.ImageField(required=True)
     is_public = forms.BooleanField(
         required=False,
-        label=_(
-            'Make the event publically visible?'),
+        label=_('Make the event publically visible?'),
     )
 
     class Meta:
         model = Event
         fields = ['name', 'description', 'thumbnail_original',
                   'tags', 'category', 'is_public', 'recurrences']
+
+    def __init__(self, room_id, *args, **kwargs):
+        super(EventForm, self).__init__(*args, **kwargs)
+        self.room_id = room_id
+
+    def save(self, organizer, user, commit=True):
+        new_event = super(EventForm, self).save(commit=False)
+        new_event.organizer = organizer
+        new_event.created_by = user
+        new_event.updated_by = user
+        new_event.room_id = self.room_id
+
+        if commit:
+            new_event.save()
+        return new_event

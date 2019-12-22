@@ -14,4 +14,6 @@ urlpatterns = [
         views.RoomEventsCreate.as_view(), name='events_create'),
 
     url(r'api/rooms/$', api.Rooms.as_view(), name='api_room_feed'),
+    url(r'api/(?P<room_id>\w{0,50})/events/$',
+        api.RoomEvents.as_view(), name='api_room_event_feed'),
 ]

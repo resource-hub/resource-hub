@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
+from django.utils.translation import ugettext_lazy as _
 from django.views import View
 from django.views.decorators.cache import cache_page
 
@@ -75,6 +76,19 @@ class RoomDetails(View):
 
 
 class RoomEventsCreate(View):
+    template_name = 'rooms/room_events_create.html'
+
     def get(self, request, room_id):
-        context = {'event_form': EventForm()}
-        return render(request, 'rooms/room_events_create.html', context)
+        context = {'event_form': EventForm(room_id)}
+        return render(request, self.template_name, context)
+
+    def post(self, request, room_id):
+        event_form = EventForm(room_id, request.POST, request.FILES)
+        if event_form.is_valid():
+            event_form.save(request.actor, request.user)
+            message = _('The event has been created successfully')
+            messages.add_message(request, messages.SUCCESS, message)
+            return redirect(reverse('rooms:room_details', kwargs={'room_id': room_id}))
+        else:
+            context = {'event_form': event_form}
+            return render(request, self.template_name, context)

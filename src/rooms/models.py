@@ -76,7 +76,7 @@ class Event(models.Model):
         EventCategory, on_delete=models.SET_NULL, null=True)
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
     is_public = models.BooleanField()
-    recurrences = RecurrenceField(null=True)
+    recurrences = RecurrenceField(null=False)
     thumbnail_original = models.ImageField(null=False, blank=True,
                                            upload_to='images/')
     thumbnail = ImageSpecField(

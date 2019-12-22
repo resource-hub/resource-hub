@@ -5,13 +5,12 @@
 <h2>
     {% trans 'Create event' %}
 </h2>
-<form class="ui form" method="POST">
-    {% csrf_token %}
+<form class="ui form" method="POST" enctype="multipart/form-data">
     {% include '_form.html' with form=event_form %}
     {% include 'core/_identity.html' with actor=actor %}
     <button class="ui positive right labeled icon button" type="submit">
         {% trans 'Create Event' %}
-        <i class="calendar alternate outline icon"></i>
+        <i class="calendar plus outline icon"></i>
     </button>
 </form>
 {% endblock %}
