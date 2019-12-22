@@ -15,7 +15,7 @@ services:
 
   app:
     environment:
-      DJANGO_SETTINGS_MODULE: resource_hub.settings.test
+      DJANGO_SETTINGS_MODULE: resource_hub.settings.dev
     env_file:
       .env
     image: registry.gitlab.com/resource-hub/resource-hub:${CI_BUILD_REF_NAME}
