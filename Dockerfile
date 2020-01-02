@@ -4,7 +4,7 @@ ENV PYTHONUNBUFFERED=1
 
 RUN apk add --no-cache linux-headers bash gcc \
     musl-dev libjpeg-turbo-dev libpng \
-    postgresql-dev  git zlib-dev libmagic \
+    postgresql-dev git zlib-dev libmagic \
     gettext graphviz libffi-dev
 
 WORKDIR /site
