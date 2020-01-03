@@ -22,9 +22,12 @@ class RoomSerializer(serializers.ModelSerializer):
                   'price_per_h', 'max_price_per_d', 'thumbnail', 'owner']
 
 
-class EventSerializer(serializers.ModelSerializer):
-    organizer = ActorSerializerMinimal(read_only=True)
+# class EventSerializer(serializers.ModelSerializer):
+#     organizer = ActorSerializerMinimal(read_only=True)
 
-    class Meta:
-        model = Event
-        fields = ['id', 'name', 'description', 'organizer', ]
+#     def to_representation(self, instance):
+
+
+#     class Meta:
+#         model = Event
+#         fields = ['id', 'name', 'description', 'organizer', ]
