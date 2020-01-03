@@ -12,7 +12,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from rooms.models import Room, Event
-from rooms.serializers import RoomSerializer, EventSerializer
+from rooms.serializers import RoomSerializer
 
 
 '''
@@ -46,7 +46,6 @@ class Rooms(generics.ListCreateAPIView):
 @permission_classes([])
 class RoomEvents(APIView):
     http_method_names = ['get']
-    serializer_class = EventSerializer
 
     def get(self, request, room_id):
         start_str = self.request.query_params.get('start', None)
