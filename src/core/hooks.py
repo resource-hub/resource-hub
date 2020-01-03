@@ -134,3 +134,14 @@ class Hook(object):
 
 
 hook = Hook()
+
+
+class UrlHook():
+    def __init__(self):
+        self._registry = []
+
+    def register(self, patterns):
+        self._registry += patterns
+
+    def get(self):
+        return self._registry

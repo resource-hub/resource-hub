@@ -1,12 +1,23 @@
-from django.urls import include
+from django.urls import include, path
 from django.conf.urls import url
 import django.contrib.auth.views as auth
 from django.views.i18n import JavaScriptCatalog
+
 from . import views, api
+from api.urls import api_urls
 
 js_info_dict = {
     'packages': ('recurrence', ),
 }
+
+api_urls.register([
+    url(r'^users/search/$', api.UserSearch.as_view(), name='search_users'),
+    url(r'^actors/list$', api.ActorList.as_view(), name='actor_list'),
+    url(r'^actors/change$',
+        api.ActorChange.as_view(), name='actor_change'),
+    url(r'locations/search/$', api.LocationFeed.as_view(),
+        name='locations_search')
+])
 
 app_name = 'core'
 urlpatterns = [
@@ -69,12 +80,4 @@ urlpatterns = [
         name='locations_create'),
     url(r'^admin/locations/manage/$', views.LocationManage.as_view(),
         name='locations_manage'),
-
-
-    url(r'^api/user/search/$', api.UserSearch.as_view(), name='api_search_users'),
-    url(r'^api/user/roles/$', api.UserRoles.as_view()),
-    url(r'^api/organization/member/role/$',
-        api.OrganizationMemberChangeRole.as_view()),
-    url(r'api/location/search/$', api.LocationFeed.as_view(),
-        name='api_locations_search')
 ]

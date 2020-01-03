@@ -42,13 +42,11 @@ $(document).ready(function () {
 
     // display role selection modal and get list of roles
     $('#role').on('click', function (e) {
-        var url = window.location.origin + '/api/user/roles/';
-
         e.preventDefault();
         $('#select-roles')
             .modal('show');
         $.ajax({
-            url: url,
+            url: "{% url 'api:change_role' %}",
             type: "GET",
             dataType: "JSON"
         }).done(function (list) {

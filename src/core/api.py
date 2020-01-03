@@ -18,7 +18,7 @@ class UserSearch(generics.ListCreateAPIView):
     serializer_class = UserSerializer
 
 
-class UserRoles(generics.ListCreateAPIView):
+class ActorList(generics.ListCreateAPIView):
     http_method_names = ['get']
     serializer_class = ActorSerializerMinimal
 
@@ -32,10 +32,9 @@ class UserRoles(generics.ListCreateAPIView):
         return Actor.objects.filter(query)
 
 
-class OrganizationMemberChangeRole(APIView):
+class ActorChange(APIView):
     def post(self, request, format=None):
         data = request.POST
-        print(data)
         return Response(data)
 
 

@@ -52,15 +52,15 @@
 </script>
 
 <script>
-    $(document).ready(() => {
+    $(document).ready(function () {
         function create_feed(query) {
             var template = document.getElementById("room-item-template");
             var templateHtml = template.innerHTML;
             $.ajax({
-                'url': "{% url 'rooms:api_room_feed' %}?search=" + query,
+                'url': "{% url 'api:room_feed' %}?search=" + query,
                 'type': 'GET',
                 'dataType': 'JSON'
-            }).done((data) => {
+            }).done(function (data) {
                 var feed = "";
 
                 for (i in data) {
@@ -74,7 +74,7 @@
                 }
                 remove_loader('#feed-loader');
                 $('#room-feed').html(feed);
-                $('.thumbnail').on('load', () => {
+                $('.thumbnail').on('load', function () {
                     $('.placeholder').hide();
                 });
                 $('.fluid.card .image').dimmer({ on: 'hover' });
@@ -84,14 +84,15 @@
 
         create_feed("");
 
-        $('#search-room').on('input', () => {
-            var val = $(this).val().trim();
-            val = val.replace(/\s+/g, '');
+        // live search disabled
+        // $('#search-room').on('input', function () {
+        //     var val = $(this).val().trim();
+        //     val = val.replace(/\s+/g, '');
 
-            if (val.length % 3 == 0) { //for checking 3 characters
-                console.log('yes');
-            }
-        });
+        //     if (val.length % 3 == 0) { //for checking 3 characters
+        //         create_feed(val);
+        //     }
+        // });
 
         $('#filter-form').on('submit', function (e) {
             e.preventDefault();

@@ -56,7 +56,7 @@
 <p><i class="map marker alternate icon"></i>%address_string%</p>
 </script>
 <script>
-  $.get('{% url "core:api_locations_search" %}', function (data) {
+  $.get('{% url "api:locations_search" %}', function (data) {
     var popup_template = document.getElementById("pop-up-template").innerHTML;
     $.each(data, function (i, location) {
       var popup = popup_template

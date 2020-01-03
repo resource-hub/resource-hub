@@ -35,7 +35,7 @@
                 onResponse: function (result) {
                     return { results: Object.values(result) };
                 },
-                url: '{% url "core:api_search_users" %}?search={query}'
+                url: '{% url "api:search_users" %}?search={query}'
             },
             fields: {
                 title: 'username',
