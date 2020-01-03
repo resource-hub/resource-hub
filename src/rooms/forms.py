@@ -3,6 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from django_summernote.widgets import SummernoteWidget
 
+from core.widgets import TimeInput
 from rooms.models import Room, Event
 
 
@@ -21,11 +22,13 @@ class EventForm(forms.ModelForm):
         required=False,
         label=_('Make the event publically visible?'),
     )
+    start = forms.TimeField(widget=TimeInput())
+    end = forms.TimeField(widget=TimeInput())
 
     class Meta:
         model = Event
-        fields = ['name', 'description', 'thumbnail_original',
-                  'tags', 'category', 'is_public', 'recurrences']
+        fields = ['name', 'description', 'start', 'end', 'recurrences', 'thumbnail_original',
+                  'tags', 'category', 'is_public', ]
 
     def __init__(self, room_id, *args, **kwargs):
         super(EventForm, self).__init__(*args, **kwargs)

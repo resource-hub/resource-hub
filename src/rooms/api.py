@@ -1,4 +1,6 @@
 import re
+from datetime import datetime
+import dateutil.parser
 
 from django.forms.models import model_to_dict
 from django.utils.translation import ugettext_lazy as _
@@ -42,29 +44,46 @@ class Rooms(generics.ListCreateAPIView):
 
 @authentication_classes([])
 @permission_classes([])
-class RoomEvents(generics.ListCreateAPIView):
+class RoomEvents(APIView):
     http_method_names = ['get']
     serializer_class = EventSerializer
 
-    def get_queryset(self):
-        start = self.request.query_params.get('start', None)
-        end = self.request.query_params.get('end', None)
-        room_id = self.kwargs['room_id']
+    def get(self, request, room_id):
+        start_str = self.request.query_params.get('start', None)
+        end_str = self.request.query_params.get('end', None)
 
-        if start is None or end is None:
+        if start_str is None or end_str is None:
             raise exceptions.NotFound(
                 detail=_('start or end parameter not set'))
 
-        if not is_valid_iso8601(start) or not is_valid_iso8601(end):
+        try:
+            start = dateutil.parser.parse(start_str).replace(tzinfo=None)
+            end = dateutil.parser.parse(end_str).replace(tzinfo=None)
+        except ValueError as e:
             raise exceptions.ParseError(
                 detail=_('start or end parameter not valid iso_8601 string'))
 
         try:
-            queryset = Room.objects.get(id=room_id)
+            Room.objects.get(id=room_id)
         except Room.DoesNotExist:
             raise exception.NotFound(
                 detail=_('No room corresponds to the given id'))
 
-        queryset = Event.objects.filter(room=room_id)
+        events = Event.objects.filter(room=room_id)
+        result = []
 
-        return queryset
+        for e in events:
+            occurrences = e.recurrences.between(
+                start,
+                end,
+            )
+            for o in occurrences:
+                result.append({
+                    'id': e.id,
+                    'title': e.name,
+                    'description': e.description,
+                    'start': datetime.combine(o.date(), e.start),
+                    'end': datetime.combine(o.date(), e.end),
+                })
+
+        return Response(result)

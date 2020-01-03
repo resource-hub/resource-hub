@@ -69,6 +69,8 @@ class Event(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=128)
     description = models.CharField(max_length=128)
+    start = models.TimeField()
+    end = models.TimeField()
     organizer = models.ForeignKey(
         Actor, on_delete=models.CASCADE, related_name='event_actor')
     tags = models.ManyToManyField(EventTag)

@@ -1,4 +1,4 @@
-from django.forms.widgets import TextInput, CheckboxInput
+from django.forms.widgets import TextInput, CheckboxInput, TimeInput
 
 
 class UISearchField(TextInput):
@@ -7,3 +7,7 @@ class UISearchField(TextInput):
 
 class UICheckboxSlider(CheckboxInput):
     template_name = 'core/widgets/checkbox_slider.html'
+
+
+class TimeInput(TimeInput):
+    template_name = 'core/widgets/time_input.html'

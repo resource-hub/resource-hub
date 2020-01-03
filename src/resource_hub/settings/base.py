@@ -145,7 +145,7 @@ DATABASES = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = get_env_var('TIMEZONE')
 
 USE_I18N = True
 

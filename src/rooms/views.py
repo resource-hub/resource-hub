@@ -85,6 +85,7 @@ class RoomEventsCreate(View):
     def post(self, request, room_id):
         event_form = EventForm(room_id, request.POST, request.FILES)
         if event_form.is_valid():
+            print(event_form.cleaned_data['recurrences'])
             event_form.save(request.actor, request.user)
             message = _('The event has been created successfully')
             messages.add_message(request, messages.SUCCESS, message)
