@@ -48,10 +48,18 @@
                 {% trans 'Locations' %}
             </div>
             <div class="menu">
-                <a class="item" href="{% url 'core:locations_manage' %}">
-                    {% trans 'Overview' %}
+                <a class="item
+                {% if '/locations/manage' in request.path %}
+                    active
+                    {% endif %}
+                " href="{% url 'core:locations_manage' %}">
+                    {% trans 'Manage' %}
                 </a>
-                <a class="item" href="{% url 'core:locations_create' %}">
+                <a class="item
+                {% if '/locations/create' in request.path %}
+                    active
+                    {% endif %}
+                " href="{% url 'core:locations_create' %}">
                     {% trans 'Create' %}
                 </a>
             </div>

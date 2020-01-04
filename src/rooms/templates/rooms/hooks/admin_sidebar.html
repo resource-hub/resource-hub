@@ -5,10 +5,19 @@
         {% trans 'Rooms' %}
     </div>
     <div class="menu">
-        <a class="item" href="{% url 'rooms:manage' %}">
-            {% trans 'Overview' %}
+        {{ request.path }}
+        <a class="item
+            {% if '/rooms/manage' in request.path %}
+                active
+            {% endif %}
+        " href="{% url 'rooms:manage' %}">
+            {% trans 'Manage' %}
         </a>
-        <a class="item" href="{% url 'rooms:create' %}">
+        <a class="item
+            {% if '/rooms/create' in request.path %}
+                active
+            {% endif %}
+        " href="{% url 'rooms:create' %}">
             {% trans 'Create' %}
         </a>
     </div>

@@ -1,21 +1,16 @@
+{% load i18n %}
 <style>
     #back-up {
-        font-size: 2rem;
-        color: #f26202;
         visibility: hidden;
         position: fixed;
         bottom: 20px;
         right: 20px;
         z-index: 2;
-        border: none;
-        outline: none;
-        background-color: transparent;
-        cursor: pointer;
         transition: visibility 0s linear 0.5s, opacity 0.3s linear;
         -webkit-transition: visibility 0s linear 0.5s, opacity 0.3s linear;
     }
 </style>
 
-<button id="back-up" title="Go to top">
-    <i class="caret square up icon"></i>
+<button id="back-up" class="ui orange icon button" title="{% trans 'Go to top' %}">
+    <i class="arrow up icon"></i>
 </button>
