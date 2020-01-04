@@ -81,7 +81,7 @@ class Register(View):
         if request.user.is_authenticated:
             message = _('You are already logged in.')
             messages.add_message(request, messages.INFO, message)
-            return redirect(reverse('core:admin'))
+            return redirect(reverse('admin:home'))
         else:
             user_form = UserFormManager()
             return render(request, 'core/register.html', user_form.get_forms())
@@ -132,7 +132,7 @@ class Activate(View):
             login(request, user)
             message = _('Your account has been activated successfully.')
             messages.add_message(request, messages.SUCCESS, message)
-            return redirect(reverse('core:admin'))
+            return redirect(reverse('admin:home'))
         else:
             message = _('Your activation-link is invalid!')
             messages.add_message(request, messages.ERROR, message)
@@ -141,7 +141,7 @@ class Activate(View):
 
 def custom_login(request):
     if request.user.is_authenticated:
-        return redirect(reverse('core:admin'))
+        return redirect(reverse('admin:home'))
     else:
         return LoginView.as_view(
             template_name='core/login.html')(request)

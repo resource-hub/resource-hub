@@ -122,7 +122,7 @@ class TestSetRole(TestView, TestCase):
 
 
 class TestAdmin(TestView, TestCase):
-    view_name = 'core:admin'
+    view_name = 'admin:home'
 
 
 class TestAccountSettings(TestView, TestCase):
