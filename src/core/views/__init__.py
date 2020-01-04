@@ -202,7 +202,7 @@ class AccountSettings(ScopeView):
 
         if account_form.is_valid:
             messages.add_message(request, messages.SUCCESS, message)
-            return redirect(reverse('core:account_settings', kwargs={'scope': scope}))
+            return redirect(reverse('admin:account_settings', kwargs={'scope': scope}))
         else:
             return render(request, self.template_name, account_form.get_forms(scope))
 
@@ -210,7 +210,7 @@ class AccountSettings(ScopeView):
 @method_decorator(login_required, name='dispatch')
 class AccountProfile(ScopeView):
     template_name = 'core/admin/account_profile.html'
-    redirect_url = 'core:account_profile'
+    redirect_url = 'admin:account_profile'
     legal_scope = ['info', 'address', 'bank_account', ]
 
     def get(self, request, scope):
@@ -277,7 +277,7 @@ class OrganizationCreate(View):
                 organization_form.save()
             message = _('The organization has been registered')
             messages.add_message(request, messages.SUCCESS, message)
-            return redirect(reverse('core:organizations_manage'))
+            return redirect(reverse('admin:organizations_manage'))
         else:
             return render(request, self.template_name, organization_form.get_forms())
 
@@ -301,7 +301,7 @@ class OrganizationsProfile(View):
 @method_decorator([login_required, organization_admin_required], name='dispatch')
 class OrganizationProfileEdit(View):
     template_name = 'core/admin/organizations_profile_edit.html'
-    redirect_url = 'core:organizations_profile_edit'
+    redirect_url = 'admin:organizations_profile_edit'
     legal_scope = ['info', 'address', 'bank_account']
 
     def get(self, request, organization_id, scope):
@@ -384,7 +384,7 @@ class OrganizationMembersAdd(View):
 
             message = _('User has been added to ' + organization.name)
             messages.add_message(request, messages.SUCCESS, message)
-            return redirect(reverse('core:organizations_members', kwargs={'organization_id': organization_id}))
+            return redirect(reverse('admin:organizations_members', kwargs={'organization_id': organization_id}))
         else:
             context = {
                 'member_add_form': member_add_form,
@@ -418,7 +418,7 @@ class LocationCreate(View):
 
                 message = _('The location has been created')
                 messages.add_message(request, messages.SUCCESS, message)
-                return redirect(reverse('core:locations_manage'))
+                return redirect(reverse('admin:locations_manage'))
 
         context = {
             'location_form': location_form,

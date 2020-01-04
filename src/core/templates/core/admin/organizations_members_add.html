@@ -1,10 +1,10 @@
-{% extends "core/admin/__base.html" %}
+{% extends "admin/__base.html" %}
 {% load i18n %}
 {% load django_tables2 %}
 
 {% block content %}
 <a class="ui labeled icon button back-button"
-    href="{% url 'core:organizations_members' organization_id=organization.id %}">
+    href="{% url 'admin:organizations_members' organization_id=organization.id %}">
     <i class="left arrow icon"></i>
     {% trans 'Back' %}
 </a>

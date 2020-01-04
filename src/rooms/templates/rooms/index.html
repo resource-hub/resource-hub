@@ -57,7 +57,7 @@
             var template = document.getElementById("room-item-template");
             var templateHtml = template.innerHTML;
             $.ajax({
-                'url': "{% url 'api:room_feed' %}?search=" + query,
+                'url': "{% url 'api:rooms' %}?search=" + query,
                 'type': 'GET',
                 'dataType': 'JSON'
             }).done(function (data) {

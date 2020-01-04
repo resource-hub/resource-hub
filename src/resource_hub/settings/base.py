@@ -56,6 +56,8 @@ GITLAB_TOKEN = get_env_var('GITLAB_TOKEN')
 INSTALLED_APPS = [
     # project apps
     'core.apps.CoreConfig',
+    'core.apps.AdminConfig',
+    'core.apps.ApiConfig',
     'rooms.apps.RoomsConfig',
     # third party
     'imagekit',
@@ -66,7 +68,6 @@ INSTALLED_APPS = [
     'django_summernote',
     'recurrence',
     # native apps
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',

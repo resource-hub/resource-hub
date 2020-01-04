@@ -1,4 +1,4 @@
-{% extends 'core/admin/__base.html' %}
+{% extends 'admin/__base.html' %}
 {% load i18n %}
 {% load django_tables2 %}
 
@@ -17,7 +17,7 @@
         <p>
             {% trans 'No associated locations found' %}
         </p>
-        <a class="ui positive right labeled icon button" href="{% url 'core:locations_create' %}">
+        <a class="ui positive right labeled icon button" href="{% url 'admin:locations_create' %}">
             {% trans 'Create one!' %}
             <i class="child icon"></i>
         </a>

@@ -6,7 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 
 class OrganizationsTable(tables.Table):
     name = tables.LinkColumn(
-        'core:organizations_profile',
+        'admin:organizations_profile',
         verbose_name=_('Name'),
         kwargs={
             'organization_id': A('organization_id'),
@@ -14,7 +14,7 @@ class OrganizationsTable(tables.Table):
     )
     role = tables.Column(verbose_name=_('Your role'))
     # members = tables.LinkColumn(
-    #     'core:organizations_members',
+    #     'admin:organizations_members',
     #     text=safe('<i class="users icon"></i>'),
     #     verbose_name=_('Members'),
     #     kwargs={

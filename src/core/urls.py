@@ -3,12 +3,48 @@ from django.conf.urls import url
 import django.contrib.auth.views as auth
 from django.views.i18n import JavaScriptCatalog
 
-from . import views, api
-from api.urls import api_urls
+from core.api.urls import api_urls
+from core.admin.urls import admin_urls
+import core.views as views
+from core.views import api
 
 js_info_dict = {
     'packages': ('recurrence', ),
 }
+
+admin_urls.register([
+    url(r'^$', views.Admin.as_view(), name='home'),
+    url(r'^account/profile/(?P<scope>\w{0,50})/$',
+        views.AccountProfile.as_view(),
+        name='account_profile'),
+    url(r'^account/settings/(?P<scope>\w{0,50})/$',
+        views.AccountSettings.as_view(),
+        name='account_settings'),
+
+    url(r'^organizations/manage$',
+        views.OrganizationsManage.as_view(),
+        name='organizations_manage'),
+    url(r'^organizations/create/$',
+        views.OrganizationCreate.as_view(),
+        name='organizations_create'),
+    url(r'^organizations/manage/profile/(?P<organization_id>\w{0,50})/$',
+        views.OrganizationsProfile.as_view(),
+        name='organizations_profile'),
+    url(r'^organizations/manage/profile/edit/(?P<organization_id>\w{0,50})/(?P<scope>\w{0,50})/$',
+        views.OrganizationProfileEdit.as_view(),
+        name='organizations_profile_edit'),
+    url(r'^organizations/manage/members/(?P<organization_id>\w{0,50})/$',
+        views.OrganizationMembers.as_view(),
+        name='organizations_members'),
+    url(r'^organizations/manage/members/add/(?P<organization_id>\w{0,50})/$',
+        views.OrganizationMembersAdd.as_view(),
+        name='organizations_members_add'),
+
+    url(r'^locations/create/$', views.LocationCreate.as_view(),
+        name='locations_create'),
+    url(r'^locations/manage/$', views.LocationManage.as_view(),
+        name='locations_manage'),
+])
 
 api_urls.register([
     url(r'^users/search/$', api.UserSearch.as_view(), name='search_users'),
@@ -49,35 +85,4 @@ urlpatterns = [
         packages=['recurrence']), name='jsi18n'),
     url(r'^set_role/$', views.SetRole.as_view(), name='set_role'),
 
-    url(r'^admin/$', views.Admin.as_view(), name='admin'),
-    url(r'^admin/account/profile/(?P<scope>\w{0,50})/$',
-        views.AccountProfile.as_view(),
-        name='account_profile'),
-    url(r'^admin/account/settings/(?P<scope>\w{0,50})/$',
-        views.AccountSettings.as_view(),
-        name='account_settings'),
-
-    url(r'^admin/organizations/manage$',
-        views.OrganizationsManage.as_view(),
-        name='organizations_manage'),
-    url(r'^admin/organizations/create/$',
-        views.OrganizationCreate.as_view(),
-        name='organizations_create'),
-    url(r'^admin/organizations/manage/profile/(?P<organization_id>\w{0,50})/$',
-        views.OrganizationsProfile.as_view(),
-        name='organizations_profile'),
-    url(r'^admin/organizations/manage/profile/edit/(?P<organization_id>\w{0,50})/(?P<scope>\w{0,50})/$',
-        views.OrganizationProfileEdit.as_view(),
-        name='organizations_profile_edit'),
-    url(r'^admin/organizations/manage/members/(?P<organization_id>\w{0,50})/$',
-        views.OrganizationMembers.as_view(),
-        name='organizations_members'),
-    url(r'^admin/organizations/manage/members/add/(?P<organization_id>\w{0,50})/$',
-        views.OrganizationMembersAdd.as_view(),
-        name='organizations_members_add'),
-
-    url(r'^admin/locations/create/$', views.LocationCreate.as_view(),
-        name='locations_create'),
-    url(r'^admin/locations/manage/$', views.LocationManage.as_view(),
-        name='locations_manage'),
 ]

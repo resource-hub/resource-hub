@@ -131,7 +131,7 @@ class TestAccountSettings(TestView, TestCase):
 
         for s in scope:
             response = self.client.get(
-                reverse('core:account_settings', kwargs={'scope': s}))
+                reverse('admin:account_settings', kwargs={'scope': s}))
             self.assertEqual(response.status_code, 200)
 
 
@@ -141,13 +141,13 @@ class TestAccountProfile(TestView, TestCase):
 
         for s in scope:
             response = self.client.get(
-                reverse('core:account_profile', kwargs={'scope': s}))
+                reverse('admin:account_profile', kwargs={'scope': s}))
             self.assertEqual(response.status_code, 200)
 
 
 class TestOrganizationsManage(TestView, TestCase):
-    view_name = 'core:organizations_manage'
+    view_name = 'admin:organizations_manage'
 
 
 class TestOrganizationsCreate(TestView, TestCase):
-    view_name = 'core:organizations_create'
+    view_name = 'admin:organizations_create'

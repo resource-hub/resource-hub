@@ -9,14 +9,14 @@
                     {% if '/account/profile/' in request.path %}
                     active
                     {% endif %}
-                    " href="{% url 'core:account_profile' scope='info' %}">
+                    " href="{% url 'admin:account_profile' scope='info' %}">
                     {% trans 'Profile' %}
                 </a>
                 <a class="item
                 {% if '/settings/' in request.path %}
                 active
                 {% endif %}
-                " href="{% url 'core:account_settings' scope='email' %}">
+                " href="{% url 'admin:account_settings' scope='email' %}">
                     {% trans 'Settings' %}
                 </a>
             </div>
@@ -31,14 +31,14 @@
                 {% if '/admin/organizations/manage' in request.path %}
                     active
                     {% endif %}
-                " href="{% url 'core:organizations_manage' %}">
+                " href="{% url 'admin:organizations_manage' %}">
                     {% trans 'Manage' %}
                 </a>
                 <a class="item
                 {% if '/organizations/create' in request.path %}
                     active
                     {% endif %}
-                " href="{% url 'core:organizations_create' %}">
+                " href="{% url 'admin:organizations_create' %}">
                     {% trans 'Create' %}
                 </a>
             </div>
@@ -52,14 +52,14 @@
                 {% if '/locations/manage' in request.path %}
                     active
                     {% endif %}
-                " href="{% url 'core:locations_manage' %}">
+                " href="{% url 'admin:locations_manage' %}">
                     {% trans 'Manage' %}
                 </a>
                 <a class="item
                 {% if '/locations/create' in request.path %}
                     active
                     {% endif %}
-                " href="{% url 'core:locations_create' %}">
+                " href="{% url 'admin:locations_create' %}">
                     {% trans 'Create' %}
                 </a>
             </div>

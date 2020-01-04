@@ -60,7 +60,7 @@ class RoomsCreate(View):
 
             message = ('The room has been created')
             messages.add_message(request, messages.SUCCESS, message)
-            return redirect(reverse('rooms:manage'))
+            return redirect(reverse('admin:rooms_manage'))
 
         context = {
             'room_form': room_form,

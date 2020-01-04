@@ -13,7 +13,7 @@
         var calendarEl = document.getElementById('calendar');
 
         var calendar = new FullCalendar.Calendar(calendarEl, {
-            events: "{% url 'api:room_event_feed' room_id=room.id %}",
+            events: "{% url 'api:rooms_event_feed' room_id=room.id %}",
             plugins: ['dayGrid']
         });
 
