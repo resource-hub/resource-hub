@@ -44,7 +44,8 @@
             <div class="content">
                 <div class="header">%name%</div>
                 <div class="meta">
-                    <p><i class="map marker alternate icon"></i>%address_string%</p>
+                    <p><i class="location arrow icon"></i> %location_name%</p>
+                    <p><i class="map marker alternate icon"></i> %address_string%</p>
                 </div>
             </div>
         </a>
@@ -70,6 +71,7 @@
                         .replace(/%owner_thumbnail%/g, data[i].owner['thumbnail'])
                         .replace(/%room_thumbnail%/g, data[i]['thumbnail'])
                         .replace(/%name%/g, data[i]['name'])
+                        .replace(/%location_name%/g, data[i].location.name)
                         .replace(/%address_string%/g, data[i].location.address['address_string']);
                 }
                 remove_loader('#feed-loader');
