@@ -10,7 +10,8 @@ from django.forms import model_to_dict
 from django.utils.dateparse import parse_date
 from django.utils.translation import ugettext_lazy as _
 
-from core.models import *
+from core.models import (Actor, Address, BankAccount, Location, Organization,
+                         OrganizationMember, User)
 from core.widgets import UISearchField
 from django_summernote.widgets import SummernoteWidget
 from schwifty import BIC, IBAN
@@ -355,7 +356,7 @@ class OrganizationFormManager():
         if membership.is_valid():
             membership.save()
         else:
-            raise ValidationError("Invalid Membership form")
+            raise forms.ValidationError("Invalid Membership form")
 
         return new_organization
 
@@ -447,9 +448,10 @@ class LocationForm(forms.ModelForm):
         fields = ['name', 'description', 'image',
                   'search', 'latitude', 'longitude']
 
-    def save(self, owner, commit=True):
+    def save(self, owner=None, commit=True):
         new_location = super(LocationForm, self).save(commit=False)
-        new_location.owner = owner
+        if owner is not None:
+            new_location.owner = owner
         if commit:
             new_location.save()
         return new_location

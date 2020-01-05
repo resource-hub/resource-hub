@@ -1,0 +1,15 @@
+{% extends 'admin/__base.html' %}
+{% load i18n %}
+{% load django_tables2 %}
+
+{% block content %}
+<h2>
+    {% trans 'Edit Profile' %}
+</h2>
+<div class="ui segment tab-content">
+    <form class="ui form" method="POST" enctype="multipart/form-data">
+        {% include '_form.html' with form=location_form %}
+        {% include '_save_button.html' %}
+    </form>
+</div>
+{% endblock %}

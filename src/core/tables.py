@@ -39,7 +39,13 @@ class MembersTable(tables.Table):
 
 
 class LocationsTable(tables.Table):
-    name = tables.Column(verbose_name=_('Name'))
+    name = tables.LinkColumn(
+        'admin:locations_profile',
+        verbose_name=_('Name'),
+        kwargs={
+            'location_id': A('location_id'),
+        }
+    )
 
     class Meta:
         attrs = {

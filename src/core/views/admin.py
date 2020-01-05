@@ -279,14 +279,14 @@ class LocationsCreate(View):
 @method_decorator(login_required, name='dispatch')
 class LocationsManage(View):
     def get(self, request):
-        locations = Location.objects.all()
+        locations = Location.objects.filter()
 
         if locations:
             data = []
             for l in locations:
                 data.append({
                     'name': l.name,
-                    'id': l.id,
+                    'location_id': l.id,
                 })
             locations_table = LocationsTable(data)
         else:
@@ -297,17 +297,30 @@ class LocationsManage(View):
         }
         return render(request, 'core/admin/locations_manage.html', context)
 
-
+# todo rights to edit
 @method_decorator(login_required, name='dispatch')
 class LocationsProfile(View):
-    template_name = 'core/admin/location_profile.html'
+    template_name = 'core/admin/locations_profile.html'
 
-    def get(self, request):
-        profile_form = ''
+    def get(self, request, location_id):
+        location = get_object_or_404(Location, pk=location_id)
+        location_form = LocationForm(initial=model_to_dict(location))
         context = {
-            'profile_form': profile_form,
+            'location_form': location_form,
         }
         return render(request, self.template_name, context)
 
-    def post(self, request):
-        return redirect(reverse('core:location_profile'))
+    def post(self, request, location_id):
+        location = get_object_or_404(Location, pk=location_id)
+        location_form = LocationForm(
+            request.POST, request.FILES, instance=location)
+
+        if location_form.is_valid():
+            location_form.save()
+            return redirect(reverse('admin:locations_profile', kwargs={'location_id': location_id}))
+
+        context = {
+            'location_form': location_form,
+        }
+
+        return render(request, self.template_name, context)
