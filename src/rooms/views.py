@@ -1,12 +1,15 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 from django.utils.decorators import method_decorator
+from django.forms import model_to_dict
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.views import View
 from django.views.decorators.cache import cache_page
 
+from core.models import OrganizationMember
 from rooms.forms import RoomForm, EventForm
 from rooms.models import Room
 from rooms.tables import RoomsTable
@@ -22,14 +25,21 @@ def index(request):
 @method_decorator(login_required, name='dispatch')
 class RoomsManage(View):
     def get(self, request):
-        rooms = Room.objects.all().filter(owner__pk=request.actor.id)
+        user = request.user
+        query = Q(owner=user.pk)
+        sub_condition = Q(owner__organization__members=user)
+        sub_condition.add(
+            Q(owner__organization__organizationmember__role__gte=OrganizationMember.ADMIN), Q.AND)
+        query.add(sub_condition, Q.OR)
+        rooms = Room.objects.filter(query)
 
         if rooms:
             data = []
-            for o in rooms:
+            for r in rooms:
                 data.append({
-                    'name': o.name,
-                    'id': o.id,
+                    'name': r.name,
+                    'room_id': r.id,
+                    'owner': r.owner,
                 })
             rooms_table = RoomsTable(data)
         else:
@@ -66,6 +76,33 @@ class RoomsCreate(View):
             'room_form': room_form,
         }
         return render(request, 'rooms/admin/rooms_create.html', context)
+
+
+class RoomsProfileEdit(View):
+    template_name = 'rooms/admin/rooms_profile_edit.html'
+
+    def get(self, request, room_id):
+        room = get_object_or_404(Room, pk=room_id)
+        room_form = RoomForm(initial=model_to_dict(room))
+        context = {
+            'room_form': room_form
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request, room_id):
+        room = get_object_or_404(Room, pk=room_id)
+        room_form = RoomForm(
+            request.POST, request.FILES, instance=room)
+
+        if room_form.is_valid():
+            room_form.save()
+            return redirect(reverse('admin:rooms_profile_edit', kwargs={'room_id': room_id}))
+
+        context = {
+            'room_form': room_form,
+        }
+
+        return render(request, self.template_name, context)
 
 
 class RoomDetails(View):

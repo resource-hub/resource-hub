@@ -1,4 +1,3 @@
-from django.utils.safestring import mark_safe as safe
 from django.utils.translation import ugettext_lazy as _
 
 import django_tables2 as tables
@@ -40,12 +39,13 @@ class MembersTable(tables.Table):
 
 class LocationsTable(tables.Table):
     name = tables.LinkColumn(
-        'admin:locations_profile',
+        'admin:locations_profile_edit',
         verbose_name=_('Name'),
         kwargs={
             'location_id': A('location_id'),
         }
     )
+    owner = tables.Column()
 
     class Meta:
         attrs = {

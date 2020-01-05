@@ -1,0 +1,16 @@
+{% extends 'admin/__base.html' %}
+{% load i18n %}
+
+{% block content %}
+{% url 'admin:rooms_manage' as url %}
+{% include '_back_button.html' with url=url %}
+<h2>
+    {% trans 'Edit Profile' %}
+</h2>
+<div class="ui segment tab-content">
+    <form class="ui form" method="POST" enctype="multipart/form-data">
+        {% include '_form.html' with form=room_form %}
+        {% include '_save_button.html' %}
+    </form>
+</div>
+{% endblock %}

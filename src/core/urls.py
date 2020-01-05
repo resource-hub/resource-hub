@@ -43,8 +43,8 @@ admin_urls.register([
         name='locations_create'),
     url(r'^locations/manage/$', admin.LocationsManage.as_view(),
         name='locations_manage'),
-    url(r'^locations/manage/(?P<location_id>\w{0,50})/profile/$', admin.LocationsProfile.as_view(),
-        name='locations_profile'),
+    url(r'^locations/manage/(?P<location_id>\w{0,50})/profile/edit$', admin.LocationsProfileEdit.as_view(),
+        name='locations_profile_edit'),
 ])
 
 api_urls.register([

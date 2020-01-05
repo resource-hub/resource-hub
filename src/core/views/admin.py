@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
+from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -279,13 +280,20 @@ class LocationsCreate(View):
 @method_decorator(login_required, name='dispatch')
 class LocationsManage(View):
     def get(self, request):
-        locations = Location.objects.filter()
+        user = request.user
+        query = Q(owner=user.pk)
+        sub_condition = Q(owner__organization__members=user)
+        sub_condition.add(
+            Q(owner__organization__organizationmember__role__gte=OrganizationMember.ADMIN), Q.AND)
+        query.add(sub_condition, Q.OR)
+        locations = Location.objects.filter(query)
 
         if locations:
             data = []
             for l in locations:
                 data.append({
                     'name': l.name,
+                    'owner': l.owner,
                     'location_id': l.id,
                 })
             locations_table = LocationsTable(data)
@@ -299,8 +307,8 @@ class LocationsManage(View):
 
 # todo rights to edit
 @method_decorator(login_required, name='dispatch')
-class LocationsProfile(View):
-    template_name = 'core/admin/locations_profile.html'
+class LocationsProfileEdit(View):
+    template_name = 'core/admin/locations_profile_edit.html'
 
     def get(self, request, location_id):
         location = get_object_or_404(Location, pk=location_id)
@@ -317,7 +325,7 @@ class LocationsProfile(View):
 
         if location_form.is_valid():
             location_form.save()
-            return redirect(reverse('admin:locations_profile', kwargs={'location_id': location_id}))
+            return redirect(reverse('admin:locations_profile_edit', kwargs={'location_id': location_id}))
 
         context = {
             'location_form': location_form,

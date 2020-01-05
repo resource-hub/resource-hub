@@ -14,6 +14,8 @@ api_urls.register([
 
 admin_urls.register([
     url(r'^rooms/manage/$', views.RoomsManage.as_view(), name='rooms_manage'),
+    url(r'^rooms/manage/(?P<room_id>\w{0,50})/profile/edit/$',
+        views.RoomsProfileEdit.as_view(), name='rooms_profile_edit'),
     url(r'^rooms/create/$', views.RoomsCreate.as_view(), name='rooms_create'),
 ])
 
