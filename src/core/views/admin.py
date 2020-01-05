@@ -113,7 +113,7 @@ class OrganizationsManage(View):
 
 
 @method_decorator(login_required, name='dispatch')
-class OrganizationCreate(View):
+class OrganizationsCreate(View):
     template_name = 'core/admin/organizations_create.html'
 
     def get(self, request):
@@ -150,7 +150,7 @@ class OrganizationsProfile(View):
 
 
 @method_decorator([login_required, organization_admin_required], name='dispatch')
-class OrganizationProfileEdit(View):
+class OrganizationsProfileEdit(View):
     template_name = 'core/admin/organizations_profile_edit.html'
     redirect_url = 'admin:organizations_profile_edit'
     legal_scope = ['info', 'address', 'bank_account']
@@ -183,7 +183,7 @@ class OrganizationProfileEdit(View):
 
 
 @method_decorator([login_required, organization_admin_required], name='dispatch')
-class OrganizationMembers(View):
+class OrganizationsMembers(View):
     def get(self, request, organization_id):
         organization = get_object_or_404(Organization, pk=organization_id)
         members = organization.members.select_related().all()
@@ -211,7 +211,7 @@ class OrganizationMembers(View):
 
 
 @method_decorator([login_required, organization_admin_required], name='dispatch')
-class OrganizationMembersAdd(View):
+class OrganizationsMembersAdd(View):
     template_name = 'core/admin/organizations_members_add.html'
 
     def get(self, request, organization_id):
@@ -243,7 +243,7 @@ class OrganizationMembersAdd(View):
 
 
 @method_decorator(login_required, name='dispatch')
-class LocationCreate(View):
+class LocationsCreate(View):
     def get(self, request):
         location_form = LocationForm()
         address_form = AddressForm()
@@ -277,7 +277,7 @@ class LocationCreate(View):
 
 
 @method_decorator(login_required, name='dispatch')
-class LocationManage(View):
+class LocationsManage(View):
     def get(self, request):
         locations = Location.objects.all()
 
@@ -296,3 +296,18 @@ class LocationManage(View):
             'locations_table': locations_table,
         }
         return render(request, 'core/admin/locations_manage.html', context)
+
+
+@method_decorator(login_required, name='dispatch')
+class LocationsProfile(View):
+    template_name = 'core/admin/location_profile.html'
+
+    def get(self, request):
+        profile_form = ''
+        context = {
+            'profile_form': profile_form,
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request):
+        return redirect(reverse('core:location_profile'))

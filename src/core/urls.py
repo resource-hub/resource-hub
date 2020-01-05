@@ -1,14 +1,13 @@
-from django.urls import include, path
+from django.urls import include
 from django.conf.urls import url
 import django.contrib.auth.views as dj_auth
 from django.views.i18n import JavaScriptCatalog
 
 from core.api.urls import api_urls
 from core.admin.urls import admin_urls
-import core.views as views
 from core.views import api, admin, auth, site
 
-js_info_dict = {
+JS_INFO_DICT = {
     'packages': ('recurrence', ),
 }
 
@@ -25,26 +24,26 @@ admin_urls.register([
         admin.OrganizationsManage.as_view(),
         name='organizations_manage'),
     url(r'^organizations/create/$',
-        admin.OrganizationCreate.as_view(),
+        admin.OrganizationsCreate.as_view(),
         name='organizations_create'),
     url(r'^organizations/manage/profile/(?P<organization_id>\w{0,50})/$',
         admin.OrganizationsProfile.as_view(),
         name='organizations_profile'),
     url(r'^organizations/manage/profile/edit/(?P<organization_id>\w{0,50})/(?P<scope>\w{0,50})/$',
-        admin.OrganizationProfileEdit.as_view(),
+        admin.OrganizationsProfileEdit.as_view(),
         name='organizations_profile_edit'),
     url(r'^organizations/manage/members/(?P<organization_id>\w{0,50})/$',
-        admin.OrganizationMembers.as_view(),
+        admin.OrganizationsMembers.as_view(),
         name='organizations_members'),
     url(r'^organizations/manage/members/add/(?P<organization_id>\w{0,50})/$',
-        admin.OrganizationMembersAdd.as_view(),
+        admin.OrganizationsMembersAdd.as_view(),
         name='organizations_members_add'),
 
-    url(r'^locations/create/$', admin.LocationCreate.as_view(),
+    url(r'^locations/create/$', admin.LocationsCreate.as_view(),
         name='locations_create'),
-    url(r'^locations/manage/$', admin.LocationManage.as_view(),
+    url(r'^locations/manage/$', admin.LocationsManage.as_view(),
         name='locations_manage'),
-    url(r'^locations/manage/(?P<location_id>\w{0,50})/profile/$', admin.LocationProfile.as_view(),
+    url(r'^locations/manage/(?P<location_id>\w{0,50})/profile/$', admin.LocationsProfile.as_view(),
         name='locations_profile'),
 ])
 
@@ -83,7 +82,7 @@ urlpatterns = [
     # todo termns an conditions
     # url(r'^terms/$', views.Admin.as_view(), name='terms'),
     url(r'^i18n/', include('django.conf.urls.i18n')),
-    url(r'^jsi18n/$', JavaScriptCatalog.as_view(), js_info_dict),
+    url(r'^jsi18n/$', JavaScriptCatalog.as_view(), JS_INFO_DICT),
     url(r'^jsi18n.js$', JavaScriptCatalog.as_view(
         packages=['recurrence']), name='jsi18n'),
 ]
