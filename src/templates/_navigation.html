@@ -88,7 +88,7 @@
                 {% trans '' %}
             </div>
             <div id="role-loader" class="ui active workaround centered inline loader"></div>
-            <form id="role-form" class="ui hidden form" action="{% url 'core:set_role' %}" method="POST">
+            <form id="role-form" class="ui hidden form" action="{% url 'core:actor_set' %}" method="POST">
                 {% csrf_token %}
                 <div class="field">
                     <label for="actor">{% trans 'Role' %}</label>

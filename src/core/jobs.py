@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
+
 from django_rq import job
 
 DEFAULT = 'default' if settings.TESTING else 'high'

@@ -1,7 +1,8 @@
-import django_tables2 as tables
-from django_tables2.utils import Accessor as A
 from django.utils.safestring import mark_safe as safe
 from django.utils.translation import ugettext_lazy as _
+
+import django_tables2 as tables
+from django_tables2.utils import Accessor as A
 
 
 class OrganizationsTable(tables.Table):
@@ -13,14 +14,6 @@ class OrganizationsTable(tables.Table):
         }
     )
     role = tables.Column(verbose_name=_('Your role'))
-    # members = tables.LinkColumn(
-    #     'admin:organizations_members',
-    #     text=safe('<i class="users icon"></i>'),
-    #     verbose_name=_('Members'),
-    #     kwargs={
-    #         'id': A('profile'),
-    #     }
-    # )
 
     class Meta:
         attrs = {

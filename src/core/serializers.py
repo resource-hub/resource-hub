@@ -1,4 +1,4 @@
-from core.models import User, Actor, Location, Address
+from core.models import Actor, Address, Location, User
 from rest_framework import serializers
 
 

@@ -1,20 +1,19 @@
 from datetime import datetime
-import requests
-from schwifty import IBAN, BIC
 
+import requests
 from django import forms
 from django.conf import settings
 from django.contrib.auth import update_session_auth_hash
-from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
+from django.contrib.auth.forms import PasswordChangeForm, UserCreationForm
 from django.contrib.auth.hashers import check_password
 from django.forms import model_to_dict
-from django.utils.translation import ugettext_lazy as _
 from django.utils.dateparse import parse_date
-
-from django_summernote.widgets import SummernoteWidget
+from django.utils.translation import ugettext_lazy as _
 
 from core.models import *
 from core.widgets import UISearchField
+from django_summernote.widgets import SummernoteWidget
+from schwifty import BIC, IBAN
 
 
 class ActorForm(forms.ModelForm):

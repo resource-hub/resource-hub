@@ -114,7 +114,7 @@ class TestCustomLogin(TestCase):
 
 
 class TestSetRole(TestView, TestCase):
-    view_name = 'core:set_role'
+    view_name = 'core:actor_set'
 
     def test_status_code(self):
         response = self.client.post(reverse(self.view_name))

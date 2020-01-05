@@ -3,7 +3,7 @@ from functools import wraps
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
 
-from core.models import User, OrganizationMember
+from core.models import OrganizationMember, User
 
 
 def organization_admin_required(function):

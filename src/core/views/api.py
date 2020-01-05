@@ -1,8 +1,7 @@
 from django.db.models import Q
-from django.forms.models import model_to_dict
 
-from rest_framework import status, filters, generics
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework import filters, generics
+from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
