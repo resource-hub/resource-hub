@@ -1,7 +1,7 @@
 # Resource Hub
 Checkout the latest stable build on https://demo.resource-hub.eu/
 
-## Install for development
+## Development setup 
 * Download and install Docker and Docker-Compose for your OS/Distro: https://docs.docker.com/
 * create .env file in root directory of project and fill these values:
 ```
