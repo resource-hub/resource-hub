@@ -20,10 +20,7 @@
         </h3>
         <form class="ui form" method="POST" action="{{ url }}">
             {% include "_form.html" with form=email_form %}
-            <button class="ui positive right labeled icon button" type="submit">
-                {% trans 'Save' %}
-                <i class="save icon"></i>
-            </button>
+            {% include '_save_button.html' %}
         </form>
     </div>
     <div id="password" class="{{ password }} tab">
@@ -32,10 +29,7 @@
         </h3>
         <form class="ui form" method="POST" action="{{ url }}">
             {% include "_form.html" with form=password_form %}
-            <button class="ui positive right labeled icon button" type="submit">
-                {% trans 'Save' %}
-                <i class="save icon"></i>
-            </button>
+            {% include '_save_button.html' %}
         </form>
     </div>
 </div>
