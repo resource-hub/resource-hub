@@ -31,5 +31,5 @@ MAP_API_TOKEN={TODO: MAPBOX API TOKEN}
 cd /path/to/resource-hub
 sudo docker-compose up
 # optional: populate db with dummies
-sudo docker-compose exec  app python src/manage.py init_demo --full
+sudo docker-compose exec  app python src/manage.py loaddata full
 ```
