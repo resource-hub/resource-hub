@@ -3,12 +3,8 @@
 {% load django_tables2 %}
 
 {% block content %}
-<a class="ui labeled icon button back-button"
-    href="{% url 'admin:organizations_members' organization_id=organization.id %}">
-    <i class="left arrow icon"></i>
-    {% trans 'Back' %}
-</a>
-
+{% url 'admin:organizations_members' organization_id=organization.id as url %}
+{% include '_back_button.html' with url=url %}
 <h2>
     {{ organization.name }}
 </h2>
