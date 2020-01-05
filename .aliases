@@ -1,4 +1,4 @@
-alias dinit="sudo docker-compose exec  app python src/manage.py init_demo --full"
+alias dinit="sudo docker-compose exec  app python src/manage.py loaddata full"
 alias dshell="sudo docker-compose exec app python src/manage.py shell"
 alias dmanage="sudo docker-compose exec app python src/manage.py"
 alias dvisu="sudo dmanage graph_models --pydot -a -g -o model_visualized.svg"
