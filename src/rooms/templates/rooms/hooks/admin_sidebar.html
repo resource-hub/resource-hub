@@ -9,14 +9,14 @@
             {% if '/rooms/manage' in request.path %}
                 active
             {% endif %}
-        " href="{% url 'admin:rooms_manage' %}">
+        " href="{% url 'panel:rooms_manage' %}">
             {% trans 'Manage' %}
         </a>
         <a class="item
             {% if '/rooms/create' in request.path %}
                 active
             {% endif %}
-        " href="{% url 'admin:rooms_create' %}">
+        " href="{% url 'panel:rooms_create' %}">
             {% trans 'Create' %}
         </a>
     </div>

@@ -3,7 +3,7 @@
 {% load django_tables2 %}
 
 {% block content %}
-{% url 'admin:organizations_members' organization_id=organization.id as url %}
+{% url 'panel:organizations_members' organization_id=organization.id as url %}
 {% include '_back_button.html' with url=url %}
 <h2>
     {{ organization.name }}

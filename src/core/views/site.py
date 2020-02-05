@@ -6,6 +6,7 @@ from django.views import View
 
 from core.forms import ReportIssueForm, ActorForm
 
+
 def index(request):
     return redirect(reverse('core:home'))
 
@@ -14,6 +15,11 @@ class Home(View):
     def get(self, request):
         context = {'userform': ActorForm()}
         return render(request, 'core/home.html', context)
+
+
+class Terms(View):
+    def get(self, request):
+        return render(request, 'core/terms_and_conditions.html')
 
 
 class Support(View):

@@ -4,7 +4,7 @@ from django.conf.urls import url
 from core.hooks import UrlHook
 
 
-app_name = 'admin'
+app_name = 'panel'
 
 admin_urls = UrlHook()
 urlpatterns = [

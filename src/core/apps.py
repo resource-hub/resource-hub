@@ -5,8 +5,8 @@ class CoreConfig(AppConfig):
     name = 'core'
 
 
-class AdminConfig(AppConfig):
-    name = 'core.admin'
+class PanelConfig(AppConfig):
+    name = 'core.panel'
 
 
 class ApiConfig(AppConfig):

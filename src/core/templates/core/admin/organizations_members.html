@@ -3,7 +3,7 @@
 {% load django_tables2 %}
 
 {% block content %}
-{% url 'admin:organizations_profile' organization_id=organization.id as url %}
+{% url 'panel:organizations_profile' organization_id=organization.id as url %}
 {% include '_back_button.html' with url=url %}
 <h2>
     {{ organization.name }}
@@ -12,7 +12,7 @@
 <div class=" ui segment tab-content">
     <div>
         <a class="ui labeled icon right floated green button"
-            href="{% url 'admin:organizations_members_add' organization_id=organization.id %}">
+            href="{% url 'panel:organizations_members_add' organization_id=organization.id %}">
             <i class="plus icon"></i>
             {% trans 'Add' %}
         </a>

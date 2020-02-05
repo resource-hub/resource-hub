@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block content %}
-<a class="ui labeled icon button back-button" href="{% url 'admin:organizations_manage' %}">
+<a class="ui labeled icon button back-button" href="{% url 'panel:organizations_manage' %}">
     <i class="left arrow icon"></i>
     {% trans 'Back' %}
 </a>
@@ -24,12 +24,12 @@
 
                 {% if is_admin %}
                 <div class="ui compact menu">
-                    <a class="item" href="{% url 'admin:organizations_members' organization_id=organization.id %}">
+                    <a class="item" href="{% url 'panel:organizations_members' organization_id=organization.id %}">
                         <i class="users icon"></i>
                         {% trans 'Members' %}
                     </a>
                     <a class="item"
-                        href="{% url 'admin:organizations_profile_edit' organization_id=organization.id scope='info' %}">
+                        href="{% url 'panel:organizations_profile_edit' organization_id=organization.id scope='info' %}">
                         <i class="edit icon"></i>
                         {% trans 'Profile' %}
                     </a>

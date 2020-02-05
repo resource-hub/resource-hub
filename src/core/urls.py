@@ -4,7 +4,7 @@ import django.contrib.auth.views as dj_auth
 from django.views.i18n import JavaScriptCatalog
 
 from core.api.urls import api_urls
-from core.admin.urls import admin_urls
+from core.panel.urls import admin_urls
 from core.views import api, admin, auth, site
 
 JS_INFO_DICT = {
@@ -62,6 +62,7 @@ urlpatterns = [
     url(r'^home/$', site.Home.as_view(), name='home'),
     url(r'^support/$', site.Support.as_view(), name='support'),
     url(r'^language/$', site.Language.as_view(), name='language'),
+    url(r'^terms/$', site.Terms.as_view(), name='terms'),
 
     url(r'^register/$', auth.Register.as_view(), name='register'),
     url(r'^login/$', auth.custom_login, name='login'),
@@ -79,8 +80,6 @@ urlpatterns = [
         template_name='core/password_reset_complete.html')),
     url(r'^actor/set$', auth.SetRole.as_view(), name='actor_set'),
 
-    # todo termns an conditions
-    # url(r'^terms/$', views.Admin.as_view(), name='terms'),
     url(r'^i18n/', include('django.conf.urls.i18n')),
     url(r'^jsi18n/$', JavaScriptCatalog.as_view(), JS_INFO_DICT),
     url(r'^jsi18n.js$', JavaScriptCatalog.as_view(

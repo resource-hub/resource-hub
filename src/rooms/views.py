@@ -70,7 +70,7 @@ class RoomsCreate(View):
 
             message = ('The room has been created')
             messages.add_message(request, messages.SUCCESS, message)
-            return redirect(reverse('admin:rooms_manage'))
+            return redirect(reverse('panel:rooms_manage'))
 
         context = {
             'room_form': room_form,
@@ -96,7 +96,7 @@ class RoomsProfileEdit(View):
 
         if room_form.is_valid():
             room_form.save()
-            return redirect(reverse('admin:rooms_profile_edit', kwargs={'room_id': room_id}))
+            return redirect(reverse('panel:rooms_profile_edit', kwargs={'room_id': room_id}))
 
         context = {
             'room_form': room_form,

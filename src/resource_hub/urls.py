@@ -12,10 +12,11 @@ urlpatterns = [
     # apps
     path('', include('core.urls')),
     path('api/', include('core.api.urls')),
-    path('admin/', include('core.admin.urls')),
+    path('admin/', include('core.panel.urls')),
     path('rooms/', include('rooms.urls')),
 
     # external apps
+    path('dj-admin', admin.site.urls),
     path('django-rq/', include('django_rq.urls')),
     path('summernote/', include('django_summernote.urls')),
 ]

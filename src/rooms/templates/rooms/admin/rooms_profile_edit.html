@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block content %}
-{% url 'admin:rooms_manage' as url %}
+{% url 'panel:rooms_manage' as url %}
 {% include '_back_button.html' with url=url %}
 <h2>
     {% trans 'Edit Profile' %}

@@ -56,7 +56,7 @@ GITLAB_TOKEN = get_env_var('GITLAB_TOKEN')
 INSTALLED_APPS = [
     # project apps
     'core.apps.CoreConfig',
-    'core.apps.AdminConfig',
+    'core.apps.PanelConfig',
     'core.apps.ApiConfig',
     'rooms.apps.RoomsConfig',
     # third party
@@ -69,6 +69,7 @@ INSTALLED_APPS = [
     'recurrence',
     # native apps
     'django.contrib.auth',
+    'django.contrib.admin',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
@@ -175,7 +176,7 @@ MEDIA_URL = '/media/'
 
 # Custom settings
 
-LOGIN_REDIRECT_URL = 'admin:home'
+LOGIN_REDIRECT_URL = 'panel:home'
 LOGIN_URL = 'core:login'
 
 AUTH_USER_MODEL = "core.User"

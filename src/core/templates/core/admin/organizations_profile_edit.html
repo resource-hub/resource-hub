@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block content %}
-{% url 'admin:organizations_profile' organization_id=organization.id as url %}
+{% url 'panel:organizations_profile' organization_id=organization.id as url %}
 {% include '_back_button.html' with url=url %}
 <h2>{{ organization.name }}</h2>
 <div id="secondary-menu" class="ui secondary pointing menu">
