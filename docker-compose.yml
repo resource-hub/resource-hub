@@ -20,7 +20,7 @@ services:
     command: maildev -s 8025 -w 8080
     ports: 
       - "8080:8080"
-    
+
   worker:
     environment:
       DJANGO_SETTINGS_MODULE: resource_hub.settings.dev

@@ -4,11 +4,11 @@ from rooms.models import Room, Event
 from rest_framework import serializers
 
 from core.models import Actor, User, Organization
-from core.serializers import ActorSerializerMinimal, LocationSerializer
+from core.serializers import ActorSerializer, LocationSerializer
 
 
 class RoomSerializer(serializers.ModelSerializer):
-    owner = ActorSerializerMinimal(read_only=True)
+    owner = ActorSerializer(read_only=True)
     location = LocationSerializer(read_only=True)
     thumbnail = serializers.ImageField()
     room_link = serializers.SerializerMethodField()
@@ -23,7 +23,7 @@ class RoomSerializer(serializers.ModelSerializer):
 
 
 # class EventSerializer(serializers.ModelSerializer):
-#     organizer = ActorSerializerMinimal(read_only=True)
+#     organizer = ActorSerializer(read_only=True)
 
 #     def to_representation(self, instance):
 

@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from core.models import User, Actor, Location, OrganizationMember
-from core.serializers import UserSerializer, ActorSerializerMinimal, LocationSerializer
+from core.serializers import UserSerializer, ActorSerializer, LocationSerializer
 
 
 class UserSearch(generics.ListCreateAPIView):
@@ -19,7 +19,7 @@ class UserSearch(generics.ListCreateAPIView):
 
 class ActorList(generics.ListCreateAPIView):
     http_method_names = ['get']
-    serializer_class = ActorSerializerMinimal
+    serializer_class = ActorSerializer
 
     def get_queryset(self):
         user = self.request.user
@@ -39,7 +39,7 @@ class ActorChange(APIView):
 
 @authentication_classes([])
 @permission_classes([])
-class LocationFeed(generics.ListCreateAPIView):
+class Locations(generics.ListCreateAPIView):
     http_method_names = ['get']
     queryset = Location.objects.all()
     serializer_class = LocationSerializer

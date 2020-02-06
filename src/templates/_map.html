@@ -1,0 +1,47 @@
+{% load sekizai_tags %}
+{% load static %}
+{% load l10n %}
+
+<div id="map" class="map">
+
+</div>
+
+{% addtoblock 'js' %}
+<link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %}">
+<script src="{% static 'leaflet/leaflet.js' %}"></script>
+<script id="pop-up-template" type="text/tempate">
+    <h5>%name%</h5>
+    <p><i class="map marker alternate icon"></i>%address_string%</p>
+</script>
+{% localize off %}
+<script>
+    var popup_template = document.getElementById("pop-up-template").innerHTML;
+    var latitude = parseFloat('{{ location.latitude }}');
+    var longitude = parseFloat('{{ location.longitude }}');
+
+    var map = L.map('map').setView([latitude, longitude], 14);
+    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        maxZoom: 20,
+        id: 'mapbox.streets',
+        accessToken: '{{ MAP_API_TOKEN }}'
+    }).addTo(map);
+
+    var marker = L.icon({
+        iconUrl: '{% static "marker.png" %}',
+        iconSize: [23, 40],
+        iconAnchor: [11.5, 39],
+        popupAnchor: [0, -40]
+    });
+
+    var popup = popup_template
+        .replace(/%name%/g, '{{ location.name }}')
+        .replace(/%address_string%/g, '{{ location.address }}');
+    L.marker([latitude, longitude], {
+        icon: marker,
+        title: '{{ location.name }}',
+        clickable: true,
+    }).bindPopup(popup).addTo(map);
+</script>
+{% endlocalize %}
+{% endaddtoblock %}

@@ -1,76 +1,113 @@
-{% extends "core/__base.html" %}
-{% load i18n %}
-{% load static %}
-
-{% block extra_head %}
+{% extends "core/__base.html" %} {% load i18n %} {% load static %} {% block extra_head %}
 <link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %}">
 <script src="{% static 'leaflet/leaflet.js' %}"></script>
-{% endblock %}
+{% endblock %} {% block not_in_container %} {% include '_support-button.html' %}
+<div id="map" class="main-map">
 
-{% block not_in_container %}
-{% include '_support-button.html' %}
-<div id="map">
 
 </div>
+<script>
+    var map = L.map('map').setView([52.3783212, 9.72492], 12.5);
+
+    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        maxZoom: 20,
+        id: 'mapbox.streets',
+        accessToken: '{{ MAP_API_TOKEN }}'
+    }).addTo(map);
+
+    var marker = L.icon({
+        iconUrl: '{% static "marker.png" %}',
+        iconSize: [23, 40],
+        iconAnchor: [11.5, 39],
+        popupAnchor: [0, -40]
+    });
+</script>
 {% endblock %}
 
 {% block content %}
-<h1>{% trans 'Welcome!' %}</h1>
-<p>
-  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
-  aliqua. Id porta nibh venenatis cras sed felis eget velit aliquet. Ipsum a arcu cursus vitae congue. In ante metus
-  dictum at tempor. Porta non pulvinar neque laoreet suspendisse interdum consectetur. Potenti nullam ac tortor vitae
-  purus faucibus ornare suspendisse. Sodales ut etiam sit amet nisl. Nulla facilisi morbi tempus iaculis urna. Nec dui
-  nunc mattis enim. Sem fringilla ut morbi tincidunt augue. Egestas erat imperdiet sed euismod nisi porta lorem mollis.
-</p>
-<p>
-  Ultrices in iaculis nunc sed augue lacus. Faucibus et molestie ac feugiat sed lectus vestibulum mattis. Non
-  consectetur a erat nam. Tempus urna et pharetra pharetra massa massa ultricies mi. Imperdiet dui accumsan sit amet
-  nulla. Suspendisse potenti nullam ac tortor vitae. Augue neque gravida in fermentum et sollicitudin ac orci. Urna id
-  volutpat lacus laoreet non curabitur gravida arcu. Lacus vel facilisis volutpat est velit egestas dui. Non diam
-  phasellus vestibulum lorem sed risus ultricies tristique. Quis vel eros donec ac odio tempor orci. Lacus suspendisse
-  faucibus interdum posuere lorem ipsum dolor sit.
-</p>
-<script>
-  var map = L.map('map').setView([52.3783212, 9.72492], 12.5);
+<h1>{% trans 'Locations' %}</h1>
+<div id="feed-loader" class="ui active centered inline loader"></div>
+<div id="location-feed" class="ui stackable three column cards grid"></div>
 
-  L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-    maxZoom: 20,
-    id: 'mapbox.streets',
-    accessToken: '{{ MAP_API_TOKEN }}'
-  }).addTo(map);
-
-  var marker = L.icon({
-    iconUrl: '{% static "marker.png" %}',
-    iconSize: [23, 40],
-    iconAnchor: [11.5, 39],
-    popupAnchor: [0, -40]
-  });
-</script>
 {% endblock %}
-
 {% block scripts %}
 <script id="pop-up-template" type="text/tempate">
-<h5>%name%</h5>
-<p><i class="map marker alternate icon"></i>%address_string%</p>
+    <h5>%name%</h5>
+    <p><i class="map marker alternate icon"></i>%address_string%</p>
 </script>
-<script>
-  $.get('{% url "api:locations_search" %}', function (data) {
-    var popup_template = document.getElementById("pop-up-template").innerHTML;
-    $.each(data, function (i, location) {
-      var popup = popup_template
-        .replace(/%name%/g, location.name)
-        .replace(/%address_string%/g, location.address.address_string);
-      L.marker([location.latitude, location.longitude],
-        {
-          icon: marker,
-          title: location.name,
-          clickable: true,
-        }
-      ).bindPopup(popup).addTo(map);
-    })
-  })
 
+<script id="location-item-template" type="text/template">
+<div class="column">
+    <a id='card' class="ui fluid card" href="%location_link%">
+        <div class="content">
+            <img class="ui avatar image" src="%owner_thumbnail%"> %owner_name%
+        </div>
+        <div class="blurring dimmable image">
+            <div class="ui dimmer">
+                <div class="content">
+                    <div class="center">
+                        <div class="ui inverted button">{% trans 'Details' %}</div>
+                    </div>
+                </div>
+            </div>
+            <img class="thumbnail" src="%location_thumbnail%">
+        </div>
+        <div class="ui placeholder">
+            <div class="square image"></div>
+        </div>
+        <div class="content">
+            <div class="header">%location_name%</div>
+            <div class="meta">
+                <p><i class="map marker alternate icon"></i> %address_string%</p>
+            </div>
+        </div>
+    </a>
+</div>
+</script>
+
+<script>
+    function create_feed(query, data = null) {
+        var feed = "";
+        var template = document.getElementById("location-item-template");
+        var templateHtml = template.innerHTML;
+        $.each(data, function (i, location) {
+            feed += templateHtml
+                .replace(/%owner_name%/g, location.owner['name'])
+                .replace(/%owner_thumbnail%/g, location.owner['thumbnail'])
+                .replace(/%location_link%/g, location['location_link'])
+                .replace(/%location_thumbnail%/g, location['thumbnail'])
+                .replace(/%location_name%/g, location.name)
+                .replace(/%address_string%/g, location.address['address_string']);
+        });
+
+        remove_loader('#feed-loader');
+        $('#location-feed').html(feed);
+        $('.thumbnail').on('load', function () {
+            $('.placeholder').hide();
+        });
+        $('.fluid.card .image').dimmer({
+            on: 'hover'
+        });
+    }
+
+    $(document).ready(function () {
+        $.get('{% url "api:locations_search" %}', function (data) {
+            var popup_template = document.getElementById("pop-up-template").innerHTML;
+
+            $.each(data, function (i, location) {
+                var popup = popup_template
+                    .replace(/%name%/g, location.name)
+                    .replace(/%address_string%/g, location.address.address_string);
+                L.marker([location.latitude, location.longitude], {
+                    icon: marker,
+                    title: location.name,
+                    clickable: true,
+                }).bindPopup(popup).addTo(map);
+
+            });
+            create_feed('', data);
+        });
+    });
 </script>
 {% endblock %}

@@ -1,0 +1,31 @@
+{% extends "core/__base.html" %}
+{% load i18n %}
+{% load sekizai_tags %}
+{% load hook_tags %}
+
+{% block not_in_container %}
+<div class="container">
+    <div class="location-image" style="background-image: url('{{ location.image.url }}')">
+    </div>
+</div>
+{% endblock %}
+{% block content %}
+<div class="container">
+    <h1>{{ location.name }}</h1>
+</div>
+<div>
+    {{ location.description | safe}}
+</div>
+<div class="ui horizontal section divider">Location</div>
+
+<div class="ui stackable two column grid">
+    <div class="six wide column">
+        <p class="ui header">{% trans 'Address' %}</p>
+        <p>{{ location.address }}</p>
+    </div>
+    <div class="ten wide column">
+        {% include '_map.html' with location=location %}
+    </div>
+</div>
+{% hook 'locations_profile' %}
+{% endblock %}

@@ -1,10 +1,11 @@
 from django.contrib import messages
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.views import View
 
 from core.forms import ReportIssueForm, ActorForm
+from core.models import Location
 
 
 def index(request):
@@ -54,3 +55,12 @@ class Support(View):
 class Language(View):
     def get(self, request):
         return render(request, 'core/language.html')
+
+
+class LocationsProfile(View):
+    def get(self, request, location_id):
+        location = get_object_or_404(Location, pk=location_id)
+        context = {
+            'location': location
+        }
+        return render(request, 'core/location_profile.html', context)

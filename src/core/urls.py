@@ -52,7 +52,7 @@ api_urls.register([
     url(r'^actors/list$', api.ActorList.as_view(), name='actor_list'),
     url(r'^actors/change$',
         api.ActorChange.as_view(), name='actor_change'),
-    url(r'locations/search/$', api.LocationFeed.as_view(),
+    url(r'locations/search/$', api.Locations.as_view(),
         name='locations_search')
 ])
 
@@ -76,7 +76,7 @@ urlpatterns = [
         template_name='core/password_reset_done.html', ), name='password_reset_done'),
     url(r'^password/reset/confirm/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$', dj_auth.PasswordResetConfirmView.as_view(
         template_name='core/password_reset_confirm.html', success_url='/password/reset/complete/'), name='password_reset_confirm'),
-    url(r'password/reset/complete/$', dj_auth.PasswordResetCompleteView.as_view(
+    url(r'^password/reset/complete/$', dj_auth.PasswordResetCompleteView.as_view(
         template_name='core/password_reset_complete.html')),
     url(r'^actor/set$', auth.SetRole.as_view(), name='actor_set'),
 
@@ -84,4 +84,7 @@ urlpatterns = [
     url(r'^jsi18n/$', JavaScriptCatalog.as_view(), JS_INFO_DICT),
     url(r'^jsi18n.js$', JavaScriptCatalog.as_view(
         packages=['recurrence']), name='jsi18n'),
+
+    url(r'^locations/(?P<location_id>\w{0,50})/profile/$',
+        site.LocationsProfile.as_view(), name='locations_profile'),
 ]

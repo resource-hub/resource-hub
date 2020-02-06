@@ -65,7 +65,7 @@ class RoomEvents(APIView):
         try:
             Room.objects.get(id=room_id)
         except Room.DoesNotExist:
-            raise exception.NotFound(
+            raise exceptions.NotFound(
                 detail=_('No room corresponds to the given id'))
 
         events = Event.objects.filter(room=room_id)

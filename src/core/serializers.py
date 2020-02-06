@@ -1,3 +1,5 @@
+from django.shortcuts import reverse
+
 from core.models import Actor, Address, Location, User
 from rest_framework import serializers
 
@@ -14,12 +16,6 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class ActorSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Actor
-        fields = ['id', 'name', ]
-
-
-class ActorSerializerMinimal(serializers.ModelSerializer):
     thumbnail = serializers.ImageField()
 
     class Meta:
@@ -41,7 +37,14 @@ class AddressSerializer(serializers.ModelSerializer):
 
 class LocationSerializer(serializers.ModelSerializer):
     address = AddressSerializer()
+    owner = ActorSerializer()
+    thumbnail = serializers.ImageField()
+    location_link = serializers.SerializerMethodField()
+
+    def get_location_link(self, obj):
+        return reverse('core:locations_profile', kwargs={'location_id': obj.id})
 
     class Meta:
         model = Location
-        fields = ['name', 'description', 'latitude', 'longitude', 'address', ]
+        fields = ['name', 'latitude',
+                  'longitude', 'address', 'owner', 'thumbnail', 'location_link', ]

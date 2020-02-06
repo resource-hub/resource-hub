@@ -60,13 +60,14 @@ INSTALLED_APPS = [
     'core.apps.ApiConfig',
     'rooms.apps.RoomsConfig',
     # third party
-    'imagekit',
-    'rest_framework',
     'django_extensions',
     'django_tables2',
     'django_rq',
     'django_summernote',
+    'imagekit',
     'recurrence',
+    'rest_framework',
+    'sekizai',
     # native apps
     'django.contrib.auth',
     'django.contrib.admin',
@@ -102,7 +103,10 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+
                 # custom preprocessors
+                'sekizai.context_processors.sekizai',
+
                 'core.context_processors.actor',
                 'core.context_processors.map_api_token',
             ],

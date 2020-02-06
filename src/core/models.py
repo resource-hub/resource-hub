@@ -137,7 +137,7 @@ class Location(models.Model):
     latitude = models.DecimalField(max_digits=9, decimal_places=6, default=0)
     longitude = models.DecimalField(max_digits=9, decimal_places=6, default=0)
     image = models.ImageField(null=True, blank=True,
-                              upload_to='images/')
+                              upload_to='images/', default='images/default.png')
     thumbnail = ImageSpecField(
         source='image',
         processors=[ResizeToFill(400, 300)],
