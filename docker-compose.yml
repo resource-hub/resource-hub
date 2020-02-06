@@ -15,6 +15,12 @@ services:
     image: redis:alpine
     command: redis-server
 
+  mail:
+    image: djfarrelly/maildev:latest
+    command: maildev -s 8025 -w 8080
+    ports: 
+      - "8080:8080"
+    
   worker:
     environment:
       DJANGO_SETTINGS_MODULE: resource_hub.settings.dev
@@ -36,7 +42,9 @@ services:
       - postgres
       - redis
       - worker
+      - mail
     links:
       - redis
+      - mail
     ports:
       - "${DJANGO_PORT}:${DJANGO_PORT}"

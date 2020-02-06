@@ -55,6 +55,8 @@ Twisted = "*"
 zope = {interface = "*"}
 django-summernote = {git = "https://github.com/summernote/django-summernote.git",ref = "702b574920342766f56262725d87125719156878"}
 django-redis = "*"
+smptd = "*"
+smtpd = "*"
 
 [requires]
 python_version = "*"

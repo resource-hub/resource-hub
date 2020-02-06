@@ -16,3 +16,4 @@ cov
 *.save
 .idea
 purge.sh
+mails.log

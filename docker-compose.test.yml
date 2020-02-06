@@ -13,6 +13,12 @@ services:
     image: redis:alpine
     command: redis-server
 
+  mail:
+    image: djfarrelly/maildev:latest
+    command: maildev -s 8025 -w 8080
+    ports: 
+      - "8080:8080"
+
   app:
     environment:
       DJANGO_SETTINGS_MODULE: resource_hub.settings.dev
@@ -20,5 +26,10 @@ services:
       .env
     image: registry.gitlab.com/resource-hub/resource-hub:${CI_BUILD_REF_NAME}
     command: bash -c "cd src; coverage run --source='.' manage.py test && coverage report"
+    depends_on: 
+      - postgres
+      - redis
+      - mail
     links:
       - postgres
+      - mail
