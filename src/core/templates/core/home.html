@@ -1,6 +1,7 @@
 {% extends "core/__base.html" %} {% load i18n %} {% load static %} {% block extra_head %}
 <link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %}">
 <script src="{% static 'leaflet/leaflet.js' %}"></script>
+<script src="{% static 'bouncemarker/bouncemarker.js' %}"></script>
 {% endblock %} {% block not_in_container %} {% include '_support-button.html' %}
 <div id="map" class="main-map">
 
@@ -100,6 +101,8 @@
                     .replace(/%name%/g, location.name)
                     .replace(/%address_string%/g, location.address.address_string);
                 L.marker([location.latitude, location.longitude], {
+                    bounceOnAdd: true,
+                    bounceOnAddOptions: { duration: 500, height: 70 },
                     icon: marker,
                     title: location.name,
                     clickable: true,
