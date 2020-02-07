@@ -3,6 +3,15 @@ function remove_loader(name) {
 }
 
 $(document).ready(function () {
+    $('.menu-icon').on('click', function () {
+        $('.ui.sidebar')
+            .sidebar({
+                dimPage: true,
+                transition: 'overlay'
+            })
+            .sidebar('toggle')
+            ;
+    })
     $('#secondary-menu').children('.ui .item').on('click', function () {
         $('#secondary-menu').children('.ui .item').removeClass('active');
         $(this).addClass('active');

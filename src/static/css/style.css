@@ -121,12 +121,18 @@ h1 {
     transition: background .1s ease, box-shadow .1s ease, color .1s ease, -webkit-box-shadow .1s ease;
 }
 
-.brand {
-    display: inline-block;
-    margin-right: 1rem;
-    font-size: 1.25rem;
-    line-height: inherit;
-    white-space: nowrap;
+.avatar {
+    border-radius: 500rem;
+}
+
+.menu-icon {
+    display: none;
+    cursor: pointer;
+    color: inherit;
+}
+
+.ui.sidebar {
+    overflow: visible!important;
 }
 
 .ui.vertical.footer {
@@ -162,6 +168,14 @@ h1 {
 
 .account-layout {
     padding-left: 220px;
+}
+
+.ui.vertical.menu .dropdown.item .menu {
+    background: #1b1c1d !important;
+}
+
+.ui.vertical.menu .dropdown.item .menu * {
+    color: #fff !important;
 }
 
 .wrapper {
@@ -242,10 +256,16 @@ td>a {
 }
 
 @media (max-width: 600px) {
-    .ui.vertical.menu {
-        display: none;
-    }
     .account-layout {
         padding-left: 0;
+    }
+}
+
+@media only screen and (max-width: 767px) {
+    .collapsible>.item {
+        display: none;
+    }
+    .menu-icon {
+        display: block;
     }
 }
