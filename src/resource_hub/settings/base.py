@@ -54,11 +54,13 @@ GITLAB_TOKEN = get_env_var('GITLAB_TOKEN')
 # Application definition
 
 INSTALLED_APPS = [
-    # project apps
-    'core.apps.CoreConfig',
-    'core.apps.PanelConfig',
-    'core.apps.ApiConfig',
-    'rooms.apps.RoomsConfig',
+    # native apps
+    'django.contrib.auth',
+    'django.contrib.admin',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
     # third party
     'django_extensions',
     'django_tables2',
@@ -68,13 +70,11 @@ INSTALLED_APPS = [
     'recurrence',
     'rest_framework',
     'sekizai',
-    # native apps
-    'django.contrib.auth',
-    'django.contrib.admin',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
+    # project apps
+    'core.apps.CoreConfig',
+    'core.apps.PanelConfig',
+    'core.apps.ApiConfig',
+    'rooms.apps.RoomsConfig',
 ]
 
 MIDDLEWARE = [

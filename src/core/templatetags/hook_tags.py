@@ -6,7 +6,6 @@ from django.utils.html import format_html_join
 
 from core.hooks import hook
 
-
 register = template.Library()
 
 
@@ -23,6 +22,7 @@ def hook_tag(context, name, *args, **kwargs):
     responses marked as safe (conditionally)
     :rtype: str
     """
+    # print(context)
     return format_html_join(
         sep="\n",
         format_string="{}",

@@ -1,5 +1,6 @@
 {% extends 'core/__base.html' %}
 {% load i18n %}
+{% load sekizai_tags %}
 
 {% block content %}
 <div class="ui segment">
@@ -15,76 +16,12 @@
         </button>
     </form>
 </div>
-<div id="feed-loader" class="ui active centered inline loader"></div>
-<div id="room-feed" class="ui stackable three column cards grid">
 
-</div>
-{% endblock %}
-
-{% block scripts %}
-<script id="room-item-template" type="text/template">
-    <div class="column">
-        <a id='card' class="ui fluid card" href="%room_link%">
-            <div class="content">
-                <img class="ui avatar image" src="%owner_thumbnail%"> %owner_name%
-            </div>
-            <div class="blurring dimmable image">
-                <div class="ui dimmer">
-                    <div class="content">
-                        <div class="center">
-                            <div class="ui inverted button">{% trans 'Details' %}</div>
-                        </div>
-                    </div>
-                </div>
-                <img class="thumbnail" src="%room_thumbnail%">
-            </div>
-            <div class="ui placeholder">
-                <div class="square image"></div>
-            </div>
-            <div class="content">
-                <div class="header">%name%</div>
-                <div class="meta">
-                    <p><i class="location arrow icon"></i> %location_name%</p>
-                    <p><i class="map marker alternate icon"></i> %address_string%</p>
-                </div>
-            </div>
-        </a>
-    </div>
-</script>
-
+{% include 'rooms/_room_feed.html' %}
+{% addtoblock 'js' %}
 <script>
     $(document).ready(function () {
-        function create_feed(query) {
-            var template = document.getElementById("room-item-template");
-            var templateHtml = template.innerHTML;
-            $.ajax({
-                'url': "{% url 'api:rooms' %}?search=" + query,
-                'type': 'GET',
-                'dataType': 'JSON'
-            }).done(function (data) {
-                var feed = "";
-
-                for (i in data) {
-                    feed += templateHtml
-                        .replace(/%room_link%/g, data[i]['room_link'])
-                        .replace(/%owner_name%/g, data[i].owner['name'])
-                        .replace(/%owner_thumbnail%/g, data[i].owner['thumbnail'])
-                        .replace(/%room_thumbnail%/g, data[i]['thumbnail'])
-                        .replace(/%name%/g, data[i]['name'])
-                        .replace(/%location_name%/g, data[i].location.name)
-                        .replace(/%address_string%/g, data[i].location.address['address_string']);
-                }
-                remove_loader('#feed-loader');
-                $('#room-feed').html(feed);
-                $('.thumbnail').on('load', function () {
-                    $('.placeholder').hide();
-                });
-                $('.fluid.card .image').dimmer({ on: 'hover' });
-            });
-
-        }
-
-        create_feed("");
+        create_feed();
 
         // live search disabled
         // $('#search-room').on('input', function () {
@@ -102,6 +39,7 @@
             create_feed(query);
         })
 
-    })
+    });
 </script>
+{% endaddtoblock %}
 {% endblock %}

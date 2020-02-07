@@ -1,19 +1,18 @@
 import re
 from datetime import datetime
-import dateutil.parser
 
+import dateutil.parser
+from django.db.models import Q
 from django.forms.models import model_to_dict
 from django.utils.translation import ugettext_lazy as _
 
-from rest_framework import status, filters, generics
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
-from rest_framework import exceptions
+from rest_framework import exceptions, filters, generics, status
+from rest_framework.decorators import (api_view, authentication_classes,
+                                       permission_classes)
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
-from rooms.models import Room, Event
+from rooms.models import Event, Room
 from rooms.serializers import RoomSerializer
-
 
 '''
 Thanks to https://stackoverflow.com/questions/41129921/validate-an-iso-8601-datetime-string-in-python
@@ -36,10 +35,19 @@ def is_valid_iso8601(val):
 @permission_classes([])
 class Rooms(generics.ListCreateAPIView):
     http_method_names = ['get']
-    search_fields = ['name']
-    filter_backends = (filters.SearchFilter,)
-    queryset = Room.objects.all()
     serializer_class = RoomSerializer
+
+    def get_queryset(self):
+        name = self.request.query_params.get('name', None)
+        pk = self.request.query_params.get('id', None)
+        q = Q()
+        if name is not None:
+            q.add(Q(name__icontains=name), Q.AND)
+
+        if pk is not None:
+            q.add(Q(location=pk), Q.AND)
+
+        return Room.objects.filter(q)
 
 
 @authentication_classes([])
