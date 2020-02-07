@@ -51,6 +51,10 @@ footer {
     margin-top: auto;
 }
 
+h1 {
+    margin-bottom: 1em;
+}
+
 .inline {
     display: inline;
 }
@@ -199,8 +203,8 @@ footer {
     overflow: hidden;
 }
 
-.container {
-    margin: 0 0 3vh 0;
+.section-container {
+    margin: 2vh 0 3vh 0;
 }
 
 /* .ui.secondary.pointing.menu .active.item {

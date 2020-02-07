@@ -1,25 +1,44 @@
 {% load static %}
+{% load i18n %}
 <div class="ui vertical footer segment">
     <div class="ui center aligned container">
-        <!-- <div class="ui stackable grid">
-            <div class="three wide column">
-                <h4 class="ui header">
-                    Info
-                </h4>
-
-            </div>
-            <div class="three wide column">
-                <h4 class="ui header">
-                    Software
-                </h4>
-            </div>
-        </div>
-        <div class="ui section divider"></div> -->
         <div class="ui horizontal small divided link list">
             <a class="item" href="https://gitlab.com/resource-hub/resource-hub" target="_blank">
                 <p><img width="150" height="auto" src="{% static 'logo.png' %}" class="ui centered image"></p>
                 <p>GNU AGPLv3</p>
             </a>
+        </div>
+        <div class="ui section divider"></div>
+        <div class="ui stackable grid">
+            <div class="three wide column">
+                <h4 class="ui header">
+                    {% trans 'General' %}
+                </h4>
+                <div class="ui link list">
+                    <a class="item">Imprint</a>
+                    <a class="item">Terms</a>
+                </div>
+            </div>
+            <div class="three wide column">
+                <h4 class="ui header">
+                    {% trans 'Software' %}
+                </h4>
+                <div class="ui link list">
+                    <a class="item" href="https://gitlab.com/resource-hub/resource-hub" target="_blank">Repository</a>
+                </div>
+            </div>
+            <div class="three wide column">
+
+            </div>
+            <div class="six wide column">
+                <h4 class="ui header">{% trans 'In cooperation with <3' %}</h4>
+                <div class="ui two column grid">
+                    <a class="column" href="https://www.gesellschaftplus.de" target="_blank"><img width="150"
+                            height="auto" src="{% static 'gfaz_logo.png' %}" class="ui centered image"></a>
+                    <a class="column" href="https://wasmitherz.de" target="_blank"><img width="150" height="auto"
+                            src="{% static 'wmh_logo.jpg' %}" class="ui centered image"></a>
+                </div>
+            </div>
         </div>
     </div>
 </div>
