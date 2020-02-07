@@ -213,6 +213,7 @@ class OrganizationMember(models.Model):
         else:
             return False
 
+    @classmethod
     def get_role(user, organization):
         role = OrganizationMember.objects.get(
             organization=organization,
