@@ -5,7 +5,7 @@
 <h2>
     {% trans 'Create Organization' %}
 </h2>
-<div class="ui segment tab-content">
+<div class="section-container tab-content">
     <form class="ui form" method="POST" action="{{ url }}" enctype="multipart/form-data">
         {% include '_form.html' with form=organization_form %}
         {% include '_form.html' with form=actor_form %}
