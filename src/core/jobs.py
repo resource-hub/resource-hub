@@ -3,10 +3,8 @@ from django.core.mail import EmailMultiAlternatives
 
 from django_rq import job
 
-DEFAULT = 'default' if settings.TESTING else 'high'
 
-
-@job(DEFAULT)
+@job('default')
 def send_mail(subject, message, recipient):
     email = EmailMultiAlternatives(
         subject,
