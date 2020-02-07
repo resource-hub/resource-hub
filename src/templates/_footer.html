@@ -15,8 +15,8 @@
                     {% trans 'General' %}
                 </h4>
                 <div class="ui link list">
-                    <a class="item">Imprint</a>
-                    <a class="item">Terms</a>
+                    <a class="item">{% trans 'Imprint' %}</a>
+                    <a class="item">{% trans 'Terms' %}</a>
                 </div>
             </div>
             <div class="three wide column">
@@ -24,7 +24,9 @@
                     {% trans 'Software' %}
                 </h4>
                 <div class="ui link list">
-                    <a class="item" href="https://gitlab.com/resource-hub/resource-hub" target="_blank">Repository</a>
+                    <a class="item" href="https://gitlab.com/resource-hub/resource-hub"
+                        target="_blank">{% trans 'Repository' %}</a>
+                    <a class="item" href="{% url 'core:report_bug' %}">Report Bug</a>
                 </div>
             </div>
             <div class="three wide column">

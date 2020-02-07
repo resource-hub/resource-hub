@@ -1,11 +1,11 @@
-from django.urls import include
-from django.conf.urls import url
 import django.contrib.auth.views as dj_auth
+from django.conf.urls import url
+from django.urls import include
 from django.views.i18n import JavaScriptCatalog
 
 from core.api.urls import api_urls
 from core.panel.urls import admin_urls
-from core.views import api, admin, auth, site
+from core.views import admin, api, auth, site
 
 JS_INFO_DICT = {
     'packages': ('recurrence', ),
@@ -60,7 +60,7 @@ app_name = 'core'
 urlpatterns = [
     url(r'^$', site.index, name='index'),
     url(r'^home/$', site.Home.as_view(), name='home'),
-    url(r'^support/$', site.Support.as_view(), name='support'),
+    url(r'^bug/$', site.ReportBug.as_view(), name='report_bug'),
     url(r'^language/$', site.Language.as_view(), name='language'),
     url(r'^terms/$', site.Terms.as_view(), name='terms'),
 
@@ -85,6 +85,6 @@ urlpatterns = [
     url(r'^jsi18n.js$', JavaScriptCatalog.as_view(
         packages=['recurrence']), name='jsi18n'),
 
-    url(r'^locations/(?P<location_id>\w{0,50})/profile/$',
+    url(r'^locations/(?P<location_id>\w{0,50})/$',
         site.LocationsProfile.as_view(), name='locations_profile'),
 ]

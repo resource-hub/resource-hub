@@ -59,7 +59,7 @@ class TestHome(TestView, TestCase):
 
 
 class TestSupport(TestView, TestCase):
-    view_name = 'core:support'
+    view_name = 'core:report_bug'
 
 
 class TestLanguage(TestView, TestCase):

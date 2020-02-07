@@ -457,7 +457,7 @@ class LocationForm(forms.ModelForm):
         return new_location
 
 
-class ReportIssueForm(forms.Form):
+class ReportBugForm(forms.Form):
     title = forms.CharField(
         max_length=128,
         help_text=_(
@@ -480,5 +480,7 @@ class ReportIssueForm(forms.Form):
         r = requests.post(URL, data=payload, headers=headers)
 
         if r.status_code != 201:
+            import json
+            content = json.loads(r.content)
             raise IOError(
-                'Issue not successfully created. POST request exited with: ' + r.status_code)
+                'Issue not successfully created. POST request exited with: ' + str(r.status_code) + ' Msg:' + content['message']['error'])
