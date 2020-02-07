@@ -11,5 +11,5 @@ class UICheckboxSlider(CheckboxInput):
     template_name = 'core/widgets/checkbox_slider.html'
 
 
-class TimeInput(TimeInput):
+class TimeInputCustom(TimeInput):
     template_name = 'core/widgets/time_input.html'
