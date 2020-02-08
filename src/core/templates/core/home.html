@@ -36,6 +36,7 @@
 <script id="pop-up-template" type="text/tempate">
     <h5>%name%</h5>
     <p><i class="map marker alternate icon"></i>%address_string%</p>
+    <a class="ui positive button" href="%location_link%">{% trans 'details' %}</a>
 </script>
 
 <script id="location-item-template" type="text/template">
@@ -99,7 +100,8 @@
             $.each(data, function (i, location) {
                 var popup = popup_template
                     .replace(/%name%/g, location.name)
-                    .replace(/%address_string%/g, location.address.address_string);
+                    .replace(/%address_string%/g, location.address.address_string)
+                    .replace(/%location_link%/g, location['location_link']);
                 L.marker([location.latitude, location.longitude], {
                     bounceOnAdd: true,
                     bounceOnAddOptions: { duration: 500, height: 70 },
