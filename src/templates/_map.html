@@ -9,6 +9,7 @@
 {% addtoblock 'js' %}
 <link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %}">
 <script src="{% static 'leaflet/leaflet.js' %}"></script>
+<script src="{% static 'bouncemarker/bouncemarker.js' %}"></script>
 <script id="pop-up-template" type="text/tempate">
     <h5>%name%</h5>
     <p><i class="map marker alternate icon"></i>%address_string%</p>
@@ -38,10 +39,12 @@
         .replace(/%name%/g, '{{ location.name }}')
         .replace(/%address_string%/g, '{{ location.address }}');
     L.marker([latitude, longitude], {
+        bounceOnAdd: true,
+        bounceOnAddOptions: { duration: 500, height: 70 },
         icon: marker,
         title: '{{ location.name }}',
         clickable: true,
-    }).bindPopup(popup).addTo(map);
+    }).bindPopup(popup).addTo(map).openPopup();
 </script>
 {% endlocalize %}
 {% endaddtoblock %}
