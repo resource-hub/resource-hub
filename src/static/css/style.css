@@ -138,7 +138,7 @@ td>a {
     border-radius: 500rem;
 }
 
-.menu-icon {
+#main-menu-toggle {
     display: none;
     cursor: pointer;
     color: inherit;
@@ -168,12 +168,11 @@ td>a {
     border-right-style: solid;
     border-right-color: #1678c2;
     border-radius: 0 !important;
-    margin: 0 -2px 0 0;
     border-right-width: 2.5px;
 }
 
-.account-layout {
-    padding-left: 220px;
+.admin.wrapper {
+    padding: 0 0 0 220px;
 }
 
 .ui.vertical.menu .dropdown.item .menu {
@@ -182,6 +181,16 @@ td>a {
 
 .ui.vertical.menu .dropdown.item .menu * {
     color: #fff !important;
+}
+
+.back-up {
+    visibility: hidden;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 10;
+    transition: visibility 0s linear 0.5s, opacity 0.3s linear;
+    -webkit-transition: visibility 0s linear 0.5s, opacity 0.3s linear;
 }
 
 /**
@@ -243,7 +252,7 @@ td>a {
 }
 
 .hidden {
-    display: none;
+    display: none !important;
 }
 
 .spacer {
@@ -274,7 +283,7 @@ td>a {
   *
   */
 
-@media (max-width: 600px) {
+@media only screen and (max-width: 600px) {
     .account-layout {
         padding-left: 0;
     }
@@ -284,7 +293,23 @@ td>a {
     .collapsible>.item {
         display: none;
     }
-    .menu-icon {
+    #main-menu-toggle {
         display: block;
+    }
+    #admin-sidebar-toggle {
+        display: block !important;
+    }
+    .admin.wrapper {
+        padding: 0 0 0 0;
+    }
+}
+
+@media only screen and (min-width: 768px) {
+    #admin-sidebar {
+        display: block !important;
+        visibility: visible;
+    }
+    .admin.main.container {
+        margin-left: 220px;
     }
 }

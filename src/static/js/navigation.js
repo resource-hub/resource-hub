@@ -3,8 +3,17 @@ function remove_loader(name) {
 }
 
 $(document).ready(function () {
-    $('.menu-icon').on('click', function () {
-        $('.ui.sidebar')
+    $('#main-menu-toggle').on('click', function () {
+        $('#main-menu-sidebar')
+            .sidebar({
+                dimPage: true,
+                transition: 'overlay'
+            })
+            .sidebar('toggle')
+            ;
+    });
+    $('#admin-sidebar-toggle').on('click', function () {
+        $('#admin-sidebar')
             .sidebar({
                 dimPage: true,
                 transition: 'overlay'

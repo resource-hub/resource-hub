@@ -25,6 +25,8 @@
         {% include "_navigation_bar.html" %}
     </header>
     {% include "_sidebar.html" %}
+    {% block body %}
+    {% endblock %}
     <main id="main" class="pusher" role="main">
         {% include '_scroll-button.html' %}
         {% block main %}

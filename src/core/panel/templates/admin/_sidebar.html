@@ -1,69 +1,67 @@
 {% load i18n %}
 {% load hook_tags %}
-<aside>
-    <div class="ui vertical menu">
-        <div class="item">
-            <div class="header">Account</div>
-            <div class="menu">
-                <a class="item
+<aside id="admin-sidebar" class="ui vertical sidebar menu">
+    <div class="item">
+        <div class="header">Account</div>
+        <div class="menu">
+            <a class="item
                     {% if '/account/profile/' in request.path %}
                     active
                     {% endif %}
                     " href="{% url 'panel:account_profile' scope='info' %}">
-                    {% trans 'Profile' %}
-                </a>
-                <a class="item
+                {% trans 'Profile' %}
+            </a>
+            <a class="item
                 {% if '/settings/' in request.path %}
                 active
                 {% endif %}
                 " href="{% url 'panel:account_settings' scope='email' %}">
-                    {% trans 'Settings' %}
-                </a>
-            </div>
+                {% trans 'Settings' %}
+            </a>
         </div>
-        <div class="item">
-            <div class="header">
-                {% trans 'Organizations' %}
-            </div>
-            <div class="menu">
-                <a class="item
+    </div>
+    <div class="item">
+        <div class="header">
+            {% trans 'Organizations' %}
+        </div>
+        <div class="menu">
+            <a class="item
                 {{ request.path }}
                 {% if '/admin/organizations/manage' in request.path %}
                     active
                     {% endif %}
                 " href="{% url 'panel:organizations_manage' %}">
-                    {% trans 'Manage' %}
-                </a>
-                <a class="item
+                {% trans 'Manage' %}
+            </a>
+            <a class="item
                 {% if '/organizations/create' in request.path %}
                     active
                     {% endif %}
                 " href="{% url 'panel:organizations_create' %}">
-                    {% trans 'Create' %}
-                </a>
-            </div>
+                {% trans 'Create' %}
+            </a>
         </div>
-        <div class="item">
-            <div class="header">
-                {% trans 'Locations' %}
-            </div>
-            <div class="menu">
-                <a class="item
+    </div>
+    <div class="item">
+        <div class="header">
+            {% trans 'Locations' %}
+        </div>
+        <div class="menu">
+            <a class="item
                 {% if '/locations/manage' in request.path %}
                     active
                     {% endif %}
                 " href="{% url 'panel:locations_manage' %}">
-                    {% trans 'Manage' %}
-                </a>
-                <a class="item
+                {% trans 'Manage' %}
+            </a>
+            <a class="item
                 {% if '/locations/create' in request.path %}
                     active
                     {% endif %}
                 " href="{% url 'panel:locations_create' %}">
-                    {% trans 'Create' %}
-                </a>
-            </div>
+                {% trans 'Create' %}
+            </a>
         </div>
-        {% hook 'admin_sidebar' %}
     </div>
+    {% hook 'admin_sidebar' %}
 </aside>
