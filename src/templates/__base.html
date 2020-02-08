@@ -22,14 +22,15 @@
 
 <body>
     <header>
-        {% include "_navigation.html" %}
+        {% include "_navigation_bar.html" %}
     </header>
-    <main id="main" role="main">
+    {% include "_sidebar.html" %}
+    <main id="main" class="pusher" role="main">
         {% include '_scroll-button.html' %}
         {% block main %}
         {% endblock %}
     </main>
-    <footer>
+    <footer class="pusher">
         {% block footer %}
         {% endblock %}
         {% block javascript %}

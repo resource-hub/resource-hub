@@ -100,26 +100,3 @@
         </div>
     </div>
 </div>
-
-<div class="ui inverted sidebar vertical mobile menu">
-    <a class="item" href="{% url 'core:home' %}">
-        {% trans 'Home' %}
-    </a>
-    {% hook 'navigation_bar' %}
-    <div class="ui dropdown item">
-        {% get_current_language as LANGUAGE_CODE %}
-        {% get_language_info for LANGUAGE_CODE as CURRENT_LANG %}
-        <span class="text">{{ CURRENT_LANG.name_local }}</span>
-        <i class="dropdown icon"></i>
-        <div class="inverted menu item transition hidden">
-            {% get_available_languages as LANGUAGES %}
-            {% get_language_info_list for LANGUAGES as languages %}
-            {% for language in languages %}
-            <option value="{{ language.code }}"
-                class="lang item {% if language.code == LANGUAGE_CODE %}active selected{% endif %}">
-                <span class="inverted text">{{ language.name_local }}</span>
-            </option>
-            {% endfor %}
-        </div>
-    </div>
-</div>
