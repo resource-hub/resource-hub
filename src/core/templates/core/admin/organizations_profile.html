@@ -7,9 +7,9 @@
 {% include '_back_button.html' with url=url %}
 {% endblock %}
 {% block content %}
-<h2>
+<h1>
     {% trans 'Profile' %}
-</h2>
+</h1>
 <div class="section-container tab-content">
     <div class="ui stackable two column grid">
         <div class="four wide column">
@@ -39,9 +39,9 @@
 
         </div>
         <div class="twelve wide column">
-            <h2>
+            <h1>
                 {{ organization.name }}
-            </h2>
+            </h1>
             <div class="ui container">
                 <label class="ui tiny header">{% trans 'Description' %}</label>
                 <p>

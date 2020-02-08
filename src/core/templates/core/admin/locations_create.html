@@ -2,9 +2,9 @@
 {% load i18n %}
 
 {% block content %}
-<h2>
+<h1>
     {% trans 'Create Location' %}
-</h2>
+</h1>
 <div class="section-container tab-content">
     <form class="ui form" method="POST" action="{{ url }}" enctype="multipart/form-data">
         {% include '_form.html' with form=location_form %}

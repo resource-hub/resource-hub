@@ -1,0 +1,27 @@
+{% extends 'admin/__base.html' %}
+{% load i18n %}
+
+{% block content %}
+<h1>{% trans 'Notifications' %}</h1>
+<div class="ui feed">
+    <div class="event">
+        <div class="label">
+            <img src="/images/avatar/small/elliot.jpg">
+        </div>
+        <div class="content">
+            You added Elliot Fu to the group <a>Coworkers</a>
+        </div>
+    </div>
+    <div class="event">
+        <div class="label">
+            <i class="pencil icon"></i>
+        </div>
+        <div class="content">
+            <div class="summary">
+                You posted on your friend <a>Stevie Feliciano's</a> wall.
+                <div class="date">Today</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

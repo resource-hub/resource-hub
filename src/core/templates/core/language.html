@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block content %}
-<h2>Set language</h2>
+<h1>Set language</h1>
 <form class="ui form" action="{% url 'core:set_language' %}" method="post">{% csrf_token %}
     <input name="next" type="hidden" value="{{ redirect_to }}">
     <p>

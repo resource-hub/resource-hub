@@ -20,6 +20,8 @@ admin_urls.register([
         admin.AccountSettings.as_view(),
         name='account_settings'),
 
+    url(r'^notifications/$', admin.Notifications.as_view(), name='notifications'),
+
     url(r'^organizations/manage$',
         admin.OrganizationsManage.as_view(),
         name='organizations_manage'),

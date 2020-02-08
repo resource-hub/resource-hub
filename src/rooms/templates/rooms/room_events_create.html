@@ -2,9 +2,9 @@
 {% load i18n %}
 
 {% block content %}
-<h2>
+<h1>
     {% trans 'Create event' %}
-</h2>
+</h1>
 <form class="ui form" method="POST" enctype="multipart/form-data">
     {% include '_form.html' with form=event_form %}
     {% include 'core/_identity.html' with actor=actor %}

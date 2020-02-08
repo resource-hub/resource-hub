@@ -87,6 +87,12 @@ class AccountProfile(ScopeView):
         else:
             return render(request, self.template_name, profile_form.get_forms(scope))
 
+@method_decorator(login_required, name='dispatch')
+class Notifications(View):
+    template_name = 'core/admin/notifications.html'
+    def get(self, request):
+        return render(request, self.template_name)
+
 
 @method_decorator(login_required, name='dispatch')
 class OrganizationsManage(View):

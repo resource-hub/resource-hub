@@ -44,8 +44,11 @@
             </span>
             <i class="dropdown icon"></i>
             <div class="menu">
-                <a class="item" href="{% url 'panel:home' %}"> <i class="sliders horizontal icon"></i> Admin</a>
-                <a id="role" class="item"><i class="address card outline icon"></i> Change role</a>
+                <a class="item" href="{% url 'panel:home' %}"> <i
+                        class="sliders horizontal icon"></i>{% trans 'Admin' %}</a>
+                <a class="item" href="{% url 'panel:notifications' %}"><i
+                        class="bell icon"></i>{% trans 'Notfications' %}</a>
+                <a id="role" class="item"><i class="address card outline icon"></i>{% trans 'Change role' %}</a>
                 <div class="divider"></div>
                 <div class="item">
                     <a class="ui red button" href="{% url 'core:logout' %}">
