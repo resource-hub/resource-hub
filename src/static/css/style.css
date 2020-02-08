@@ -175,6 +175,10 @@ td>a {
     padding: 0 0 0 220px;
 }
 
+.admin-navigation {
+    min-height: 2em;
+}
+
 .ui.vertical.menu .dropdown.item .menu {
     background: #1b1c1d !important;
 }
@@ -301,6 +305,9 @@ td>a {
     }
     .admin.wrapper {
         padding: 0 0 0 0;
+    }
+    #register-button {
+        display: none;
     }
 }
 

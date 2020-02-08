@@ -2,11 +2,11 @@
 {% load i18n %}
 {% load static %}
 
+{% block admin-navigation %}
+{% url 'panel:organizations_manage' as url%}
+{% include '_back_button.html' with url=url %}
+{% endblock %}
 {% block content %}
-<a class="ui labeled icon button back-button" href="{% url 'panel:organizations_manage' %}">
-    <i class="left arrow icon"></i>
-    {% trans 'Back' %}
-</a>
 <h2>
     {% trans 'Profile' %}
 </h2>

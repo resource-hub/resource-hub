@@ -8,11 +8,13 @@
 {% block main %}
 <div class="admin wrapper pusher">
     <div class="main container">
-        <nav>
-            <button id="admin-sidebar-toggle" class="ui hidden button">
+        <nav class="admin-navigation">
+            <button id="admin-sidebar-toggle" class="ui hidden left floated button">
                 <i class="ul list icon"></i>
                 Menu
             </button>
+            {% block admin-navigation %}
+            {% endblock %}
         </nav>
         {% if messages %}
         <div class="messages">

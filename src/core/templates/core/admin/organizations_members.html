@@ -2,9 +2,12 @@
 {% load i18n %}
 {% load django_tables2 %}
 
-{% block content %}
+{% block admin-navigation %}
 {% url 'panel:organizations_profile' organization_id=organization.id as url %}
 {% include '_back_button.html' with url=url %}
+{% endblock %}
+
+{% block content %}
 <h2>
     {{ organization.name }}
 </h2>

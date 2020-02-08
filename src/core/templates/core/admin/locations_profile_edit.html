@@ -1,9 +1,12 @@
 {% extends 'admin/__base.html' %}
 {% load i18n %}
 
-{% block content %}
+{% block admin-navigation %}
 {% url 'panel:locations_manage' as url %}
 {% include '_back_button.html' with url=url %}
+{% endblock %}
+
+{% block content %}
 <h2>
     {% trans 'Edit Profile' %}
 </h2>

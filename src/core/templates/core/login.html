@@ -12,10 +12,14 @@
                 {% trans 'Login' %}
                 <i class="sign-in icon"></i>
             </button>
-            <a class="ui right floated grey button" href="{% url 'core:password_reset' %}">
-                {% trans 'Forgot password?' %}
+            <a class="ui primary left labeled icon right floated button" href="{% url 'core:register' %}">
+                <i class="clipboard outline icon"></i>
+                {% trans 'Register' %}
             </a>
         </form>
     </div>
+    <a class="ui grey button" href="{% url 'core:password_reset' %}">
+        {% trans 'Forgot password?' %}
+    </a>
 </div>
 {% endblock %}
