@@ -43,6 +43,10 @@ body {
     overflow-y: scroll;
 }
 
+button::first-letter, label::first-letter, .item::first-letter, .header::first-letter, .button::first-letter {
+    text-transform: uppercase;
+}
+
 em {
     letter-spacing: 0.3px;
 }
@@ -116,7 +120,7 @@ td>a {
 
 .navigation-bar>.left>.item, .navigation-bar>.right>.item {
     position: relative;
-    padding: 0 10px 0 10px;
+    padding: 0 1em 0 0;
     vertical-align: middle;
     line-height: 1;
     text-decoration: none;
@@ -140,6 +144,7 @@ td>a {
 
 .avatar {
     border-radius: 500rem;
+    margin: 0 0.9em 0 0;
 }
 
 #main-menu-toggle {
@@ -172,7 +177,7 @@ td>a {
     border-right-style: solid;
     border-right-color: #1678c2;
     border-radius: 0 !important;
-    border-right-width: 2.5px;
+    border-right-width: 0.25em;
 }
 
 .admin.wrapper {

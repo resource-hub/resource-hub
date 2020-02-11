@@ -38,17 +38,17 @@
                 {% endif %}
                 ">
         </div>
-        <div class="ui pointing dropdown item" style="margin-top: 9px;">
+        <div class="ui pointing dropdown" style="margin-top: 9px;">
             <span>
                 {{ actor.name }}
             </span>
             <i class="dropdown icon"></i>
             <div class="menu">
-                <a class="item" href="{% url 'panel:home' %}"> <i
-                        class="sliders horizontal icon"></i>{% trans 'admin' %}</a>
+                <a class="item" href="{% url 'panel:home' %}">
+                    <i class="sliders horizontal icon"></i>{% trans 'Admin' %}</a>
                 <a class="item" href="{% url 'panel:notifications' %}"><i
-                        class="bell icon"></i>{% trans 'notfications' %}</a>
-                <a id="role" class="item"><i class="address card outline icon"></i>{% trans 'change role' %}</a>
+                        class="bell icon"></i>{% trans 'Notfications' %}</a>
+                <a id="role" class="item"><i class="address card outline icon"></i>{% trans 'Change role' %}</a>
                 <div class="divider"></div>
                 <div class="item">
                     <a class="ui red button" href="{% url 'core:logout' %}">
