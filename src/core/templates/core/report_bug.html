@@ -3,11 +3,11 @@
 {% load static %}
 
 {% block content %}
-<h1>{% trans 'Report a Bug' %}</h1>
+<h1>{% trans 'report a Bug' %}</h1>
 <div class="ui segment">
     <p class="">
         <i class="info circle icon"></i>
-        {% trans 'Use this form to report a bug or any other technical inquiry. Or write to this email: ' %}
+        {% trans 'use this form to report a bug or any other technical inquiry. Or write to this email: ' %}
         <a href="mailto:incoming+resource-hub-resource-hub-13767519-issue-@incoming.gitlab.com">
             incoming+resource-hub-resource-hub-13767519-issue-@incoming.gitlab.com
         </a>
@@ -17,7 +17,7 @@
     {% csrf_token %}
     {% include "_form.html" with form=bug_form %}
     <button class="ui positive right labeled icon button" type="submit">
-        {% trans 'Report' %}
+        {% trans 'report' %}
         <i class="bug icon"></i>
     </button>
 </form>

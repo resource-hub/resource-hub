@@ -22,6 +22,11 @@ admin_urls.register([
 
     url(r'^notifications/$', admin.Notifications.as_view(), name='notifications'),
 
+    url(r'^finance/payment-methods/manage$',
+        admin.PaymentMethodsManage.as_view(), name='payment_methods_manage'),
+    url(r'^finance/payment-methods/add$',
+        admin.PaymentMethodsAdd.as_view(), name='payment_methods_add'),
+
     url(r'^organizations/manage$',
         admin.OrganizationsManage.as_view(),
         name='organizations_manage'),

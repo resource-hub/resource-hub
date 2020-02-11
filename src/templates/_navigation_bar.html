@@ -7,7 +7,7 @@
         Menu</a>
     <div class="collapsible left">
         <a class="item" href="{% url 'core:home' %}">
-            {% trans 'Home' %}
+            {% trans 'home' %}
         </a>
         {% hook 'navigation_bar' %}
         <div class="ui pointing dropdown item">
@@ -45,14 +45,14 @@
             <i class="dropdown icon"></i>
             <div class="menu">
                 <a class="item" href="{% url 'panel:home' %}"> <i
-                        class="sliders horizontal icon"></i>{% trans 'Admin' %}</a>
+                        class="sliders horizontal icon"></i>{% trans 'admin' %}</a>
                 <a class="item" href="{% url 'panel:notifications' %}"><i
-                        class="bell icon"></i>{% trans 'Notfications' %}</a>
-                <a id="role" class="item"><i class="address card outline icon"></i>{% trans 'Change role' %}</a>
+                        class="bell icon"></i>{% trans 'notfications' %}</a>
+                <a id="role" class="item"><i class="address card outline icon"></i>{% trans 'change role' %}</a>
                 <div class="divider"></div>
                 <div class="item">
                     <a class="ui red button" href="{% url 'core:logout' %}">
-                        {% trans 'Logout' %}
+                        {% trans 'logout' %}
                     </a>
                 </div>
             </div>
@@ -60,11 +60,11 @@
         {% else %}
         <div class="item">
             <a id="register-button" class="small ui primary button" href="{% url 'core:register' %}">
-                {% trans 'Register' %}
+                {% trans 'register' %}
             </a>
 
             <a class="small ui positive button" href="{% url 'core:login' %}">
-                {% trans 'Login' %}
+                {% trans 'login' %}
             </a>
         </div>
         {% endif %}
@@ -80,7 +80,7 @@
 <div id="select-roles" class="ui modal">
     <i class="close icon"></i>
     <div class="header">
-        {% trans 'Choose role' %}
+        {% trans 'choose role' %}
     </div>
 
     <div class="content">
@@ -92,11 +92,11 @@
             <form id="role-form" class="ui hidden form" action="{% url 'core:actor_set' %}" method="POST">
                 {% csrf_token %}
                 <div class="field">
-                    <label for="actor">{% trans 'Role' %}</label>
+                    <label for="actor">{% trans 'role' %}</label>
                     <select id="role-list" name="actor_id"></select>
                 </div>
                 <button type="submit" class="ui positive right labeled icon button">
-                    {% trans 'Choose' %}
+                    {% trans 'choose' %}
                     <i class="checkmark icon"></i>
                 </button>
             </form>

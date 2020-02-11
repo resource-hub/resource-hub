@@ -9,17 +9,17 @@
             {% csrf_token %}
             {% include "_form.html" with form=form %}
             <button class="ui positive right labeled icon button" type="submit">
-                {% trans 'Login' %}
+                {% trans 'login' %}
                 <i class="sign-in icon"></i>
             </button>
             <a class="ui primary left labeled icon right floated button" href="{% url 'core:register' %}">
                 <i class="clipboard outline icon"></i>
-                {% trans 'Register' %}
+                {% trans 'register' %}
             </a>
         </form>
     </div>
     <a class="ui grey button" href="{% url 'core:password_reset' %}">
-        {% trans 'Forgot password?' %}
+        {% trans 'forgot password?' %}
     </a>
 </div>
 {% endblock %}

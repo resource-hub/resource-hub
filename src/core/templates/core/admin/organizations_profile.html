@@ -8,7 +8,7 @@
 {% endblock %}
 {% block content %}
 <h1>
-    {% trans 'Profile' %}
+    {% trans 'profile' %}
 </h1>
 <div class="section-container tab-content">
     <div class="ui stackable two column grid">
@@ -26,12 +26,12 @@
                 <div class="ui compact menu">
                     <a class="item" href="{% url 'panel:organizations_members' organization_id=organization.id %}">
                         <i class="users icon"></i>
-                        {% trans 'Members' %}
+                        {% trans 'members' %}
                     </a>
                     <a class="item"
                         href="{% url 'panel:organizations_profile_edit' organization_id=organization.id scope='info' %}">
                         <i class="edit icon"></i>
-                        {% trans 'Profile' %}
+                        {% trans 'profile' %}
                     </a>
                 </div>
                 {% endif %}
@@ -43,19 +43,19 @@
                 {{ organization.name }}
             </h1>
             <div class="ui container">
-                <label class="ui tiny header">{% trans 'Description' %}</label>
+                <label class="ui tiny header">{% trans 'description' %}</label>
                 <p>
                     {{ organization.info_text |safe }}
                 </p>
-                <label class="ui tiny header">{% trans 'Telephone (public)' %}</label>
+                <label class="ui tiny header">{% trans 'telephone (public)' %}</label>
                 <p>
                     {{ organization.telephone_public }}
                 </p>
-                <label class="ui tiny header">{% trans 'Email (public)' %}</label>
+                <label class="ui tiny header">{% trans 'email (public)' %}</label>
                 <p>
                     {{ organization.email_public }}
                 </p>
-                <label class="ui tiny header">{% trans 'Website' %}</label>
+                <label class="ui tiny header">{% trans 'website' %}</label>
                 <p>
                     <a href="{{ organization.website }}">{{ organization.website }}</a>
                 </p>

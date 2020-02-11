@@ -17,10 +17,10 @@
         <a class="ui labeled icon right floated green button"
             href="{% url 'panel:organizations_members_add' organization_id=organization.id %}">
             <i class="plus icon"></i>
-            {% trans 'Add' %}
+            {% trans 'add' %}
         </a>
         <h3 class="inline">
-            {% trans 'Members' %}
+            {% trans 'members' %}
         </h3>
 
     </div>
@@ -29,7 +29,7 @@
         {% render_table members_table %}
         {% else %}
         <p>
-            {% trans 'No associated members found' %}
+            {% trans 'no associated members found' %}
         </p>
         {% endif %}
     </div>

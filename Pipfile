@@ -3,8 +3,6 @@ name = "pypi"
 url = "https://pypi.org/simple"
 verify_ssl = true
 
-[dev-packages]
-
 [packages]
 asgiref = "*" 
 attrs = "*"   
@@ -56,6 +54,9 @@ zope = {interface = "*"}
 django-summernote = {git = "https://github.com/summernote/django-summernote.git",ref = "702b574920342766f56262725d87125719156878"}
 django-redis = "*"
 django-sekizai = "*"
+pycountry = "*"
+django-countries = "*"
+rq-scheduler = "*"
 
 [requires]
 python_version = "*"

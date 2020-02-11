@@ -3,19 +3,36 @@
 
 {% block content %}
 <h1>
-    {% trans 'Create' %}
+    {% trans 'create' %}
 </h1>
 <div class="section-container tab-content">
     <h3>
-        {% trans 'Create room' %}
+        {% trans 'create room' %}
     </h3>
     <form class="ui form" method="POST" action="{{ url }}" enctype="multipart/form-data">
         {% include '_form.html' with form=room_form %}
+        <div id="venue_procedure">
+            {% include '_form.html' with form=venue_procedure %}
+        </div>
         {% include 'core/_identity.html' %}
         <button class="ui positive right labeled icon button" type="submit">
-            {% trans 'Create' %}
+            {% trans 'create' %}
             <i class="home icon"></i>
         </button>
     </form>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function () {
+        $('#id_bookable').on('click', function () {
+            if ($('#id_bookable').is(':checked')) {
+                $('#venue_procedure').show();
+            } else {
+                $('#venue_procedure').hide();
+            }
+        })
+    })
+</script>
 {% endblock %}

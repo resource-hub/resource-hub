@@ -1,10 +1,9 @@
 from django.urls import reverse
 
-from rooms.models import Room, Event
-from rest_framework import serializers
-
-from core.models import Actor, User, Organization
+from core.models import Actor, Organization, User
 from core.serializers import ActorSerializer, LocationSerializer
+from rest_framework import serializers
+from rooms.models import Event, Room
 
 
 class RoomSerializer(serializers.ModelSerializer):
@@ -19,7 +18,7 @@ class RoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = Room
         fields = ['id', 'name', 'description', 'room_link', 'location',
-                  'price_per_h', 'max_price_per_d', 'thumbnail', 'owner']
+                  'thumbnail', 'owner']
 
 
 # class EventSerializer(serializers.ModelSerializer):

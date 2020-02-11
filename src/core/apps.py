@@ -11,3 +11,7 @@ class PanelConfig(AppConfig):
 
 class ApiConfig(AppConfig):
     name = 'core.api'
+
+
+class FinanceConfig(AppConfig):
+    name = 'core.finance'

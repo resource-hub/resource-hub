@@ -10,20 +10,20 @@
 <h1>{{ organization.name }}</h1>
 <div id="secondary-menu" class="ui secondary pointing menu">
     <a class="{{ info }} item" tab-id="info">
-        {% trans 'Profile' %}
+        {% trans 'profile' %}
     </a>
     <a class="{{ address }} item" tab-id="address">
-        {% trans 'Address' %}
+        {% trans 'address' %}
     </a>
     <a class="{{ bank_account }} item" tab-id="bank_account">
-        {% trans 'Bank Account' %}
+        {% trans 'bank account' %}
     </a>
 </div>
 
 <div class="section-container tab-content">
     <div id="info" class="{{ info }} tab">
         <h3>
-            {% trans 'Edit profile' %}
+            {% trans 'edit profile' %}
         </h3>
         <form class="ui form" method="POST" enctype="multipart/form-data">
             {% include '_form.html' with form=actor_form %}
@@ -32,7 +32,7 @@
     </div>
     <div id="address" class="{{ address }} tab">
         <h3>
-            {% trans 'Edit Address' %}
+            {% trans 'edit address' %}
         </h3>
         <form class="ui form" method="POST">
             {% include '_form.html' with form=address_form %}
@@ -41,7 +41,7 @@
     </div>
     <div id="bank_account" class="{{ bank_account }} tab">
         <h3>
-            {% trans 'Edit bank information' %}
+            {% trans 'edit bank information' %}
         </h3>
         <form class="ui form" method="POST">
             {% include '_form.html' with form=bank_account_form %}

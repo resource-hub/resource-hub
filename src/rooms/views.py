@@ -1,16 +1,16 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from django.utils.decorators import method_decorator
 from django.forms import model_to_dict
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.views import View
 from django.views.decorators.cache import cache_page
 
 from core.models import OrganizationMember
-from rooms.forms import RoomForm, EventForm
+from rooms.forms import EventForm, RoomForm, VenueFormManager
 from rooms.models import Room
 from rooms.tables import RoomsTable
 
@@ -54,28 +54,21 @@ class RoomsManage(View):
 @method_decorator(login_required, name='dispatch')
 class RoomsCreate(View):
     def get(self, request):
-        room_form = RoomForm()
-        context = {
-            'room_form': room_form,
-        }
-        return render(request, 'rooms/admin/rooms_create.html', context)
+        venue_form = VenueFormManager()
+
+        return render(request, 'rooms/admin/rooms_create.html', venue_form.get_forms())
 
     def post(self, request):
-        room_form = RoomForm(request.POST, request.FILES)
+        venue_form = VenueFormManager(request)
 
-        if room_form.is_valid():
-            new_room = room_form.save(commit=False)
-            new_room.owner = request.actor
-            new_room.save()
+        if venue_form.is_valid():
+            venue_form.save(request.actor)
 
             message = ('The room has been created')
             messages.add_message(request, messages.SUCCESS, message)
             return redirect(reverse('panel:rooms_manage'))
 
-        context = {
-            'room_form': room_form,
-        }
-        return render(request, 'rooms/admin/rooms_create.html', context)
+        return render(request, 'rooms/admin/rooms_create.html', venue_form.get_forms())
 
 
 class RoomsProfileEdit(View):
@@ -116,7 +109,7 @@ class RoomEventsCreate(View):
     template_name = 'rooms/room_events_create.html'
 
     def get(self, request, room_id):
-        context = {'event_form': EventForm(room_id)}
+        context = {'event_form': EventForm(room_id), }
         return render(request, self.template_name, context)
 
     def post(self, request, room_id):

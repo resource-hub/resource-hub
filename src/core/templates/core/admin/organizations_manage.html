@@ -4,21 +4,21 @@
 
 {% block content %}
 <h1>
-    {% trans 'Overview' %}
+    {% trans 'overview' %}
 </h1>
 <div class="section-container tab-content">
     <h3>
-        {% trans 'Your organizations' %}
+        {% trans 'your organizations' %}
     </h3>
     <div>
         {% if organizations_table %}
         {% render_table organizations_table %}
         {% else %}
         <p>
-            {% trans 'No associated organizations found' %}
+            {% trans 'no associated organizations found' %}
         </p>
         <a class="ui positive right labeled icon button" href="{% url 'panel:organizations_create' %}">
-            {% trans 'Create one!' %}
+            {% trans 'create one!' %}
             <i class="child icon"></i>
         </a>
         {% endif %}

@@ -31,13 +31,17 @@
         </p>
     </div>
     <div class="column">
+        {% if room.bookable %}
         <div id='calendar'></div>
         <div class="spacer">
             <a class="ui right labeled positive icon button" href="{% url 'rooms:events_create' room_id=room.id %}">
-                {% trans 'Book' %}
+                {% trans 'book' %}
                 <i class="calendar alternate outline icon"></i>
             </a>
         </div>
+        {% else %}
+        <img class="ui fluid image" src="{{ room.thumbnail_original.url }}">
+        {% endif %}
     </div>
 </div>
 {% endblock %}

@@ -3,7 +3,7 @@
 
 {% block content %}
 <h1>
-    {% trans 'Create Organization' %}
+    {% trans 'create organization' %}
 </h1>
 <div class="section-container tab-content">
     <form class="ui form" method="POST" action="{{ url }}" enctype="multipart/form-data">
@@ -12,7 +12,7 @@
         {% include '_form.html' with form=address_form %}
         {% include '_form.html' with form=bank_account_form %}
         <button class="ui positive right labeled icon button" type="submit">
-            {% trans 'Create' %}
+            {% trans 'create' %}
             <i class="users icon"></i>
         </button>
     </form>

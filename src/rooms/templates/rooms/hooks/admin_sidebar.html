@@ -2,7 +2,7 @@
 
 <div class="item">
     <div class="header">
-        {% trans 'Rooms' %}
+        {% trans 'rooms' %}
     </div>
     <div class="menu">
         <a class="item
@@ -10,14 +10,14 @@
                 active
             {% endif %}
         " href="{% url 'panel:rooms_manage' %}">
-            {% trans 'Manage' %}
+            {% trans 'manage' %}
         </a>
         <a class="item
             {% if '/rooms/create' in request.path %}
                 active
             {% endif %}
         " href="{% url 'panel:rooms_create' %}">
-            {% trans 'Create' %}
+            {% trans 'create' %}
         </a>
     </div>
 </div>

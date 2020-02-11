@@ -1,0 +1,8 @@
+{% extends "admin/__base.html" %}
+{% load i18n %}
+{% load hook_tags %}
+
+{% block content %}
+<h1>{% trans 'manage payment methods' %}</h1>
+{% hook 'payment_method' %}
+{% endblock %}
