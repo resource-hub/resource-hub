@@ -10,16 +10,16 @@ from django.views import View
 from django.views.decorators.cache import cache_page
 
 from core.models import OrganizationMember
-from rooms.forms import EventForm, RoomForm, VenueFormManager
-from rooms.models import Room
-from rooms.tables import RoomsTable
+from venues.forms import EventForm, RoomForm, VenueFormManager
+from venues.models import Room
+from venues.tables import RoomsTable
 
 TTL = 60 * 5
 
 
 # @cache_page(TTL)
 def index(request):
-    return render(request, 'rooms/index.html')
+    return render(request, 'venues/index.html')
 
 # Admin section
 @method_decorator(login_required, name='dispatch')
@@ -31,24 +31,24 @@ class RoomsManage(View):
         sub_condition.add(
             Q(owner__organization__organizationmember__role__gte=OrganizationMember.ADMIN), Q.AND)
         query.add(sub_condition, Q.OR)
-        rooms = Room.objects.filter(query)
+        venues = Room.objects.filter(query)
 
-        if rooms:
+        if venues:
             data = []
-            for r in rooms:
+            for r in venues:
                 data.append({
                     'name': r.name,
                     'room_id': r.id,
                     'owner': r.owner,
                 })
-            rooms_table = RoomsTable(data)
+            venues_table = RoomsTable(data)
         else:
-            rooms_table = None
+            venues_table = None
 
         context = {
-            'rooms_table': rooms_table,
+            'venues_table': venues_table,
         }
-        return render(request, 'rooms/admin/rooms_manage.html', context)
+        return render(request, 'venues/admin/venues_manage.html', context)
 
 
 @method_decorator(login_required, name='dispatch')
@@ -56,7 +56,7 @@ class RoomsCreate(View):
     def get(self, request):
         venue_form = VenueFormManager()
 
-        return render(request, 'rooms/admin/rooms_create.html', venue_form.get_forms())
+        return render(request, 'venues/admin/venues_create.html', venue_form.get_forms())
 
     def post(self, request):
         venue_form = VenueFormManager(request)
@@ -66,13 +66,13 @@ class RoomsCreate(View):
 
             message = ('The room has been created')
             messages.add_message(request, messages.SUCCESS, message)
-            return redirect(reverse('panel:rooms_manage'))
+            return redirect(reverse('panel:venues_manage'))
 
-        return render(request, 'rooms/admin/rooms_create.html', venue_form.get_forms())
+        return render(request, 'venues/admin/venues_create.html', venue_form.get_forms())
 
 
 class RoomsProfileEdit(View):
-    template_name = 'rooms/admin/rooms_profile_edit.html'
+    template_name = 'venues/admin/venues_profile_edit.html'
 
     def get(self, request, room_id):
         room = get_object_or_404(Room, pk=room_id)
@@ -89,7 +89,7 @@ class RoomsProfileEdit(View):
 
         if room_form.is_valid():
             room_form.save()
-            return redirect(reverse('panel:rooms_profile_edit', kwargs={'room_id': room_id}))
+            return redirect(reverse('panel:venues_profile_edit', kwargs={'room_id': room_id}))
 
         context = {
             'room_form': room_form,
@@ -102,11 +102,11 @@ class RoomDetails(View):
     def get(self, request, room_id):
         room = get_object_or_404(Room, pk=room_id)
         context = {'room': room}
-        return render(request, 'rooms/room_details.html', context)
+        return render(request, 'venues/room_details.html', context)
 
 
 class RoomEventsCreate(View):
-    template_name = 'rooms/room_events_create.html'
+    template_name = 'venues/room_events_create.html'
 
     def get(self, request, room_id):
         context = {'event_form': EventForm(room_id), }
@@ -118,7 +118,7 @@ class RoomEventsCreate(View):
             event_form.save(request.actor, request.user)
             message = _('The event has been created successfully')
             messages.add_message(request, messages.SUCCESS, message)
-            return redirect(reverse('rooms:room_details', kwargs={'room_id': room_id}))
+            return redirect(reverse('venues:room_details', kwargs={'room_id': room_id}))
         else:
             context = {'event_form': event_form}
             return render(request, self.template_name, context)

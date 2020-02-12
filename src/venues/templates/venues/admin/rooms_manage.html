@@ -8,16 +8,16 @@
 </h1>
 <div class="section-container tab-content">
     <h3>
-        {% trans 'your rooms' %}
+        {% trans 'your venues' %}
     </h3>
     <div>
-        {% if rooms_table %}
-        {% render_table rooms_table %}
+        {% if venues_table %}
+        {% render_table venues_table %}
         {% else %}
         <p>
-            {% trans 'no associated rooms found' %}
+            {% trans 'no associated venues found' %}
         </p>
-        <a class="ui positive right labeled icon button" href="{% url 'panel:rooms_create' %}">
+        <a class="ui positive right labeled icon button" href="{% url 'panel:venues_create' %}">
             {% trans 'create one!' %}
             <i class="child icon"></i>
         </a>

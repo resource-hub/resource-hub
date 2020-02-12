@@ -11,8 +11,8 @@ from rest_framework.decorators import (api_view, authentication_classes,
                                        permission_classes)
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rooms.models import Event, Room
-from rooms.serializers import RoomSerializer
+from venues.models import Event, Room
+from venues.serializers import RoomSerializer
 
 '''
 Thanks to https://stackoverflow.com/questions/41129921/validate-an-iso-8601-datetime-string-in-python

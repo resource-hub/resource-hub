@@ -6,7 +6,7 @@ from django_tables2.utils import Accessor as A
 
 class RoomsTable(tables.Table):
     name = tables.LinkColumn(
-        'panel:rooms_profile_edit',
+        'panel:venues_profile_edit',
         verbose_name=_('Name'),
         kwargs={
             'room_id': A('room_id'),

@@ -74,7 +74,7 @@ INSTALLED_APPS = [
     'core.apps.CoreConfig',
     'core.apps.PanelConfig',
     'core.apps.ApiConfig',
-    'rooms.apps.RoomsConfig',
+    'venues.apps.VenuesConfig',
 ]
 
 MIDDLEWARE = [

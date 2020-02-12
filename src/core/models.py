@@ -489,13 +489,13 @@ class Contract(models.Model):
         DeclarationOfIntent,
         null=True,
         on_delete=models.SET_NULL,
-        related_name='initiation',
+        related_name='contract_initiation',
     )
     acceptance = models.OneToOneField(
         DeclarationOfIntent,
         on_delete=models.SET_NULL,
         null=True,
-        related_name='acceptance',
+        related_name='contract_acceptance',
     )
 
 
@@ -523,6 +523,7 @@ class BaseContractProcedure(models.Model):
     trigger = models.ManyToManyField(
         ContractTrigger,
         blank=True,
+        related_name='procedure'
     )
     created_at = models.DateTimeField(
         auto_now_add=True,

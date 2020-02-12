@@ -3,7 +3,7 @@
 
 {% block content %}
 <div>
-    <form class="ui form" method="POST" action="{% url 'rooms:events_create' %}">
+    <form class="ui form" method="POST" action="{% url 'venues:events_create' %}">
         {% csrf_token %}
         {% include '_form.html' with form=event_form %}
         <div class="field">

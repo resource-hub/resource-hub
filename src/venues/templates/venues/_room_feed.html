@@ -56,7 +56,7 @@
         }
 
         $.ajax({
-            'url': "{% url 'api:rooms' %}" + query,
+            'url': "{% url 'api:venues' %}" + query,
             'type': 'GET',
             'dataType': 'JSON'
         }).done(function (data) {

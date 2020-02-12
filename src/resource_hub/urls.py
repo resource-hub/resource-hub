@@ -12,7 +12,7 @@ urlpatterns = [
     path('', include('core.urls')),
     path('api/', include('core.api.urls')),
     path('admin/', include('core.panel.urls')),
-    path('rooms/', include('rooms.urls')),
+    path('venues/', include('venues.urls')),
 
     # external apps
     path('dj-admin', admin.site.urls),

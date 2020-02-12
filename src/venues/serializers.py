@@ -3,7 +3,7 @@ from django.urls import reverse
 from core.models import Actor, Organization, User
 from core.serializers import ActorSerializer, LocationSerializer
 from rest_framework import serializers
-from rooms.models import Event, Room
+from venues.models import Event, Room
 
 
 class RoomSerializer(serializers.ModelSerializer):
@@ -13,7 +13,7 @@ class RoomSerializer(serializers.ModelSerializer):
     room_link = serializers.SerializerMethodField()
 
     def get_room_link(self, obj):
-        return reverse('rooms:room_details', kwargs={'room_id': obj.id})
+        return reverse('venues:room_details', kwargs={'room_id': obj.id})
 
     class Meta:
         model = Room

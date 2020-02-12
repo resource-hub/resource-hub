@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from core.widgets import TimeInputCustom
 from django_summernote.widgets import SummernoteWidget
-from rooms.models import Event, Room, VenueContractProcedure
+from venues.models import Event, Room, VenueContractProcedure
 
 
 class RoomForm(forms.ModelForm):
