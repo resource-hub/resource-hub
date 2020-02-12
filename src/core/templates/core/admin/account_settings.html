@@ -6,17 +6,17 @@
 <h1>Settings</h1>
 <div id="secondary-menu" class="ui secondary pointing menu">
     <a class="{{ email }} item" tab-id="email">
-        {% trans 'email' %}
+        {% trans 'Email' %}
     </a>
     <a class="{{ password }} item" tab-id="password">
-        {% trans 'password' %}
+        {% trans 'Password' %}
     </a>
 </div>
 
 <div class="section-container tab-content">
     <div id="email" class="{{ email }} tab">
         <h3>
-            {% trans 'change email' %}
+            {% trans 'Change email' %}
         </h3>
         <form class="ui form" method="POST" action="{{ url }}">
             {% include "_form.html" with form=email_form %}
@@ -25,7 +25,7 @@
     </div>
     <div id="password" class="{{ password }} tab">
         <h3>
-            {% trans 'change password' %}
+            {% trans 'Change password' %}
         </h3>
         <form class="ui form" method="POST" action="{{ url }}">
             {% include "_form.html" with form=password_form %}

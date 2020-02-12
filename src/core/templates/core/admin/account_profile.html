@@ -6,20 +6,20 @@
 <h1>Profile</h1>
 <div id="secondary-menu" class="ui secondary pointing menu">
     <a class="{{ info }} item" tab-id="info">
-        {% trans 'profile' %}
+        {% trans 'Profile' %}
     </a>
     <a class="{{ address }} item" tab-id="address">
-        {% trans 'address' %}
+        {% trans 'Address' %}
     </a>
     <a class="{{ bank_account }} item" tab-id="bank_account">
-        {% trans 'bank account' %}
+        {% trans 'Bank account' %}
     </a>
 </div>
 
 <div class="section-container tab-content">
     <div id="info" class="{{ info }} tab">
         <h3>
-            {% trans 'edit profile' %}
+            {% trans 'Edit profile' %}
         </h3>
         <form class="ui form" method="POST" action="{{ url }}" enctype="multipart/form-data">
             {% include '_form.html' with form=actor_form %}
@@ -28,7 +28,7 @@
     </div>
     <div id="address" class="{{ address }} tab">
         <h3>
-            {% trans 'edit address' %}
+            {% trans 'Edit address' %}
         </h3>
         <form class="ui form" method="POST" action="{{ url }}">
             {% include '_form.html' with form=address_form %}
@@ -37,7 +37,7 @@
     </div>
     <div id="bank_account" class="{{ bank_account }} tab">
         <h3>
-            {% trans 'edit bank information' %}
+            {% trans 'Edit bank information' %}
         </h3>
         <form class="ui form" method="POST" action="{{ url }}">
             {% include '_form.html' with form=bank_account_form %}
