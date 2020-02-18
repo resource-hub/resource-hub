@@ -28,7 +28,7 @@ class VenueContractProcedure(BaseContractProcedure):
     )
 
 
-class Room(models.Model):
+class Venue(models.Model):
     """describing locations."""
 
     # Fields
@@ -41,7 +41,7 @@ class Room(models.Model):
     thumbnail_original = models.ImageField(
         null=False,
         blank=True,
-        upload_to='images/'
+        upload_to='images/',
     )
     thumbnail = ImageSpecField(
         source='thumbnail_original',
@@ -134,8 +134,8 @@ class Event(models.Model):
         on_delete=models.SET_NULL,
         null=True
     )
-    room = models.ForeignKey(
-        Room,
+    venue = models.ForeignKey(
+        Venue,
         on_delete=models.CASCADE
     )
     is_public = models.BooleanField()

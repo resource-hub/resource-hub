@@ -1,9 +1,9 @@
-{% extends "admin/__base.html" %}
+{% extends "control/__base.html" %}
 {% load i18n %}
 {% load django_tables2 %}
 
 {% block admin-navigation %}
-{% url 'panel:organizations_members' organization_id=organization.id as url %}
+{% url 'control:organizations_members' organization_id=organization.id as url %}
 {% include '_back_button.html' with url=url %}
 {% endblock %}
 

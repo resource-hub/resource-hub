@@ -72,7 +72,7 @@ INSTALLED_APPS = [
     'sekizai',
     # project apps
     'core.apps.CoreConfig',
-    'core.apps.PanelConfig',
+    'core.apps.ControlConfig',
     'core.apps.ApiConfig',
     'venues.apps.VenuesConfig',
 ]
@@ -180,7 +180,7 @@ MEDIA_URL = '/media/'
 
 # Custom settings
 
-LOGIN_REDIRECT_URL = 'panel:home'
+LOGIN_REDIRECT_URL = 'control:home'
 LOGIN_URL = 'core:login'
 
 AUTH_USER_MODEL = "core.User"

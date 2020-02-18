@@ -401,50 +401,6 @@ class DeclarationOfIntent(models.Model):
     timestamp = models.DateTimeField()
 
 
-class Trigger(models.Model):
-    # fields
-    function_call = models.CharField(
-        max_length=128,
-    )
-    name = models.CharField(
-        max_length=64,
-    )
-    comment = models.CharField(
-        max_length=255,
-    )
-    owner = models.ForeignKey(
-        Actor,
-        on_delete=models.CASCADE
-    )
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-    )
-
-    class Meta:
-        abstract = True
-
-
-class ContractTrigger(Trigger):
-    provider = models.CharField(
-        max_length=64,
-    )
-
-
-class Fee(models.Model):
-    absolute = models.BooleanField(default=False)
-    value = models.DecimalField(
-        decimal_places=3,
-        max_digits=13,
-    )
-
-
-class PaymentMethod(Trigger):
-    fee = models.ForeignKey(
-        Fee,
-        on_delete=models.PROTECT,
-    )
-
-
 class Contract(models.Model):
     # constants
     STATE_PENDING = 'p'
@@ -496,6 +452,54 @@ class Contract(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         related_name='contract_acceptance',
+    )
+
+
+class Trigger(models.Model):
+    # fields
+    function_call = models.CharField(
+        max_length=128,
+    )
+    condition = models.CharField(
+        choices=Contract.STATES,
+        max_length=2,
+    )
+    name = models.CharField(
+        max_length=64,
+    )
+    comment = models.CharField(
+        max_length=255,
+    )
+    owner = models.ForeignKey(
+        Actor,
+        on_delete=models.CASCADE
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    class Meta:
+        abstract = True
+
+
+class ContractTrigger(Trigger):
+    provider = models.CharField(
+        max_length=64,
+    )
+
+
+class Fee(models.Model):
+    absolute = models.BooleanField(default=False)
+    value = models.DecimalField(
+        decimal_places=3,
+        max_digits=13,
+    )
+
+
+class PaymentMethod(Trigger):
+    fee = models.ForeignKey(
+        Fee,
+        on_delete=models.PROTECT,
     )
 
 

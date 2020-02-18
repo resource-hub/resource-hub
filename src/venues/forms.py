@@ -3,14 +3,14 @@ from django.utils.translation import ugettext_lazy as _
 
 from core.widgets import TimeInputCustom
 from django_summernote.widgets import SummernoteWidget
-from venues.models import Event, Room, VenueContractProcedure
+from venues.models import Event, Venue, VenueContractProcedure
 
 
-class RoomForm(forms.ModelForm):
+class VenueForm(forms.ModelForm):
     description = forms.CharField(widget=SummernoteWidget())
 
     class Meta:
-        model = Room
+        model = Venue
         fields = ['name', 'description', 'location',
                   'thumbnail_original', 'bookable']
 
@@ -27,10 +27,10 @@ class VenueProcedureForm(forms.ModelForm):
 class VenueFormManager():
     def __init__(self, request=None):
         if request is None:
-            self.room_form = RoomForm()
+            self.room_form = VenueForm()
             self.venue_procedure = VenueProcedureForm()
         else:
-            self.room_form = RoomForm(request.POST, request.FILES)
+            self.room_form = VenueForm(request.POST, request.FILES)
             self.venue_procedure = VenueProcedureForm(request.POST)
 
     def is_valid(self):

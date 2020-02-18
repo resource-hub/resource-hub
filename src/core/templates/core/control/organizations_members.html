@@ -1,9 +1,9 @@
-{% extends "admin/__base.html" %}
+{% extends "control/__base.html" %}
 {% load i18n %}
 {% load django_tables2 %}
 
 {% block admin-navigation %}
-{% url 'panel:organizations_profile' organization_id=organization.id as url %}
+{% url 'control:organizations_profile' organization_id=organization.id as url %}
 {% include '_back_button.html' with url=url %}
 {% endblock %}
 
@@ -15,7 +15,7 @@
 <div class="section-container tab-content">
     <div>
         <a class="ui labeled icon right floated green button"
-            href="{% url 'panel:organizations_members_add' organization_id=organization.id %}">
+            href="{% url 'control:organizations_members_add' organization_id=organization.id %}">
             <i class="plus icon"></i>
             {% trans 'add' %}
         </a>

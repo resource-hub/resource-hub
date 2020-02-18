@@ -11,8 +11,8 @@ from rest_framework.decorators import (api_view, authentication_classes,
                                        permission_classes)
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from venues.models import Event, Room
-from venues.serializers import RoomSerializer
+from venues.models import Event, Venue
+from venues.serializers import VenueSerializer
 
 '''
 Thanks to https://stackoverflow.com/questions/41129921/validate-an-iso-8601-datetime-string-in-python
@@ -33,9 +33,9 @@ def is_valid_iso8601(val):
 
 @authentication_classes([])
 @permission_classes([])
-class Rooms(generics.ListCreateAPIView):
+class Venues(generics.ListCreateAPIView):
     http_method_names = ['get']
-    serializer_class = RoomSerializer
+    serializer_class = VenueSerializer
 
     def get_queryset(self):
         name = self.request.query_params.get('name', None)
@@ -47,12 +47,12 @@ class Rooms(generics.ListCreateAPIView):
         if pk is not None:
             q.add(Q(location=pk), Q.AND)
 
-        return Room.objects.filter(q)
+        return Venue.objects.filter(q)
 
 
 @authentication_classes([])
 @permission_classes([])
-class RoomEvents(APIView):
+class VenueEvents(APIView):
     http_method_names = ['get']
 
     def get(self, request, room_id):
@@ -71,8 +71,8 @@ class RoomEvents(APIView):
                 detail=_('start or end parameter not valid iso_8601 string'))
 
         try:
-            Room.objects.get(id=room_id)
-        except Room.DoesNotExist:
+            Venue.objects.get(id=room_id)
+        except Venue.DoesNotExist:
             raise exceptions.NotFound(
                 detail=_('No room corresponds to the given id'))
 

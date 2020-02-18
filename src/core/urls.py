@@ -4,53 +4,53 @@ from django.urls import include
 from django.views.i18n import JavaScriptCatalog
 
 from core.api.urls import api_urls
-from core.panel.urls import admin_urls
-from core.views import admin, api, auth, site
+from core.control.urls import control_urls
+from core.views import api, auth, control, site
 
 JS_INFO_DICT = {
     'packages': ('recurrence', ),
 }
 
-admin_urls.register([
-    url(r'^$', admin.Home.as_view(), name='home'),
+control_urls.register([
+    url(r'^$', control.Home.as_view(), name='home'),
     url(r'^account/profile/(?P<scope>\w{0,50})/$',
-        admin.AccountProfile.as_view(),
+        control.AccountProfile.as_view(),
         name='account_profile'),
     url(r'^account/settings/(?P<scope>\w{0,50})/$',
-        admin.AccountSettings.as_view(),
+        control.AccountSettings.as_view(),
         name='account_settings'),
 
-    url(r'^notifications/$', admin.Notifications.as_view(), name='notifications'),
+    url(r'^notifications/$', control.Notifications.as_view(), name='notifications'),
 
     url(r'^finance/payment-methods/manage$',
-        admin.PaymentMethodsManage.as_view(), name='payment_methods_manage'),
+        control.PaymentMethodsManage.as_view(), name='payment_methods_manage'),
     url(r'^finance/payment-methods/add$',
-        admin.PaymentMethodsAdd.as_view(), name='payment_methods_add'),
+        control.PaymentMethodsAdd.as_view(), name='payment_methods_add'),
 
     url(r'^organizations/manage$',
-        admin.OrganizationsManage.as_view(),
+        control.OrganizationsManage.as_view(),
         name='organizations_manage'),
     url(r'^organizations/create/$',
-        admin.OrganizationsCreate.as_view(),
+        control.OrganizationsCreate.as_view(),
         name='organizations_create'),
     url(r'^organizations/manage/(?P<organization_id>\w{0,50})/profile/$',
-        admin.OrganizationsProfile.as_view(),
+        control.OrganizationsProfile.as_view(),
         name='organizations_profile'),
     url(r'^organizations/manage/(?P<organization_id>\w{0,50})/profile/edit/(?P<scope>\w{0,50})/$',
-        admin.OrganizationsProfileEdit.as_view(),
+        control.OrganizationsProfileEdit.as_view(),
         name='organizations_profile_edit'),
     url(r'^organizations/manage/(?P<organization_id>\w{0,50})/members/$',
-        admin.OrganizationsMembers.as_view(),
+        control.OrganizationsMembers.as_view(),
         name='organizations_members'),
     url(r'^organizations/manage/(?P<organization_id>\w{0,50})/members/add/$',
-        admin.OrganizationsMembersAdd.as_view(),
+        control.OrganizationsMembersAdd.as_view(),
         name='organizations_members_add'),
 
-    url(r'^locations/create/$', admin.LocationsCreate.as_view(),
+    url(r'^locations/create/$', control.LocationsCreate.as_view(),
         name='locations_create'),
-    url(r'^locations/manage/$', admin.LocationsManage.as_view(),
+    url(r'^locations/manage/$', control.LocationsManage.as_view(),
         name='locations_manage'),
-    url(r'^locations/manage/(?P<location_id>\w{0,50})/profile/edit$', admin.LocationsProfileEdit.as_view(),
+    url(r'^locations/manage/(?P<location_id>\w{0,50})/profile/edit$', control.LocationsProfileEdit.as_view(),
         name='locations_profile_edit'),
 ])
 

@@ -1,48 +1,53 @@
-{% extends "admin/__base.html" %}
+{% extends "control/__base.html" %}
 {% load i18n %}
 
+{% block admin-navigation %}
+{% url 'control:organizations_profile' organization_id=organization.id as url %}
+{% include '_back_button.html' with url=url %}
+{% endblock %}
+
 {% block content %}
-{% url 'core:account_information' as url %}
-<h1>Profile</h1>
+<h1>{{ organization.name }}</h1>
 <div id="secondary-menu" class="ui secondary pointing menu">
     <a class="{{ info }} item" tab-id="info">
-        {% trans 'Profile' %}
+        {% trans 'profile' %}
     </a>
     <a class="{{ address }} item" tab-id="address">
-        {% trans 'Address' %}
+        {% trans 'address' %}
     </a>
     <a class="{{ bank_account }} item" tab-id="bank_account">
-        {% trans 'Bank account' %}
+        {% trans 'bank account' %}
     </a>
 </div>
 
 <div class="section-container tab-content">
     <div id="info" class="{{ info }} tab">
         <h3>
-            {% trans 'Edit profile' %}
+            {% trans 'edit profile' %}
         </h3>
-        <form class="ui form" method="POST" action="{{ url }}" enctype="multipart/form-data">
+        <form class="ui form" method="POST" enctype="multipart/form-data">
             {% include '_form.html' with form=actor_form %}
             {% include '_save_button.html' %}
         </form>
     </div>
     <div id="address" class="{{ address }} tab">
         <h3>
-            {% trans 'Edit address' %}
+            {% trans 'edit address' %}
         </h3>
-        <form class="ui form" method="POST" action="{{ url }}">
+        <form class="ui form" method="POST">
             {% include '_form.html' with form=address_form %}
             {% include '_save_button.html' %}
         </form>
     </div>
     <div id="bank_account" class="{{ bank_account }} tab">
         <h3>
-            {% trans 'Edit bank information' %}
+            {% trans 'edit bank information' %}
         </h3>
-        <form class="ui form" method="POST" action="{{ url }}">
+        <form class="ui form" method="POST">
             {% include '_form.html' with form=bank_account_form %}
             {% include '_save_button.html' %}
         </form>
     </div>
 </div>
+
 {% endblock %}

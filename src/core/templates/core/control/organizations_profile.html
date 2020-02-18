@@ -1,9 +1,9 @@
-{% extends 'admin/__base.html' %}
+{% extends 'control/__base.html' %}
 {% load i18n %}
 {% load static %}
 
 {% block admin-navigation %}
-{% url 'panel:organizations_manage' as url%}
+{% url 'control:organizations_manage' as url%}
 {% include '_back_button.html' with url=url %}
 {% endblock %}
 {% block content %}
@@ -24,12 +24,12 @@
 
                 {% if is_admin %}
                 <div class="ui compact menu">
-                    <a class="item" href="{% url 'panel:organizations_members' organization_id=organization.id %}">
+                    <a class="item" href="{% url 'control:organizations_members' organization_id=organization.id %}">
                         <i class="users icon"></i>
                         {% trans 'members' %}
                     </a>
                     <a class="item"
-                        href="{% url 'panel:organizations_profile_edit' organization_id=organization.id scope='info' %}">
+                        href="{% url 'control:organizations_profile_edit' organization_id=organization.id scope='info' %}">
                         <i class="edit icon"></i>
                         {% trans 'profile' %}
                     </a>

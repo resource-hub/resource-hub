@@ -9,14 +9,14 @@
             {% if '/venues/manage' in request.path %}
                 active
             {% endif %}
-        " href="{% url 'panel:venues_manage' %}">
+        " href="{% url 'control:venues_manage' %}">
             {% trans 'manage' %}
         </a>
         <a class="item
             {% if '/venues/create' in request.path %}
                 active
             {% endif %}
-        " href="{% url 'panel:venues_create' %}">
+        " href="{% url 'control:venues_create' %}">
             {% trans 'create' %}
         </a>
     </div>

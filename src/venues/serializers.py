@@ -3,10 +3,10 @@ from django.urls import reverse
 from core.models import Actor, Organization, User
 from core.serializers import ActorSerializer, LocationSerializer
 from rest_framework import serializers
-from venues.models import Event, Room
+from venues.models import Event, Venue
 
 
-class RoomSerializer(serializers.ModelSerializer):
+class VenueSerializer(serializers.ModelSerializer):
     owner = ActorSerializer(read_only=True)
     location = LocationSerializer(read_only=True)
     thumbnail = serializers.ImageField()
@@ -16,7 +16,7 @@ class RoomSerializer(serializers.ModelSerializer):
         return reverse('venues:room_details', kwargs={'room_id': obj.id})
 
     class Meta:
-        model = Room
+        model = Venue
         fields = ['id', 'name', 'description', 'room_link', 'location',
                   'thumbnail', 'owner']
 

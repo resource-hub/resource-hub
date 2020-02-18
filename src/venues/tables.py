@@ -4,9 +4,9 @@ import django_tables2 as tables
 from django_tables2.utils import Accessor as A
 
 
-class RoomsTable(tables.Table):
+class VenuesTable(tables.Table):
     name = tables.LinkColumn(
-        'panel:venues_profile_edit',
+        'control:venues_profile_edit',
         verbose_name=_('Name'),
         kwargs={
             'room_id': A('room_id'),

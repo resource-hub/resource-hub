@@ -10,9 +10,9 @@ from django.views import View
 from django.views.decorators.cache import cache_page
 
 from core.models import OrganizationMember
-from venues.forms import EventForm, RoomForm, VenueFormManager
-from venues.models import Room
-from venues.tables import RoomsTable
+from venues.forms import EventForm, VenueForm, VenueFormManager
+from venues.models import Venue
+from venues.tables import VenuesTable
 
 TTL = 60 * 5
 
@@ -23,7 +23,7 @@ def index(request):
 
 # Admin section
 @method_decorator(login_required, name='dispatch')
-class RoomsManage(View):
+class VenuesManage(View):
     def get(self, request):
         user = request.user
         query = Q(owner=user.pk)
@@ -31,7 +31,7 @@ class RoomsManage(View):
         sub_condition.add(
             Q(owner__organization__organizationmember__role__gte=OrganizationMember.ADMIN), Q.AND)
         query.add(sub_condition, Q.OR)
-        venues = Room.objects.filter(query)
+        venues = Venue.objects.filter(query)
 
         if venues:
             data = []
@@ -41,22 +41,22 @@ class RoomsManage(View):
                     'room_id': r.id,
                     'owner': r.owner,
                 })
-            venues_table = RoomsTable(data)
+            venues_table = VenuesTable(data)
         else:
             venues_table = None
 
         context = {
             'venues_table': venues_table,
         }
-        return render(request, 'venues/admin/venues_manage.html', context)
+        return render(request, 'venues/control/venues_manage.html', context)
 
 
 @method_decorator(login_required, name='dispatch')
-class RoomsCreate(View):
+class VenuesCreate(View):
     def get(self, request):
         venue_form = VenueFormManager()
 
-        return render(request, 'venues/admin/venues_create.html', venue_form.get_forms())
+        return render(request, 'venues/control/venues_create.html', venue_form.get_forms())
 
     def post(self, request):
         venue_form = VenueFormManager(request)
@@ -66,30 +66,30 @@ class RoomsCreate(View):
 
             message = ('The room has been created')
             messages.add_message(request, messages.SUCCESS, message)
-            return redirect(reverse('panel:venues_manage'))
+            return redirect(reverse('control:venues_manage'))
 
-        return render(request, 'venues/admin/venues_create.html', venue_form.get_forms())
+        return render(request, 'venues/control/venues_create.html', venue_form.get_forms())
 
 
-class RoomsProfileEdit(View):
-    template_name = 'venues/admin/venues_profile_edit.html'
+class VenuesProfileEdit(View):
+    template_name = 'venues/control/venues_profile_edit.html'
 
     def get(self, request, room_id):
-        room = get_object_or_404(Room, pk=room_id)
-        room_form = RoomForm(initial=model_to_dict(room))
+        room = get_object_or_404(Venue, pk=room_id)
+        room_form = VenueForm(initial=model_to_dict(room))
         context = {
             'room_form': room_form
         }
         return render(request, self.template_name, context)
 
     def post(self, request, room_id):
-        room = get_object_or_404(Room, pk=room_id)
-        room_form = RoomForm(
+        room = get_object_or_404(Venue, pk=room_id)
+        room_form = VenueForm(
             request.POST, request.FILES, instance=room)
 
         if room_form.is_valid():
             room_form.save()
-            return redirect(reverse('panel:venues_profile_edit', kwargs={'room_id': room_id}))
+            return redirect(reverse('control:venues_profile_edit', kwargs={'room_id': room_id}))
 
         context = {
             'room_form': room_form,
@@ -98,14 +98,14 @@ class RoomsProfileEdit(View):
         return render(request, self.template_name, context)
 
 
-class RoomDetails(View):
+class VenueDetails(View):
     def get(self, request, room_id):
-        room = get_object_or_404(Room, pk=room_id)
+        room = get_object_or_404(Venue, pk=room_id)
         context = {'room': room}
         return render(request, 'venues/room_details.html', context)
 
 
-class RoomEventsCreate(View):
+class VenueEventsCreate(View):
     template_name = 'venues/room_events_create.html'
 
     def get(self, request, room_id):

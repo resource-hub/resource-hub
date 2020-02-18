@@ -6,7 +6,7 @@ from django_tables2.utils import Accessor as A
 
 class OrganizationsTable(tables.Table):
     name = tables.LinkColumn(
-        'panel:organizations_profile',
+        'control:organizations_profile',
         verbose_name=_('Name'),
         kwargs={
             'organization_id': A('organization_id'),
@@ -39,7 +39,7 @@ class MembersTable(tables.Table):
 
 class LocationsTable(tables.Table):
     name = tables.LinkColumn(
-        'panel:locations_profile_edit',
+        'control:locations_profile_edit',
         verbose_name=_('Name'),
         kwargs={
             'location_id': A('location_id'),

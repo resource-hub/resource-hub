@@ -8,14 +8,14 @@
                     {% if '/account/profile/' in request.path %}
                     active
                     {% endif %}
-                    " href="{% url 'panel:account_profile' scope='info' %}">
+                    " href="{% url 'control:account_profile' scope='info' %}">
                 {% trans 'profile' %}
             </a>
             <a class="item
                 {% if '/settings/' in request.path %}
                 active
                 {% endif %}
-                " href="{% url 'panel:account_settings' scope='email' %}">
+                " href="{% url 'control:account_settings' scope='email' %}">
                 {% trans 'settings' %}
             </a>
         </div>
@@ -30,14 +30,14 @@
                 {% if '/finance/payment-methods/manage' in request.path %}
                     active
                     {% endif %}
-                " href="{% url 'panel:payment_methods_manage' %}">
+                " href="{% url 'control:payment_methods_manage' %}">
                 {% trans 'manage' %}
             </a>
             <a class="item
                 {% if '/finance/payment-methods/add' in request.path %}
                     active
                     {% endif %}
-                " href="{% url 'panel:payment_methods_add' %}">
+                " href="{% url 'control:payment_methods_add' %}">
                 {% trans 'add' %}
             </a>
         </div>
@@ -49,17 +49,17 @@
         <div class="menu">
             <a class="item
                 {{ request.path }}
-                {% if '/admin/organizations/manage' in request.path %}
+                {% if '/control/organizations/manage' in request.path %}
                     active
                     {% endif %}
-                " href="{% url 'panel:organizations_manage' %}">
+                " href="{% url 'control:organizations_manage' %}">
                 {% trans 'manage' %}
             </a>
             <a class="item
                 {% if '/organizations/create' in request.path %}
                     active
                     {% endif %}
-                " href="{% url 'panel:organizations_create' %}">
+                " href="{% url 'control:organizations_create' %}">
                 {% trans 'create' %}
             </a>
         </div>
@@ -73,17 +73,17 @@
                 {% if '/locations/manage' in request.path %}
                     active
                     {% endif %}
-                " href="{% url 'panel:locations_manage' %}">
+                " href="{% url 'control:locations_manage' %}">
                 {% trans 'manage' %}
             </a>
             <a class="item
                 {% if '/locations/create' in request.path %}
                     active
                     {% endif %}
-                " href="{% url 'panel:locations_create' %}">
+                " href="{% url 'control:locations_create' %}">
                 {% trans 'create' %}
             </a>
         </div>
     </div>
-    {% hook 'admin_sidebar' %}
+    {% hook 'control_sidebar' %}
 </aside>

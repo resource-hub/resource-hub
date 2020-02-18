@@ -11,7 +11,7 @@ urlpatterns = [
     # apps
     path('', include('core.urls')),
     path('api/', include('core.api.urls')),
-    path('admin/', include('core.panel.urls')),
+    path('control/', include('core.control.urls')),
     path('venues/', include('venues.urls')),
 
     # external apps

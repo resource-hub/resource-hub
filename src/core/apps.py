@@ -5,13 +5,9 @@ class CoreConfig(AppConfig):
     name = 'core'
 
 
-class PanelConfig(AppConfig):
-    name = 'core.panel'
+class ControlConfig(AppConfig):
+    name = 'core.control'
 
 
 class ApiConfig(AppConfig):
     name = 'core.api'
-
-
-class FinanceConfig(AppConfig):
-    name = 'core.finance'

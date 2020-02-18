@@ -18,7 +18,7 @@ from core.tables import LocationsTable, MembersTable, OrganizationsTable
 @method_decorator(login_required, name='dispatch')
 class Home(View):
     def get(self, request):
-        return render(request, 'core/admin/index.html')
+        return render(request, 'core/control/index.html')
 
 
 class ScopeView(View):
@@ -35,7 +35,7 @@ class ScopeView(View):
 
 @method_decorator(login_required, name='dispatch')
 class AccountSettings(ScopeView):
-    template_name = 'core/admin/account_settings.html'
+    template_name = 'core/control/account_settings.html'
     legal_scope = ['email', 'password', ]
 
     def get(self, request, scope):
@@ -54,15 +54,15 @@ class AccountSettings(ScopeView):
 
         if account_form.is_valid:
             messages.add_message(request, messages.SUCCESS, message)
-            return redirect(reverse('panel:account_settings', kwargs={'scope': scope}))
+            return redirect(reverse('control:account_settings', kwargs={'scope': scope}))
         else:
             return render(request, self.template_name, account_form.get_forms(scope))
 
 
 @method_decorator(login_required, name='dispatch')
 class AccountProfile(ScopeView):
-    template_name = 'core/admin/account_profile.html'
-    redirect_url = 'panel:account_profile'
+    template_name = 'core/control/account_profile.html'
+    redirect_url = 'control:account_profile'
     legal_scope = ['info', 'address', 'bank_account', ]
 
     def get(self, request, scope):
@@ -90,7 +90,7 @@ class AccountProfile(ScopeView):
 
 @method_decorator(login_required, name='dispatch')
 class PaymentMethodsManage(View):
-    template_name = 'core/admin/finance_payment_methods_manage.html'
+    template_name = 'core/control/finance_payment_methods_manage.html'
 
     def get(self, request):
         return render(request, self.template_name)
@@ -98,7 +98,7 @@ class PaymentMethodsManage(View):
 
 @method_decorator(login_required, name='dispatch')
 class PaymentMethodsAdd(View):
-    template_name = 'core/admin/finance_payment_methods_add.html'
+    template_name = 'core/control/finance_payment_methods_add.html'
 
     def get(self, request):
         return render(request, self.template_name)
@@ -106,7 +106,7 @@ class PaymentMethodsAdd(View):
 
 @method_decorator(login_required, name='dispatch')
 class Notifications(View):
-    template_name = 'core/admin/notifications.html'
+    template_name = 'core/control/notifications.html'
 
     def get(self, request):
         return render(request, self.template_name)
@@ -134,12 +134,12 @@ class OrganizationsManage(View):
         context = {
             'organizations_table': organizations_table,
         }
-        return render(request, 'core/admin/organizations_manage.html', context)
+        return render(request, 'core/control/organizations_manage.html', context)
 
 
 @method_decorator(login_required, name='dispatch')
 class OrganizationsCreate(View):
-    template_name = 'core/admin/organizations_create.html'
+    template_name = 'core/control/organizations_create.html'
 
     def get(self, request):
         organization_form = OrganizationFormManager()
@@ -153,7 +153,7 @@ class OrganizationsCreate(View):
                 organization_form.save()
             message = _('The organization has been registered')
             messages.add_message(request, messages.SUCCESS, message)
-            return redirect(reverse('panel:organizations_manage'))
+            return redirect(reverse('control:organizations_manage'))
 
         return render(request, self.template_name, organization_form.get_forms())
 
@@ -171,13 +171,13 @@ class OrganizationsProfile(View):
             'is_admin': member.is_admin(),
         }
 
-        return render(request, 'core/admin/organizations_profile.html', context)
+        return render(request, 'core/control/organizations_profile.html', context)
 
 
 @method_decorator([login_required, organization_admin_required], name='dispatch')
 class OrganizationsProfileEdit(View):
-    template_name = 'core/admin/organizations_profile_edit.html'
-    redirect_url = 'panel:organizations_profile_edit'
+    template_name = 'core/control/organizations_profile_edit.html'
+    redirect_url = 'control:organizations_profile_edit'
     legal_scope = ['info', 'address', 'bank_account']
 
     def get(self, request, organization_id, scope):
@@ -232,12 +232,12 @@ class OrganizationsMembers(View):
             'members_table': members_table,
             'organization': organization,
         }
-        return render(request, 'core/admin/organizations_members.html', context)
+        return render(request, 'core/control/organizations_members.html', context)
 
 
 @method_decorator([login_required, organization_admin_required], name='dispatch')
 class OrganizationsMembersAdd(View):
-    template_name = 'core/admin/organizations_members_add.html'
+    template_name = 'core/control/organizations_members_add.html'
 
     def get(self, request, organization_id):
         organization = get_object_or_404(Organization, pk=organization_id)
@@ -258,7 +258,7 @@ class OrganizationsMembersAdd(View):
 
             message = _('User has been added to ' + organization.name)
             messages.add_message(request, messages.SUCCESS, message)
-            return redirect(reverse('panel:organizations_members', kwargs={'organization_id': organization_id}))
+            return redirect(reverse('control:organizations_members', kwargs={'organization_id': organization_id}))
         else:
             context = {
                 'member_add_form': member_add_form,
@@ -276,7 +276,7 @@ class LocationsCreate(View):
             'location_form': location_form,
             'address_form': address_form,
         }
-        return render(request, 'core/admin/locations_create.html', context)
+        return render(request, 'core/control/locations_create.html', context)
 
     def post(self, request):
         location_form = LocationForm(request.POST)
@@ -292,13 +292,13 @@ class LocationsCreate(View):
 
                 message = _('The location has been created')
                 messages.add_message(request, messages.SUCCESS, message)
-                return redirect(reverse('panel:locations_manage'))
+                return redirect(reverse('control:locations_manage'))
 
         context = {
             'location_form': location_form,
             'address_form': address_form,
         }
-        return render(request, 'core/admin/locations_create.html', context)
+        return render(request, 'core/control/locations_create.html', context)
 
 
 @method_decorator(login_required, name='dispatch')
@@ -327,12 +327,12 @@ class LocationsManage(View):
         context = {
             'locations_table': locations_table,
         }
-        return render(request, 'core/admin/locations_manage.html', context)
+        return render(request, 'core/control/locations_manage.html', context)
 
 # todo rights to edit
 @method_decorator(login_required, name='dispatch')
 class LocationsProfileEdit(View):
-    template_name = 'core/admin/locations_profile_edit.html'
+    template_name = 'core/control/locations_profile_edit.html'
 
     def get(self, request, location_id):
         location = get_object_or_404(Location, pk=location_id)
@@ -349,7 +349,7 @@ class LocationsProfileEdit(View):
 
         if location_form.is_valid():
             location_form.save()
-            return redirect(reverse('panel:locations_profile_edit', kwargs={'location_id': location_id}))
+            return redirect(reverse('control:locations_profile_edit', kwargs={'location_id': location_id}))
 
         context = {
             'location_form': location_form,
