@@ -407,6 +407,7 @@ class Contract(models.Model):
     STATE_CONFIRMED = 'co'
     STATE_ACCEPTED = 'a'
     STATE_FINALIZED = 'f'
+    STATE_DISPUTED = 'd'
     STATE_EXPIRED = 'x'
     STATE_CANCELED = 'c'
 
@@ -415,6 +416,7 @@ class Contract(models.Model):
         (STATE_CONFIRMED, _('confirmed')),
         (STATE_ACCEPTED, _('accepted')),
         (STATE_FINALIZED, _('finalized')),
+        (STATE_DISPUTED, _('disputed')),
         (STATE_EXPIRED, _('expired')),
         (STATE_CANCELED, _('canceled')),
     ]
@@ -455,6 +457,13 @@ class Contract(models.Model):
     )
 
 
+class TriggerMeta(models.Model):
+    trigger_name = models.CharField(max_length=64)
+    provider_name = models.CharField(max_length=64)
+    description = models.TextField()
+    thumbnail = models.ImageField(default='images/default.png')
+
+
 class Trigger(models.Model):
     # fields
     function_call = models.CharField(
@@ -474,17 +483,19 @@ class Trigger(models.Model):
         Actor,
         on_delete=models.CASCADE
     )
+    meta = models.ForeignKey(
+        TriggerMeta,
+        on_delete=models.PROTECT,
+        max_length=64,
+    )
     created_at = models.DateTimeField(
         auto_now_add=True,
     )
-
-    class Meta:
-        abstract = True
-
-
-class ContractTrigger(Trigger):
-    provider = models.CharField(
-        max_length=64,
+    created_by = models.ForeignKey(
+        User,
+        related_name='trigger_created_by',
+        null=True,
+        on_delete=models.SET_NULL,
     )
 
 
@@ -525,7 +536,7 @@ class BaseContractProcedure(models.Model):
         verbose_name=_('tax rate applied to prices'),
     )
     trigger = models.ManyToManyField(
-        ContractTrigger,
+        Trigger,
         blank=True,
         related_name='procedure'
     )

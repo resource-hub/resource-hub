@@ -15,13 +15,13 @@ class VenueForm(forms.ModelForm):
                   'thumbnail_original', 'bookable']
 
 
-class VenueProcedureForm(forms.ModelForm):
-    terms_and_conditions = forms.CharField(widget=SummernoteWidget())
+# class VenueProcedureForm(forms.ModelForm):
+#     terms_and_conditions = forms.CharField(widget=SummernoteWidget())
 
-    class Meta:
-        model = VenueContractProcedure
-        fields = ['terms_and_conditions', 'notes',
-                  'payment_methods', 'tax_rate', 'trigger', ]
+#     class Meta:
+#         model = VenueContractProcedure
+#         fields = ['terms_and_conditions', 'notes',
+#                   'payment_methods', 'tax_rate', 'trigger', ]
 
 
 class VenueFormManager():

@@ -12,6 +12,7 @@ from django.views import View
 from core.decorators import organization_admin_required
 from core.forms import *
 from core.models import *
+from core.signals import payment_method_forms
 from core.tables import LocationsTable, MembersTable, OrganizationsTable
 
 
@@ -101,7 +102,12 @@ class PaymentMethodsAdd(View):
     template_name = 'core/control/finance_payment_methods_add.html'
 
     def get(self, request):
-        return render(request, self.template_name)
+        forms = payment_method_forms.send(sender=self.__class__)
+        print(forms)
+        context = {
+            'forms': forms,
+        }
+        return render(request, self.template_name, context)
 
 
 @method_decorator(login_required, name='dispatch')

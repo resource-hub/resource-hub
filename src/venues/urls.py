@@ -1,8 +1,8 @@
-from django.urls import path
 from django.conf.urls import url
+from django.urls import path
 
-from core.urls import control_urls, api_urls
-from venues import views, api
+from core.urls import api_urls, control_urls
+from venues import api, views
 
 app_name = 'venues'
 

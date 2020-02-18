@@ -1,8 +1,9 @@
 {% extends "control/__base.html" %}
 {% load i18n %}
-{% load hook_tags %}
 
 {% block content %}
 <h1>Add Payment Method</h1>
-{% hook 'payment_method' %}
+{% for form in forms %}
+{{ form }}
+{% endfor %}
 {% endblock %}
