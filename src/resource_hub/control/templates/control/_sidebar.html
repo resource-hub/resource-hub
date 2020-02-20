@@ -9,20 +9,20 @@
                     active
                     {% endif %}
                     " href="{% url 'control:account_profile' scope='info' %}">
-                {% trans 'profile' %}
+                {% trans 'Profile' %}
             </a>
             <a class="item
                 {% if '/settings/' in request.path %}
                 active
                 {% endif %}
                 " href="{% url 'control:account_settings' scope='email' %}">
-                {% trans 'settings' %}
+                {% trans 'Settings' %}
             </a>
         </div>
     </div>
     <div class="item">
         <div class="header">
-            {% trans 'finance' %}
+            {% trans 'Finance' %}
         </div>
         <div class="menu">
             <a class="item
@@ -44,7 +44,7 @@
     </div>
     <div class="item">
         <div class="header">
-            {% trans 'organizations' %}
+            {% trans 'Organizations' %}
         </div>
         <div class="menu">
             <a class="item
@@ -66,7 +66,7 @@
     </div>
     <div class="item">
         <div class="header">
-            {% trans 'locations' %}
+            {% trans 'Locations' %}
         </div>
         <div class="menu">
             <a class="item

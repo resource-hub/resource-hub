@@ -43,10 +43,6 @@ body {
     overflow-y: scroll;
 }
 
-button::first-letter, label::first-letter, .item::first-letter, .header::first-letter, .button::first-letter {
-    text-transform: uppercase;
-}
-
 em {
     letter-spacing: 0.3px;
 }
@@ -62,10 +58,6 @@ footer {
 
 h1 {
     margin-bottom: 1em;
-}
-
-h1::first-letter, h2::first-letter, h3::first-letter, h4::first-letter, h5::first-letter, h6::first-letter {
-    text-transform: uppercase;
 }
 
 td>a {
