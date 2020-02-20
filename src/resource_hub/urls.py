@@ -9,13 +9,13 @@ from django.urls import include, path
 
 urlpatterns = [
     # apps
-    path('', include('core.urls')),
-    path('api/', include('core.api.urls')),
-    path('control/', include('core.control.urls')),
-    path('venues/', include('venues.urls')),
+    path('', include('resource_hub.core.urls')),
+    path('api/', include('resource_hub.api.urls')),
+    path('control/', include('resource_hub.control.urls')),
+    path('venues/', include('resource_hub.venues.urls')),
 
     # external apps
-    path('dj-admin', admin.site.urls),
+    path('admin/', admin.site.urls),
     path('django-rq/', include('django_rq.urls')),
     path('summernote/', include('django_summernote.urls')),
 ]

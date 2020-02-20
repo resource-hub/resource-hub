@@ -31,7 +31,7 @@ DEBUG = True
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
-TEST_RUNNER = 'core.tests.runners.MyTestSuiteRunner'
+TEST_RUNNER = 'resource_hub.core.tests.runners.MyTestSuiteRunner'
 
 SECRET_KEY = get_env_var('SECRET_KEY')
 
@@ -39,6 +39,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(
     os.path.dirname(os.path.abspath(__file__))))
 
 PROJECT_DIR = os.path.join(BASE_DIR, 'resource_hub')
+
 
 ALLOWED_HOSTS = []
 
@@ -71,11 +72,11 @@ INSTALLED_APPS = [
     'rest_framework',
     'sekizai',
     # project apps
-    'core.apps.CoreConfig',
-    'core.apps.ControlConfig',
-    'core.apps.ApiConfig',
-    'plugins.bank_transfer',
-    'venues.apps.VenuesConfig',
+    'resource_hub.core',
+    'resource_hub.api',
+    'resource_hub.control',
+    'resource_hub.plugins.bank_transfer',
+    'resource_hub.venues',
 ]
 
 MIDDLEWARE = [
@@ -89,14 +90,14 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # custom middleware
-    'core.middleware.ActorMiddleware',
+    'resource_hub.core.middleware.ActorMiddleware',
 ]
 
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [os.path.join(PROJECT_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -108,8 +109,8 @@ TEMPLATES = [
                 # custom preprocessors
                 'sekizai.context_processors.sekizai',
 
-                'core.context_processors.actor',
-                'core.context_processors.map_api_token',
+                'resource_hub.core.context_processors.actor',
+                'resource_hub.core.context_processors.map_api_token',
             ],
         },
     },
@@ -174,7 +175,7 @@ LOCALE_PATHS = (
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
+    os.path.join(PROJECT_DIR, "static"),
 ]
 MEDIA_URL = '/media/'
 
