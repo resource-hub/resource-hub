@@ -1,5 +1,5 @@
 from django.dispatch import Signal
 
-payment_method_forms = Signal(
+register_payment_methods = Signal(
     providing_args=[],
 )

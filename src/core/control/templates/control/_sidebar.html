@@ -30,14 +30,14 @@
                 {% if '/finance/payment-methods/manage' in request.path %}
                     active
                     {% endif %}
-                " href="{% url 'control:payment_methods_manage' %}">
+                " href="{% url 'control:finance_payment_methods_manage' %}">
                 {% trans 'manage' %}
             </a>
             <a class="item
                 {% if '/finance/payment-methods/add' in request.path %}
                     active
                     {% endif %}
-                " href="{% url 'control:payment_methods_add' %}">
+                " href="{% url 'control:finance_payment_methods_add' %}">
                 {% trans 'add' %}
             </a>
         </div>

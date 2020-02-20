@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.db.models import Q
+from django.forms import Form
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -12,7 +13,7 @@ from django.views import View
 from core.decorators import organization_admin_required
 from core.forms import *
 from core.models import *
-from core.signals import payment_method_forms
+from core.signals import register_payment_methods
 from core.tables import LocationsTable, MembersTable, OrganizationsTable
 
 
@@ -101,11 +102,41 @@ class PaymentMethodsManage(View):
 class PaymentMethodsAdd(View):
     template_name = 'core/control/finance_payment_methods_add.html'
 
+    def get_payment_methods(self, data=None):
+        payment_methods = register_payment_methods.send(sender=self.__class__)
+        payment_methods_list = []
+
+        for method in payment_methods:
+            method = method[1]
+            payment_methods_list.append(
+                {
+                    'name': method.verbose_name(),
+                    'form': method.form()(data=data, prefix=method.prefix()),
+                    'prefix': method.prefix(),
+
+                }
+            )
+        return payment_methods_list
+
     def get(self, request):
-        forms = payment_method_forms.send(sender=self.__class__)
-        print(forms)
         context = {
-            'forms': forms,
+            'payment_methods': self.get_payment_methods(),
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request):
+        payment_methods = self.get_payment_methods(data=request.POST)
+        for payment_method in payment_methods:
+            form = payment_method['form']
+            if form.is_valid():
+                form.save(request=request)
+                message = _('The configuration for {} has been saved'.format(
+                    str(payment_method['name'])
+                ))
+                messages.add_message(request, messages.SUCCESS, message)
+                return redirect(reverse('control:finance_payment_methods_add'))
+        context = {
+            'payment_methods': payment_methods,
         }
         return render(request, self.template_name, context)
 

@@ -1,4 +1,5 @@
 import string
+from collections import OrderedDict
 from decimal import Decimal
 
 from django.contrib.auth.models import AbstractUser
@@ -7,6 +8,7 @@ from django.db.models import Max
 from django.db.models.functions import Cast
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.shortcuts import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.utils.functional import cached_property
@@ -98,10 +100,6 @@ class Actor(models.Model):
     # Methods
     def __str__(self):
         return str(self.name)
-
-    @staticmethod
-    def get_default():
-        Actor.objects.get_or_create(pk=1)
 
 
 class User(AbstractUser, Actor):
@@ -457,18 +455,18 @@ class Contract(models.Model):
     )
 
 
-class TriggerMeta(models.Model):
-    trigger_name = models.CharField(max_length=64)
-    provider_name = models.CharField(max_length=64)
-    description = models.TextField()
-    thumbnail = models.ImageField(default='images/default.png')
+# class TriggerMeta(models.Model):
+#     name = models.CharField(max_length=64)
+#     provider = models.CharField(max_length=64)
+#     description = models.TextField()
+#     thumbnail = models.ImageField(default='images/default.png')
 
 
 class Trigger(models.Model):
     # fields
-    function_call = models.CharField(
-        max_length=128,
-    )
+    # callback = models.CharField(
+    #     max_length=128,
+    # )
     condition = models.CharField(
         choices=Contract.STATES,
         max_length=2,
@@ -483,35 +481,84 @@ class Trigger(models.Model):
         Actor,
         on_delete=models.CASCADE
     )
-    meta = models.ForeignKey(
-        TriggerMeta,
-        on_delete=models.PROTECT,
-        max_length=64,
-    )
     created_at = models.DateTimeField(
         auto_now_add=True,
     )
-    created_by = models.ForeignKey(
-        User,
-        related_name='trigger_created_by',
-        null=True,
-        on_delete=models.SET_NULL,
-    )
+
+    class Meta:
+        abstract = True
+
+    # attributes
+    @staticmethod
+    def fixed_condtion() -> bool:
+        return False
+
+    @staticmethod
+    def default_condition() -> str:
+        raise NotImplementedError()
+
+    @staticmethod
+    def verbose_name() -> str:
+        raise NotImplementedError()
+
+    @staticmethod
+    def info() -> dict:
+        return {
+            'name': '',
+            'provider': '',
+            'description': '',
+            'thumbnail': 'images/default.png',
+        }
+
+    @staticmethod
+    def form() -> OrderedDict:
+        raise NotImplementedError()
+
+    @staticmethod
+    def form_url() -> str:
+        raise NotImplementedError()
+
+    # methods
+
+    def callback(self) -> None:
+        raise NotImplementedError()
 
 
-class Fee(models.Model):
-    absolute = models.BooleanField(default=False)
-    value = models.DecimalField(
+class ContractTrigger(Trigger):
+    # attributes
+    @staticmethod
+    def fixed_condtion() -> bool:
+        return False
+
+    @staticmethod
+    def default_condition() -> str:
+        return Contract.STATE_ACCEPTED
+
+
+class PaymentMethod(Trigger):
+    # fields
+    fee_absolute = models.BooleanField(default=False)
+    fee_value = models.DecimalField(
         decimal_places=3,
         max_digits=13,
     )
 
+    # attributes
+    @staticmethod
+    def fixed_condtion() -> bool:
+        return True
 
-class PaymentMethod(Trigger):
-    fee = models.ForeignKey(
-        Fee,
-        on_delete=models.PROTECT,
-    )
+    @staticmethod
+    def default_condition() -> str:
+        return Contract.STATE_ACCEPTED
+
+    @staticmethod
+    def is_prepayment() -> bool:
+        return False
+
+    @staticmethod
+    def redirect_route() -> str:
+        return reverse('core:finance_payment_methods_add')
 
 
 class BaseContractProcedure(models.Model):
@@ -536,7 +583,7 @@ class BaseContractProcedure(models.Model):
         verbose_name=_('tax rate applied to prices'),
     )
     trigger = models.ManyToManyField(
-        Trigger,
+        ContractTrigger,
         blank=True,
         related_name='procedure'
     )

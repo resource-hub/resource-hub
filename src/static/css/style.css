@@ -80,6 +80,10 @@ td>a {
   *
   */
 
+.nav {
+    margin-bottom: 3.2em;
+}
+
 .navigation-bar {
     font-family: Lato, 'Helvetica Neue', Arial, Helvetica, sans-serif;
     position: fixed;
@@ -181,6 +185,7 @@ td>a {
 }
 
 .admin.wrapper {
+    margin-top: -3.2em;
     padding: 0 0 0 220px;
 }
 
@@ -230,7 +235,7 @@ td>a {
   */
 
 .main.container {
-    margin: 5em 0 8em 0;
+    margin: 3em 0 8em 0;
     max-width: 1127px;
     margin-left: auto !important;
     margin-right: auto !important;
@@ -254,7 +259,6 @@ td>a {
 }
 
 .main-map {
-    margin-top: 44.8px;
     width: 100%;
     height: 75vh;
 }

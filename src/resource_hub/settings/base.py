@@ -74,7 +74,7 @@ INSTALLED_APPS = [
     'core.apps.CoreConfig',
     'core.apps.ControlConfig',
     'core.apps.ApiConfig',
-    'plugins.bank_transfer.BankTransfer',
+    'plugins.bank_transfer',
     'venues.apps.VenuesConfig',
 ]
 

@@ -3,7 +3,15 @@
 
 {% block content %}
 <h1>Add Payment Method</h1>
-{% for form in forms %}
-{{ form }}
+{% include 'core/_identity.html' with actor=actor %}
+{% for payment_method in payment_methods %}
+<h2>{{ payment_method.name }}</h2>
+<form class="ui form" method="POST">
+    {% include '_form.html' with form=payment_method.form %}
+    <button class="ui positive right labeled icon button" type="submit">
+        {% trans 'Add' %}
+        <i class="plus icon"></i>
+    </button>
+</form>
 {% endfor %}
 {% endblock %}

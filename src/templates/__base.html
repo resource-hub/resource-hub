@@ -21,7 +21,7 @@
 </head>
 
 <body>
-    <header>
+    <header class="nav">
         {% include "_navigation_bar.html" %}
     </header>
     {% include "_sidebar.html" %}
@@ -42,7 +42,7 @@
         {% endblock %}
         {% block scripts %}
         {% endblock %}
-        {% render_block 'js' %}
+        {%  render_block 'js' %}
     </footer>
 </body>
 

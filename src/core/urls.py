@@ -23,9 +23,9 @@ control_urls.register([
     url(r'^notifications/$', control.Notifications.as_view(), name='notifications'),
 
     url(r'^finance/payment-methods/manage$',
-        control.PaymentMethodsManage.as_view(), name='payment_methods_manage'),
+        control.PaymentMethodsManage.as_view(), name='finance_payment_methods_manage'),
     url(r'^finance/payment-methods/add$',
-        control.PaymentMethodsAdd.as_view(), name='payment_methods_add'),
+        control.PaymentMethodsAdd.as_view(), name='finance_payment_methods_add'),
 
     url(r'^organizations/manage$',
         control.OrganizationsManage.as_view(),

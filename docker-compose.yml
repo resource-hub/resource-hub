@@ -48,5 +48,3 @@ services:
       - mail
     ports:
       - "${DJANGO_PORT}:${DJANGO_PORT}"
-    stdin_open: true
-    tty: true
