@@ -54,12 +54,12 @@ class VenuesManage(View):
 @method_decorator(login_required, name='dispatch')
 class VenuesCreate(View):
     def get(self, request):
-        venue_form = VenueFormManager()
+        venue_form = VenueFormManager(request.user)
 
         return render(request, 'venues/control/venues_create.html', venue_form.get_forms())
 
     def post(self, request):
-        venue_form = VenueFormManager(request)
+        venue_form = VenueFormManager(request.user, request)
 
         if venue_form.is_valid():
             venue_form.save(request.actor)

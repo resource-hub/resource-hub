@@ -535,6 +535,9 @@ class Trigger(models.Model):
     def form(self):
         raise NotImplementedError()
 
+    def __str__(self):
+        return '{}: {} ({})'.format(self.verbose_name, self.name, self.comment)
+
 
 class ContractTrigger(Trigger):
     # attributes

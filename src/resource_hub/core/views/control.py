@@ -16,15 +16,7 @@ from resource_hub.core.models import *
 from resource_hub.core.signals import register_payment_methods
 from resource_hub.core.tables import (LocationsTable, MembersTable,
                                       OrganizationsTable, PaymentMethodsTable)
-
-
-def get_associated_objects(user, model):
-    query = Q(owner=user.pk)
-    sub_condition = Q(owner__organization__members=user)
-    sub_condition.add(
-        Q(owner__organization__organizationmember__role__gte=OrganizationMember.ADMIN), Q.AND)
-    query.add(sub_condition, Q.OR)
-    return model.objects.select_related('owner').filter(query)
+from resource_hub.core.utils import get_associated_objects
 
 
 @method_decorator(login_required, name='dispatch')
@@ -417,32 +409,18 @@ class LocationsCreate(View):
 
 
 @method_decorator(login_required, name='dispatch')
-class LocationsManage(View):
-    def get(self, request):
-        user = request.user
-        query = Q(owner=user.pk)
-        sub_condition = Q(owner__organization__members=user)
-        sub_condition.add(
-            Q(owner__organization__organizationmember__role__gte=OrganizationMember.ADMIN), Q.AND)
-        query.add(sub_condition, Q.OR)
-        locations = Location.objects.filter(query)
+class LocationsManage(TableView):
+    header = _('Manage locations')
 
-        if locations:
-            data = []
-            for l in locations:
-                data.append({
-                    'name': l.name,
-                    'owner': l.owner,
-                    'location_id': l.id,
-                })
-            locations_table = LocationsTable(data)
-        else:
-            locations_table = None
+    def get_queryset(self):
+        return get_associated_objects(
+            self.request.user,
+            Location
+        )
 
-        context = {
-            'locations_table': locations_table,
-        }
-        return render(request, 'core/control/locations_manage.html', context)
+    def get_table(self):
+        return LocationsTable
+
 
 # todo rights to edit
 @method_decorator(login_required, name='dispatch')
