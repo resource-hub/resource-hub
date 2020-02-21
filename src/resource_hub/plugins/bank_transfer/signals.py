@@ -8,4 +8,4 @@ from .models import BankTransfer
 
 @receiver(register_payment_methods)
 def register_payment_method(sender, **kwargs):
-    return BankTransfer
+    return BankTransfer()

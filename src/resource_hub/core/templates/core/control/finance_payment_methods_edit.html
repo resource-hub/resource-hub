@@ -1,0 +1,18 @@
+{% extends 'control/__base.html' %}
+{% load i18n %}
+
+{% block admin-navigation %}
+{% url 'control:finance_payment_methods_manage' as url %}
+{% include '_back_button.html' with url=url %}
+{% endblock %}
+
+{% block content %}
+<h1>{% trans 'Edit bank transfer method' %}</h1>
+<form class="ui form" method="POST">
+    {% include '_form.html' with form=form %}
+    <button class="ui positive right labeled icon button" type="sumit">
+        {% trans 'Save' %}
+        <i class="save icon"></i>
+    </button>
+</form>
+{% endblock %}

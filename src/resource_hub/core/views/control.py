@@ -15,7 +15,16 @@ from resource_hub.core.forms import *
 from resource_hub.core.models import *
 from resource_hub.core.signals import register_payment_methods
 from resource_hub.core.tables import (LocationsTable, MembersTable,
-                                      OrganizationsTable)
+                                      OrganizationsTable, PaymentMethodsTable)
+
+
+def get_associated_objects(user, model):
+    query = Q(owner=user.pk)
+    sub_condition = Q(owner__organization__members=user)
+    sub_condition.add(
+        Q(owner__organization__organizationmember__role__gte=OrganizationMember.ADMIN), Q.AND)
+    query.add(sub_condition, Q.OR)
+    return model.objects.select_related('owner').filter(query)
 
 
 @method_decorator(login_required, name='dispatch')
@@ -97,12 +106,84 @@ class FinanceBankAccounts(View):
         return render(request, 'core/control/finance_bank_accounts.html')
 
 
-@method_decorator(login_required, name='dispatch')
-class FinancePaymentMethodsManage(View):
-    template_name = 'core/control/finance_payment_methods_manage.html'
+class TableView(View):
+    template_name = 'core/table_view.html'
+    header = 'Header'
+    request = None
+
+    def get_queryset(self):
+        raise NotImplementedError()
+
+    def get_table(self):
+        raise NotImplementedError()
 
     def get(self, request):
-        return render(request, self.template_name)
+        self.request = request
+        queryset = self.get_queryset()
+        context = {
+            'header': self.header,
+            'table': self.get_table()(queryset),
+        }
+        return render(request, self.template_name, context)
+
+
+@method_decorator(login_required, name='dispatch')
+class FinancePaymentMethodsManage(TableView):
+    header = _('Payment methods')
+
+    def get_queryset(self):
+        methods = get_associated_objects(
+            self.request.user,
+            PaymentMethod
+        ).select_subclasses()
+
+        result = []
+        for method in methods:
+            result.append(
+                {
+                    'pk': method.pk,
+                    'name': method.name,
+                    'owner': method.owner,
+                    'method_type': method.verbose_name,
+                }
+            )
+        return result
+
+    def get_table(self):
+        return PaymentMethodsTable
+
+
+def get_subobject_or_404(klass, *args, **kwargs):
+    try:
+        return klass.objects.get_subclass(*args, **kwargs)
+    except klass.DoesNotExist:
+        raise Http404('No %s matches the given query.')
+
+
+@method_decorator(login_required, name='dispatch')
+class FinancePaymentMethodsEdit(View):
+    template_name = 'core/control/finance_payment_methods_edit.html'
+
+    def get(self, request, pk):
+        payment_method = get_subobject_or_404(PaymentMethod, pk=pk)
+        context = {
+            'form': payment_method.form(instance=payment_method)
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request, pk):
+        payment_method = get_subobject_or_404(PaymentMethod, pk=pk)
+        form = payment_method.form(request.POST, instance=payment_method)
+        if form.is_valid():
+            form.save(request)
+            message = _('Your changes have been saved successfully')
+            messages.add_message(request, messages.SUCCESS, message)
+            return redirect(reverse('control:finance_payment_methods_manage'))
+
+        context = {
+            'form': form
+        }
+        return render(request, self.template_name, context)
 
 
 @method_decorator(login_required, name='dispatch')
@@ -117,9 +198,9 @@ class FinancePaymentMethodsAdd(View):
             method = method[1]
             payment_methods_list.append(
                 {
-                    'name': method.verbose_name(),
-                    'form': method.form()(data=data, prefix=method.prefix()),
-                    'prefix': method.prefix(),
+                    'name': method.verbose_name,
+                    'form': method.form(data=data, prefix=method.prefix),
+                    'prefix': method.prefix,
 
                 }
             )

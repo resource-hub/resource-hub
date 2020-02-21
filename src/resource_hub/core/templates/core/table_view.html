@@ -1,0 +1,15 @@
+{% extends "control/__base.html" %}
+{% load i18n %}
+{% load django_tables2 %}
+
+{% block content %}
+<h1>{{ header }}</h1>
+{% if table %}
+{% render_table table %}
+{% else %}
+<p>
+    {% trans 'No associated items found' %}
+</p>
+{% endif %}
+
+{% endblock %}

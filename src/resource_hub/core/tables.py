@@ -4,6 +4,18 @@ import django_tables2 as tables
 from django_tables2.utils import Accessor as A
 
 
+class PaymentMethodsTable(tables.Table):
+    name = tables.Column(
+        linkify=('control:finance_payment_methods_edit', {'pk': A('pk')}))
+    method_type = tables.Column()
+    owner = tables.Column(verbose_name=_('Owner'))
+
+    class Meta:
+        attrs = {
+            "class": "ui selectable celled table"
+        }
+
+
 class OrganizationsTable(tables.Table):
     name = tables.LinkColumn(
         'control:organizations_profile',

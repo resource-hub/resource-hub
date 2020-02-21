@@ -26,6 +26,8 @@ control_urls.register([
         name='finance_bank_accounts'),
     url(r'^finance/payment-methods/manage/$',
         control.FinancePaymentMethodsManage.as_view(), name='finance_payment_methods_manage'),
+    url(r'^finance/payment-methods/manage/(?P<pk>\w{0,50})/$', control.FinancePaymentMethodsEdit.as_view(
+    ), name='finance_payment_methods_edit'),
     url(r'^finance/payment-methods/add$',
         control.FinancePaymentMethodsAdd.as_view(), name='finance_payment_methods_add'),
 

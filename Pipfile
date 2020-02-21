@@ -57,6 +57,7 @@ django-sekizai = "*"
 pycountry = "*"
 django-countries = "*"
 rq-scheduler = "*"
+django-model-utils = "*"
 
 [requires]
 python_version = "*"

@@ -19,6 +19,7 @@ import pycountry
 from django_countries.fields import CountryField
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
+from model_utils.managers import InheritanceManager
 from resource_hub.core.settings import COUNTRIES_WITH_STATE_IN_ADDRESS
 
 
@@ -489,20 +490,22 @@ class Trigger(models.Model):
         abstract = True
 
     # attributes
-    @staticmethod
-    def fixed_condtion() -> bool:
+    objects = InheritanceManager()
+
+    @property
+    def fixed_condtion(self) -> bool:
         return False
 
-    @staticmethod
-    def default_condition() -> str:
+    @property
+    def default_condition(self) -> str:
         raise NotImplementedError()
 
-    @staticmethod
-    def verbose_name() -> str:
+    @property
+    def verbose_name(self) -> str:
         raise NotImplementedError()
 
-    @staticmethod
-    def info() -> dict:
+    @property
+    def info(self) -> dict:
         return {
             'name': '',
             'provider': '',
@@ -510,17 +513,19 @@ class Trigger(models.Model):
             'thumbnail': 'images/default.png',
         }
 
-    @staticmethod
-    def form() -> OrderedDict:
+    @property
+    def form_url(self) -> str:
         raise NotImplementedError()
 
-    @staticmethod
-    def form_url() -> str:
+    @property
+    def edit_url(self, pk) -> str:
         raise NotImplementedError()
 
     # methods
-
     def callback(self) -> None:
+        raise NotImplementedError()
+
+    def form(self):
         raise NotImplementedError()
 
 

@@ -6,8 +6,6 @@ class BankTransferConfig(AppConfig):
 
     def ready(self):
         from . import signals
-        from .urls import register_urls
-        register_urls()
 
 
 default_app_config = 'resource_hub.plugins.bank_transfer.BankTransferConfig'

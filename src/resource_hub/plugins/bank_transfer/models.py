@@ -16,30 +16,34 @@ class BankTransfer(PaymentMethod):
     )
 
     # attributes
-    @staticmethod
-    def verbose_name() -> str:
+    @property
+    def verbose_name(self) -> str:
         return _('Bank transfer')
 
-    @staticmethod
-    def info() -> dict:
+    @property
+    def edit_url(self):
+        return reverse('control:bank_transfer_edit', kwargs={'pk': self.pk})
+
+    @property
+    def info(self) -> dict:
         return {
-            'name': BankTransfer.verbose_name(),
+            'name': BankTransfer.verbose_name,
             'provider': 'Resource Hub Team',
             'description': _('The other party gets the necessary information to pay via direct bank transfer'),
             'thumbnail': 'images/default.png',
         }
 
-    @staticmethod
-    def form() -> OrderedDict:
+    @property
+    def form(self):
         from .forms import BankTransferForm
         return BankTransferForm
 
-    @staticmethod
-    def form_url() -> str:
+    @property
+    def form_url(self) -> str:
         return reverse('control:bank_transfer_create')
 
-    @staticmethod
-    def prefix() -> str:
+    @property
+    def prefix(self) -> str:
         return 'bnk'
 
     # methods
