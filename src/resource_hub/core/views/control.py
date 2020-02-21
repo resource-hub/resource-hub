@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import F, Q
 from django.forms import Form
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
@@ -43,6 +43,26 @@ class ScopeView(View):
         if self.scope_is_valid(kwargs['scope']):
             return super(ScopeView, self).dispatch(*args, **kwargs)
         raise Http404
+
+
+class TableView(View):
+    template_name = 'core/table_view.html'
+    header = 'Header'
+    request = None
+
+    def get_queryset(self):
+        raise NotImplementedError()
+
+    def get_table(self):
+        raise NotImplementedError()
+
+    def get(self, request):
+        self.request = request
+        context = {
+            'header': self.header,
+            'table': self.get_table()(self.get_queryset()),
+        }
+        return render(request, self.template_name, context)
 
 
 @method_decorator(login_required, name='dispatch')
@@ -104,27 +124,6 @@ class AccountProfile(ScopeView):
 class FinanceBankAccounts(View):
     def get(self, request):
         return render(request, 'core/control/finance_bank_accounts.html')
-
-
-class TableView(View):
-    template_name = 'core/table_view.html'
-    header = 'Header'
-    request = None
-
-    def get_queryset(self):
-        raise NotImplementedError()
-
-    def get_table(self):
-        raise NotImplementedError()
-
-    def get(self, request):
-        self.request = request
-        queryset = self.get_queryset()
-        context = {
-            'header': self.header,
-            'table': self.get_table()(queryset),
-        }
-        return render(request, self.template_name, context)
 
 
 @method_decorator(login_required, name='dispatch')
@@ -238,28 +237,19 @@ class Notifications(View):
 
 
 @method_decorator(login_required, name='dispatch')
-class OrganizationsManage(View):
-    def get(self, request):
-        user = request.user
-        organizations = Organization.objects.all().filter(members__pk=user.id)
+class OrganizationsManage(TableView):
+    header = _('Manage your organizations')
 
-        if organizations:
-            data = []
-            for o in organizations:
-                role = OrganizationMember.get_role(user, o)
-                data.append({
-                    'name': o.name,
-                    'role': role,
-                    'organization_id': o.id,
-                })
-            organizations_table = OrganizationsTable(data)
-        else:
-            organizations_table = None
+    def get_table(self):
+        return OrganizationsTable
 
-        context = {
-            'organizations_table': organizations_table,
-        }
-        return render(request, 'core/control/organizations_manage.html', context)
+    def get_queryset(self):
+        user = self.request.user
+        query = Q(members=user)
+        query.add(
+            Q(organizationmember__role__gte=OrganizationMember.MEMBER), Q.AND)
+        return Organization.objects.filter(query).annotate(role=F('organizationmember__role')).values(
+            'id', 'name', 'role')
 
 
 @method_decorator(login_required, name='dispatch')

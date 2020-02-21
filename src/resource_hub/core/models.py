@@ -340,6 +340,13 @@ class OrganizationMember(models.Model):
             return False
 
     @staticmethod
+    def role_display_reverse(val: int) -> str:
+        for item in OrganizationMember.ORGANIZATION_ROLES:
+            if item[0] == val:
+                return item[1]
+        raise ValueError('Corresponding role does not exist')
+
+    @staticmethod
     def get_role(user, organization) -> str:
         role = OrganizationMember.objects.get(
             organization=organization,

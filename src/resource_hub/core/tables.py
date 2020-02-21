@@ -2,6 +2,7 @@ from django.utils.translation import ugettext_lazy as _
 
 import django_tables2 as tables
 from django_tables2.utils import Accessor as A
+from resource_hub.core.models import OrganizationMember
 
 
 class PaymentMethodsTable(tables.Table):
@@ -17,14 +18,19 @@ class PaymentMethodsTable(tables.Table):
 
 
 class OrganizationsTable(tables.Table):
-    name = tables.LinkColumn(
-        'control:organizations_profile',
+    name = tables.Column(
         verbose_name=_('Name'),
-        kwargs={
-            'organization_id': A('organization_id'),
-        }
+        linkify=(
+            'control:organizations_profile',
+            {
+                'organization_id': A('id'),
+            }
+        ),
     )
-    role = tables.Column(verbose_name=_('Your role'))
+    role = tables.Column(verbose_name=_('Rights'))
+
+    def render_role(self, value):
+        return OrganizationMember.role_display_reverse(value)
 
     class Meta:
         attrs = {
