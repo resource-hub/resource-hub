@@ -14,7 +14,8 @@ from resource_hub.core.decorators import organization_admin_required
 from resource_hub.core.forms import *
 from resource_hub.core.models import *
 from resource_hub.core.signals import register_payment_methods
-from resource_hub.core.tables import LocationsTable, MembersTable, OrganizationsTable
+from resource_hub.core.tables import (LocationsTable, MembersTable,
+                                      OrganizationsTable)
 
 
 @method_decorator(login_required, name='dispatch')
@@ -91,7 +92,13 @@ class AccountProfile(ScopeView):
 
 
 @method_decorator(login_required, name='dispatch')
-class PaymentMethodsManage(View):
+class FinanceBankAccounts(View):
+    def get(self, request):
+        return render(request, 'core/control/finance_bank_accounts.html')
+
+
+@method_decorator(login_required, name='dispatch')
+class FinancePaymentMethodsManage(View):
     template_name = 'core/control/finance_payment_methods_manage.html'
 
     def get(self, request):
@@ -99,7 +106,7 @@ class PaymentMethodsManage(View):
 
 
 @method_decorator(login_required, name='dispatch')
-class PaymentMethodsAdd(View):
+class FinancePaymentMethodsAdd(View):
     template_name = 'core/control/finance_payment_methods_add.html'
 
     def get_payment_methods(self, data=None):

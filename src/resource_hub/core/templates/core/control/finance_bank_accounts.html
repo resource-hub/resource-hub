@@ -1,0 +1,8 @@
+{% extends "control/__base.html" %}
+{% load i18n %}
+
+{% block content %}
+<h1>{% trans 'Add bank account' %}</h1>
+{% include 'core/_identity.html' with actor=actor %}
+
+{% endblock %}

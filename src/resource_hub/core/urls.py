@@ -22,12 +22,14 @@ control_urls.register([
 
     url(r'^notifications/$', control.Notifications.as_view(), name='notifications'),
 
-    url(r'^finance/payment-methods/manage$',
-        control.PaymentMethodsManage.as_view(), name='finance_payment_methods_manage'),
+    url(r'^finance/bank-accounts/$', control.FinanceBankAccounts.as_view(),
+        name='finance_bank_accounts'),
+    url(r'^finance/payment-methods/manage/$',
+        control.FinancePaymentMethodsManage.as_view(), name='finance_payment_methods_manage'),
     url(r'^finance/payment-methods/add$',
-        control.PaymentMethodsAdd.as_view(), name='finance_payment_methods_add'),
+        control.FinancePaymentMethodsAdd.as_view(), name='finance_payment_methods_add'),
 
-    url(r'^organizations/manage$',
+    url(r'^organizations/manage/$',
         control.OrganizationsManage.as_view(),
         name='organizations_manage'),
     url(r'^organizations/create/$',

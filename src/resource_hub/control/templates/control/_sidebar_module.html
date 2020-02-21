@@ -1,0 +1,45 @@
+{% for item in structure %}
+<div class="item
+     {% if item.url in request.path %}
+                    active
+                    {% else %}
+                    collapsed
+                    {% endif %}
+    ">
+    <a class="header" href="{% if item.sub_items %}{{ item.sub_items.0.url }}{% endif %}">{{ item.header }}</a>
+    {% if item.sub_items %}
+    <div class="menu">
+        {% for sub_item in item.sub_items %}
+        <a class="item indent 
+                    {% if sub_item.url in request.path %}
+                        {% if sub_item.subsub_items %}
+                        bold
+                        {% else %}
+                        active
+                        {% endif %}
+                    {% endif %}
+                    "
+            href="{% if sub_item.subsub_items %}{{ sub_item.subsub_items.0.url }}{% else %}{{ sub_item.url }}{% endif %}">
+            {{ sub_item.header }}
+        </a>
+        {% if sub_item.subsub_items %}
+        <div class="menu
+        {% if sub_item.url not in request.path %}
+        collapsed
+        {% endif %}">
+            {% for subsub_item in sub_item.subsub_items %}
+            <a class="item indent2 
+                    {% if subsub_item.url in request.path %}
+                    active
+                    {% endif %}
+                    " href="{{ subsub_item.url }}">
+                {{ subsub_item.header }}
+                {% endfor %}
+            </a>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endfor %}

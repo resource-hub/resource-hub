@@ -33,6 +33,10 @@
     min-height: inherit !important;
 }
 
+.ui.vertical.menu .item>.header:not(.ui) {
+    margin: 0;
+}
+
 /**
   *
   * Tag specific   
@@ -176,6 +180,24 @@ td>a {
     border-right-width: 0.25em;
 }
 
+.ui.vertical.menu .item .menu a.item.active2 {
+    border-right-style: solid;
+    border-right-color: #1678c2;
+    border-radius: 0 !important;
+    border-right-width: 0.25em;
+}
+
+.ui.vertical.sidebar.menu>.item>.header {
+    display: block;
+    width: 100%;
+    text-decoration: none;
+    color: inherit;
+}
+
+.collapsed> :not(.header) {
+    display: none !important;
+}
+
 .admin.wrapper {
     margin-top: -3.2em;
     padding: 0 0 0 220px;
@@ -234,6 +256,11 @@ td>a {
     padding: 1.4em;
 }
 
+.bold {
+    font-weight: 700 !important;
+    color: rgba(0, 0, 0, .87) !important;
+}
+
 .inline {
     display: inline;
 }
@@ -278,6 +305,14 @@ td>a {
 
 .section-container {
     margin: 2vh 0 3vh 0;
+}
+
+.indent {
+    margin-left: 0.5em;
+}
+
+.indent2 {
+    margin-left: 1em;
 }
 
 /**
