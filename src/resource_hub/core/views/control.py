@@ -386,7 +386,7 @@ class LocationsCreate(View):
         return render(request, 'core/control/locations_create.html', context)
 
     def post(self, request):
-        location_form = LocationForm(request.POST)
+        location_form = LocationForm(request.POST, request.FILES)
         address_form = AddressForm(request.POST)
 
         if address_form.is_valid():
