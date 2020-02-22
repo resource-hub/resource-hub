@@ -1,6 +1,5 @@
 import django.contrib.auth.views as dj_auth
-from django.conf.urls import url
-from django.urls import include, path
+from django.urls import include, path, re_path
 from django.views.i18n import JavaScriptCatalog
 
 from resource_hub.api.urls import api_urls
@@ -37,9 +36,6 @@ control_urls.register([
     path('organizations/create/',
          control.OrganizationsCreate.as_view(),
          name='organizations_create'),
-    path('organizations/manage/<int:organization_id>/profile/',
-         control.OrganizationsProfile.as_view(),
-         name='organizations_profile'),
     path('organizations/manage/<int:organization_id>/profile/edit/<str:scope>/',
          control.OrganizationsProfileEdit.as_view(),
          name='organizations_profile_edit'),
@@ -79,17 +75,20 @@ urlpatterns = [
     path('login/', auth.custom_login, name='login'),
     path('logout/', dj_auth.LogoutView.as_view(
         template_name='core/logout.html'), name='logout'),
-    url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
-        auth.Activate.as_view(), name='activate'),
+    re_path(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+            auth.Activate.as_view(), name='activate'),
     path('password/reset/', dj_auth.PasswordResetView.as_view(
         template_name='core/password_reset.html', success_url='/password/reset/done/', email_template_name='core/mail_password_reset.html'), name='password_reset'),
     path('password/reset/done/', dj_auth.PasswordResetDoneView.as_view(
         template_name='core/password_reset_done.html', ), name='password_reset_done'),
-    url(r'^password/reset/confirm/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$', dj_auth.PasswordResetConfirmView.as_view(
+    re_path(r'^password/reset/confirm/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$', dj_auth.PasswordResetConfirmView.as_view(
         template_name='core/password_reset_confirm.html', success_url='/password/reset/complete/'), name='password_reset_confirm'),
     path('password/reset/complete/', dj_auth.PasswordResetCompleteView.as_view(
         template_name='core/password_reset_complete.html')),
     path('actor/set', auth.SetRole.as_view(), name='actor_set'),
+    path('organizations/manage/<int:organization_id>/profile/',
+         control.OrganizationsProfile.as_view(),
+         name='organizations_profile'),
 
     path('i18n/', include('django.conf.urls.i18n')),
     path('jsi18n/', JavaScriptCatalog.as_view(), JS_INFO_DICT),
