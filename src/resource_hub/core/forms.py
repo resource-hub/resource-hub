@@ -10,10 +10,10 @@ from django.forms import model_to_dict
 from django.utils.dateparse import parse_date
 from django.utils.translation import ugettext_lazy as _
 
-from resource_hub.core.models import (Actor, Address, BankAccount, Location, Organization,
-                                      OrganizationMember, User)
-from resource_hub.core.widgets import UISearchField
 from django_summernote.widgets import SummernoteWidget
+from resource_hub.core.models import (Actor, Address, BankAccount, Location,
+                                      Organization, OrganizationMember, User)
+from resource_hub.core.widgets import UISearchField
 from schwifty import BIC, IBAN
 
 

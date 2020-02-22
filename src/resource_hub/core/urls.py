@@ -11,6 +11,7 @@ JS_INFO_DICT = {
 }
 
 control_urls.register([
+    # account
     path('', control.Home.as_view(), name='home'),
     path('account/profile/<str:scope>/',
          control.AccountProfile.as_view(),
@@ -19,6 +20,7 @@ control_urls.register([
          control.AccountSettings.as_view(),
          name='account_settings'),
 
+    # notifications
     path('notifications/', control.Notifications.as_view(), name='notifications'),
 
     path('finance/bank-accounts/', control.FinanceBankAccounts.as_view(),
@@ -30,6 +32,7 @@ control_urls.register([
     path('finance/payment-methods/add',
          control.FinancePaymentMethodsAdd.as_view(), name='finance_payment_methods_add'),
 
+    # organizations
     path('organizations/manage/',
          control.OrganizationsManage.as_view(),
          name='organizations_manage'),
@@ -46,6 +49,7 @@ control_urls.register([
          control.OrganizationsMembersAdd.as_view(),
          name='organizations_members_add'),
 
+    # locations
     path('locations/create/', control.LocationsCreate.as_view(),
          name='locations_create'),
     path('locations/manage/', control.LocationsManage.as_view(),
@@ -65,12 +69,14 @@ api_urls.register([
 
 app_name = 'core'
 urlpatterns = [
+    # site
     path('', site.index, name='index'),
     path('home/', site.Home.as_view(), name='home'),
     path('bug/', site.ReportBug.as_view(), name='report_bug'),
     path('language/', site.Language.as_view(), name='language'),
     path('terms/', site.Terms.as_view(), name='terms'),
 
+    # path
     path('register/', auth.Register.as_view(), name='register'),
     path('login/', auth.custom_login, name='login'),
     path('logout/', dj_auth.LogoutView.as_view(
@@ -86,15 +92,17 @@ urlpatterns = [
     path('password/reset/complete/', dj_auth.PasswordResetCompleteView.as_view(
         template_name='core/password_reset_complete.html')),
     path('actor/set', auth.SetRole.as_view(), name='actor_set'),
-    path('organizations/manage/<int:organization_id>/profile/',
-         control.OrganizationsProfile.as_view(),
-         name='organizations_profile'),
 
+
+    # locale stuff
     path('i18n/', include('django.conf.urls.i18n')),
     path('jsi18n/', JavaScriptCatalog.as_view(), JS_INFO_DICT),
     path('jsi18n.js', JavaScriptCatalog.as_view(
         packages=['recurrence']), name='jsi18n'),
 
-    path('locations/<int:location_id>/',
+    path('locations/<slug:slug>/',
          site.LocationsProfile.as_view(), name='locations_profile'),
+    path('organizations/manage/<int:organization_id>/profile/',
+         control.OrganizationsProfile.as_view(),
+         name='organizations_profile'),
 ]

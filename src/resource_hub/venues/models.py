@@ -2,11 +2,11 @@ import uuid
 
 from django.db import models
 
-from resource_hub.core.models import (Actor, BaseContractProcedure, Contract, Gallery,
-                                      Location)
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
 from recurrence.fields import RecurrenceField
+from resource_hub.core.models import (Actor, BaseContractProcedure, Contract,
+                                      Gallery, Location)
 
 
 class VenueContractProcedure(BaseContractProcedure):
@@ -32,6 +32,10 @@ class Venue(models.Model):
     """describing locations."""
 
     # Fields
+    slug = models.SlugField(
+        db_index=True,
+        max_length=50,
+    )
     name = models.CharField(max_length=128)
     description = models.TextField()
     location = models.ForeignKey(
@@ -77,6 +81,7 @@ class Venue(models.Model):
     # Metadata
     class Meta:
         ordering = ['name']
+        unique_together = ['name', 'location']
 
     # Methods
     def __str__(self):
@@ -109,6 +114,11 @@ class EventCategory(models.Model):
 
 class Event(models.Model):
     # fields
+    slug = models.SlugField(
+        unique=True,
+        db_index=True,
+        max_length=50,
+    )
     uuid = models.UUIDField(
         default=uuid.uuid4,
         editable=False,

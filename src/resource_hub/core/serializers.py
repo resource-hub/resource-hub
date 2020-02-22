@@ -42,7 +42,7 @@ class LocationSerializer(serializers.ModelSerializer):
     location_link = serializers.SerializerMethodField()
 
     def get_location_link(self, obj):
-        return reverse('core:locations_profile', kwargs={'location_id': obj.id})
+        return reverse('core:locations_profile', kwargs={'slug': obj.slug})
 
     class Meta:
         model = Location

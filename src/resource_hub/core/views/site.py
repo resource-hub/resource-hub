@@ -52,9 +52,9 @@ class Language(View):
 
 
 class LocationsProfile(View):
-    def get(self, request, location_id):
-        location = get_object_or_404(Location, pk=location_id)
+    def get(self, request, slug):
+        location = get_object_or_404(Location, slug=slug)
         context = {
             'location': location
         }
-        return render(request, 'core/location_profile.html', context)
+        return render(request, 'core/locations_profile.html', context)

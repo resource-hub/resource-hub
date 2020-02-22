@@ -12,6 +12,7 @@ from django.shortcuts import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.utils.functional import cached_property
+from django.utils.text import slugify
 from django.utils.translation import pgettext
 from django.utils.translation import ugettext_lazy as _
 
@@ -104,7 +105,9 @@ class Actor(models.Model):
 
 
 class User(AbstractUser, Actor):
-    """natural person."""
+    """
+    natural person
+    """
     email = models.EmailField(
         unique=True,
     )
@@ -114,7 +117,9 @@ class User(AbstractUser, Actor):
 
 
 class Address(models.Model):
-    """describe address."""
+    """
+    describe address
+    """
 
     # Fields
     street = models.CharField(
@@ -167,7 +172,9 @@ class Address(models.Model):
 
 
 class BankAccount(models.Model):
-    """describes a bank account."""
+    """
+    describes a bank account
+    """
 
     # Fields
     account_holder = models.CharField(
@@ -210,14 +217,22 @@ class BankAccount(models.Model):
 
 
 class Location(models.Model):
-    """describing locations."""
+    """
+    describing locations
+    """
 
     # Fields
+    slug = models.SlugField(
+        max_length=50,
+        unique=True,
+        db_index=True,
+    )
     address = models.ForeignKey(
         Address,
         on_delete=models.CASCADE
     )
     name = models.CharField(
+        unique=True,
         max_length=128,
         null=True,
         blank=True,
@@ -274,11 +289,25 @@ class Location(models.Model):
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        if not self.id:
+            # Newly created object, so set slug
+            self.slug = slugify(self.name)
+
+        super(Location, self).save(*args, **kwargs)
+
 
 class Organization(Actor):
-    """juristic person."""
+    """
+    juristic person
+    """
 
     # fields
+    slug = models.SlugField(
+        unique=True,
+        db_index=True,
+        max_length=50,
+    )
     members = models.ManyToManyField(
         User,
         through='OrganizationMember',
@@ -296,6 +325,12 @@ class Organization(Actor):
     # Methods
     def __str__(self):
         return super().name
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            # Newly created object, so set slug
+            self.slug = slugify(self.name)
+        super(Organization, self).save(*args, **kwargs)
 
 
 class OrganizationMember(models.Model):
@@ -463,18 +498,7 @@ class Contract(models.Model):
     )
 
 
-# class TriggerMeta(models.Model):
-#     name = models.CharField(max_length=64)
-#     provider = models.CharField(max_length=64)
-#     description = models.TextField()
-#     thumbnail = models.ImageField(default='images/default.png')
-
-
 class Trigger(models.Model):
-    # fields
-    # callback = models.CharField(
-    #     max_length=128,
-    # )
     condition = models.CharField(
         choices=Contract.STATES,
         max_length=2,
