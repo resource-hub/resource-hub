@@ -50,9 +50,16 @@ class TableView(View):
 
     def get(self, request):
         self.request = request
+        queryset = self.get_queryset()
+
+        if queryset:
+            table = self.get_table()(queryset)
+        else:
+            table = None
+
         context = {
             'header': self.header,
-            'table': self.get_table()(self.get_queryset()),
+            'table': table,
         }
         return render(request, self.template_name, context)
 
