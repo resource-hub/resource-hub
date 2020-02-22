@@ -1,0 +1,48 @@
+{% extends "core/__base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block content %}
+<h1>
+    {% trans 'Profile' %}
+</h1>
+<div class="section-container tab-content">
+    <div class="ui stackable two column grid">
+        <div class="twelve wide column">
+            <h1>
+                {{ actor.name }}
+            </h1>
+            <div class="ui container">
+                <label class="ui tiny header">{% trans 'description' %}</label>
+                <p>
+                    {{ actor.info_text |safe }}
+                </p>
+                <label class="ui tiny header">{% trans 'telephone (public)' %}</label>
+                <p>
+                    {{ actor.telephone_public }}
+                </p>
+                <label class="ui tiny header">{% trans 'email (public)' %}</label>
+                <p>
+                    {{ actor.email_public }}
+                </p>
+                <label class="ui tiny header">{% trans 'website' %}</label>
+                <p>
+                    <a href="{{ actor.website }}">{{ actor.website }}</a>
+                </p>
+            </div>
+        </div>
+        <div class="four wide column">
+            <div class="ui container center aligned">
+                <img width="100%" height="auto" src="
+                    {% if actor.thumbnail_large %}
+                    {{ actor.thumbnail_large.url }}
+                    {% else %}
+                    {% static 'default.png' %}
+                    {% endif %}
+                    ">
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -48,6 +48,9 @@ control_urls.register([
     path('organizations/manage/<int:organization_id>/members/add/',
          control.OrganizationsMembersAdd.as_view(),
          name='organizations_members_add'),
+    path('organizations/manage/<int:organization_id>/profile/',
+         control.OrganizationsProfile.as_view(),
+         name='organizations_profile'),
 
     # locations
     path('locations/create/', control.LocationsCreate.as_view(),
@@ -102,7 +105,7 @@ urlpatterns = [
 
     path('locations/<slug:slug>/',
          site.LocationsProfile.as_view(), name='locations_profile'),
-    path('organizations/manage/<int:organization_id>/profile/',
-         control.OrganizationsProfile.as_view(),
-         name='organizations_profile'),
+    path('actor/<slug:slug>/',
+         site.ActorProfile.as_view(),
+         name='actor_profile'),
 ]

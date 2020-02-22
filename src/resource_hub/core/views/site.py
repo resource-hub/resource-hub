@@ -5,7 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.views import View
 
 from resource_hub.core.forms import ActorForm, ReportBugForm
-from resource_hub.core.models import Location
+from resource_hub.core.models import Actor, Location
 
 
 def index(request):
@@ -49,6 +49,15 @@ class ReportBug(View):
 class Language(View):
     def get(self, request):
         return render(request, 'core/language.html')
+
+
+class ActorProfile(View):
+    def get(self, request, slug):
+        actor = get_object_or_404(Actor, slug=slug)
+        context = {
+            'actor': actor,
+        }
+        return render(request, 'core/actor_profile.html', context)
 
 
 class LocationsProfile(View):

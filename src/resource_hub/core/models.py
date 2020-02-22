@@ -30,6 +30,11 @@ class Actor(models.Model):
         max_length=128,
         null=True,
     )
+    slug = models.SlugField(
+        unique=True,
+        db_index=True,
+        max_length=50,
+    )
     address = models.OneToOneField(
         'Address',
         null=True,
@@ -114,6 +119,13 @@ class User(AbstractUser, Actor):
     birth_date = models.DateField(
         null=True,
     )
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            # Newly created object, so set slug
+            self.slug = slugify(self.username)
+
+        super(User, self).save(*args, **kwargs)
 
 
 class Address(models.Model):
@@ -303,11 +315,6 @@ class Organization(Actor):
     """
 
     # fields
-    slug = models.SlugField(
-        unique=True,
-        db_index=True,
-        max_length=50,
-    )
     members = models.ManyToManyField(
         User,
         through='OrganizationMember',

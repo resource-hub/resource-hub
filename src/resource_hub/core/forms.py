@@ -64,6 +64,16 @@ class OrganizationForm(forms.ModelForm):
         'Organization name'), help_text=_('Please include your legal form'))
     info_text = forms.CharField(widget=SummernoteWidget(), required=False)
 
+    def clean_name(self):
+        name = self.cleaned_data['name']
+        try:
+            Organization.objects.get(name=name)
+        except Organization.DoesNotExist:
+            return name
+
+        raise forms.ValidationError(
+            _('This organization name already exists'), code='organization-name-exists')
+
     class Meta:
         model = Organization
         fields = ['name', 'image', 'telephone_public', 'telephone_private',
