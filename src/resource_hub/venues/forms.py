@@ -45,29 +45,29 @@ class VenueProcedureForm(forms.ModelForm):
 class VenueFormManager():
     def __init__(self, user, request=None):
         if request is None:
-            self.room_form = VenueForm(user)
+            self.venue_form = VenueForm(user)
             self.venue_procedure = VenueProcedureForm(user)
         else:
-            self.room_form = VenueForm(user, request.POST, request.FILES)
+            self.venue_form = VenueForm(user, request.POST, request.FILES)
             self.venue_procedure = VenueProcedureForm(
                 user, data=request.POST)
 
     def is_valid(self):
-        return self.room_form.is_valid() and self.venue_procedure.is_valid()
+        return self.venue_form.is_valid() and self.venue_procedure.is_valid()
 
     def get_forms(self):
         return {
-            'room_form': self.room_form,
+            'venue_form': self.venue_form,
             'venue_procedure': self.venue_procedure,
         }
 
     def save(self, owner, commit=True):
-        new_room = self.room_form.save(commit=False)
-        new_room.owner = owner
+        new_venue = self.venue_form.save(commit=False)
+        new_venue.owner = owner
         self.venue_procedure.save(commit=commit)
 
         if commit:
-            new_room.save()
+            new_venue.save()
 
 
 class EventForm(forms.ModelForm):
@@ -85,16 +85,16 @@ class EventForm(forms.ModelForm):
         fields = ['name', 'description', 'start', 'end', 'recurrences', 'thumbnail_original',
                   'tags', 'category', 'is_public', ]
 
-    def __init__(self, room_id, *args, **kwargs):
+    def __init__(self, venue_id, *args, **kwargs):
         super(EventForm, self).__init__(*args, **kwargs)
-        self.room_id = room_id
+        self.venue_id = venue_id
 
     def save(self, organizer, user, commit=True):
         new_event = super(EventForm, self).save(commit=False)
         new_event.organizer = organizer
         new_event.created_by = user
         new_event.updated_by = user
-        new_event.room_id = self.room_id
+        new_event.venue_id = self.venue_id
 
         if commit:
             new_event.save()

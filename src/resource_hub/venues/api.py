@@ -55,7 +55,7 @@ class Venues(generics.ListCreateAPIView):
 class VenueEvents(APIView):
     http_method_names = ['get']
 
-    def get(self, request, room_id):
+    def get(self, request, venue_id):
         start_str = self.request.query_params.get('start', None)
         end_str = self.request.query_params.get('end', None)
 
@@ -71,12 +71,12 @@ class VenueEvents(APIView):
                 detail=_('start or end parameter not valid iso_8601 string'))
 
         try:
-            Venue.objects.get(id=room_id)
+            Venue.objects.get(id=venue_id)
         except Venue.DoesNotExist:
             raise exceptions.NotFound(
-                detail=_('No room corresponds to the given id'))
+                detail=_('No venue corresponds to the given id'))
 
-        events = Event.objects.filter(room=room_id)
+        events = Event.objects.filter(venue=venue_id)
         result = []
 
         for e in events:

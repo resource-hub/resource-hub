@@ -7,7 +7,7 @@
     <h5>Filters <i class="filter icon"></i></h5>
     <form class="ui form" id="filter-form">
         <div class="ui icon input">
-            <input id="search-room" name="search_query" type="text" placeholder="{% trans 'search...' %}">
+            <input id="search-venue" name="search_query" type="text" placeholder="{% trans 'search...' %}">
             <i class="search icon"></i>
         </div>
         <button class="ui right floated positive right labeled icon button" type="submit">
@@ -17,14 +17,14 @@
     </form>
 </div>
 
-{% include 'venues/_room_feed.html' %}
+{% include 'venues/_venue_feed.html' %}
 {% addtoblock 'js' %}
 <script>
     $(document).ready(function () {
         create_feed();
 
         // live search disabled
-        // $('#search-room').on('input', function () {
+        // $('#search-venue').on('input', function () {
         //     var val = $(this).val().trim();
         //     val = val.replace(/\s+/g, '');
 

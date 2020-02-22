@@ -10,14 +10,14 @@ class VenueSerializer(serializers.ModelSerializer):
     owner = ActorSerializer(read_only=True)
     location = LocationSerializer(read_only=True)
     thumbnail = serializers.ImageField()
-    room_link = serializers.SerializerMethodField()
+    venue_link = serializers.SerializerMethodField()
 
-    def get_room_link(self, obj):
-        return reverse('venues:room_details', kwargs={'room_id': obj.id})
+    def get_venue_link(self, obj):
+        return reverse('venues:venue_details', kwargs={'venue_id': obj.id})
 
     class Meta:
         model = Venue
-        fields = ['id', 'name', 'description', 'room_link', 'location',
+        fields = ['id', 'name', 'description', 'venue_link', 'location',
                   'thumbnail', 'owner']
 
 

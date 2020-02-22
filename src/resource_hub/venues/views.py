@@ -38,7 +38,7 @@ class VenuesManage(View):
             for r in venues:
                 data.append({
                     'name': r.name,
-                    'room_id': r.id,
+                    'venue_id': r.id,
                     'owner': r.owner,
                 })
             venues_table = VenuesTable(data)
@@ -64,7 +64,7 @@ class VenuesCreate(View):
         if venue_form.is_valid():
             venue_form.save(request.actor)
 
-            message = ('The room has been created')
+            message = ('The venue has been created')
             messages.add_message(request, messages.SUCCESS, message)
             return redirect(reverse('control:venues_manage'))
 
@@ -74,51 +74,51 @@ class VenuesCreate(View):
 class VenuesProfileEdit(View):
     template_name = 'venues/control/venues_profile_edit.html'
 
-    def get(self, request, room_id):
-        room = get_object_or_404(Venue, pk=room_id)
-        room_form = VenueForm(initial=model_to_dict(room))
+    def get(self, request, venue_id):
+        venue = get_object_or_404(Venue, pk=venue_id)
+        venue_form = VenueForm(request.user, instance=venue)
         context = {
-            'room_form': room_form
+            'venue_form': venue_form
         }
         return render(request, self.template_name, context)
 
-    def post(self, request, room_id):
-        room = get_object_or_404(Venue, pk=room_id)
-        room_form = VenueForm(
-            request.POST, request.FILES, instance=room)
+    def post(self, request, venue_id):
+        venue = get_object_or_404(Venue, pk=venue_id)
+        venue_form = VenueForm(request.user,
+                               request.POST, request.FILES, instance=venue)
 
-        if room_form.is_valid():
-            room_form.save()
-            return redirect(reverse('control:venues_profile_edit', kwargs={'room_id': room_id}))
+        if venue_form.is_valid():
+            venue_form.save()
+            return redirect(reverse('control:venues_profile_edit', kwargs={'venue_id': venue_id}))
 
         context = {
-            'room_form': room_form,
+            'venue_form': venue_form,
         }
 
         return render(request, self.template_name, context)
 
 
 class VenueDetails(View):
-    def get(self, request, room_id):
-        room = get_object_or_404(Venue, pk=room_id)
-        context = {'room': room}
-        return render(request, 'venues/room_details.html', context)
+    def get(self, request, venue_id):
+        venue = get_object_or_404(Venue, pk=venue_id)
+        context = {'venue': venue}
+        return render(request, 'venues/venue_details.html', context)
 
 
 class VenueEventsCreate(View):
-    template_name = 'venues/room_events_create.html'
+    template_name = 'venues/venue_events_create.html'
 
-    def get(self, request, room_id):
-        context = {'event_form': EventForm(room_id), }
+    def get(self, request, venue_id):
+        context = {'event_form': EventForm(venue_id), }
         return render(request, self.template_name, context)
 
-    def post(self, request, room_id):
-        event_form = EventForm(room_id, request.POST, request.FILES)
+    def post(self, request, venue_id):
+        event_form = EventForm(venue_id, request.POST, request.FILES)
         if event_form.is_valid():
             event_form.save(request.actor, request.user)
             message = _('The event has been created successfully')
             messages.add_message(request, messages.SUCCESS, message)
-            return redirect(reverse('venues:room_details', kwargs={'room_id': room_id}))
+            return redirect(reverse('venues:venue_details', kwargs={'venue_id': venue_id}))
         else:
             context = {'event_form': event_form}
             return render(request, self.template_name, context)

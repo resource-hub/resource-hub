@@ -9,7 +9,7 @@ class VenuesTable(tables.Table):
         'control:venues_profile_edit',
         verbose_name=_('Name'),
         kwargs={
-            'room_id': A('room_id'),
+            'venue_id': A('venue_id'),
         }
     )
     owner = tables.Column(verbose_name=_('Owner'))

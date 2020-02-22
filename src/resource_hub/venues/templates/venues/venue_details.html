@@ -13,7 +13,7 @@
         var calendarEl = document.getElementById('calendar');
 
         var calendar = new FullCalendar.Calendar(calendarEl, {
-            events: "{% url 'api:venues_event_feed' room_id=room.id %}",
+            events: "{% url 'api:venues_event_feed' venue_id=venue.id %}",
             plugins: ['dayGrid']
         });
 
@@ -25,22 +25,22 @@
 {% block content %}
 <div class="ui stackable two column grid">
     <div class="column">
-        <h1>{{ room.name }}</h1>
+        <h1>{{ venue.name }}</h1>
         <p>
-            {{ room.description |safe }}
+            {{ venue.description |safe }}
         </p>
     </div>
     <div class="column">
-        {% if room.bookable %}
+        {% if venue.bookable %}
         <div id='calendar'></div>
         <div class="spacer">
-            <a class="ui right labeled positive icon button" href="{% url 'venues:events_create' room_id=room.id %}">
+            <a class="ui right labeled positive icon button" href="{% url 'venues:events_create' venue_id=venue.id %}">
                 {% trans 'book' %}
                 <i class="calendar alternate outline icon"></i>
             </a>
         </div>
         {% else %}
-        <img class="ui fluid image" src="{{ room.thumbnail_original.url }}">
+        <img class="ui fluid image" src="{{ venue.thumbnail_original.url }}">
         {% endif %}
     </div>
 </div>

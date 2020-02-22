@@ -429,7 +429,9 @@ class LocationsProfileEdit(View):
 
     def get(self, request, location_id):
         location = get_object_or_404(Location, pk=location_id)
-        location_form = LocationForm(initial=model_to_dict(location))
+        location_form = LocationForm(
+            instance=location
+        )
         context = {
             'location_form': location_form,
         }
@@ -438,7 +440,10 @@ class LocationsProfileEdit(View):
     def post(self, request, location_id):
         location = get_object_or_404(Location, pk=location_id)
         location_form = LocationForm(
-            request.POST, request.FILES, instance=location)
+            request.POST,
+            request.FILES,
+            instance=location
+        )
 
         if location_form.is_valid():
             location_form.save()
