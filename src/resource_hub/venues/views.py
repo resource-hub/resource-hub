@@ -89,6 +89,8 @@ class VenuesProfileEdit(View):
 
         if venue_form.is_valid():
             venue_form.save(venue.owner)
+            message = _('The venue has been updated')
+            messages.add_message(request, messages.SUCCESS, message)
             return redirect(reverse('control:venues_profile_edit', kwargs={'venue_id': venue_id}))
 
         return render(request, self.template_name, venue_form.get_forms())
