@@ -76,26 +76,22 @@ class VenuesProfileEdit(View):
 
     def get(self, request, venue_id):
         venue = get_object_or_404(Venue, pk=venue_id)
-        venue_form = VenueForm(request.user, instance=venue)
-        context = {
-            'venue_form': venue_form
-        }
-        return render(request, self.template_name, context)
+        venue_form = VenueFormManager(request.user, instance=venue)
+        return render(request, self.template_name, venue_form.get_forms())
 
     def post(self, request, venue_id):
         venue = get_object_or_404(Venue, pk=venue_id)
-        venue_form = VenueForm(request.user,
-                               request.POST, request.FILES, instance=venue)
+        venue_form = VenueFormManager(
+            request.user,
+            request,
+            instance=venue,
+        )
 
         if venue_form.is_valid():
-            venue_form.save()
+            venue_form.save(venue.owner)
             return redirect(reverse('control:venues_profile_edit', kwargs={'venue_id': venue_id}))
 
-        context = {
-            'venue_form': venue_form,
-        }
-
-        return render(request, self.template_name, context)
+        return render(request, self.template_name, venue_form.get_forms())
 
 
 class VenueDetails(View):

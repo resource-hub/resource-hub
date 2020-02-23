@@ -612,6 +612,9 @@ class PaymentMethod(Trigger):
 
 
 class BaseContractProcedure(models.Model):
+    auto_accept = models.BooleanField(
+        default=False
+    )
     terms_and_conditions = models.TextField(
         null=True,
         blank=True,
@@ -627,8 +630,6 @@ class BaseContractProcedure(models.Model):
         blank=True,
     )
     tax_rate = models.IntegerField(
-        null=False,
-        blank=True,
         default=0,
         verbose_name=_('tax rate applied to prices'),
     )

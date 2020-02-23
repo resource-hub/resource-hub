@@ -100,7 +100,7 @@ class Migration(migrations.Migration):
                 ('thumbnail_original', models.ImageField(blank=True, upload_to='images/')),
                 ('bookable', models.BooleanField(default=True)),
                 ('created_at', models.DateField(auto_now=True)),
-                ('booking_procedure', models.OneToOneField(null=True, on_delete=django.db.models.deletion.SET_NULL, to='venues.VenueContractProcedure')),
+                ('contract_procedure', models.OneToOneField(null=True, on_delete=django.db.models.deletion.SET_NULL, to='venues.VenueContractProcedure')),
                 ('gallery', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='core.Gallery')),
                 ('location', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='core.Location')),
                 ('owner', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='core.Actor')),

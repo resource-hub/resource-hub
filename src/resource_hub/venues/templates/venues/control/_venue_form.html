@@ -1,0 +1,40 @@
+{% load i18n %}
+{% load sekizai_tags %}
+
+<form class="ui form" method="POST" enctype="multipart/form-data">
+    {% include '_form.html' with form=venue_form %}
+    <div id="venue_procedure">
+        {% include '_form.html' with form=venue_procedure %}
+    </div>
+    {% include 'core/_identity.html' %}
+    <button class="ui positive right labeled icon button" type="submit">
+        {{ action }}
+        <i class="home icon"></i>
+    </button>
+</form>
+
+{% addtoblock 'js' %}
+<script>
+    function check_form() {
+        if ($('#id_bookable').is(':checked')) {
+            $('#venue_procedure').show();
+            required = true;
+        } else {
+            $('#venue_procedure').hide();
+            required = false;
+        }
+        $('#id_payment_methods').prop('required', required);
+        $('#id_tax_rate').prop('required', required);
+    }
+
+    // first time when page loads 
+    // (not in document ready so it doesnt pop up for some seconds)
+    check_form()
+
+    $(document).ready(function () {
+        $('#id_bookable').on('click', function () {
+            check_form()
+        })
+    })
+</script>
+{% endaddtoblock %}

@@ -6,30 +6,7 @@
     {% trans 'Create venue' %}
 </h1>
 <div class="section-container tab-content">
-    <form class="ui form" method="POST" action="{{ url }}" enctype="multipart/form-data">
-        {% include '_form.html' with form=venue_form %}
-        <div id="venue_procedure">
-            {% include '_form.html' with form=venue_procedure %}
-        </div>
-        {% include 'core/_identity.html' %}
-        <button class="ui positive right labeled icon button" type="submit">
-            {% trans 'create' %}
-            <i class="home icon"></i>
-        </button>
-    </form>
+    {% trans 'create' as action %}
+    {% include 'venues/control/_venue_form.html' with venue_form=venue_form venue_procedure_form=venue_procedure_form action=action %}
 </div>
-{% endblock %}
-
-{% block scripts %}
-<script>
-    $(document).ready(function () {
-        $('#id_bookable').on('click', function () {
-            if ($('#id_bookable').is(':checked')) {
-                $('#venue_procedure').show();
-            } else {
-                $('#venue_procedure').hide();
-            }
-        })
-    })
-</script>
 {% endblock %}

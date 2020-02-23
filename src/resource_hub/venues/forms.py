@@ -21,11 +21,14 @@ class VenueForm(forms.ModelForm):
         model = Venue
         fields = ['name', 'description', 'location',
                   'thumbnail_original', 'bookable']
+        help_texts = {
+            'bookable': _('Do you want to use the platform\'s booking logic?'),
+        }
 
 
-class VenueProcedureForm(forms.ModelForm):
+class VenueContractProcedureForm(forms.ModelForm):
     def __init__(self, user, *args, **kwargs):
-        super(VenueProcedureForm, self).__init__(*args, **kwargs)
+        super(VenueContractProcedureForm, self).__init__(*args, **kwargs)
         self.fields['payment_methods'].queryset = get_associated_objects(
             user,
             PaymentMethod
@@ -35,25 +38,40 @@ class VenueProcedureForm(forms.ModelForm):
 
     class Meta:
         model = VenueContractProcedure
-        fields = ['terms_and_conditions', 'notes',
+        fields = ['auto_accept', 'terms_and_conditions', 'notes',
                   'payment_methods', 'tax_rate', 'trigger', ]
         help_texts = {
+            'auto_accept': _('Automatically accept the booking?'),
             'payment_methods': _('Choose the payment methods you want to use for this venue')
         }
 
 
 class VenueFormManager():
-    def __init__(self, user, request=None):
+    def __init__(self, user, request=None, instance=None):
+        self.request = request
+        venue = instance if instance else None
+        venue_procedure = instance.contract_procedure if instance else None
+
         if request is None:
-            self.venue_form = VenueForm(user)
-            self.venue_procedure = VenueProcedureForm(user)
+            self.venue_form = VenueForm(user, instance=venue)
+            self.venue_procedure = VenueContractProcedureForm(
+                user, instance=venue_procedure)
         else:
-            self.venue_form = VenueForm(user, request.POST, request.FILES)
-            self.venue_procedure = VenueProcedureForm(
-                user, data=request.POST)
+            self.venue_form = VenueForm(
+                user, request.POST,
+                request.FILES,
+                instance=venue,
+            )
+            self.venue_procedure = VenueContractProcedureForm(
+                user,
+                data=request.POST,
+                instance=venue_procedure,
+            )
 
     def is_valid(self):
-        return self.venue_form.is_valid() and self.venue_procedure.is_valid()
+        if self.request.POST.get('bookable', False):
+            return self.venue_form.is_valid() and self.venue_procedure.is_valid()
+        return self.venue_form.is_valid()
 
     def get_forms(self):
         return {
@@ -64,10 +82,13 @@ class VenueFormManager():
     def save(self, owner, commit=True):
         new_venue = self.venue_form.save(commit=False)
         new_venue.owner = owner
-        self.venue_procedure.save(commit=commit)
+        if self.venue_form.cleaned_data['bookable']:
+            new_venue_procedure = self.venue_procedure.save(commit=True)
+            new_venue.contract_procedure = new_venue_procedure
 
         if commit:
             new_venue.save()
+        return new_venue
 
 
 class EventForm(forms.ModelForm):

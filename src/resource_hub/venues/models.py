@@ -65,7 +65,7 @@ class Venue(models.Model):
     bookable = models.BooleanField(
         default=True,
     )
-    booking_procedure = models.OneToOneField(
+    contract_procedure = models.OneToOneField(
         VenueContractProcedure,
         null=True,
         on_delete=models.SET_NULL
@@ -199,7 +199,7 @@ class Equipment(models.Model):
     )
 
 
-class VenueUsageContract(Contract):
+class VenueContract(Contract):
     event = models.OneToOneField(
         Event,
         on_delete=models.PROTECT,

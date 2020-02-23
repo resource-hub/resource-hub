@@ -8,9 +8,7 @@
     {% trans 'edit profile' %}
 </h1>
 <div class="section-container tab-content">
-    <form class="ui form" method="POST" enctype="multipart/form-data">
-        {% include '_form.html' with form=venue_form %}
-        {% include '_save_button.html' %}
-    </form>
+    {% trans 'save' as action %}
+    {% include 'venues/control/_venue_form.html' with venue_form=venue_form venue_procedure_form=venue_procedure_form action=action %}
 </div>
 {% endblock %}
