@@ -3,7 +3,7 @@
 
 <form class="ui form" method="POST" enctype="multipart/form-data">
     {% include '_form.html' with form=venue_form %}
-    <div id="venue_procedure">
+    <div id="venue_procedure" class="conditional-form">
         {% include '_form.html' with form=venue_procedure %}
     </div>
     {% include 'core/_identity.html' %}
