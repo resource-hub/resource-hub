@@ -244,12 +244,18 @@ class FinanceContractsManageDetails(View):
         contract = get_subobject_or_404(Contract, pk=pk)
         timer = None
         if contract.is_pending:
-            diff = (timedelta(
-                minutes=contract.expiration_period) - (timezone.now() - contract.created_at)).seconds
-            hours, remainder = divmod(diff, 3600)
-            minutes, seconds = divmod(remainder, 60)
-            timer = '{0:02d}:{1:02d}:{2:02d}'.format(
-                hours, minutes, seconds)
+            delta = (timedelta(
+                minutes=contract.expiration_period) - (timezone.now() - contract.created_at))
+
+            # double check in case scheduler hasnt updated the state
+            if delta.total_seconds() <= 0:
+                contract.set_expired()
+            else:
+                diff = delta.seconds
+                hours, remainder = divmod(diff, 3600)
+                minutes, seconds = divmod(remainder, 60)
+                timer = '{0:02d}:{1:02d}:{2:02d}'.format(
+                    hours, minutes, seconds)
         context = {
             'contract': contract,
             'timer': timer,

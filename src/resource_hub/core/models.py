@@ -549,6 +549,19 @@ class Contract(models.Model):
     def expiration_period(self) -> int:
         return 30
 
+    # methods
+    def call_triggers(self, state):
+        return
+
+    def set_expired(self) -> None:
+        if self.state is self.STATE_PENDING:
+            self.call_triggers(self.STATE_EXPIRED)
+            self.state = self.STATE_EXPIRED
+            self.save()
+            return
+        raise ValueError(
+            'Cannot move from {} to state expired'.format(self.state))
+
 
 class Trigger(models.Model):
     condition = models.CharField(
