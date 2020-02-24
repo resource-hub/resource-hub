@@ -24,7 +24,6 @@ class FormManager():
         self.request = request
         for k, form in self.forms.items():
             self.forms[k] = form.__class__(
-                form,
                 request.POST,
                 request.FILES, instance=instances[k]
             ) if request else form.__class__(instance=instances[k])
