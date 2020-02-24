@@ -4,4 +4,55 @@
 {% block content %}
 <h1>{% trans 'Manage contracts' %}</h1>
 
+<div id="feed-loader" class="ui active centered inline loader"></div>
+<div id="contract-feed" class="ui stackable three column cards grid"></div>
+{% endblock %}
+
+{% block scripts %}
+<script id="template" type="text/template">
+    <div class="column">
+        <a id='card' class="ui fluid card" href="%link%">
+            <div class="ui yellow top attached label">%state%</div>
+            <!-- <div class="content">
+                <img class="ui avatar image" src="%creditor_thumbnail%"> %creditor_name%
+            </div> -->
+            <div class="content">
+                <div class="header">%name%</div>
+            </div>
+        </a>
+    </div>
+</script>
+<script>
+    function create_feed(name = null, id = null) {
+        var template = document.getElementById("template");
+        var templateHtml = template.innerHTML;
+
+        $.ajax({
+            'url': "{% url 'api:contracts_list' %}",
+            'type': 'GET',
+            'dataType': 'JSON'
+        }).done(function (data) {
+            var feed = "";
+
+            $.each(data, function (i, contract) {
+                feed += templateHtml
+                    .replace(/%name%/g, contract['name'])
+                    .replace(/%state%/g, contract['state'])
+                    .replace(/%link%/g, contract['link'])
+                    .replace(/%creditor_name%/g, contract.creditor['name'])
+                    .replace(/%creditor_thumbnail%/g, contract.creditor['thumbnail'])
+            });
+
+            remove_loader('#feed-loader');
+            $('#contract-feed').html(feed);
+            $('.thumbnail').on('load', function () {
+                $('.placeholder').hide();
+            });
+        });
+
+    }
+    $(document).ready(function () {
+        create_feed();
+    })
+</script>
 {% endblock %}

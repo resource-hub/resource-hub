@@ -70,8 +70,9 @@ api_urls.register([
     path('actors/list', api.ActorList.as_view(), name='actor_list'),
     path('actors/change',
          api.ActorChange.as_view(), name='actor_change'),
-    path(r'locations/search/', api.Locations.as_view(),
-         name='locations_search')
+    path('locations/search/', api.Locations.as_view(),
+         name='locations_search'),
+    path('contracts/list', api.Contracts.as_view(), name='contracts_list'),
 ])
 
 app_name = 'core'

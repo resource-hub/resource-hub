@@ -1,6 +1,6 @@
 from django.shortcuts import reverse
 
-from resource_hub.core.models import Actor, Address, Location, User
+from resource_hub.core.models import Actor, Address, Contract, Location, User
 from rest_framework import serializers
 
 
@@ -33,6 +33,27 @@ class AddressSerializer(serializers.ModelSerializer):
         model = Address
         fields = ['street', 'street_number',
                   'postal_code', 'city', 'address_string']
+
+
+class ContractSerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+    state = serializers.SerializerMethodField()
+    creditor = ActorSerializer()
+    debitor = ActorSerializer()
+    link = serializers.SerializerMethodField()
+
+    def get_name(self, obj):
+        return obj.verbose_name
+
+    def get_state(self, obj):
+        return obj.get_state_display()
+
+    def get_link(self, obj):
+        return reverse('control:finance_contracts_manage_details', kwargs={'pk': obj.pk})
+
+    class Meta:
+        model = Contract
+        fields = ['name', 'state', 'creditor', 'debitor', 'link', ]
 
 
 class LocationSerializer(serializers.ModelSerializer):

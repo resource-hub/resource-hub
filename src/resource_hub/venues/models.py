@@ -3,6 +3,7 @@ from datetime import datetime
 
 from django.db import models
 from django.utils.text import slugify
+from django.utils.translation import ugettext_lazy as _
 
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
@@ -229,3 +230,7 @@ class VenueContract(Contract):
     equipment = models.ManyToManyField(
         Equipment,
     )
+
+    @property
+    def verbose_name(self):
+        return _('Venue booking')

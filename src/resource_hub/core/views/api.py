@@ -1,12 +1,15 @@
 from django.db.models import Q
 
+from resource_hub.core.models import (Actor, Contract, Location,
+                                      OrganizationMember, User)
+from resource_hub.core.serializers import (ActorSerializer, ContractSerializer,
+                                           LocationSerializer, UserSerializer)
+from resource_hub.core.utils import get_associated_objects
 from rest_framework import filters, generics
-from rest_framework.decorators import authentication_classes, permission_classes
+from rest_framework.decorators import (authentication_classes,
+                                       permission_classes)
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
-from resource_hub.core.models import User, Actor, Location, OrganizationMember
-from resource_hub.core.serializers import UserSerializer, ActorSerializer, LocationSerializer
 
 
 class UserSearch(generics.ListCreateAPIView):
@@ -43,3 +46,11 @@ class Locations(generics.ListCreateAPIView):
     http_method_names = ['get']
     queryset = Location.objects.all()
     serializer_class = LocationSerializer
+
+
+class Contracts(generics.ListCreateAPIView):
+    http_method_names = ['get']
+    serializer_class = ContractSerializer
+
+    def get_queryset(self):
+        return Contract.objects.filter(Q(creditor=self.request.actor) | Q(debitor=self.request.actor)).select_subclasses()
