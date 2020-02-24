@@ -11,6 +11,8 @@ build:
   stage: build
   tags:
     - shell
+  only:
+    - master
   script:
     - docker login -u gitlab-ci-token -p ${CI_JOB_TOKEN} registry.gitlab.com
     - docker build -t ${CONTAINER_TEST_IMAGE} .
@@ -20,6 +22,8 @@ test:
   stage: test
   tags:
     - shell
+  only:
+    - master
   script:
     - cat ${TEST_ENV} > .env
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
