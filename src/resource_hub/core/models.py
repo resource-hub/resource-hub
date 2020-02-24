@@ -285,6 +285,15 @@ class Location(models.Model):
         Actor,
         on_delete=models.CASCADE,
     )
+    created_at = models.DateField(
+        auto_now_add=True,
+    )
+    created_by = models.ForeignKey(
+        User,
+        null=True,
+        related_name='location_created_by',
+        on_delete=models.SET_NULL,
+    )
     updated_at = models.DateTimeField(
         auto_now=True,
     )

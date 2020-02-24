@@ -11,9 +11,7 @@
     {% trans 'edit profile' %}
 </h1>
 <div class="section-container tab-content">
-    <form class="ui form" method="POST" enctype="multipart/form-data">
-        {% include '_form.html' with form=location_form %}
-        {% include '_save_button.html' %}
-    </form>
+    {% trans 'Save' as action %}
+    {% include 'core/control/_location_form.html' with action=action %}
 </div>
 {% endblock %}

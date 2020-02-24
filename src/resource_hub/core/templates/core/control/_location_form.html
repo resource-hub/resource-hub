@@ -1,0 +1,52 @@
+{% load i18n %}
+{% load sekizai_tags %}
+
+<form class="ui form" method="POST" enctype="multipart/form-data">
+    {% include '_form.html' with form=location_form %}
+    {% include '_form.html' with form=address_form %}
+    {% include 'core/_identity.html' with actor=actor %}
+    <button class="ui positive right labeled icon button" type="submit">
+        {{ action }}
+        <i class="map marker alternate icon"></i>
+    </button>
+</form>
+
+{% addtoblock 'js' %}
+<script>
+    $('.ui.search')
+        .search({
+            minCharacters: 5,
+            apiSettings: {
+                onResponse: function (result) {
+                    return { results: result.features };
+                },
+                url: 'https://api.mapbox.com/geocoding/v5/mapbox.places/{query}.json?proximity=9.72492%2C52.3783212&types=address&access_token={{ MAP_API_TOKEN}}',
+
+            },
+            fields: {
+                title: 'place_name',
+                description: '',
+                url: 'html_url'
+            },
+
+            onSelect: function (result, response) {
+                var long = result.geometry.coordinates[0];
+                var lat = result.geometry.coordinates[1];
+                var street = result.text;
+                var street_number = result.address;
+                var postal_code = typeof result.context[1] === 'undefined' ? "" : result.context[1].text;
+                var city = typeof result.context[2] === 'undefined' ? "" : result.context[2].text;
+                var country = typeof result.context[4] === 'undefined' ? "" : result.context[4].text;
+
+                $('#id_longitude').val(long);
+                $('#id_latitude').val(lat);
+                $('#id_street').val(street);
+                $('#id_street_number').val(street_number);
+                $('#id_postal_code').val(postal_code);
+                $('#id_city').val(city);
+                $('#id_country').val(country);
+            }
+        })
+        ; 
+</script>
+{% endaddtoblock %}

@@ -17,6 +17,32 @@ from resource_hub.core.widgets import UISearchField
 from schwifty import BIC, IBAN
 
 
+class FormManager():
+    forms = {}
+
+    def __init__(self, request=None, instances=None):
+        self.request = request
+        for k, form in self.forms.items():
+            self.forms[k] = form.__class__(
+                form,
+                request.POST,
+                request.FILES, instance=instances[k]
+            ) if request else form.__class__(instance=instances[k])
+
+    def get_forms(self):
+        return self.forms
+
+    def is_valid(self):
+        is_valid = True
+        for form in self.forms.values():
+            if not form.is_valid():
+                is_valid = False
+        return is_valid
+
+    def save(self, commit=True):
+        raise NotImplementedError()
+
+
 class ActorForm(forms.ModelForm):
     info_text = forms.CharField(widget=SummernoteWidget(), required=False)
 
@@ -36,9 +62,6 @@ class UserBaseForm(UserCreationForm):
         fields = ['username', 'first_name', 'last_name',
                   'email', 'birth_date', 'password1', 'password2', 'image', 'telephone_public', 'telephone_private',
                   'email_public', 'website', 'info_text']
-
-    def clean(self):
-        super().clean()
 
     def clean_birth_date(self):
         OLDEST_PERSON = 44694
@@ -83,15 +106,14 @@ class OrganizationForm(forms.ModelForm):
 class AddressForm(forms.ModelForm):
     class Meta:
         model = Address
-        exclude = ['address', 'bank_account',
-                   'created_by', 'updated_by', ]
+        fields = ['street', 'street_number',
+                  'postal_code', 'city', 'country', ]
 
 
 class BankAccountForm(forms.ModelForm):
     class Meta:
         model = BankAccount
-        exclude = ['address', 'bank_account',
-                   'created_by', 'updated_by', ]
+        fields = ['account_holder', 'iban', 'bic', ]
 
     def clean_iban(self):
         iban = self.cleaned_data['iban']
@@ -282,7 +304,7 @@ class EmailChangeForm(forms.Form):
 
     def save(self):
         new_email = self.cleaned_data['new_email1']
-        user = User.objects.filter(pk=self.user.id).update(email=new_email)
+        User.objects.get(pk=self.user.id).update(email=new_email)
 
 
 class UserAccountFormManager():
@@ -372,7 +394,7 @@ class OrganizationFormManager():
 
 
 class OrganizationMemberAddForm(forms.Form):
-    def __init__(self, organization,  *args, **kwargs):
+    def __init__(self, organization, *args, **kwargs):
         self.organization = organization
         super(OrganizationMemberAddForm, self).__init__(*args, **kwargs)
 
@@ -386,7 +408,7 @@ class OrganizationMemberAddForm(forms.Form):
     def clean_username(self):
         username = self.cleaned_data['username']
         try:
-            user = User.objects.get(username=username)
+            User.objects.get(username=username)
         except User.DoesNotExist:
             raise forms.ValidationError(
                 _('The user does not exist.'), code='user-not-exists')
@@ -418,7 +440,7 @@ class RoleChangeForm(forms.Form):
         actor_id = self.cleaned_data['actor_id']
 
         try:
-            actor = Actor.objects.get(pk=actor_id)
+            Actor.objects.get(pk=actor_id)
         except Actor.DoesNotExist:
             raise forms.ValidationError(
                 _('Actor does not exist'), code='actor-not-exists')
@@ -452,6 +474,24 @@ class LocationForm(forms.ModelForm):
         new_location = super(LocationForm, self).save(commit=False)
         if owner is not None:
             new_location.owner = owner
+        if commit:
+            new_location.save()
+        return new_location
+
+
+class LocationFormManager(FormManager):
+    forms = {
+        'location_form': LocationForm(),
+        'address_form': AddressForm(),
+    }
+
+    def save(self, commit=True):
+        owner = self.request.actor
+        user = self.request.user
+        new_address = self.forms['address_form'].save()
+        new_location = self.forms['location_form'].save(owner, commit=False)
+        new_location.created_by = user
+        new_location.address = new_address
         if commit:
             new_location.save()
         return new_location

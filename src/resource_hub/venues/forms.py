@@ -96,8 +96,9 @@ class EventForm(forms.ModelForm):
     description = forms.CharField(widget=SummernoteWidget())
     thumbnail_original = forms.ImageField(required=True)
     is_public = forms.BooleanField(
-        required=False,
-        label=_('Make the event publically visible?'),
+        initial=True,
+        help_text=_(
+            'List the event in public feeds and show its content to third parties?'),
     )
     start = forms.TimeField(widget=TimeInputCustom())
     end = forms.TimeField(widget=TimeInputCustom())

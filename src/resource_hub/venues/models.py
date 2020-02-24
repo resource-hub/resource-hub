@@ -156,7 +156,10 @@ class Event(models.Model):
         Venue,
         on_delete=models.CASCADE
     )
-    is_public = models.BooleanField()
+    is_public = models.BooleanField(
+        default=True,
+        null=False,
+    )
     recurrences = RecurrenceField(
         null=False,
     )

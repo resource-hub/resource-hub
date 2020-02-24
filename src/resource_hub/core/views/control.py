@@ -414,35 +414,20 @@ class OrganizationsMembersAdd(View):
 @method_decorator(login_required, name='dispatch')
 class LocationsCreate(View):
     def get(self, request):
-        location_form = LocationForm()
-        address_form = AddressForm()
-        context = {
-            'location_form': location_form,
-            'address_form': address_form,
-        }
-        return render(request, 'core/control/locations_create.html', context)
+        location_form = LocationFormManager()
+        return render(request, 'core/control/locations_create.html', location_form.get_forms())
 
     def post(self, request):
-        location_form = LocationForm(request.POST, request.FILES)
-        address_form = AddressForm(request.POST)
+        location_form = LocationFormManager(request)
 
-        if address_form.is_valid():
-            new_address = address_form.save()
-            if location_form.is_valid():
-                owner = request.actor
-                new_location = location_form.save(owner, commit=False)
-                new_location.address = new_address
-                new_location.save()
+        if location_form.is_valid():
+            location_form.save()
 
-                message = _('The location has been created')
-                messages.add_message(request, messages.SUCCESS, message)
-                return redirect(reverse('control:locations_manage'))
+            message = _('The location has been created')
+            messages.add_message(request, messages.SUCCESS, message)
+            return redirect(reverse('control:locations_manage'))
 
-        context = {
-            'location_form': location_form,
-            'address_form': address_form,
-        }
-        return render(request, 'core/control/locations_create.html', context)
+        return render(request, 'core/control/locations_create.html', location_form.get_forms())
 
 
 @method_decorator(login_required, name='dispatch')
@@ -459,35 +444,32 @@ class LocationsManage(TableView):
         return LocationsTable
 
 
-# todo rights to edit
 @method_decorator(login_required, name='dispatch')
 class LocationsProfileEdit(View):
     template_name = 'core/control/locations_profile_edit.html'
 
     def get(self, request, location_id):
         location = get_object_or_404(Location, pk=location_id)
-        location_form = LocationForm(
-            instance=location
+        location_form = LocationFormManager(
+            instances={
+                'location_form': location,
+                'address_form': location.address,
+            }
         )
-        context = {
-            'location_form': location_form,
-        }
-        return render(request, self.template_name, context)
+        return render(request, self.template_name, location_form.get_forms())
 
     def post(self, request, location_id):
         location = get_object_or_404(Location, pk=location_id)
-        location_form = LocationForm(
-            request.POST,
-            request.FILES,
-            instance=location
+        location_form = LocationFormManager(
+            request=request,
+            instances={
+                'location_form': location,
+                'address_form': location.address,
+            }
         )
 
         if location_form.is_valid():
             location_form.save()
             return redirect(reverse('control:locations_profile_edit', kwargs={'location_id': location_id}))
 
-        context = {
-            'location_form': location_form,
-        }
-
-        return render(request, self.template_name, context)
+        return render(request, self.template_name, location_form.get_forms())
