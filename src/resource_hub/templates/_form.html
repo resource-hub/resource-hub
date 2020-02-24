@@ -1,4 +1,11 @@
+{% load i18n %}
+
 {% csrf_token %}
+{% if form.errors %}
+<div class="ui red message">
+    {% trans 'Form contains errors!' %}
+</div>
+{% endif %}
 {% if form.non_field_errors %}
 <div class="ui red message">
     {% for error in form.non_field_errors %}
