@@ -1,3 +1,4 @@
+import re
 from datetime import datetime
 
 import requests
@@ -107,6 +108,13 @@ class AddressForm(forms.ModelForm):
         model = Address
         fields = ['street', 'street_number',
                   'postal_code', 'city', 'country', ]
+
+    def clean_postal_code(self):
+        postal_code = self.cleaned_data['postal_code']
+        if re.fullmatch(r'^[0-9]{5}$', postal_code):
+            return postal_code
+        raise forms.ValidationError(
+            _('Invalid postal code'), code='invalid-postal-code')
 
 
 class BankAccountForm(forms.ModelForm):
