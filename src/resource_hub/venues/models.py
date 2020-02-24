@@ -1,6 +1,8 @@
 import uuid
+from datetime import datetime
 
 from django.db import models
+from django.utils.text import slugify
 
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
@@ -89,7 +91,10 @@ class Venue(models.Model):
 
 
 class EventTag(models.Model):
-    name = models.CharField(max_length=64)
+    name = models.CharField(
+        max_length=64,
+        unique=True,
+    )
 
     # Metadata
     class Meta:
@@ -101,7 +106,10 @@ class EventTag(models.Model):
 
 
 class EventCategory(models.Model):
-    name = models.CharField(max_length=64)
+    name = models.CharField(
+        max_length=64,
+        unique=True,
+    )
 
     # Metadata
     class Meta:
@@ -188,10 +196,21 @@ class Event(models.Model):
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        if not self.id:
+            slug = slugify(self.name)
+            try:
+                Event.objects.get(slug=slug)
+                self.slug = slug + str(datetime.now().date())
+            except Event.DoesNotExist:
+                self.slug = slug
+        super(Event, self).save(*args, **kwargs)
+
 
 class Equipment(models.Model):
     name = models.CharField(
         max_length=128,
+        unique=True,
     )
     price = models.DecimalField(
         max_digits=13,

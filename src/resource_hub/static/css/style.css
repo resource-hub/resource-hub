@@ -319,6 +319,10 @@ td>a {
     margin: 0 0 1em;
 }
 
+.small-container {
+    margin: 1.4em 0 0 0;
+}
+
 /**
   *
   * Other   

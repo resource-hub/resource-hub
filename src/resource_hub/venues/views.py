@@ -10,7 +10,8 @@ from django.views import View
 from django.views.decorators.cache import cache_page
 
 from resource_hub.core.models import OrganizationMember
-from resource_hub.venues.forms import EventForm, VenueForm, VenueFormManager
+from resource_hub.venues.forms import (VenueContractFormManager, VenueForm,
+                                       VenueFormManager)
 from resource_hub.venues.models import Venue
 from resource_hub.venues.tables import VenuesTable
 
@@ -71,6 +72,7 @@ class VenuesCreate(View):
         return render(request, 'venues/control/venues_create.html', venue_form.get_forms())
 
 
+@method_decorator(login_required, name='dispatch')
 class VenuesProfileEdit(View):
     template_name = 'venues/control/venues_profile_edit.html'
 
@@ -96,27 +98,35 @@ class VenuesProfileEdit(View):
         return render(request, self.template_name, venue_form.get_forms())
 
 
-class VenueDetails(View):
+class VenuesDetails(View):
     def get(self, request, venue_id):
         venue = get_object_or_404(Venue, pk=venue_id)
         context = {'venue': venue}
         return render(request, 'venues/venue_details.html', context)
 
 
-class VenueEventsCreate(View):
+@method_decorator(login_required, name='dispatch')
+class EventsCreate(View):
     template_name = 'venues/venue_events_create.html'
 
     def get(self, request, venue_id):
-        context = {'event_form': EventForm(venue_id), }
-        return render(request, self.template_name, context)
+        venue = get_object_or_404(Venue, pk=venue_id)
+        return render(request, self.template_name, VenueContractFormManager(venue).get_forms())
 
     def post(self, request, venue_id):
-        event_form = EventForm(venue_id, request.POST, request.FILES)
-        if event_form.is_valid():
-            event_form.save(request.actor, request.user)
-            message = _('The event has been created successfully')
+        venue = get_object_or_404(Venue, pk=venue_id)
+        venue_contract_form = VenueContractFormManager(venue, request)
+        if venue_contract_form.is_valid():
+            venue_contract = venue_contract_form.save()
+            print(venue_contract)
+            message = _(
+                'The event has been created successfully. You can review it and either confirm or cancel.')
             messages.add_message(request, messages.SUCCESS, message)
-            return redirect(reverse('venues:venue_details', kwargs={'venue_id': venue_id}))
-        else:
-            context = {'event_form': event_form}
-            return render(request, self.template_name, context)
+            return redirect(reverse('control:finance_contracts_manage_details', kwargs={'pk': venue_contract.pk}))
+        return render(request, self.template_name, venue_contract_form.get_forms())
+
+
+@method_decorator(login_required, name='dispatch')
+class EventsManageDetails(View):
+    def get(self, request, event):
+        return

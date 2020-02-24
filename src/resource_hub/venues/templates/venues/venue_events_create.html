@@ -6,11 +6,12 @@
     {% trans 'create event' %}
 </h1>
 <form class="ui form" method="POST" enctype="multipart/form-data">
+    {% include '_form.html' with form=venue_contract_form %}
     {% include '_form.html' with form=event_form %}
     {% include 'core/_identity.html' with actor=actor %}
     <button class="ui positive right labeled icon button" type="submit">
-        {% trans 'create event' %}
-        <i class="calendar plus outline icon"></i>
+        {% trans 'Check event' %}
+        <i class="zoom-in icon"></i>
     </button>
 </form>
 {% endblock %}

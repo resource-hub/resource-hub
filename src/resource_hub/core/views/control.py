@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
@@ -6,6 +8,7 @@ from django.forms import Form
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.views import View
@@ -223,6 +226,33 @@ class FinancePaymentMethodsAdd(View):
                 return redirect(reverse('control:finance_payment_methods_add'))
         context = {
             'payment_methods': payment_methods,
+        }
+        return render(request, self.template_name, context)
+
+
+@method_decorator(login_required, name='dispatch')
+class FinanceContractsManage(View):
+    def get(self, request):
+        return render(request, 'core/control/finance_contracts_manage.html')
+
+
+@method_decorator(login_required, name='dispatch')
+class FinanceContractsManageDetails(View):
+    template_name = 'core/control/finance_contracts_manage_details.html'
+
+    def get(self, request, pk):
+        contract = get_subobject_or_404(Contract, pk=pk)
+        timer = None
+        if contract.is_pending:
+            diff = (timedelta(
+                minutes=contract.expiration_period) - (timezone.now() - contract.created_at)).seconds
+            hours, remainder = divmod(diff, 3600)
+            minutes, seconds = divmod(remainder, 60)
+            timer = '{0:02d}:{1:02d}:{2:02d}'.format(
+                hours, minutes, seconds)
+        context = {
+            'contract': contract,
+            'timer': timer,
         }
         return render(request, self.template_name, context)
 

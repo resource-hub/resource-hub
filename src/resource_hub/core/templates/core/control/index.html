@@ -2,7 +2,6 @@
 {% load i18n %}
 
 {% block content %}
-
 <div>
     <div class="ui placeholder segment">
         <div class="ui icon header">
@@ -10,12 +9,7 @@
             Hey, {{ user.first_name }}! {% trans 'what do you want to do?' %}
         </div>
     </div>
-    <div class="ui segment">
-        <p class="">
-            <i class="info circle icon"></i>
-            {% trans 'This is the the control section. Under the various navigation points on the left you can customize settings and create items.' %}
-        </p>
-    </div>
+    {% trans 'This is the the control section. Under the various navigation points on the left you can customize settings and create items.' as text %}
+    {% include '_info.html' with text=text %}
 </div>
-
 {% endblock %}

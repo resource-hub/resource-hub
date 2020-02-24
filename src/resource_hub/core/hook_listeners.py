@@ -36,8 +36,14 @@ def control_sidebar(context, *args, **kwargs):
                 'url': get_parent(reverse('control:finance_bank_accounts')),
                 'sub_items': [
                     {
-                        'header': _('Bank accounts'),
-                        'url': reverse('control:finance_bank_accounts'),
+                        'header': _('Contracts'),
+                        'url': get_parent(reverse('control:finance_contracts_manage')),
+                        'subsub_items': [
+                            {
+                                'header': _('Manage'),
+                                'url': reverse('control:finance_contracts_manage'),
+                            }
+                        ]
                     },
                     {
                         'header': _('Payment methods'),

@@ -1,0 +1,78 @@
+{% extends "control/__base.html" %}
+{% load i18n %}
+
+{% block content %}
+<h1>{% trans 'Contract details' %}</h1>
+{% ifequal contract.state 'p' %}
+<div class="ui segment">
+    <div class="ui grid">
+        <div class="eight wide column">
+            <p class="">
+                <i class="info circle icon"></i>
+                {% trans 'The contract is still pending. Until confirmation, cancellation or expiration the items will appear as booked.'  %}
+            </p>
+        </div>
+        <div class="eight wide column">
+            <div class="ui tiny red right floated statistic">
+                <div id="timer" class="value">
+                    {{ timer }}
+                </div>
+                <!-- <div class="label">
+                    {% trans 'to expiration' %}
+                </div> -->
+            </div>
+        </div>
+    </div>
+    <form id="choices" class="small-container" method="POST">
+        <button class="ui negative right labeled icon button" name="choice" value="cancel" type="submit">
+            {% trans 'Cancel' %}
+            <i class="close icon"></i>
+        </button>
+        <button class="ui positive right labeled right floated icon button" name="choice" value="confirm" type="submit">
+            {% trans 'Confirm' %}
+            <i class="check icon"></i>
+        </button>
+    </form>
+</div>
+{% endifequal %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function () {
+        if ($('#timer').length) {
+            const START = $('#timer').text().trim().replace(/(\r\n|\n|\r)/gm, "");
+            let time = START.split(':').map(function (x) {
+                return parseInt(x);
+            });
+
+            var x = setInterval(function () {
+                time[2] = time[2] - 1;
+                if (time[2] < 0) {
+                    time[2] = 59;
+                    time[1] = time[1] - 1;
+                }
+                if (time[1] < 0) {
+                    if (time[0] - 1 < 0) {
+                        clearInterval(x);
+                        $('#choices').hide();
+                        return;
+                    } else {
+                        time[0] = time[0] - 1;
+                        time[1] = time[1] = 59
+                    }
+                }
+                $('#timer').text(time_to_str(time));
+
+            }, 1000);
+            function time_to_str(time) {
+                return (
+                    String(time[0]).padStart(2, '0') + ':' +
+                    String(time[1]).padStart(2, '0') + ':' +
+                    String(time[2]).padStart(2, '0')
+                );
+            }
+        }
+    });
+</script>
+{% endblock %}

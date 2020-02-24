@@ -31,6 +31,10 @@ control_urls.register([
     ), name='finance_payment_methods_edit'),
     path('finance/payment-methods/add',
          control.FinancePaymentMethodsAdd.as_view(), name='finance_payment_methods_add'),
+    path('finance/contracts/manage/', control.FinanceContractsManage.as_view(),
+         name='finance_contracts_manage'),
+    path('finance/contracts/manage/<int:pk>/', control.FinanceContractsManageDetails.as_view(),
+         name='finance_contracts_manage_details'),
 
     # organizations
     path('organizations/manage/',

@@ -21,6 +21,7 @@ import pycountry
 from django_countries.fields import CountryField
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
+from model_utils.fields import MonitorField
 from model_utils.managers import InheritanceManager
 from resource_hub.core.settings import COUNTRIES_WITH_STATE_IN_ADDRESS
 
@@ -423,6 +424,7 @@ class Payment(models.Model):
         choices=STATES,
         max_length=2,
     )
+    state_changed = MonitorField(monitor='state')
     notes = models.TextField(
         null=True,
         blank=True,
@@ -490,16 +492,22 @@ class Contract(models.Model):
         choices=STATES,
         max_length=2,
     )
+    state_changed = MonitorField(monitor='state')
+    payment_method = models.ForeignKey(
+        'PaymentMethod',
+        null=True,
+        on_delete=models.SET_NULL,
+    )
     payment = models.ForeignKey(
         Payment,
         null=True,
         on_delete=models.SET_NULL,
     )
-    initiation = models.OneToOneField(
+    confirmation = models.OneToOneField(
         DeclarationOfIntent,
         null=True,
         on_delete=models.SET_NULL,
-        related_name='contract_initiation',
+        related_name='contract_confirmation',
     )
     acceptance = models.OneToOneField(
         DeclarationOfIntent,
@@ -507,6 +515,30 @@ class Contract(models.Model):
         null=True,
         related_name='contract_acceptance',
     )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+    created_by = models.ForeignKey(
+        User,
+        related_name='contract_created_by',
+        null=True,
+        on_delete=models.SET_NULL,
+    )
+
+    # attributes
+    objects = InheritanceManager()
+
+    @property
+    def verbose_name(self) -> str:
+        raise NotImplementedError()
+
+    @property
+    def is_pending(self) -> bool:
+        return self.state is self.STATE_PENDING
+
+    @property
+    def expiration_period(self) -> int:
+        return 30
 
 
 class Trigger(models.Model):
