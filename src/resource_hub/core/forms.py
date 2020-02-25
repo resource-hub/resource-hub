@@ -24,10 +24,11 @@ class FormManager():
     def __init__(self, request=None, instances=None):
         self.request = request
         for k, form in self.forms.items():
+            instance = instances[k] if instances else None
             self.forms[k] = form.__class__(
                 request.POST,
-                request.FILES, instance=instances[k]
-            ) if request else form.__class__(instance=instances[k])
+                request.FILES, instance=instance
+            ) if request else form.__class__(instance=instance)
 
     def get_forms(self):
         return self.forms
