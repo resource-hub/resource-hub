@@ -9,7 +9,6 @@ from resource_hub.core.models import Contract
 
 
 def init_schedule():
-    print('initializing jobs')
     scheduler = django_rq.get_scheduler('default')
     scheduler.schedule(
         scheduled_time=datetime.utcnow(),  # Time for first execution, in UTC timezone

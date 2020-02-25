@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 
-import core.tests.demodb as demodb
+import resource_hub.core.tests.demodb as demodb
 
 
 class Command(BaseCommand):

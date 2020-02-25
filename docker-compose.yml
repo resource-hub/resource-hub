@@ -28,13 +28,13 @@ services:
       - .env
     build: ./
     image: app
-    command: bash -c 'cd src && python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver --settings=resource_hub.settings.dev 0.0.0.0:${DJANGO_PORT}'
+    command: bash -c 'cd src && python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py init_schedule && python3 manage.py runserver --settings=resource_hub.settings.dev 0.0.0.0:${DJANGO_PORT}'
     volumes:
       - ./:/site:rw
     depends_on:
       - postgres
       - redis
-      # - worker
+      - worker
       - mail
     links:
       - redis
