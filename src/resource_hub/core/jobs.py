@@ -4,6 +4,7 @@ from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 
 import django_rq
+from django_rq import job
 from resource_hub.core.models import Contract
 
 
@@ -19,6 +20,7 @@ def init_schedule():
     )
 
 
+@job('default')
 def send_mail(subject, message, recipient):
     email = EmailMultiAlternatives(
         subject,

@@ -111,6 +111,8 @@ class AddressForm(forms.ModelForm):
 
     def clean_postal_code(self):
         postal_code = self.cleaned_data['postal_code']
+        if not postal_code:
+            return
         if re.fullmatch(r'^[0-9]{5}$', postal_code):
             return postal_code
         raise forms.ValidationError(
