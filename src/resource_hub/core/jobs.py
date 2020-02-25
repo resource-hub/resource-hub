@@ -10,6 +10,9 @@ from resource_hub.core.models import Contract
 
 def init_schedule():
     scheduler = django_rq.get_scheduler('default')
+    jobs = scheduler.get_jobs()
+    for job in jobs:
+        scheduler.cancel(job)
     scheduler.schedule(
         scheduled_time=datetime.utcnow(),  # Time for first execution, in UTC timezone
         func=expire_contracts,                     # Function to be queued
