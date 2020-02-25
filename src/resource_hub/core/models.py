@@ -1,6 +1,6 @@
 import string
 from collections import OrderedDict
-from datetime import datetime
+from datetime import datetime, timedelta
 from decimal import Decimal
 
 from django.contrib.auth.models import AbstractUser
@@ -547,11 +547,17 @@ class Contract(models.Model):
 
     @property
     def expiration_period(self) -> int:
-        return 30
+        return 1
 
     # methods
     def call_triggers(self, state):
         return
+
+    @property
+    def is_expired(self) -> bool:
+        delta = (timedelta(
+            minutes=self.expiration_period) - (timezone.now() - self.created_at))
+        return delta.total_seconds() <= 0
 
     def set_expired(self) -> None:
         if self.state is self.STATE_PENDING:

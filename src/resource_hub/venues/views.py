@@ -118,7 +118,6 @@ class EventsCreate(View):
         venue_contract_form = VenueContractFormManager(venue, request)
         if venue_contract_form.is_valid():
             venue_contract = venue_contract_form.save()
-            print(venue_contract)
             message = _(
                 'The event has been created successfully. You can review it and either confirm or cancel.')
             messages.add_message(request, messages.SUCCESS, message)

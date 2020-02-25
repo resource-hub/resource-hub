@@ -1,10 +1,24 @@
+from datetime import datetime
+
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 
-from django_rq import job
+import django_rq
+from resource_hub.core.models import Contract
 
 
-@job('default')
+def init_schedule():
+    print('initializing jobs')
+    scheduler = django_rq.get_scheduler('default')
+    scheduler.schedule(
+        scheduled_time=datetime.utcnow(),  # Time for first execution, in UTC timezone
+        func=expire_contracts,                     # Function to be queued
+        args=[],             # Arguments passed into function when executed
+        interval=60,                   # Time before the function is called again, in seconds
+        result_ttl=-1,
+    )
+
+
 def send_mail(subject, message, recipient):
     email = EmailMultiAlternatives(
         subject,
@@ -14,3 +28,11 @@ def send_mail(subject, message, recipient):
     email.attach_alternative(message, 'text/html')
 
     email.send(fail_silently=False)
+
+
+def expire_contracts():
+    pending_contracts = Contract.objects.filter(
+        state=Contract.STATE_PENDING)
+    for contract in pending_contracts:
+        if contract.is_expired:
+            contract.set_expired()

@@ -21,30 +21,44 @@ services:
     ports: 
       - "8080:8080"
 
-  worker:
-    environment:
-      DJANGO_SETTINGS_MODULE: resource_hub.settings.dev
-    env_file:
-      - .env
-    build: ./
-    command: bash -c 'cd src && python3 manage.py rqworker default high low'
-
   app:
     environment:
       DJANGO_SETTINGS_MODULE: resource_hub.settings.dev
     env_file:
       - .env
     build: ./
+    image: app
     command: bash -c 'cd src && python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver --settings=resource_hub.settings.dev 0.0.0.0:${DJANGO_PORT}'
     volumes:
       - ./:/site:rw
     depends_on:
       - postgres
       - redis
-      - worker
+      # - worker
       - mail
     links:
       - redis
       - mail
     ports:
       - "${DJANGO_PORT}:${DJANGO_PORT}"
+
+  worker:
+    environment:
+      DJANGO_SETTINGS_MODULE: resource_hub.settings.dev
+    env_file:
+      - .env
+    image: app
+    volumes:
+      - ./:/site:rw
+    command: bash -c 'cd src && python3 manage.py rqworker default high low'
+    
+  scheduler:
+    environment:
+      DJANGO_SETTINGS_MODULE: resource_hub.settings.dev
+    env_file:
+      - .env
+    restart: on-failure
+    image: app
+    volumes:
+      - ./:/site:rw
+    command: bash -c 'rqscheduler --host redis --port 6379'

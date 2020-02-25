@@ -10,4 +10,8 @@ https://docs.djangoproject.com/en/2.2/howto/deployment/wsgi/
 
 from django.core.wsgi import get_wsgi_application
 
+from resource_hub.core.jobs import init_schedule
+
+init_schedule()
+
 application = get_wsgi_application()
