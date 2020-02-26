@@ -225,6 +225,28 @@ td>a {
     -webkit-transition: visibility 0s linear 0.5s, opacity 0.3s linear;
 }
 
+/* contract states */
+
+.p, .w {
+    background-color: #fbbd08 !important;
+    border-color: #fbbd08 !important;
+}
+
+.r {
+    background-color: #21ba45 !important;
+    border-color: #21ba45 !important;
+}
+
+.d {
+    background-color: #db2828 !important;
+    border-color: #db2828 !important;
+}
+
+.x, .c, .f {
+    background-color: #e8e8e8 !important;
+    border-color: #e8e8e8 !important;
+}
+
 /**
   *
   * Footer

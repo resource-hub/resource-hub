@@ -12,7 +12,7 @@
 <script id="template" type="text/template">
     <div class="column">
         <a id='card' class="ui fluid card" href="%link%">
-            <div class="ui yellow top attached label">%state%</div>
+            <div class="ui %state% top attached label">%state_display%</div>
             <!-- <div class="content">
                 <img class="ui avatar image" src="%creditor_thumbnail%"> %creditor_name%
             </div> -->
@@ -41,6 +41,7 @@
                 feed += templateHtml
                     .replace(/%type_name%/g, contract['type_name'])
                     .replace(/%state%/g, contract['state'])
+                    .replace(/%state_display%/g, contract['state_display'])
                     .replace(/%link%/g, contract['link'])
                     .replace(/%created_at%/g, contract['created_at'])
                     .replace(/%creditor_name%/g, contract.creditor['name'])
