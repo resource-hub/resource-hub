@@ -38,6 +38,6 @@ def navigation_bar(context, *args, **kwargs):
 def location_profile(context, *args, **kwargs):
     from resource_hub.venues.models import Venue
     location_slug = context.request.resolver_match.kwargs['slug']
-    if not Venue.objects.filter(slug=location_slug):
+    if not Venue.objects.filter(location__slug=location_slug):
         return ""
     return render_to_string(template_name='venues/hooks/location_profile.html', context=context.flatten(), request=context.request)

@@ -34,7 +34,8 @@
         {% if venue.bookable %}
         <div id='calendar'></div>
         <div class="spacer">
-            <a class="ui right labeled positive icon button" href="{% url 'venues:events_create' venue_id=venue.id %}">
+            <a class="ui right labeled positive icon button"
+                href="{% url 'venues:events_create' venue_slug=venue.slug location_slug=venue.location.slug %}">
                 {% trans 'book' %}
                 <i class="calendar alternate outline icon"></i>
             </a>

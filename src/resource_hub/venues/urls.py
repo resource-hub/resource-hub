@@ -21,9 +21,9 @@ control_urls.register([
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('<int:venue_id>/details',
+    path('<slug:location_slug>/<slug:venue_slug>',
          views.VenuesDetails.as_view(), name='venue_details'),
-    path('<int:venue_id>/events/create/',
+    path('<slug:location_slug>/<slug:venue_slug>/events/create/',
          views.EventsCreate.as_view(), name='events_create'),
 
 ]

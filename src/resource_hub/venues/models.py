@@ -90,6 +90,16 @@ class Venue(models.Model):
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        if not self.id:
+            slug = slugify(self.name)
+            try:
+                Venue.objects.get(slug=slug, location=self.location)
+                self.slug = slug + str(datetime.now().date())
+            except Venue.DoesNotExist:
+                self.slug = slug
+        super(Venue, self).save(*args, **kwargs)
+
 
 class EventTag(models.Model):
     name = models.CharField(

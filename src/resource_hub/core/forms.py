@@ -1,7 +1,7 @@
 import re
 from datetime import datetime
 
-import requests
+# import requests
 from django import forms
 from django.conf import settings
 from django.contrib.auth import update_session_auth_hash

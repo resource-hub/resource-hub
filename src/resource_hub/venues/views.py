@@ -99,8 +99,9 @@ class VenuesProfileEdit(View):
 
 
 class VenuesDetails(View):
-    def get(self, request, venue_id):
-        venue = get_object_or_404(Venue, pk=venue_id)
+    def get(self, request, location_slug, venue_slug):
+        venue = get_object_or_404(
+            Venue, slug=venue_slug, location__slug=location_slug)
         context = {'venue': venue}
         return render(request, 'venues/venue_details.html', context)
 
@@ -109,12 +110,14 @@ class VenuesDetails(View):
 class EventsCreate(View):
     template_name = 'venues/venue_events_create.html'
 
-    def get(self, request, venue_id):
-        venue = get_object_or_404(Venue, pk=venue_id)
+    def get(self, request, location_slug, venue_slug):
+        venue = get_object_or_404(
+            Venue, slug=venue_slug, location__slug=location_slug)
         return render(request, self.template_name, VenueContractFormManager(venue).get_forms())
 
-    def post(self, request, venue_id):
-        venue = get_object_or_404(Venue, pk=venue_id)
+    def post(self, request, location_slug, venue_slug):
+        venue = get_object_or_404(
+            Venue, slug=venue_slug, location__slug=location_slug)
         venue_contract_form = VenueContractFormManager(venue, request)
         if venue_contract_form.is_valid():
             venue_contract = venue_contract_form.save()
