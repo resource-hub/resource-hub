@@ -592,6 +592,7 @@ class Contract(models.Model):
     def set_expired(self) -> None:
         if self.state is self.STATE.PENDING:
             self.move(self.STATE.EXPIRED)
+            self.save()
             return
         raise ValueError(
             'Cannot move from {} to state expired'.format(self.state))
