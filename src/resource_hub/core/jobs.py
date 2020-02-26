@@ -27,7 +27,7 @@ def init_schedule():
 
 def expire_contracts():
     pending_contracts = Contract.objects.filter(
-        state=Contract.STATE_PENDING).select_subclasses()
+        state=Contract.STATE.PENDING).select_subclasses()
     for contract in pending_contracts:
         if contract.is_expired:
             contract.set_expired()

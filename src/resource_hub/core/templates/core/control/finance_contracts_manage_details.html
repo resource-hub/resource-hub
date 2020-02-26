@@ -3,7 +3,7 @@
 
 {% block content %}
 <h1>{% trans 'Contract details' %}</h1>
-{% ifequal contract.state 'p' %}
+{% ifequal contract.state CONTRACT_STATE.PENDING %}
 <div class="ui segment">
     <div class="ui grid">
         <div class="eight wide column">
@@ -46,7 +46,7 @@
                 return parseInt(x);
             });
 
-            var x = setInterval(function () {
+            let x = setInterval(function () {
                 time[2] = time[2] - 1;
                 if (time[2] < 0) {
                     time[2] = 59;

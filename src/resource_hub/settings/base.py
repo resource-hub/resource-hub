@@ -111,6 +111,7 @@ TEMPLATES = [
 
                 'resource_hub.core.context_processors.actor',
                 'resource_hub.core.context_processors.map_api_token',
+                'resource_hub.core.context_processors.contract_states',
             ],
         },
     },

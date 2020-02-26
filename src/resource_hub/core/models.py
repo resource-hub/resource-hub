@@ -23,7 +23,6 @@ from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
 from model_utils.fields import MonitorField
 from model_utils.managers import InheritanceManager
-from resource_hub.core.settings import COUNTRIES_WITH_STATE_IN_ADDRESS
 
 
 class Actor(models.Model):
@@ -413,19 +412,19 @@ class OrganizationMember(models.Model):
 
 class Payment(models.Model):
     # constants
-    STATE_CREATED = 'c'
-    STATE_PENDING = 'p'
-    STATE_FINALIZED = 'f'
-    STATE_FAILED = 'fa'
-    STATE_CANCELED = 'ca'
-    STATE_REFUNDED = 'r'
+    CREATED = 'c'
+    PENDING = 'p'
+    FINALIZED = 'f'
+    FAILED = 'fa'
+    CANCELED = 'ca'
+    REFUNDED = 'r'
 
     STATES = [
-        (STATE_PENDING, _('pending')),
-        (STATE_FINALIZED, _('finalized')),
-        (STATE_FAILED, _('failed')),
-        (STATE_CANCELED, _('canceled')),
-        (STATE_REFUNDED, _('refunded')),
+        (PENDING, _('pending')),
+        (FINALIZED, _('finalized')),
+        (FAILED, _('failed')),
+        (CANCELED, _('canceled')),
+        (REFUNDED, _('refunded')),
     ]
 
     # fields
@@ -466,22 +465,23 @@ class DeclarationOfIntent(models.Model):
 
 class Contract(models.Model):
     # constants
-    STATE_PENDING = 'p'
-    STATE_CONFIRMED = 'co'
-    STATE_ACCEPTED = 'a'
-    STATE_FINALIZED = 'f'
-    STATE_DISPUTED = 'd'
-    STATE_EXPIRED = 'x'
-    STATE_CANCELED = 'c'
+    class STATE:
+        PENDING = 'p'
+        CONFIRMED = 'co'
+        ACCEPTED = 'a'
+        FINALIZED = 'f'
+        DISPUTED = 'd'
+        EXPIRED = 'x'
+        CANCELED = 'c'
 
     STATES = [
-        (STATE_PENDING, _('pending')),
-        (STATE_CONFIRMED, _('confirmed')),
-        (STATE_ACCEPTED, _('accepted')),
-        (STATE_FINALIZED, _('finalized')),
-        (STATE_DISPUTED, _('disputed')),
-        (STATE_EXPIRED, _('expired')),
-        (STATE_CANCELED, _('canceled')),
+        (STATE.PENDING, _('pending')),
+        (STATE.CONFIRMED, _('confirmed')),
+        (STATE.ACCEPTED, _('accepted')),
+        (STATE.FINALIZED, _('finalized')),
+        (STATE.DISPUTED, _('disputed')),
+        (STATE.EXPIRED, _('expired')),
+        (STATE.CANCELED, _('canceled')),
     ]
 
     # fields
@@ -543,7 +543,7 @@ class Contract(models.Model):
 
     @property
     def is_pending(self) -> bool:
-        return self.state is self.STATE_PENDING
+        return self.state is self.STATE.PENDING
 
     @property
     def expiration_period(self) -> int:
@@ -560,9 +560,9 @@ class Contract(models.Model):
         return delta.total_seconds() <= 0
 
     def set_expired(self) -> None:
-        if self.state is self.STATE_PENDING:
-            self.call_triggers(self.STATE_EXPIRED)
-            self.state = self.STATE_EXPIRED
+        if self.state is self.STATE.PENDING:
+            self.call_triggers(self.STATE.EXPIRED)
+            self.state = self.STATE.EXPIRED
             self.save()
             return
         raise ValueError(
@@ -642,7 +642,7 @@ class ContractTrigger(Trigger):
 
     @staticmethod
     def default_condition() -> str:
-        return Contract.STATE_ACCEPTED
+        return Contract.STATE.ACCEPTED
 
 
 class PaymentMethod(Trigger):
@@ -661,7 +661,7 @@ class PaymentMethod(Trigger):
 
     @staticmethod
     def default_condition() -> str:
-        return Contract.STATE_ACCEPTED
+        return Contract.STATE.ACCEPTED
 
     @staticmethod
     def is_prepayment() -> bool:
