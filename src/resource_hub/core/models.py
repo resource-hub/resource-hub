@@ -21,6 +21,7 @@ import pycountry
 from django_countries.fields import CountryField
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
+from ipware import get_client_ip
 from model_utils.fields import MonitorField
 from model_utils.managers import InheritanceManager
 
@@ -459,27 +460,51 @@ class DeclarationOfIntent(models.Model):
         null=True,
         on_delete=models.SET_NULL,
     )
-    ip = models.GenericIPAddressField()
-    timestamp = models.DateTimeField()
+    ip = models.GenericIPAddressField(
+        null=True,
+    )
+    ip_routable = models.BooleanField(
+        default=True,
+    )
+    timestamp = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    @classmethod
+    def create(cls, request):
+        client_ip, is_routable = get_client_ip(request)
+        if client_ip is None:
+            # Unable to get the client's IP address
+            ip_routable = False
+        else:
+            # We got the client's IP address
+            ip_routable = is_routable
+        return cls.objects.create(
+            user=request.user,
+            ip=client_ip,
+            ip_routable=ip_routable
+        )
 
 
 class Contract(models.Model):
     # constants
     class STATE:
+        # active states
         PENDING = 'p'
-        CONFIRMED = 'co'
-        ACCEPTED = 'a'
+        WAITING = 'w'
+        RUNNING = 'r'
+        DISPUTING = 'd'
+        # final states
         FINALIZED = 'f'
-        DISPUTED = 'd'
         EXPIRED = 'x'
         CANCELED = 'c'
 
     STATES = [
         (STATE.PENDING, _('pending')),
-        (STATE.CONFIRMED, _('confirmed')),
-        (STATE.ACCEPTED, _('accepted')),
+        (STATE.WAITING, _('waiting')),
+        (STATE.RUNNING, _('running')),
+        (STATE.DISPUTING, _('disputing')),
         (STATE.FINALIZED, _('finalized')),
-        (STATE.DISPUTED, _('disputed')),
         (STATE.EXPIRED, _('expired')),
         (STATE.CANCELED, _('canceled')),
     ]
@@ -547,11 +572,7 @@ class Contract(models.Model):
 
     @property
     def expiration_period(self) -> int:
-        return 1
-
-    # methods
-    def call_triggers(self, state):
-        return
+        return 30
 
     @property
     def is_expired(self) -> bool:
@@ -559,14 +580,32 @@ class Contract(models.Model):
             minutes=self.expiration_period) - (timezone.now() - self.created_at))
         return delta.total_seconds() <= 0
 
+    # methods
+    def call_triggers(self, state):
+        return
+
+    # state setters
+    def move(self, state):
+        self.call_triggers(state)
+        self.state = state
+
     def set_expired(self) -> None:
         if self.state is self.STATE.PENDING:
-            self.call_triggers(self.STATE.EXPIRED)
-            self.state = self.STATE.EXPIRED
-            self.save()
+            self.move(self.STATE.EXPIRED)
             return
         raise ValueError(
             'Cannot move from {} to state expired'.format(self.state))
+
+    def set_waiting(self, request) -> None:
+        if self.state is self.STATE.PENDING:
+            self.move(self.STATE.WAITING)
+            self.confirmation = DeclarationOfIntent.create(
+                request=request,
+            )
+            self.save()
+            return
+        raise ValueError(
+            'Cannot move from {} to state waiting'.format(self.state))
 
 
 class Trigger(models.Model):
@@ -642,7 +681,7 @@ class ContractTrigger(Trigger):
 
     @staticmethod
     def default_condition() -> str:
-        return Contract.STATE.ACCEPTED
+        return Contract.STATE.RUNNING
 
 
 class PaymentMethod(Trigger):
@@ -661,7 +700,7 @@ class PaymentMethod(Trigger):
 
     @staticmethod
     def default_condition() -> str:
-        return Contract.STATE.ACCEPTED
+        return Contract.STATE.RUNNING
 
     @staticmethod
     def is_prepayment() -> bool:

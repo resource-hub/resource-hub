@@ -58,6 +58,7 @@ pycountry = "*"
 django-countries = "*"
 rq-scheduler = "*"
 django-model-utils = "*"
+django-ipware = "*"
 
 [requires]
 python_version = "*"

@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "ac72038eebcd0a22b4064014743fa014d9c277311c9fc0605434c5bdf409b27a"
+            "sha256": "6aa00735a1843ddb2ca124b73d55c1e93ede502dafcac9d99da75794661f4cab"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -323,6 +323,13 @@
             ],
             "index": "pypi",
             "version": "==4.0.2"
+        },
+        "django-ipware": {
+            "hashes": [
+                "sha256:a7c7a8fd019dbdc9c357e6e582f65034e897572fc79a7e467674efa8aef9d00b"
+            ],
+            "index": "pypi",
+            "version": "==2.1.0"
         },
         "django-model-utils": {
             "hashes": [
@@ -888,11 +895,11 @@
         },
         "zope": {
             "hashes": [
-                "sha256:2a969526c658fa07bf0b2f08e7bc6c1144b624e4af816536b228543d7b5fac72",
-                "sha256:735312262beef5a557ff47db70740270e7dcabe5f2cc77ac072e385ef6cb9583"
+                "sha256:a41e53ee1263761e0b35c6c825264b929a5e7074ce7e6290f7b788bc4c5bc12c",
+                "sha256:ef592e722987880d88f619e7059a8f8cfef7187a6fd61c08c49a54d718943ab1"
             ],
             "index": "pypi",
-            "version": "==4.2.1"
+            "version": "==4.3"
         },
         "zope.annotation": {
             "hashes": [
