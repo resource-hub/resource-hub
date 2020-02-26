@@ -36,14 +36,18 @@ class AddressSerializer(serializers.ModelSerializer):
 
 
 class ContractSerializer(serializers.ModelSerializer):
-    name = serializers.SerializerMethodField()
+    type_name = serializers.SerializerMethodField()
     state = serializers.SerializerMethodField()
+    created_at = serializers.SerializerMethodField()
     creditor = ActorSerializer()
     debitor = ActorSerializer()
     link = serializers.SerializerMethodField()
 
-    def get_name(self, obj):
+    def get_type_name(self, obj):
         return obj.verbose_name
+
+    def get_created_at(self, obj):
+        return obj.created_at.strftime('%m.%d.%Y %H:%m:%S')
 
     def get_state(self, obj):
         return obj.get_state_display()
@@ -53,7 +57,8 @@ class ContractSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Contract
-        fields = ['name', 'state', 'creditor', 'debitor', 'link', ]
+        fields = ['type_name', 'state', 'creditor',
+                  'debitor', 'link', 'created_at', ]
 
 
 class LocationSerializer(serializers.ModelSerializer):

@@ -53,4 +53,4 @@ class Contracts(generics.ListCreateAPIView):
     serializer_class = ContractSerializer
 
     def get_queryset(self):
-        return Contract.objects.filter(Q(creditor=self.request.actor) | Q(debitor=self.request.actor)).select_subclasses()
+        return Contract.objects.filter(Q(creditor=self.request.actor) | Q(debitor=self.request.actor)).select_subclasses().order_by('-created_at')
