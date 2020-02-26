@@ -651,6 +651,7 @@ class PaymentMethod(Trigger):
     fee_value = models.DecimalField(
         decimal_places=3,
         max_digits=13,
+        default=0,
     )
 
     # attributes
