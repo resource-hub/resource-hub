@@ -27,18 +27,26 @@
 {% block scripts %}
 <script src="{% static 'datetimepicker/build/jquery.datetimepicker.full.min.js' %}"></script>
 <script>
+    function setEnd(currentDateTime) {
+        end.datetimepicker({
+            minDate: currentDateTime,
+            defaultTime: currentDateTime
+        })
+    }
+
     var locale = "{% get_current_language as LANG %}{{ LANG }}";
     jQuery.datetimepicker.setLocale(locale);
-    $('#id_dtstart').datetimepicker({
+    var start = $('#id_dtstart').datetimepicker({
+        onChangeDateTime: setEnd,
         step: 30,
         format: 'Y-m-d H:i',
         mask: true
 
     });
-    $('#id_dtend').datetimepicker({
+    var end = $('#id_dtend').datetimepicker({
         step: 30,
         format: 'Y-m-d H:i',
-        mask: true
+        mask: true,
     });
 </script>
 <script src="{% url 'core:jsi18n' %}"></script>
