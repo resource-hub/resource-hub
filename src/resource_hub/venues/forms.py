@@ -5,6 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from datetimepicker.widgets import DateTimePicker
 from django_summernote.widgets import SummernoteWidget
+from resource_hub.core.fields import HTMLField
 from resource_hub.core.models import Location, PaymentMethod
 from resource_hub.core.utils import get_associated_objects
 from resource_hub.core.widgets import TimeInputCustom
@@ -19,7 +20,7 @@ class VenueForm(forms.ModelForm):
             user,
             Location
         )
-    description = forms.CharField(widget=SummernoteWidget())
+    description = HTMLField()
 
     class Meta:
         model = Venue
@@ -38,7 +39,7 @@ class VenueContractProcedureForm(forms.ModelForm):
             PaymentMethod
         ).select_subclasses()
 
-    terms_and_conditions = forms.CharField(widget=SummernoteWidget())
+    terms_and_conditions = HTMLField()
 
     class Meta:
         model = VenueContractProcedure
