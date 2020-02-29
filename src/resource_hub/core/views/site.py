@@ -14,8 +14,7 @@ def index(request):
 
 class Home(View):
     def get(self, request):
-        context = {'userform': ActorForm()}
-        return render(request, 'core/home.html', context)
+        return render(request, 'core/home.html')
 
 
 class Terms(View):

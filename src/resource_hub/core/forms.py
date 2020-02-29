@@ -1,6 +1,7 @@
 import re
 from datetime import datetime
 
+import bleach
 import requests
 from django import forms
 from django.conf import settings
@@ -12,10 +13,12 @@ from django.utils.dateparse import parse_date
 from django.utils.translation import ugettext_lazy as _
 
 from django_summernote.widgets import SummernoteWidget
-from resource_hub.core.models import (Actor, Address, BankAccount, Location,
-                                      Organization, OrganizationMember, User)
-from resource_hub.core.widgets import UISearchField
 from schwifty import BIC, IBAN
+
+from .fields import HTMLField
+from .models import (Actor, Address, BankAccount, Location, Organization,
+                     OrganizationMember, User)
+from .widgets import UISearchField
 
 
 class FormManager():
@@ -45,7 +48,7 @@ class FormManager():
 
 
 class ActorForm(forms.ModelForm):
-    info_text = forms.CharField(widget=SummernoteWidget(), required=False)
+    info_text = HTMLField(required=False)
 
     class Meta:
         model = Actor
@@ -56,13 +59,16 @@ class ActorForm(forms.ModelForm):
 class UserBaseForm(UserCreationForm):
     birth_date = forms.CharField(
         widget=forms.widgets.DateTimeInput(attrs={"type": "date"}))
-    info_text = forms.CharField(widget=SummernoteWidget(), required=False)
+    info_text = HTMLField(required=False)
 
     class Meta:
         model = User
         fields = ['username', 'first_name', 'last_name',
                   'email', 'birth_date', 'password1', 'password2', 'image', 'telephone_public', 'telephone_private',
                   'email_public', 'website', 'info_text']
+
+    def clean_info_text(self):
+        return bleach.clean(self.cleaned_data['info_text'])
 
     def clean_birth_date(self):
         OLDEST_PERSON = 44694
@@ -86,7 +92,10 @@ class UserBaseForm(UserCreationForm):
 class OrganizationForm(forms.ModelForm):
     name = forms.CharField(max_length=100, label=_(
         'Organization name'), help_text=_('Please include your legal form'))
-    info_text = forms.CharField(widget=SummernoteWidget(), required=False)
+    info_text = HTMLField(required=False)
+
+    def clean_info_text(self):
+        return bleach.clean(self.cleaned_data['info_text'])
 
     def clean_name(self):
         name = self.cleaned_data['name']
@@ -187,11 +196,11 @@ class ProfileFormManager():
         self.is_valid = True
         self.request = request
         self.entity = entity
-        self.actor_form = ActorForm(initial=model_to_dict(self.entity))
+        self.actor_form = ActorForm(instance=self.entity)
         self.address_form = AddressForm(
-            initial=model_to_dict(self.entity.address))
+            instance=self.entity.address)
         self.bank_account_form = BankAccountForm(
-            initial=model_to_dict(self.entity.bank_account))
+            instance=self.entity.bank_account)
 
     def change_info(self):
         self.actor_form = ActorForm(
