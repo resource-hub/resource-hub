@@ -1,0 +1,19 @@
+{% load i18n %}
+
+<h2>{% trans 'Event details' %}</h2>
+<div class="ui list">
+    <div class="item">
+        <div class="header">{% trans 'Name' %}</div>
+        {{ contract.event.name }}
+    </div>
+    <div class="item">
+        <div class="header">{% trans 'Category' %}</div>
+        {{ contract.event.category.name }}
+    </div>
+    <div class="item">
+        <div class="header">{% trans 'Tags' %}</div>
+        {% for tag in contract.event.tags.all %}
+        {{ tag }}
+        {% endfor %}
+    </div>
+</div>

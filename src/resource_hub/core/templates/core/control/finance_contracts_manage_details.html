@@ -1,39 +1,52 @@
 {% extends "control/__base.html" %}
 {% load i18n %}
 
+{% block admin-navigation %}
+{% url 'control:finance_contracts_manage' as url %}
+{% include '_back_button.html' with url=url %}
+{% endblock %}
+
 {% block content %}
 <h1>{% trans 'Contract details' %}</h1>
-{% ifequal contract.state CONTRACT_STATE.PENDING %}
+{% if contract.state == CONTRACT_STATE.PENDING %}
 <div class="ui segment">
-    <div class="ui grid">
-        <div class="eight wide column">
-            <p class="">
-                <i class="info circle icon"></i>
-                {% trans 'The contract is still pending. Until confirmation, cancellation or expiration the items will appear as booked.'  %}
-            </p>
-        </div>
-        <div class="eight wide column">
-            <div class="ui tiny red right floated statistic">
-                <div id="timer" class="value">
-                    {{ timer }}
-                </div>
-                <!-- <div class="label">
-                    {% trans 'to expiration' %}
-                </div> -->
-            </div>
+    <div class="ui tiny red right floated statistic">
+        <div id="timer" class="value" style="margin-top: 0 !important; line-height: inherit;">
+            {{ timer }}
         </div>
     </div>
-    <form id="choices" class="small-container" method="POST">
-        <button class="ui negative right labeled icon button" name="choice" value="cancel" type="submit">
-            {% trans 'Cancel' %}
-            <i class="close icon"></i>
-        </button>
-        <button class="ui positive right labeled right floated icon button" name="choice" value="confirm" type="submit">
-            {% trans 'Confirm' %}
-            <i class="check icon"></i>
-        </button>
-    </form>
+    <p class="">
+        <i class="info circle icon"></i>
+        {% trans 'The contract is still pending. Until confirmation, cancellation or expiration the items will appear as booked.'  %}
+    </p>
 </div>
+{% endif %}
+<h2>{{ contract.verbose_name }} <a class="ui {{ contract.state }} tag label">{{ contract.get_state_display }}</a></h2>
+<div class="ui grid">
+    <div class="ui eight wide column">
+        <div class="ui tiny header">{% trans 'Creditor' %}</div>
+        {% include 'core/_actor_profile_small.html' with actor=contract.creditor %}
+    </div>
+    <div class="ui eight wide column">
+        <div class="ui tiny header">{% trans 'Debitor' %}</div>
+        {% include 'core/_actor_profile_small.html' with actor=contract.debitor %}
+    </div>
+</div>
+<div class="section-container">
+    {{ contract.overview }}
+</div>
+{% ifequal contract.state CONTRACT_STATE.PENDING %}
+{% include 'core/_identity.html' with actor=actor %}
+<form id="choices" class="small-container" method="POST">
+    <button class="ui negative right labeled icon button" name="choice" value="cancel" type="submit">
+        {% trans 'Cancel' %}
+        <i class="close icon"></i>
+    </button>
+    <button class="ui positive right labeled right floated icon button" name="choice" value="confirm" type="submit">
+        {% trans 'Confirm' %}
+        <i class="check icon"></i>
+    </button>
+</form>
 {% endifequal %}
 {% endblock %}
 

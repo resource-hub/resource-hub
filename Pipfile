@@ -59,6 +59,8 @@ django-countries = "*"
 rq-scheduler = "*"
 django-model-utils = "*"
 django-ipware = "*"
+django-datetimepicker = {git = "https://github.com/escodebar/django-datetimepicker.git"}
+bleach = "*"
 
 [requires]
 python_version = "*"

@@ -6,10 +6,6 @@ from resource_hub.api.urls import api_urls
 from resource_hub.control.urls import control_urls
 from resource_hub.core.views import api, auth, control, site
 
-JS_INFO_DICT = {
-    'packages': ('recurrence', ),
-}
-
 control_urls.register([
     # account
     path('', control.Home.as_view(), name='home'),
@@ -104,7 +100,6 @@ urlpatterns = [
 
     # locale stuff
     path('i18n/', include('django.conf.urls.i18n')),
-    path('jsi18n/', JavaScriptCatalog.as_view(), JS_INFO_DICT),
     path('jsi18n.js', JavaScriptCatalog.as_view(
         packages=['recurrence']), name='jsi18n'),
 

@@ -1,13 +1,19 @@
 {% extends 'core/__base.html' %}
 {% load i18n %}
-
+{% load static %}
+{% block extra_head %}
+<link rel="stylesheet" type="text/css" href="{% static 'datetimepicker/jquery.datetimepicker.css' %}" />
+{% endblock %}
 {% block content %}
 <h1>
     {% trans 'create event' %}
 </h1>
+
 <form class="ui form" method="POST" enctype="multipart/form-data">
     {% include '_form.html' with form=venue_contract_form %}
-    {% include '_form.html' with form=event_form %}
+    <div id="container">
+        {% include '_form.html' with form=event_form %}
+    </div>
     {% include 'core/_identity.html' with actor=actor %}
     <button class="ui positive right labeled icon button" type="submit">
         {% trans 'Check event' %}
@@ -16,7 +22,36 @@
 </form>
 {% endblock %}
 
+
+
 {% block scripts %}
+<script src="{% static 'datetimepicker/build/jquery.datetimepicker.full.min.js' %}"></script>
+<script>
+    var locale = "{% get_current_language as LANG %}{{ LANG }}";
+    jQuery.datetimepicker.setLocale(locale);
+    $('#id_dtstart').datetimepicker({
+        step: 30,
+        format: 'Y-m-d H:i',
+        mask: true
+
+    });
+    $('#id_dtend').datetimepicker({
+        step: 30,
+        format: 'Y-m-d H:i',
+        mask: true
+    });
+</script>
 <script src="{% url 'core:jsi18n' %}"></script>
 {{ event_form.media }}
+<script>
+    $(document).ready(function () {
+        $('#container').bind('DOMSubtreeModified', function (e) {
+            // Content change handler
+            $('input[name="limit"]').prop('checked', true);
+            $('.until-count').removeClass('disabled');
+            $('input[name="until_count"]').prop('disabled', false);
+            $('.date-field').prop('disabled', false);
+        });
+    })
+</script>
 {% endblock %}

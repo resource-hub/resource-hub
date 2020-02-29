@@ -3,18 +3,20 @@
 {% load static %}
 
 {% block extra_head %}
+{% get_current_language as LANG %}
 <link href="{% static 'fullcalendar/main.min.css' %}" rel="stylesheet">
 <link href="{% static 'fullcalendar/daygrid/main.min.css' %}" rel="stylesheet">
 <script src="{% static 'fullcalendar/main.min.js' %}"></script>
 <script src="{% static 'fullcalendar/daygrid/main.min.js' %}"></script>
-
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        var locale = '{{ LANG }}';
         var calendarEl = document.getElementById('calendar');
 
         var calendar = new FullCalendar.Calendar(calendarEl, {
             events: "{% url 'api:venues_event_feed' venue_id=venue.id %}",
-            plugins: ['dayGrid']
+            plugins: ['dayGrid'],
+            locale: locale
         });
 
         calendar.render();
@@ -23,16 +25,17 @@
 {% endblock %}
 
 {% block content %}
+{% get_current_language as LANG %}
+<h1>{{ venue.name }}</h1>
+<div id='calendar'></div>
 <div class="ui stackable two column grid">
     <div class="column">
-        <h1>{{ venue.name }}</h1>
         <p>
-            {{ venue.description |safe }}
+            {{ venue.description|safe }}
         </p>
     </div>
     <div class="column">
         {% if venue.bookable %}
-        <div id='calendar'></div>
         <div class="spacer">
             <a class="ui right labeled positive icon button"
                 href="{% url 'venues:events_create' venue_slug=venue.slug location_slug=venue.location.slug %}">

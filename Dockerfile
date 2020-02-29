@@ -9,5 +9,4 @@ RUN apk add --no-cache linux-headers bash gcc \
 
 WORKDIR /site
 COPY ./ /site
-RUN pip3 install pipenv
-RUN cd src && pipenv install --system --deploy --ignore-pipfile --sequential 
+RUN pip3 install -r requirements.txt 

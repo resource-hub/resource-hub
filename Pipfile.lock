@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "6aa00735a1843ddb2ca124b73d55c1e93ede502dafcac9d99da75794661f4cab"
+            "sha256": "d7ebc328a766b145b3bbf81de7ebeb741a4079122c3deed0d932da540905b718"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -89,6 +89,14 @@
                 "sha256:e1505eeed31b0f4ce2dbb3bc8eb256c04cc2b3b72af7d551a4ab6efd5cbe5dae"
             ],
             "version": "==4.8.2"
+        },
+        "bleach": {
+            "hashes": [
+                "sha256:44f69771e2ac81ff30d929d485b7f9919f3ad6d019b6b20c74f3b8687c3f70df",
+                "sha256:aa8b870d0f46965bac2c073a93444636b0e1ca74e9777e34f03dd494b8a59d48"
+            ],
+            "index": "pypi",
+            "version": "==3.1.1"
         },
         "btrees": {
             "hashes": [
@@ -302,11 +310,14 @@
         },
         "django-countries": {
             "hashes": [
-                "sha256:1cefad9ec804d6a0318b91c5394b5aef00336755928f44d0a6420507719d65c8",
-                "sha256:22e96236101783cfe5222ef5174972242a7e8176336d119a4dc111aedce35897"
+                "sha256:cca351f304d18187b6200e1aae381c2902045c33aea5f4da58fd74685b7cd4fc"
             ],
             "index": "pypi",
-            "version": "==5.5"
+            "version": "==6.0"
+        },
+        "django-datetimepicker": {
+            "git": "https://github.com/escodebar/django-datetimepicker.git",
+            "ref": "6ab8ed0be1beae0cf36cd888bc33426776796ce6"
         },
         "django-extensions": {
             "hashes": [
@@ -605,11 +616,11 @@
         },
         "pyhamcrest": {
             "hashes": [
-                "sha256:36cda5e849e3ee9ce54628667471e5e769f596259bb3c13c3596f6059a615ef8",
-                "sha256:5959cb4ab465b303522d2e0d270a6ee581c3ad9ba419e304bb6ebe50a60ea37a"
+                "sha256:55abfc14ec38ed2bd6093add3be72385c1b7fd8e6aeb27448c00f95cb501c60e",
+                "sha256:9f12b9b3b109d4877b2a1a42a9fb8acbf350213d3b1873eecf6eb07d6ac3caef"
             ],
             "index": "pypi",
-            "version": "==2.0.0"
+            "version": "==2.0.1"
         },
         "pyopenssl": {
             "hashes": [
@@ -791,6 +802,13 @@
                 "sha256:77ff3f3226931a1d7d8624c5371de07c8e90c7e5d80c5cc660d72659aaf23f38"
             ],
             "version": "==1.4.3"
+        },
+        "webencodings": {
+            "hashes": [
+                "sha256:a0af1213f3c2226497a97e2b3aa01a7e4bee4f403f95be16fc9acd2947514a78",
+                "sha256:b36a1c245f2d304965eb4e0a82848379241dc04b865afcc4aab16748587e1923"
+            ],
+            "version": "==0.5.1"
         },
         "webob": {
             "hashes": [

@@ -2,6 +2,7 @@ import uuid
 from datetime import datetime
 
 from django.db import models
+from django.template.loader import render_to_string
 from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
 
@@ -148,8 +149,9 @@ class Event(models.Model):
     description = models.CharField(
         max_length=128,
     )
-    start = models.TimeField()
-    end = models.TimeField()
+    dtstart = models.DateTimeField()
+    dtend = models.DateTimeField()
+    dtlast = models.DateTimeField()
     organizer = models.ForeignKey(
         Actor,
         on_delete=models.CASCADE,
@@ -173,10 +175,11 @@ class Event(models.Model):
     )
     recurrences = RecurrenceField(
         null=False,
+        blank=True,
+        include_dtstart=True,
     )
     thumbnail_original = models.ImageField(
         null=False,
-        blank=True,
         upload_to='images/'
     )
     thumbnail = ImageSpecField(
@@ -241,6 +244,21 @@ class VenueContract(Contract):
         Equipment,
     )
 
+    # attributes
     @property
     def verbose_name(self):
         return _('Venue booking')
+
+    @property
+    def overview(self):
+
+        return render_to_string(
+            'venues/_contract_overview.html',
+            context={
+                'contract': self,
+            }
+        )
+
+    # methods
+    def claim_factory(self):
+        return

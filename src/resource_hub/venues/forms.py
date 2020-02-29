@@ -1,6 +1,9 @@
 from django import forms
+from django.contrib.admin.widgets import AdminDateWidget
+from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
+from datetimepicker.widgets import DateTimePicker
 from django_summernote.widgets import SummernoteWidget
 from resource_hub.core.models import Location, PaymentMethod
 from resource_hub.core.utils import get_associated_objects
@@ -100,28 +103,142 @@ class EventForm(forms.ModelForm):
         help_text=_(
             'List the event in public feeds and show its content to third parties?'),
     )
-    start = forms.TimeField(widget=TimeInputCustom())
-    end = forms.TimeField(widget=TimeInputCustom())
-
-    class Meta:
-        model = Event
-        fields = ['name', 'description', 'start', 'end', 'recurrences', 'thumbnail_original',
-                  'tags', 'category', 'is_public', ]
+    dtstart = forms.DateTimeField(
+        label=_('Start of the event'),
+    )
+    dtend = forms.DateTimeField(
+        label=_('End of the event'),
+    )
 
     def __init__(self, venue, *args, **kwargs):
         super(EventForm, self).__init__(*args, **kwargs)
         self.venue = venue
+        self.new_event = None
+        self.dtlast = None
 
-    def save(self, organizer, user, commit=True):
-        new_event = super(EventForm, self).save(commit=False)
-        new_event.organizer = organizer
-        new_event.created_by = user
-        new_event.updated_by = user
-        new_event.venue = self.venue
+    class Meta:
+        model = Event
+        fields = ['name', 'description', 'dtstart', 'dtend', 'recurrences', 'thumbnail_original',
+                  'tags', 'category', 'is_public', ]
+        labels = {
+            'recurrences': _('Recurs on')
+        }
 
-        if commit:
-            new_event.save()
-        return new_event
+    def clean_dtend(self):
+        dtstart = self.cleaned_data['dtstart']
+        dtend = self.cleaned_data['dtend']
+
+        if dtstart > dtend:
+            raise forms.ValidationError(
+                _('Start of event is after end of event'), code='start-after-end')
+
+        if dtstart == dtend:
+            raise forms.ValidationError(
+                _('Start of event is equal to end'), code='start-equal-to-end')
+        return dtend
+
+    def clean_recurrences(self):
+        recurrences = self.cleaned_data['recurrences']
+        dtstart = self.cleaned_data['dtstart'].replace(tzinfo=None)
+        dtend = self.cleaned_data['dtend'].replace(tzinfo=None)
+        recurrences.dtstart = dtstart
+        dates = recurrences.occurrences()
+        for date in dates:
+            self.dtlast = date
+        t = dtend.time()
+        self.dtlast = self.dtlast.replace(
+            hour=t.hour, minute=t.minute, second=t.second, tzinfo=None)
+
+        start_inside = Q(
+            dtstart__lte=dtstart,
+        )
+        start_inside.add(
+            Q(dtlast__gte=dtstart),
+            Q.AND
+        )
+        last_inside = Q(
+            dtstart__lte=self.dtlast,
+        )
+        last_inside.add(
+            Q(dtlast__gte=self.dtlast),
+            Q.AND
+        )
+        intersect = start_inside
+        intersect.add(last_inside, Q.OR)
+
+        query = Q(venue=self.venue)
+        query.add(Q(intersect), Q.AND)
+
+        events = Event.objects.filter(
+            query
+        )
+        conflicts = []
+        for new_date in dates:
+            t = dtstart.time()
+            new_date_start = new_date.replace(
+                hour=t.hour, minute=t.minute, second=t.second)
+            t = self.dtlast.time()
+            new_date_end = new_date.replace(
+                hour=t.hour, minute=t.minute, second=t.second)
+            for event in events:
+                old_dates = event.recurrences.between(
+                    dtstart,
+                    self.dtlast,
+                    dtstart=dtstart,
+                    inc=True
+                )
+
+                for old_date in old_dates:
+                    t = event.dtstart.time()
+                    old_date_start = old_date.replace(
+                        hour=t.hour, minute=t.minute, second=t.second, tzinfo=None)
+                    t = event.dtlast.time()
+                    old_date_end = old_date.replace(
+                        hour=t.hour, minute=t.minute, second=t.second, tzinfo=None)
+                    print("{} - {} | {} - {}".format(new_date_start,
+                                                     new_date_end, old_date_start, old_date_end))
+                    if (
+                        (
+                            old_date_start <= new_date_start and
+                            old_date_end >= new_date_start
+                        ) or
+                        (
+                            old_date_start <= new_date_end and
+                            old_date_start >= new_date_start
+                        )
+                    ):
+                        conflicts.append(
+                            _('There is a conflict with {} on {} to {}'.format(
+                                event.name, new_date_start, new_date_end))
+                        )
+        if conflicts:
+            raise forms.ValidationError(
+                conflicts
+            )
+
+        return recurrences
+
+    def pre_save(self, *args, **kwargs):
+        # print(self.new_event.recurrences.count())
+        return False
+
+    def save(self, request, *args, commit=True, **kwargs):
+        self.new_event = super(EventForm, self).save(
+            commit=False, *args, **kwargs)
+        self.new_event.organizer = request.actor
+        self.new_event.created_by = request.user
+        self.new_event.updated_by = request.user
+        self.new_event.venue = self.venue
+        self.new_event.recurrences.dtstart = self.new_event.dtstart.replace(
+            tzinfo=None)
+        if self.dtlast is None:
+            self.new_event.dtlast = self.new_event.dtend
+        else:
+            self.new_event.dtlast = self.dtlast
+
+        self.new_event.save()
+        self.save_m2m()
+        return self.new_event
 
 
 class VenueContractForm(forms.ModelForm):
@@ -138,10 +255,15 @@ class VenueContractFormManager():
     def __init__(self, venue, request=None):
         self.request = request
         self.venue = venue
-        self.venue_contract_form = VenueContractForm(venue,
-                                                     request.POST) if request else VenueContractForm(venue)
-        self.event_form = EventForm(venue,
-                                    request.POST, request.FILES) if request else EventForm(venue)
+        self.venue_contract_form = VenueContractForm(
+            self.venue,
+            request.POST
+        ) if request else VenueContractForm(self.venue)
+        self.event_form = EventForm(
+            self.venue,
+            request.POST,
+            request.FILES
+        ) if request else EventForm(self.venue)
 
     def get_forms(self):
         return {
@@ -152,7 +274,8 @@ class VenueContractFormManager():
     def is_valid(self):
         return (
             self.venue_contract_form.is_valid() and
-            self.event_form.is_valid()
+            self.event_form.is_valid() and
+            self.event_form.pre_save()
         )
 
     def save(self, commit=True):
@@ -163,8 +286,8 @@ class VenueContractFormManager():
         new_venue_contract.creditor = self.venue.owner
         new_venue_contract.debitor = actor
         new_venue_contract.created_by = user
-        new_event = self.event_form.save(user, actor, commit=True)
-        new_venue_contract.event = new_event
+        self.new_event = self.event_form.save(self.request, commit=True)
+        new_venue_contract.event = self. new_event
 
         if commit:
             new_venue_contract.save()

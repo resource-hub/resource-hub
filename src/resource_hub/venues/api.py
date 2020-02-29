@@ -6,13 +6,13 @@ from django.db.models import Q
 from django.forms.models import model_to_dict
 from django.utils.translation import ugettext_lazy as _
 
+from resource_hub.venues.models import Event, Venue
+from resource_hub.venues.serializers import VenueSerializer
 from rest_framework import exceptions, filters, generics, status
 from rest_framework.decorators import (api_view, authentication_classes,
                                        permission_classes)
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from resource_hub.venues.models import Event, Venue
-from resource_hub.venues.serializers import VenueSerializer
 
 '''
 Thanks to https://stackoverflow.com/questions/41129921/validate-an-iso-8601-datetime-string-in-python
@@ -80,17 +80,20 @@ class VenueEvents(APIView):
         result = []
 
         for e in events:
+            print(e.dtstart)
             occurrences = e.recurrences.between(
                 start,
                 end,
+                inc=True,
+                dtstart=e.dtstart.replace(tzinfo=None)
             )
             for o in occurrences:
                 result.append({
                     'id': e.id,
                     'title': e.name,
                     'description': e.description,
-                    'start': datetime.combine(o.date(), e.start),
-                    'end': datetime.combine(o.date(), e.end),
+                    'start': datetime.combine(o.date(), e.dtstart.time()),
+                    'end': datetime.combine(o.date(), e.dtend.time()),
                 })
 
         return Response(result)

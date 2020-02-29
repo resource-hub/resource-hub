@@ -1,24 +1,12 @@
-import string
-from collections import OrderedDict
 from datetime import datetime, timedelta
-from decimal import Decimal
 
 from django.contrib.auth.models import AbstractUser
-from django.db import DatabaseError, IntegrityError, models, transaction
-from django.db.models import Max
-from django.db.models.functions import Cast
-from django.db.models.signals import post_save
-from django.dispatch import receiver
+from django.db import models
 from django.shortcuts import reverse
 from django.utils import timezone
-from django.utils.crypto import get_random_string
-from django.utils.functional import cached_property
 from django.utils.text import slugify
-from django.utils.translation import pgettext
 from django.utils.translation import ugettext_lazy as _
 
-import pycountry
-from django_countries.fields import CountryField
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
 from ipware import get_client_ip
@@ -177,7 +165,7 @@ class Address(models.Model):
 
     # Methods
     def __str__(self):
-        return '{} {} in {} {}'.format(
+        return '{} {}, {} {}'.format(
             self.street,
             self.street_number,
             self.postal_code,
@@ -486,6 +474,17 @@ class DeclarationOfIntent(models.Model):
         )
 
 
+class Claim(models.Model):
+    item = models.CharField(max_length=255)
+    amount = models.DecimalField(
+        decimal_places=5,
+        max_digits=15,
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+
 class Contract(models.Model):
     # constants
     class STATE:
@@ -527,6 +526,10 @@ class Contract(models.Model):
         max_length=2,
     )
     state_changed = MonitorField(monitor='state')
+    is_fixed_term = models.BooleanField(
+        default=True
+    )
+
     payment_method = models.ForeignKey(
         'PaymentMethod',
         null=True,
@@ -536,6 +539,10 @@ class Contract(models.Model):
         Payment,
         null=True,
         on_delete=models.SET_NULL,
+    )
+    claims = models.ManyToManyField(
+        Claim,
+        blank=True
     )
     confirmation = models.OneToOneField(
         DeclarationOfIntent,
@@ -580,6 +587,13 @@ class Contract(models.Model):
             minutes=self.expiration_period) - (timezone.now() - self.created_at))
         return delta.total_seconds() <= 0
 
+    @property
+    def overview(self) -> str:
+        '''
+        Returns description (may use html) of the contents of the contract
+        '''
+        raise NotImplementedError()
+
     # methods
     def call_triggers(self, state):
         return
@@ -607,6 +621,9 @@ class Contract(models.Model):
             return
         raise ValueError(
             'Cannot move from {} to state waiting'.format(self.state))
+
+    def claim_factory(self):
+        raise NotImplementedError()
 
 
 class Trigger(models.Model):
