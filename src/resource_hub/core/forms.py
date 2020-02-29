@@ -146,41 +146,6 @@ class BankAccountForm(forms.ModelForm):
         return bic
 
 
-class ActorFormManager():
-    def __init__(self, request=None):
-        if request is None:
-            self.actor_form = ActorForm()
-            self.address_form = AddressForm()
-            self.bank_account_form = BankAccountForm()
-        else:
-            self.actor_form = ActorForm(request.POST, request.FILES)
-            self.address_form = AddressForm(request.POST)
-            self.bank_account_form = BankAccountForm(request.POST)
-
-    def get_forms(self):
-        return {
-            'actor_form': self.actor_form,
-            'address_form': self.address_form,
-            'bank_account_form': self.bank_account_form,
-        }
-
-    def is_valid(self):
-        return (self.actor_form.is_valid() and
-                self.address_form.is_valid() and
-                self.bank_account_form.is_valid())
-
-    def save(self):
-        new_bank_account = self.bank_account_form.save()
-        new_address = self.address_form.save()
-
-        new_actor = self.actor_form.save(commit=False)
-        new_actor.address = new_address
-        new_actor.bank_account = new_bank_account
-        new_actor.save()
-
-        return new_actor
-
-
 class UserFormManager():
     def __init__(self, request=None):
         if request is None:
