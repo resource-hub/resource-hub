@@ -6,8 +6,13 @@
 {% get_current_language as LANG %}
 <link href="{% static 'fullcalendar/main.min.css' %}" rel="stylesheet">
 <link href="{% static 'fullcalendar/daygrid/main.min.css' %}" rel="stylesheet">
+<link href="{% static 'fullcalendar/timegrid/main.min.css' %}" rel="stylesheet">
+<link href="{% static 'fullcalendar/list/main.min.css' %}" rel="stylesheet">
+
 <script src="{% static 'fullcalendar/main.min.js' %}"></script>
 <script src="{% static 'fullcalendar/daygrid/main.min.js' %}"></script>
+<script src="{% static 'fullcalendar/timegrid/main.min.js' %}"></script>
+<script src="{% static 'fullcalendar/list/main.min.js' %}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         var locale = '{{ LANG }}';
@@ -15,8 +20,22 @@
 
         var calendar = new FullCalendar.Calendar(calendarEl, {
             events: "{% url 'api:venues_event_feed' venue_id=venue.id %}",
-            plugins: ['dayGrid'],
-            locale: locale
+            plugins: ['list', 'dayGrid'],
+            locale: locale,
+            defaultView: 'dayGridMonth',
+            contentHeight: 'auto',
+            header: { left: 'title', center: '', right: 'dayGridMonth,listWeek prev,next' },
+            buttonText: {
+                'dayGridMonth': "{% trans 'month' %}",
+                'listWeek': "{% trans 'week' %}"
+
+            },
+            // eventRender: function (info) {
+            //     console.log(info.el)
+            //     info.el = '';
+            //     return info.el;
+            // }
+
         });
 
         calendar.render();
@@ -24,28 +43,34 @@
 </script>
 {% endblock %}
 
-{% block content %}
-{% get_current_language as LANG %}
-<h1>{{ venue.name }}</h1>
-<div id='calendar'></div>
-<div class="ui stackable two column grid">
-    <div class="column">
-        <p>
-            {{ venue.description|safe }}
-        </p>
+{% block not_in_container %}
+<div class="container">
+    <div class="location-image" style="background-image: url('{{ venue.thumbnail_original.url }}')">
     </div>
-    <div class="column">
-        {% if venue.bookable %}
-        <div class="spacer">
-            <a class="ui right labeled positive icon button"
-                href="{% url 'venues:events_create' venue_slug=venue.slug location_slug=venue.location.slug %}">
-                {% trans 'book' %}
-                <i class="calendar alternate outline icon"></i>
-            </a>
+</div>
+{% get_current_language as LANG %}
+<div class="main container large">
+    <div class="ui stackable two column grid">
+        <div class="eight wide column">
+            <h1>{{ venue.name }}</h1>
+            <p>
+                {{ venue.description|safe }}
+            </p>
         </div>
-        {% else %}
-        <img class="ui fluid image" src="{{ venue.thumbnail_original.url }}">
-        {% endif %}
+        <div class="eight wide column">
+            <div class="calendar" id='calendar'></div>
+            {% if venue.bookable %}
+            <div class="spacer">
+                <a class="ui right labeled positive icon button"
+                    href="{% url 'venues:events_create' venue_slug=venue.slug location_slug=venue.location.slug %}">
+                    {% trans 'book' %}
+                    <i class="calendar alternate outline icon"></i>
+                </a>
+            </div>
+            {% else %}
+            <img class="ui fluid image" src="{{ venue.thumbnail_original.url }}">
+            {% endif %}
+        </div>
     </div>
 </div>
 {% endblock %}

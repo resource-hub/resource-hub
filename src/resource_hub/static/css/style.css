@@ -37,6 +37,13 @@
     margin: 0;
 }
 
+.fc-button-primary {
+    background-color: white !important;
+    color: rgba(0, 0, 0, .87) !important;
+    border: 0 !important;
+    font-size: 1.2em !important;
+}
+
 /**
   *
   * Tag specific   
@@ -278,6 +285,10 @@ td>a {
     padding: 1.4em;
 }
 
+.main.container.large {
+    max-width: 1980px !important;
+}
+
 .bold {
     font-weight: 700 !important;
     color: rgba(0, 0, 0, .87) !important;
@@ -344,6 +355,10 @@ td>a {
 .small-container {
     margin: 1.4em 0 0 0;
 }
+
+/* .calendar {
+    height: 50em;
+} */
 
 /**
   *
