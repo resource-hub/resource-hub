@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db import transaction
 from django.db.models import Q
 from django.forms import model_to_dict
 from django.shortcuts import get_object_or_404, redirect, render
@@ -120,7 +121,10 @@ class EventsCreate(View):
             Venue, slug=venue_slug, location__slug=location_slug)
         venue_contract_form = VenueContractFormManager(venue, request)
         if venue_contract_form.is_valid():
-            venue_contract = venue_contract_form.save()
+            with transaction.atomic():
+                venue_contract = venue_contract_form.save()
+            venue_contract.set_pending(
+                occurrences=venue_contract_form.occurrences)
             message = _(
                 'The event has been created successfully. You can review it and either confirm or cancel.')
             messages.add_message(request, messages.SUCCESS, message)

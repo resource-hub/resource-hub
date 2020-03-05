@@ -8,7 +8,7 @@ from django.conf import settings
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm, UserCreationForm
 from django.contrib.auth.hashers import check_password
-from django.forms import model_to_dict
+from django.forms import formset_factory, model_to_dict
 from django.utils.dateparse import parse_date
 from django.utils.translation import ugettext_lazy as _
 
@@ -17,8 +17,8 @@ from schwifty import BIC, IBAN
 
 from .fields import HTMLField
 from .models import (Actor, Address, BankAccount, Location, Organization,
-                     OrganizationMember, User)
-from .widgets import UISearchField
+                     OrganizationMember, Price, User)
+from .widgets import IBANInput, UISearchField
 
 
 class FormManager():
@@ -130,12 +130,14 @@ class AddressForm(forms.ModelForm):
 
 
 class BankAccountForm(forms.ModelForm):
+    iban = forms.CharField(widget=IBANInput())
+
     class Meta:
         model = BankAccount
         fields = ['account_holder', 'iban', 'bic', ]
 
     def clean_iban(self):
-        iban = self.cleaned_data['iban']
+        iban = self.cleaned_data['iban'].replace(' ', '')
         if iban:
             try:
                 IBAN(iban)
@@ -324,6 +326,14 @@ class UserAccountFormManager():
             'password_form': self.password_form,
             scope: 'active',
         }
+
+
+# class PriceForm(forms.ModelForm):
+#     class Meta:
+#         model = Price
+
+
+# PriceFormSet = formset_factory(PriceForm)
 
 
 class OrganizationFormManager():

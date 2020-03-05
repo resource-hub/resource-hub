@@ -256,6 +256,10 @@ class FinanceContractsManageDetails(View):
                 minutes, seconds = divmod(remainder, 60)
                 timer = '{0:02d}:{1:02d}:{2:02d}'.format(
                     hours, minutes, seconds)
+
+        contract.payment_method = PaymentMethod.objects.get_subclass(
+            pk=contract.payment_method.pk)
+
         context = {
             'contract': contract,
             'timer': timer,

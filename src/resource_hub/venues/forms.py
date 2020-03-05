@@ -116,6 +116,7 @@ class EventForm(forms.ModelForm):
         self.venue = venue
         self.new_event = None
         self.dtlast = None
+        self.occurrences = []
 
     class Meta:
         model = Event
@@ -124,6 +125,9 @@ class EventForm(forms.ModelForm):
         labels = {
             'recurrences': _('Recurs on')
         }
+
+    def get_occurrences(self):
+        return self.occurrences
 
     def clean_dtend(self):
         dtstart = self.cleaned_data['dtstart']
@@ -139,17 +143,31 @@ class EventForm(forms.ModelForm):
         return dtend
 
     def clean_recurrences(self):
+        '''
+        quick, dirty and naive conflict detection (polynomial runtime)
+        work in progress
+        '''
+
         recurrences = self.cleaned_data['recurrences']
         dtstart = self.cleaned_data['dtstart'].replace(tzinfo=None)
         dtend = self.cleaned_data['dtend'].replace(tzinfo=None)
         recurrences.dtstart = dtstart
         dates = recurrences.occurrences()
         for date in dates:
-            self.dtlast = date
-        t = dtend.time()
-        self.dtlast = self.dtlast.replace(
-            hour=t.hour, minute=t.minute, second=t.second, tzinfo=None)
+            # get last occurrence and apply times to dates
 
+            t = dtstart.time()
+            occurrence_start = date.replace(
+                hour=t.hour, minute=t.minute, second=t.second)
+            t = dtend.time()
+            occurrence_end = date.replace(
+                hour=t.hour, minute=t.minute, second=t.second)
+            self.occurrences.append(
+                (occurrence_start, occurrence_end)
+            )
+            self.dtlast = occurrence_end
+
+        # query existing events in planned timeframe
         start_inside = Q(
             dtstart__lte=dtstart,
         )
@@ -170,18 +188,16 @@ class EventForm(forms.ModelForm):
         query = Q(venue=self.venue)
         query.add(Q(intersect), Q.AND)
 
-        events = Event.objects.filter(
+        current_events = Event.objects.filter(
             query
         )
+
+        # iterate for conflicts (O(n^3) worst case ha!)
         conflicts = []
-        for new_date in dates:
-            t = dtstart.time()
-            new_date_start = new_date.replace(
-                hour=t.hour, minute=t.minute, second=t.second)
-            t = self.dtlast.time()
-            new_date_end = new_date.replace(
-                hour=t.hour, minute=t.minute, second=t.second)
-            for event in events:
+        for occurrence in self.occurrences:
+            new_date_start = occurrence[0]
+            new_date_end = occurrence[1]
+            for event in current_events:
                 old_dates = event.recurrences.between(
                     dtstart,
                     self.dtlast,
@@ -246,10 +262,11 @@ class VenueContractForm(forms.ModelForm):
     def __init__(self, venue, *args, **kwargs):
         super(VenueContractForm, self).__init__(*args, **kwargs)
         self.fields['payment_method'].queryset = venue.contract_procedure.payment_methods.select_subclasses()
+        self.fields['price'].queryset = venue.contract_procedure.prices.all()
 
     class Meta:
         model = VenueContract
-        fields = ['payment_method']
+        fields = ['price', 'payment_method']
 
 
 class VenueContractFormManager():
@@ -266,6 +283,10 @@ class VenueContractFormManager():
             request.FILES
         ) if request else EventForm(self.venue)
 
+    @property
+    def occurrences(self):
+        return self.event_form.get_occurrences()
+
     def get_forms(self):
         return {
             'venue_contract_form': self.venue_contract_form,
@@ -275,8 +296,7 @@ class VenueContractFormManager():
     def is_valid(self):
         return (
             self.venue_contract_form.is_valid() and
-            self.event_form.is_valid() and
-            self.event_form.pre_save()
+            self.event_form.is_valid()
         )
 
     def save(self, commit=True):
@@ -287,8 +307,9 @@ class VenueContractFormManager():
         new_venue_contract.creditor = self.venue.owner
         new_venue_contract.debitor = actor
         new_venue_contract.created_by = user
-        self.new_event = self.event_form.save(self.request, commit=True)
-        new_venue_contract.event = self. new_event
+        new_venue_contract.contract_procedure = self.venue.contract_procedure
+        new_event = self.event_form.save(self.request, commit=True)
+        new_venue_contract.event = new_event
 
         if commit:
             new_venue_contract.save()

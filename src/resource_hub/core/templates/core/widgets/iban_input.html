@@ -1,0 +1,18 @@
+{% with id=widget.attrs.id %}
+<input {% if id %}id="{{ id }}" {% endif %} type="text" {% if widget.value != None %}value="{{ widget.value }}"
+    {% endif %} name="{{ widget.name }}" {% include "django/forms/widgets/attrs.html" %}>
+
+{% if id %}
+<script>
+    function space(e) {
+        console.log('hello');
+        e.target.value = e.target.value.replace(/[^\dA-Z]/g, '').replace(/(.{4})/g, '$1 ').trim();
+    }
+    $(document).ready(function () {
+        var element = $('#{{ id }}');
+        element.on('input propertychange', space);
+        element.trigger('input');
+    });
+</script>
+{% endif %}
+{% endwith %}

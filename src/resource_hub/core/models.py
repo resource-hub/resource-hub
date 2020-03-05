@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.shortcuts import reverse
 from django.utils import timezone
@@ -474,12 +475,63 @@ class DeclarationOfIntent(models.Model):
         )
 
 
-class Claim(models.Model):
-    item = models.CharField(max_length=255)
-    amount = models.DecimalField(
+class Price(models.Model):
+    addressee = models.ForeignKey(
+        Actor,
+        null=True,
+        default=None,
+        on_delete=models.CASCADE
+    )
+    value = models.DecimalField(
         decimal_places=5,
         max_digits=15,
     )
+    currency = models.CharField(
+        default='EUR',
+        max_length=5,
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    def __str__(self):
+        return '{} {}'.format(
+            self.value,
+            self.currency
+        )
+
+
+class Claim(models.Model):
+    item = models.CharField(max_length=255)
+    quantity = models.DecimalField(
+        decimal_places=5,
+        max_digits=15,
+    )
+    unit = models.CharField(
+        max_length=5,
+    )
+    price = models.DecimalField(
+        decimal_places=5,
+        max_digits=15,
+    )
+    currency = models.CharField(
+        default='EUR',
+        max_length=5,
+    )
+    tax_rate = models.IntegerField(
+        default=0,
+        verbose_name=_('tax rate applied in percent'),
+    )
+    net = models.DecimalField(
+        decimal_places=5,
+        max_digits=15,
+    )
+    gross = models.DecimalField(
+        decimal_places=5,
+        max_digits=15,
+    )
+    period_start = models.DateTimeField()
+    period_end = models.DateTimeField()
     created_at = models.DateTimeField(
         auto_now_add=True,
     )
@@ -509,6 +561,10 @@ class Contract(models.Model):
     ]
 
     # fields
+    contract_procedure = models.ForeignKey(
+        'ContractProcedure',
+        on_delete=models.PROTECT,
+    )
     creditor = models.ForeignKey(
         Actor,
         null=True,
@@ -529,7 +585,6 @@ class Contract(models.Model):
     is_fixed_term = models.BooleanField(
         default=True
     )
-
     payment_method = models.ForeignKey(
         'PaymentMethod',
         null=True,
@@ -539,6 +594,11 @@ class Contract(models.Model):
         Payment,
         null=True,
         on_delete=models.SET_NULL,
+    )
+    price = models.ForeignKey(
+        Price,
+        null=True,
+        on_delete=models.PROTECT,
     )
     claims = models.ManyToManyField(
         Claim,
@@ -594,6 +654,11 @@ class Contract(models.Model):
         '''
         raise NotImplementedError()
 
+    @property
+    def claim_table(self):
+        from .tables import ClaimTable
+        return ClaimTable(self.claims.all())
+
     # methods
     def call_triggers(self, state):
         return
@@ -602,6 +667,10 @@ class Contract(models.Model):
     def move(self, state):
         self.call_triggers(state)
         self.state = state
+
+    def set_pending(self, *args, **kwargs) -> None:
+        self.move(self.STATE.PENDING)
+        self.claim_factory(**kwargs)
 
     def set_expired(self) -> None:
         if self.state is self.STATE.PENDING:
@@ -729,7 +798,7 @@ class PaymentMethod(Trigger):
         return reverse('core:finance_payment_methods_add')
 
 
-class BaseContractProcedure(models.Model):
+class ContractProcedure(models.Model):
     auto_accept = models.BooleanField(
         default=False
     )
@@ -747,9 +816,16 @@ class BaseContractProcedure(models.Model):
         PaymentMethod,
         blank=True,
     )
+    prices = models.ManyToManyField(
+        Price,
+    )
     tax_rate = models.IntegerField(
         default=0,
-        verbose_name=_('tax rate applied to prices'),
+        verbose_name=_('tax rate applied in percent'),
+        validators=[
+            MinValueValidator(0),
+            MaxValueValidator(99),
+        ]
     )
     trigger = models.ManyToManyField(
         ContractTrigger,
@@ -759,9 +835,6 @@ class BaseContractProcedure(models.Model):
     created_at = models.DateTimeField(
         auto_now_add=True,
     )
-
-    class Meta:
-        abstract = True
 
 
 class Gallery(models.Model):

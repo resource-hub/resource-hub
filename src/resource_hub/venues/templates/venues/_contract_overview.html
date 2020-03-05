@@ -1,19 +1,32 @@
 {% load i18n %}
 
+{% with event=contract.event %}
 <h2>{% trans 'Event details' %}</h2>
-<div class="ui list">
-    <div class="item">
-        <div class="header">{% trans 'Name' %}</div>
-        {{ contract.event.name }}
+<div class="ui stackable two column grid">
+    <div class="column">
+        <div class="ui list">
+            <div class="item">
+                <div class="header">{% trans 'Name' %}</div>
+                {{ event.name }}
+            </div>
+            <div class="item">
+                <div class="header">{% trans 'Category' %}</div>
+                {{ event.category.name }}
+            </div>
+            <div class="item">
+                <div class="header">{% trans 'Tags' %}</div>
+                {% for tag in event.tags.all %}
+                {{ tag }}
+                {% endfor %}
+            </div>
+            <div class="item">
+                <div class="header">{% trans 'Description' %}</div>
+                {{ event.description|safe }}
+            </div>
+        </div>
     </div>
-    <div class="item">
-        <div class="header">{% trans 'Category' %}</div>
-        {{ contract.event.category.name }}
-    </div>
-    <div class="item">
-        <div class="header">{% trans 'Tags' %}</div>
-        {% for tag in contract.event.tags.all %}
-        {{ tag }}
-        {% endfor %}
+    <div class="column">
+        <img src="{{ contract.event.thumbnail.url }}">
     </div>
 </div>
+{% endwith %}

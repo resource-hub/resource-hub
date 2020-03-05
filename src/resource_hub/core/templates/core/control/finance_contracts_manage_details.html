@@ -1,5 +1,6 @@
 {% extends "control/__base.html" %}
 {% load i18n %}
+{% load django_tables2 %}
 
 {% block admin-navigation %}
 {% url 'control:finance_contracts_manage' as url %}
@@ -7,7 +8,8 @@
 {% endblock %}
 
 {% block content %}
-<h1>{% trans 'Contract details' %}</h1>
+<h1>{% trans 'Contract details' %} <a class="ui {{ contract.state }} tag label">{{ contract.get_state_display }}</a>
+</h1>
 {% if contract.state == CONTRACT_STATE.PENDING %}
 <div class="ui segment">
     <div class="ui tiny red right floated statistic">
@@ -21,7 +23,7 @@
     </p>
 </div>
 {% endif %}
-<h2>{{ contract.verbose_name }} <a class="ui {{ contract.state }} tag label">{{ contract.get_state_display }}</a></h2>
+<h2>{{ contract.verbose_name }}</h2>
 <div class="ui grid">
     <div class="ui eight wide column">
         <div class="ui tiny header">{% trans 'Creditor' %}</div>
@@ -35,6 +37,26 @@
 <div class="section-container">
     {{ contract.overview }}
 </div>
+<div class="section-container">
+    <h2>{% trans 'Claims' %}</h2>
+    {% render_table contract.claim_table %}
+    <h3>{% trans 'Payment method' %}</h3>
+    <div class="ui list">
+        <div class="item">
+            <div class="header">
+                {% trans 'Name' %}
+            </div>
+            {{ contract.payment_method.verbose_name }}
+        </div>
+        <div class="item">
+            <div class="header">
+                {% trans 'Prepayment' %}
+            </div>
+            {{ contract.payment_method.is_prepayment }}
+        </div>
+    </div>
+</div>
+
 {% ifequal contract.state CONTRACT_STATE.PENDING %}
 {% include 'core/_identity.html' with actor=actor %}
 <form id="choices" class="small-container" method="POST">

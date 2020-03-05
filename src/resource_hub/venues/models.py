@@ -9,11 +9,11 @@ from django.utils.translation import ugettext_lazy as _
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
 from recurrence.fields import RecurrenceField
-from resource_hub.core.models import (Actor, BaseContractProcedure, Contract,
-                                      Gallery, Location)
+from resource_hub.core.models import (Actor, Claim, Contract,
+                                      ContractProcedure, Gallery, Location)
 
 
-class VenueContractProcedure(BaseContractProcedure):
+class VenueContractProcedure(ContractProcedure):
     price_per_h = models.DecimalField(
         null=True,
         blank=True,
@@ -260,5 +260,28 @@ class VenueContract(Contract):
         )
 
     # methods
-    def claim_factory(self):
-        return
+    def claim_factory(self, occurrences=None):
+        for occurrence in occurrences:
+            start = occurrence[0]
+            end = occurrence[1]
+            delta = ((end - start).total_seconds())/3600
+            net = delta * float(self.price.value)
+            gross = net*(1 + (self.contract_procedure.tax_rate / 100))
+            print(gross)
+
+            self.claims.create(
+                item='{}: {}-{}'.format(
+                    self.event.name,
+                    start,
+                    end
+                ),
+                quantity=delta,
+                unit='h',
+                price=self.price.value,
+                currency=self.price.currency,
+                tax_rate=self.contract_procedure.tax_rate,
+                net=net,
+                gross=gross,
+                period_start=start,
+                period_end=end,
+            )

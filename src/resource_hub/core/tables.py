@@ -2,7 +2,6 @@ from django.utils.translation import ugettext_lazy as _
 
 import django_tables2 as tables
 from django_tables2.utils import Accessor as A
-from resource_hub.core.models import OrganizationMember
 
 
 class PaymentMethodsTable(tables.Table):
@@ -30,6 +29,7 @@ class OrganizationsTable(tables.Table):
     role = tables.Column(verbose_name=_('Rights'))
 
     def render_role(self, value):
+        from resource_hub.core.models import OrganizationMember
         return OrganizationMember.role_display_reverse(value)
 
     class Meta:
@@ -68,4 +68,22 @@ class LocationsTable(tables.Table):
     class Meta:
         attrs = {
             "class": "ui selectable celled table"
+        }
+
+
+class ClaimTable(tables.Table):
+    # columns
+    item = tables.Column(verbose_name=_('Item'))
+    quantity = tables.Column(verbose_name=_('Quantity'))
+    unit = tables.Column(verbose_name=_('Unit'))
+    price = tables.Column(verbose_name=_('Price/unit'))
+    currency = tables.Column(verbose_name=_('Currency'))
+    tax_rate = tables.Column(verbose_name=_('Tax'))
+    net = tables.Column(verbose_name=_('Net'))
+    gross = tables.Column(verbose_name=_(
+        'Gross'), footer=lambda table: sum(x.gross for x in table.data))
+
+    class Meta:
+        attrs = {
+            "class": "ui selectable table"
         }

@@ -1,5 +1,5 @@
 from django.forms.renderers import TemplatesSetting
-from django.forms.widgets import TextInput, CheckboxInput, TimeInput
+from django.forms.widgets import CheckboxInput, TextInput, TimeInput
 from django.template.context import make_context
 
 
@@ -13,3 +13,7 @@ class UICheckboxSlider(CheckboxInput):
 
 class TimeInputCustom(TimeInput):
     template_name = 'core/widgets/time_input.html'
+
+
+class IBANInput(TextInput):
+    template_name = 'core/widgets/iban_input.html'
