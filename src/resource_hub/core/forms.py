@@ -130,7 +130,9 @@ class AddressForm(forms.ModelForm):
 
 
 class BankAccountForm(forms.ModelForm):
-    iban = forms.CharField(widget=IBANInput())
+    account_holder = forms.CharField(max_length=70, label=_('Account holder'))
+    iban = forms.CharField(widget=IBANInput(), label=_('IBAN'))
+    bic = forms.CharField(max_length=11, label=_('BIC'))
 
     class Meta:
         model = BankAccount
