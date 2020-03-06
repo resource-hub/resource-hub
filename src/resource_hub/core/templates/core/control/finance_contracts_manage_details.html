@@ -10,7 +10,7 @@
 {% block content %}
 <h1>{% trans 'Contract details' %} <a class="ui {{ contract.state }} tag label">{{ contract.get_state_display }}</a>
 </h1>
-{% if contract.state == CONTRACT_STATE.PENDING %}
+{% if contract.state == CONTRACT_STATE.PENDING and is_debitor %}
 <div class="ui segment">
     <div class="ui tiny red right floated statistic">
         <div id="timer" class="value" style="margin-top: 0 !important; line-height: inherit;">
@@ -23,6 +23,14 @@
     </p>
 </div>
 {% endif %}
+{{ is_debitor }}
+{% if contract.state == CONTRACT_STATE.WAITING and not is_debitor %}
+<div class="ui segment">
+    <i class="info circle icon"></i>
+    {% trans 'The contract is waiting. You can either accept or decline the offer.'  %}
+</div>
+{% endif %}
+
 <h2>{{ contract.verbose_name }}</h2>
 <div class="ui grid">
     <div class="ui eight wide column">
@@ -55,11 +63,36 @@
             {{ contract.payment_method.is_prepayment }}
         </div>
     </div>
+    <h3>{% trans 'Terms and Conditions' %}</h3>
+    <div class="ui accordion">
+        <div class="title">
+            <i class="dropdown icon"></i>
+            <b>{% trans 'show' %}</b>
+        </div>
+        <div class="content">
+            {{ contract.contract_procedure.terms_and_conditions|safe }}
+        </div>
+    </div>
 </div>
-
-{% ifequal contract.state CONTRACT_STATE.PENDING %}
+{% if contract.state == CONTRACT_STATE.WAITING and not is_debitor %}
 {% include 'core/_identity.html' with actor=actor %}
 <form id="choices" class="small-container" method="POST">
+    {% csrf_token %}
+    <button class="ui negative right labeled icon button" name="choice" value="decline" type="submit">
+        {% trans 'Decline' %}
+        <i class="close icon"></i>
+    </button>
+    <button class="ui positive right labeled right floated icon button" name="choice" value="accept" type=" submit">
+        {% trans 'Accept' %}
+        <i class="check icon"></i>
+    </button>
+</form>
+{% endif %}
+
+{% if contract.state == CONTRACT_STATE.PENDING and is_debitor %}
+{% include 'core/_identity.html' with actor=actor %}
+<form id="choices" class="small-container" method="POST">
+    {% csrf_token %}
     <button class="ui negative right labeled icon button" name="choice" value="cancel" type="submit">
         {% trans 'Cancel' %}
         <i class="close icon"></i>
@@ -69,7 +102,7 @@
         <i class="check icon"></i>
     </button>
 </form>
-{% endifequal %}
+{% endif %}
 {% endblock %}
 
 {% block scripts %}
@@ -108,6 +141,11 @@
                 );
             }
         }
+    });
+</script>
+<script language='javascript'>
+    $(document).ready(function () {
+        $('.ui.accordion').accordion();
     });
 </script>
 {% endblock %}

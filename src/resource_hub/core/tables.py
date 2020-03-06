@@ -78,7 +78,7 @@ class ClaimTable(tables.Table):
     unit = tables.Column(verbose_name=_('Unit'))
     price = tables.Column(verbose_name=_('Price/unit'))
     currency = tables.Column(verbose_name=_('Currency'))
-    tax_rate = tables.Column(verbose_name=_('Tax'))
+    tax_rate = tables.Column(verbose_name=_('Tax (%)'))
     net = tables.Column(verbose_name=_('Net'))
     gross = tables.Column(verbose_name=_(
         'Gross'), footer=lambda table: sum(x.gross for x in table.data))

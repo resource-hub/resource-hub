@@ -549,6 +549,7 @@ class Contract(models.Model):
         FINALIZED = 'f'
         EXPIRED = 'x'
         CANCELED = 'c'
+        DECLINED = 'n'
 
     STATES = [
         (STATE.PENDING, _('pending')),
@@ -558,6 +559,7 @@ class Contract(models.Model):
         (STATE.FINALIZED, _('finalized')),
         (STATE.EXPIRED, _('expired')),
         (STATE.CANCELED, _('canceled')),
+        (STATE.DECLINED, _('declined')),
     ]
 
     # fields
@@ -673,17 +675,49 @@ class Contract(models.Model):
         self.claim_factory(**kwargs)
 
     def set_expired(self) -> None:
-        if self.state is self.STATE.PENDING:
+        if self.state == self.STATE.PENDING:
             self.move(self.STATE.EXPIRED)
             self.save()
             return
         raise ValueError(
             'Cannot move from {} to state expired'.format(self.state))
 
+    def set_canceled(self, request) -> None:
+        if (
+            self.state == self.STATE.PENDING or
+            self.state == self.STATE.WAITING
+        ):
+            self.move(self.STATE.CANCELED)
+            self.save()
+            return
+        raise ValueError(
+            'Cannot move from {} to state canceled'.format(self.state))
+
+    def set_declined(self, request) -> None:
+        if self.STATE == self.STATE.WAITING:
+            self.move(self.STATE.DECLINED)
+            self.save()
+        raise ValueError(
+            'Cannot move from {} to state declined'.format(self.state))
+
     def set_waiting(self, request) -> None:
-        if self.state is self.STATE.PENDING:
+        if self.state == self.STATE.PENDING:
             self.move(self.STATE.WAITING)
             self.confirmation = DeclarationOfIntent.create(
+                request=request,
+            )
+            self.save()
+
+            if self.contract_procedure.auto_accept:
+                self.set_running()
+            return
+        raise ValueError(
+            'Cannot move from {} to state waiting'.format(self.state))
+
+    def set_running(self, request) -> None:
+        if self.state == self.STATE.WAITING:
+            self.move(self.STATE.RUNNING)
+            self.acceptance = DeclarationOfIntent.create(
                 request=request,
             )
             self.save()

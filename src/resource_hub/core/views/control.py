@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.db.models import F, Q
 from django.forms import Form
-from django.http import Http404
+from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
@@ -242,8 +242,17 @@ class FinanceContractsManageDetails(View):
 
     def get(self, request, pk):
         contract = get_subobject_or_404(Contract, pk=pk)
+        actor = request.actor
+
+        if contract.debitor == actor:
+            is_debitor = True
+        elif contract.creditor == actor:
+            is_debitor = False
+        else:
+            return HttpResponseForbidden
+
         timer = None
-        if contract.is_pending:
+        if contract.is_pending and is_debitor:
             delta = (timedelta(
                 minutes=contract.expiration_period) - (timezone.now() - contract.created_at))
 
@@ -262,9 +271,48 @@ class FinanceContractsManageDetails(View):
 
         context = {
             'contract': contract,
+            'is_debitor': is_debitor,
             'timer': timer,
         }
         return render(request, self.template_name, context)
+
+    def post(self, request, pk):
+        contract = get_subobject_or_404(Contract, pk=pk)
+        actor = request.actor
+
+        choice = request.POST.get('choice', None)
+        if contract.debitor == actor:
+            is_debitor = True
+        elif contract.creditor == actor:
+            is_debitor = False
+        else:
+            return HttpResponseForbidden
+
+        if is_debitor:
+            if choice == 'cancel':
+                contract.set_canceled(request)
+                message = _('{} has been canceled'.format(
+                    contract.verbose_name))
+            elif choice == 'confirm':
+                contract.set_waiting(request)
+                message = _('{} has been confirmed'.format(
+                    contract.verbose_name))
+            else:
+                message = _('Invalid Choice')
+        else:
+            if choice == 'decline':
+                contract.set_declined(request)
+                message = _('{} has been decline'.format(
+                    contract.verbose_name))
+            elif choice == 'accept':
+                contract.set_running(request)
+                message = _('{} has been accepted'.format(
+                    contract.verbose_name))
+            else:
+                message = _('Invalid Choice')
+
+        messages.add_message(request, messages.SUCCESS, message)
+        return redirect(reverse('control:finance_contracts_manage'))
 
 
 @method_decorator(login_required, name='dispatch')
