@@ -46,6 +46,20 @@ def control_sidebar(context, *args, **kwargs):
                         ]
                     },
                     {
+                        'header': _('Contract procedures'),
+                        'url': get_parent(reverse('control:finance_contract_procedures_manage')),
+                        'subsub_items': [
+                            {
+                                'header': _('Manage'),
+                                'url': reverse('control:finance_contract_procedures_manage'),
+                            },
+                            {
+                                'header': _('Create'),
+                                'url': reverse('control:finance_contract_procedures_create'),
+                            }
+                        ]
+                    },
+                    {
                         'header': _('Payment methods'),
                         'url': get_parent(reverse('control:finance_payment_methods_manage')),
                         'subsub_items': [

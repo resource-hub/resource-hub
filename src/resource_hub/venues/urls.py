@@ -17,6 +17,8 @@ control_urls.register([
     path('venues/manage/<int:venue_id>/profile/edit/',
          views.VenuesProfileEdit.as_view(), name='venues_profile_edit'),
     path('venues/create/', views.VenuesCreate.as_view(), name='venues_create'),
+    path('venues/contract-procedures/create', views.ContractProceduresCreate.as_view(),
+         name='venues_contract_procedures_create'),
 ])
 
 urlpatterns = [

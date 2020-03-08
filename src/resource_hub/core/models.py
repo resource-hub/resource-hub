@@ -490,6 +490,9 @@ class Price(models.Model):
         default='EUR',
         max_length=5,
     )
+    discounts = models.BooleanField(
+        default=True
+    )
     created_at = models.DateTimeField(
         auto_now_add=True
     )
@@ -499,6 +502,26 @@ class Price(models.Model):
             self.value,
             self.currency
         )
+
+
+class PriceProfile(models.Model):
+    addressee = models.ForeignKey(
+        Actor,
+        null=True,
+        default=None,
+        on_delete=models.CASCADE
+    )
+    description = models.CharField(
+        max_length=64,
+    )
+    discount = models.IntegerField(
+        default=0,
+        verbose_name=_('tax rate applied in percent'),
+        validators=[
+            MinValueValidator(0),
+            MaxValueValidator(100),
+        ]
+    )
 
 
 class Claim(models.Model):
@@ -592,15 +615,10 @@ class Contract(models.Model):
         null=True,
         on_delete=models.SET_NULL,
     )
-    payment = models.ForeignKey(
-        Payment,
-        null=True,
-        on_delete=models.SET_NULL,
-    )
-    price = models.ForeignKey(
-        Price,
-        null=True,
+    price_profile = models.ForeignKey(
+        PriceProfile,
         on_delete=models.PROTECT,
+        null=True,
     )
     claims = models.ManyToManyField(
         Claim,
@@ -708,8 +726,8 @@ class Contract(models.Model):
             )
             self.save()
 
-            if self.contract_procedure.auto_accept:
-                self.set_running()
+            if self.contract_procedure.auto_accept or (self.creditor == self.debitor):
+                self.set_running(request)
             return
         raise ValueError(
             'Cannot move from {} to state waiting'.format(self.state))
@@ -833,6 +851,9 @@ class PaymentMethod(Trigger):
 
 
 class ContractProcedure(models.Model):
+    name = models.CharField(
+        max_length=64,
+    )
     auto_accept = models.BooleanField(
         default=False
     )
@@ -850,8 +871,8 @@ class ContractProcedure(models.Model):
         PaymentMethod,
         blank=True,
     )
-    prices = models.ManyToManyField(
-        Price,
+    price_profiles = models.ManyToManyField(
+        PriceProfile,
     )
     tax_rate = models.IntegerField(
         default=0,
@@ -861,14 +882,25 @@ class ContractProcedure(models.Model):
             MaxValueValidator(99),
         ]
     )
-    trigger = models.ManyToManyField(
+    triggers = models.ManyToManyField(
         ContractTrigger,
         blank=True,
         related_name='procedure'
     )
+    owner = models.ForeignKey(
+        Actor,
+        on_delete=models.PROTECT,
+    )
     created_at = models.DateTimeField(
         auto_now_add=True,
     )
+
+    # attributes
+    objects = InheritanceManager()
+
+    @property
+    def type_name(self):
+        raise NotImplementedError()
 
 
 class Gallery(models.Model):

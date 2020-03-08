@@ -10,5 +10,7 @@ class CoreConfig(AppConfig):
     def ready(self):
         hook.register('control_sidebar', control_sidebar)
 
+        from . import signals
+
 
 default_app_config = 'resource_hub.core.CoreConfig'

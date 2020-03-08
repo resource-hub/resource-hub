@@ -31,6 +31,10 @@ control_urls.register([
          name='finance_contracts_manage'),
     path('finance/contracts/manage/<int:pk>/', control.FinanceContractsManageDetails.as_view(),
          name='finance_contracts_manage_details'),
+    path('finance/contract-procedures/manage/', control.FinanceContractProceduresManage.as_view(),
+         name='finance_contract_procedures_manage'),
+    path('finance/contract-procedures/create/', control.FinanceContractProceduresCreate.as_view(),
+         name='finance_contract_procedures_create'),
 
     # organizations
     path('organizations/manage/',

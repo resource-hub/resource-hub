@@ -11,10 +11,11 @@ from django.views import View
 from django.views.decorators.cache import cache_page
 
 from resource_hub.core.models import OrganizationMember
-from resource_hub.venues.forms import (VenueContractFormManager, VenueForm,
-                                       VenueFormManager)
-from resource_hub.venues.models import Venue
-from resource_hub.venues.tables import VenuesTable
+
+from .forms import (VenueContractFormManager, VenueContractProcedureForm,
+                    VenueForm)
+from .models import Venue
+from .tables import VenuesTable
 
 TTL = 60 * 5
 
@@ -56,12 +57,14 @@ class VenuesManage(View):
 @method_decorator(login_required, name='dispatch')
 class VenuesCreate(View):
     def get(self, request):
-        venue_form = VenueFormManager(request.user)
-
-        return render(request, 'venues/control/venues_create.html', venue_form.get_forms())
+        venue_form = VenueForm(request)
+        context = {
+            'venue_form': venue_form,
+        }
+        return render(request, 'venues/control/venues_create.html', context)
 
     def post(self, request):
-        venue_form = VenueFormManager(request.user, request)
+        venue_form = VenueForm(request, request.POST)
 
         if venue_form.is_valid():
             venue_form.save(request.actor)
@@ -70,7 +73,10 @@ class VenuesCreate(View):
             messages.add_message(request, messages.SUCCESS, message)
             return redirect(reverse('control:venues_manage'))
 
-        return render(request, 'venues/control/venues_create.html', venue_form.get_forms())
+        context = {
+            'venue_form': venue_form,
+        }
+        return render(request, 'venues/control/venues_create.html', context)
 
 
 @method_decorator(login_required, name='dispatch')
@@ -136,3 +142,15 @@ class EventsCreate(View):
 class EventsManageDetails(View):
     def get(self, request, event):
         return
+
+
+@method_decorator(login_required, name='dispatch')
+class ContractProceduresCreate(View):
+    template_name = 'venues/control/contract_procedures_create.html'
+
+    def get(self, request):
+        contract_procedure_form = VenueContractProcedureForm(request)
+        context = {
+            'contract_procedure_form': contract_procedure_form,
+        }
+        return render(request, self.template_name, context)

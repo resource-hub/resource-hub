@@ -13,13 +13,13 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.views import View
 
-from resource_hub.core.decorators import organization_admin_required
-from resource_hub.core.forms import *
-from resource_hub.core.models import *
-from resource_hub.core.signals import register_payment_methods
-from resource_hub.core.tables import (LocationsTable, MembersTable,
-                                      OrganizationsTable, PaymentMethodsTable)
-from resource_hub.core.utils import get_associated_objects
+from ..decorators import organization_admin_required
+from ..forms import *
+from ..models import *
+from ..signals import register_contract_procedures, register_payment_methods
+from ..tables import (ContractProcedureTable, LocationsTable, MembersTable,
+                      OrganizationsTable, PaymentMethodsTable)
+from ..utils import get_associated_objects
 
 
 @method_decorator(login_required, name='dispatch')
@@ -313,6 +313,34 @@ class FinanceContractsManageDetails(View):
 
         messages.add_message(request, messages.SUCCESS, message)
         return redirect(reverse('control:finance_contracts_manage'))
+
+
+@method_decorator(login_required, name='dispatch')
+class FinanceContractProceduresManage(TableView):
+    header = _('Manage contract procedures')
+
+    def get_queryset(self):
+        return get_associated_objects(
+            self.request.user,
+            ContractProcedure
+        ).select_subclasses()
+
+    def get_table(self):
+        return ContractProcedureTable
+
+
+@method_decorator(login_required, name='dispatch')
+class FinanceContractProceduresCreate(View):
+    def get(self, request):
+        contract_procedures = register_contract_procedures.send(
+            sender=self.__class__)
+        if contract_procedures:
+            contract_procedures = list(
+                map(lambda x: x[1], contract_procedures))
+        context = {
+            'contract_procedures': contract_procedures
+        }
+        return render(request, 'core/control/finance_contract_procedures_create.html', context)
 
 
 @method_decorator(login_required, name='dispatch')

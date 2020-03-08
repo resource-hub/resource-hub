@@ -291,7 +291,6 @@ td>a {
 
 .bold {
     font-weight: 700 !important;
-    color: rgba(0, 0, 0, .87) !important;
 }
 
 .inline {
@@ -403,5 +402,49 @@ td>a {
     }
     .admin.main.container {
         margin-left: 220px;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    #map {
+        filter: invert(100%);
+    }
+    a, b, p, span {
+        color: #ffffff !important;
+    }
+    /* a, .ui.dropdown>span {
+        color: #F92672 !important;
+    } */
+    .ui.item {
+        color: #ffffff !important;
+    }
+    body, nav, .ui.card, .ui.sidebar, .ui.segment, .ui.table, .ui.dropdown {
+        background-color: #272822 !important;
+        color: #ffffff !important;
+        border-top: #666 !important;
+    }
+    .ui.card {
+        box-shadow: 0 1px 3px 0 #666, 0 0 0 1px #666;
+    }
+    .ui.positive {
+        background-color: #66D9EF !important;
+    }
+    .ui.footer {
+        background-color: #373844;
+        color: #ffffff !important;
+    }
+    input, textarea, select, th, .dropdown>.menu, .note-editable, .ui.icon.message {
+        background-color: #373844 !important;
+        color: #ffffff !important;
+    }
+    td::hover, td::selection {
+        color: #ffffff !important;
+    }
+    h1, h2, h3, h4, h5, h6, label, .header {
+        color: #A6E22E !important;
+    }
+    footer {
+        background-color: #303030 !important;
+        color: #ffffff !important;
     }
 }

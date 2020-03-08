@@ -330,9 +330,8 @@ class UserAccountFormManager():
         }
 
 
-# class PriceForm(forms.ModelForm):
-#     class Meta:
-#         model = Price
+# class PriceForm(forms.Form):
+#     addressee = models.
 
 
 # PriceFormSet = formset_factory(PriceForm)

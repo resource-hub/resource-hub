@@ -6,7 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 from datetimepicker.widgets import DateTimePicker
 from django_summernote.widgets import SummernoteWidget
 from resource_hub.core.fields import HTMLField
-from resource_hub.core.models import Location, PaymentMethod
+from resource_hub.core.models import ContractTrigger, Location, PaymentMethod
 from resource_hub.core.utils import get_associated_objects
 from resource_hub.core.widgets import TimeInputCustom
 from resource_hub.venues.models import (Event, Venue, VenueContract,
@@ -14,7 +14,8 @@ from resource_hub.venues.models import (Event, Venue, VenueContract,
 
 
 class VenueForm(forms.ModelForm):
-    def __init__(self, user, *args, **kwargs):
+    def __init__(self, request, *args, **kwargs):
+        user = request.user
         super(VenueForm, self).__init__(*args, **kwargs)
         self.fields['location'].queryset = get_associated_objects(
             user,
@@ -25,75 +26,82 @@ class VenueForm(forms.ModelForm):
     class Meta:
         model = Venue
         fields = ['name', 'description', 'location',
-                  'thumbnail_original', 'bookable']
+                  'thumbnail_original', 'bookable', 'price', 'equipment', ]
         help_texts = {
             'bookable': _('Do you want to use the platform\'s booking logic?'),
         }
 
 
 class VenueContractProcedureForm(forms.ModelForm):
-    def __init__(self, user, *args, **kwargs):
+    def __init__(self, request, *args, **kwargs):
+        user = request.user
         super(VenueContractProcedureForm, self).__init__(*args, **kwargs)
         self.fields['payment_methods'].queryset = get_associated_objects(
             user,
             PaymentMethod
         ).select_subclasses()
+        self.fields['triggers'].queryset = get_associated_objects(
+            user,
+            ContractTrigger
+        )
 
     terms_and_conditions = HTMLField()
 
     class Meta:
         model = VenueContractProcedure
-        fields = ['auto_accept', 'terms_and_conditions', 'notes',
-                  'payment_methods', 'tax_rate', 'trigger', ]
+        fields = ['venues', 'auto_accept', 'terms_and_conditions', 'notes',
+                  'price_profiles', 'tax_rate', 'payment_methods', 'triggers']
+
         help_texts = {
             'auto_accept': _('Automatically accept the booking?'),
-            'payment_methods': _('Choose the payment methods you want to use for this venue')
+            'payment_methods': _('Choose the payment methods you want to use for this venue'),
+            'price_profiles': _('Define discounts for certain groups and actors'),
         }
 
 
-class VenueFormManager():
-    def __init__(self, user, request=None, instance=None):
-        self.request = request
-        venue = instance if instance else None
-        venue_procedure = instance.contract_procedure if instance else None
+# class VenueFormManager():
+#     def __init__(self, user, request=None, instance=None):
+#         self.request = request
+#         venue = instance if instance else None
+#         venue_procedure = instance.contract_procedure if instance else None
 
-        if request is None:
-            self.venue_form = VenueForm(user, instance=venue)
-            self.venue_procedure = VenueContractProcedureForm(
-                user, instance=venue_procedure)
-        else:
-            self.venue_form = VenueForm(
-                user, request.POST,
-                request.FILES,
-                instance=venue,
-            )
-            self.venue_procedure = VenueContractProcedureForm(
-                user,
-                data=request.POST,
-                instance=venue_procedure,
-            )
+#         if request is None:
+#             self.venue_form = VenueForm(user, instance=venue)
+#             self.venue_procedure = VenueContractProcedureForm(
+#                 user, instance=venue_procedure)
+#         else:
+#             self.venue_form = VenueForm(
+#                 user, request.POST,
+#                 request.FILES,
+#                 instance=venue,
+#             )
+#             self.venue_procedure = VenueContractProcedureForm(
+#                 user,
+#                 data=request.POST,
+#                 instance=venue_procedure,
+#             )
 
-    def is_valid(self):
-        if self.request.POST.get('bookable', False):
-            return self.venue_form.is_valid() and self.venue_procedure.is_valid()
-        return self.venue_form.is_valid()
+#     def is_valid(self):
+#         if self.request.POST.get('bookable', False):
+#             return self.venue_form.is_valid() and self.venue_procedure.is_valid()
+#         return self.venue_form.is_valid()
 
-    def get_forms(self):
-        return {
-            'venue_form': self.venue_form,
-            'venue_procedure': self.venue_procedure,
-        }
+#     def get_forms(self):
+#         return {
+#             'venue_form': self.venue_form,
+#             'venue_procedure': self.venue_procedure,
+#         }
 
-    def save(self, owner, commit=True):
-        new_venue = self.venue_form.save(commit=False)
-        new_venue.owner = owner
-        if self.venue_form.cleaned_data['bookable']:
-            new_venue_procedure = self.venue_procedure.save(commit=True)
-            new_venue.contract_procedure = new_venue_procedure
+#     def save(self, owner, commit=True):
+#         new_venue = self.venue_form.save(commit=False)
+#         new_venue.owner = owner
+#         if self.venue_form.cleaned_data['bookable']:
+#             new_venue_procedure = self.venue_procedure.save(commit=True)
+#             new_venue.contract_procedure = new_venue_procedure
 
-        if commit:
-            new_venue.save()
-        return new_venue
+#         if commit:
+#             new_venue.save()
+#         return new_venue
 
 
 class EventForm(forms.ModelForm):
@@ -266,7 +274,7 @@ class VenueContractForm(forms.ModelForm):
 
     class Meta:
         model = VenueContract
-        fields = ['price', 'payment_method']
+        fields = ['payment_method']
 
 
 class VenueContractFormManager():

@@ -2,6 +2,7 @@ import uuid
 from datetime import datetime
 
 from django.db import models
+from django.shortcuts import reverse
 from django.template.loader import render_to_string
 from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
@@ -10,26 +11,22 @@ from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
 from recurrence.fields import RecurrenceField
 from resource_hub.core.models import (Actor, Claim, Contract,
-                                      ContractProcedure, Gallery, Location)
+                                      ContractProcedure, Gallery, Location,
+                                      Price)
 
 
 class VenueContractProcedure(ContractProcedure):
-    price_per_h = models.DecimalField(
-        null=True,
-        blank=True,
-        max_digits=8,
-        decimal_places=2,
+    venues = models.ManyToManyField(
+        'Venue',
     )
-    max_price_per_d = models.DecimalField(
-        null=True,
-        blank=True,
-        max_digits=8,
-        decimal_places=2,
-    )
-    equipment = models.ManyToManyField(
-        'Equipment',
-        blank=True,
-    )
+
+    @property
+    def type_name(self):
+        return _('Venue contract procedure')
+
+    @property
+    def form_link(self):
+        return reverse('control:venues_contract_procedures_create')
 
 
 class Venue(models.Model):
@@ -69,10 +66,13 @@ class Venue(models.Model):
     bookable = models.BooleanField(
         default=True,
     )
-    contract_procedure = models.OneToOneField(
-        VenueContractProcedure,
+    price = models.ForeignKey(
+        Price,
+        on_delete=models.PROTECT,
         null=True,
-        on_delete=models.SET_NULL
+    )
+    equipment = models.ManyToManyField(
+        'Equipment',
     )
     created_at = models.DateField(
         auto_now=True,
@@ -229,9 +229,14 @@ class Equipment(models.Model):
         max_length=128,
         unique=True,
     )
-    price = models.DecimalField(
-        max_digits=13,
-        decimal_places=2,
+    quantity = models.IntegerField()
+    price = models.ForeignKey(
+        Price,
+        on_delete=models.PROTECT,
+        null=True,
+    )
+    apply_price_profile = models.BooleanField(
+        default=True,
     )
 
 
@@ -239,6 +244,9 @@ class VenueContract(Contract):
     event = models.OneToOneField(
         Event,
         on_delete=models.PROTECT,
+    )
+    venues = models.ManyToManyField(
+        Venue,
     )
     equipment = models.ManyToManyField(
         Equipment,

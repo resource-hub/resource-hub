@@ -87,3 +87,17 @@ class ClaimTable(tables.Table):
         attrs = {
             "class": "ui selectable table"
         }
+
+
+class ContractProcedureTable(tables.Table):
+    # columns
+    name = tables.Column(verbose_name=_('Type'))
+    owner = tables.Column(verbose_name=_('Owner'))
+
+    def render_name(self, value, record):
+        return record.type_name
+
+    class Meta:
+        attrs = {
+            "class": "ui selectable table"
+        }

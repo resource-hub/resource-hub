@@ -23,6 +23,10 @@ def control_sidebar(context, *args, **kwargs):
                     {
                         'header': _('Create'),
                         'url': reverse('control:venues_create'),
+                    },
+                    {
+                        'header': _('Booking Procedures'),
+                        'url': reverse('control:venues_contract_procedures_create'),
                     }
                 ]
             },

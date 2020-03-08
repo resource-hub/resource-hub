@@ -24,5 +24,7 @@ class VenuesConfig(AppConfig):
         except ProgrammingError:
             pass
 
+        from . import signals
+
 
 default_app_config = 'resource_hub.venues.VenuesConfig'

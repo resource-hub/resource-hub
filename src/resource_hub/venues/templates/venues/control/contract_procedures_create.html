@@ -1,0 +1,18 @@
+{% extends 'control/__base.html' %}
+{% load i18n %}
+
+{% block content %}
+<h1>
+    {% trans 'Create venue contract procedure' %}
+</h1>
+<div class="section-container tab-content">
+    {% trans 'create' as action %}
+    <form class="ui form" method="POST">
+        {% include '_form.html' with form=contract_procedure_form %}
+        <button class="ui positive right labeled icon button" type="submit">
+            {% trans 'Create' %}
+            <i class="plus icon"></i>
+        </button>
+    </form>
+</div>
+{% endblock %}
