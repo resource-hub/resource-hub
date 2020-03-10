@@ -1,3 +1,4 @@
+from django.utils.html import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
 import django_tables2 as tables
@@ -91,11 +92,12 @@ class ClaimTable(tables.Table):
 
 class ContractProcedureTable(tables.Table):
     # columns
-    name = tables.Column(verbose_name=_('Type'))
+    pk = tables.Column(verbose_name=_('Type'))
     owner = tables.Column(verbose_name=_('Owner'))
 
-    def render_name(self, value, record):
-        return record.type_name
+    def render_pk(self, value, record):
+        print(record.name)
+        return mark_safe('<a href="{}">{}</a>'.format(record.edit_link, record.type_name))
 
     class Meta:
         attrs = {

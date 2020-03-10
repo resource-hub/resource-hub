@@ -1,0 +1,84 @@
+{% load i18n %}
+{% load formset_tags %}
+{% load static %}
+{% load sekizai_tags %}
+
+<div id="formset" data-formset-prefix="{{ formset.prefix }}">
+    <table class="ui table">
+        {{ formset.management_form }}
+
+        <!-- New forms will be inserted in here -->
+        {% for form in formset %}
+        {% if forloop.first %}
+        <thead>
+            <tr>
+                {% for field in form.visible_fields %}
+                <th>
+                    {{ field.label|capfirst }}<br>
+                    {% if field.help_text %}
+                    <small style="color: grey">{{ field.help_text }}</small>
+                    {% endif %}
+
+                </th>
+                {% endfor %}
+            </tr>
+        </thead>
+        {% endif %}
+        <tbody data-formset-body>
+            <tr data-formset-form>
+                {% for field in form.visible_fields %}
+                <td>
+                    {# Include the hidden fields in the form #}
+                    {% if forloop.first %}
+                    {% for hidden in form.hidden_fields %}
+                    {{ hidden }}
+                    {% endfor %}
+                    {% endif %}
+                    {{ field }}
+                    {% for error in field.errors %}
+                    <div class="ui pointing red basic label">{{ error }}</div>
+                    {% endfor %}
+                </td>
+                {% endfor %}
+            </tr>
+        </tbody>
+        {% endfor %}
+
+        <!-- The empty form template. By wrapping this in a <script> tag, the
+    __prefix__ placeholder can easily be replaced in both attributes and
+    any scripts -->
+        <script type="form-template" data-formset-empty-form>
+        {% escapescript %}
+            <tr data-formset-form>
+                {% for field in formset.empty_form.visible_fields %}
+                <td>
+                    {# Include the hidden fields in the form #}
+                    {% if forloop.first %}
+                    {% for hidden in form.hidden_fields %}
+                    {{ hidden }}
+                    {% endfor %}
+                    {% endif %}
+                    {{ field.errors.as_ul }}
+                    {{ field }}
+                </td>
+                {% endfor %}
+            </tr>
+        {% endescapescript %}
+    </script>
+    </table>
+    <!-- This button will add a new form when clicked -->
+    <a class="ui right labeled icon button" id="data-formset-add">
+        {% trans 'Add another' %}
+        <i class="plus icon"></i>
+    </a>
+</div>
+{% addtoblock 'js' %}
+<script src="{% static 'js/jquery.formset.js' %}"></script>
+<script>jQuery(function ($) {
+        $("#formset").formset({
+            animateForms: true,
+            reorderMode: 'dom',
+            add: '#data-formset-add'
+        });
+    });</script>
+{% endaddtoblock %}

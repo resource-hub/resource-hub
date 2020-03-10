@@ -505,9 +505,14 @@ class Price(models.Model):
 
 
 class PriceProfile(models.Model):
+    contract_procedure = models.ForeignKey(
+        'ContractProcedure',
+        on_delete=models.PROTECT,
+    )
     addressee = models.ForeignKey(
         Actor,
         null=True,
+        blank=True,
         default=None,
         on_delete=models.CASCADE
     )
@@ -516,12 +521,17 @@ class PriceProfile(models.Model):
     )
     discount = models.IntegerField(
         default=0,
-        verbose_name=_('tax rate applied in percent'),
         validators=[
             MinValueValidator(0),
             MaxValueValidator(100),
         ]
     )
+
+    # methods
+    def __str__(self):
+        addressee = '' if self.addressee is None else '({})'.format(
+            self.addressee.name)
+        return '{}%: {} {}'.format(self.discount, self.description, addressee)
 
 
 class Claim(models.Model):
@@ -701,10 +711,7 @@ class Contract(models.Model):
             'Cannot move from {} to state expired'.format(self.state))
 
     def set_canceled(self, request) -> None:
-        if (
-            self.state == self.STATE.PENDING or
-            self.state == self.STATE.WAITING
-        ):
+        if (self.state == self.STATE.PENDING):
             self.move(self.STATE.CANCELED)
             self.save()
             return
@@ -870,9 +877,6 @@ class ContractProcedure(models.Model):
     payment_methods = models.ManyToManyField(
         PaymentMethod,
         blank=True,
-    )
-    price_profiles = models.ManyToManyField(
-        PriceProfile,
     )
     tax_rate = models.IntegerField(
         default=0,

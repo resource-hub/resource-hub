@@ -67,6 +67,7 @@ INSTALLED_APPS = [
     'django_tables2',
     'django_rq',
     'django_summernote',
+    'djangoformsetjs',
     'imagekit',
     'recurrence',
     'rest_framework',

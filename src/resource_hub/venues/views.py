@@ -10,11 +10,12 @@ from django.utils.translation import ugettext_lazy as _
 from django.views import View
 from django.views.decorators.cache import cache_page
 
+from resource_hub.core.forms import PriceProfileFormSet
 from resource_hub.core.models import OrganizationMember
 
-from .forms import (VenueContractFormManager, VenueContractProcedureForm,
-                    VenueForm)
-from .models import Venue
+from .forms import (VenueContractFormManager,
+                    VenueContractProcedureFormManager, VenueForm)
+from .models import Venue, VenueContractProcedure
 from .tables import VenuesTable
 
 TTL = 60 * 5
@@ -85,24 +86,30 @@ class VenuesProfileEdit(View):
 
     def get(self, request, venue_id):
         venue = get_object_or_404(Venue, pk=venue_id)
-        venue_form = VenueFormManager(request.user, instance=venue)
-        return render(request, self.template_name, venue_form.get_forms())
+        venue_form = VenueForm(request, instance=venue)
+        print(venue_form.fields)
+        context = {
+            'venue_form': venue_form,
+        }
+        return render(request, self.template_name, context)
 
     def post(self, request, venue_id):
         venue = get_object_or_404(Venue, pk=venue_id)
-        venue_form = VenueFormManager(
-            request.user,
+        venue_form = VenueForm(
             request,
             instance=venue,
         )
 
         if venue_form.is_valid():
-            venue_form.save(venue.owner)
+            venue_form.save()
             message = _('The venue has been updated')
             messages.add_message(request, messages.SUCCESS, message)
             return redirect(reverse('control:venues_profile_edit', kwargs={'venue_id': venue_id}))
 
-        return render(request, self.template_name, venue_form.get_forms())
+        context = {
+            'venue_form': venue_form,
+        }
+        return render(request, self.template_name, context)
 
 
 class VenuesDetails(View):
@@ -120,7 +127,7 @@ class EventsCreate(View):
     def get(self, request, location_slug, venue_slug):
         venue = get_object_or_404(
             Venue, slug=venue_slug, location__slug=location_slug)
-        return render(request, self.template_name, VenueContractFormManager(venue).get_forms())
+        return render(request, self.template_name, VenueContractFormManager(venue, request).get_forms())
 
     def post(self, request, location_slug, venue_slug):
         venue = get_object_or_404(
@@ -149,8 +156,40 @@ class ContractProceduresCreate(View):
     template_name = 'venues/control/contract_procedures_create.html'
 
     def get(self, request):
-        contract_procedure_form = VenueContractProcedureForm(request)
-        context = {
-            'contract_procedure_form': contract_procedure_form,
-        }
-        return render(request, self.template_name, context)
+        contract_procedure_form = VenueContractProcedureFormManager(request)
+        return render(request, self.template_name, contract_procedure_form.get_forms())
+
+    def post(self, request):
+        contract_procedure_form = VenueContractProcedureFormManager(request)
+
+        if contract_procedure_form.is_valid():
+            contract_procedure_form.save()
+            message = _(
+                'The event contract procedure has been saved successfully')
+            messages.add_message(request, messages.SUCCESS, message)
+            return redirect(reverse('control:finance_contract_procedures_manage'))
+        return render(request, self.template_name, contract_procedure_form.get_forms())
+
+
+@method_decorator(login_required, name='dispatch')
+class ContractProceduresEdit(View):
+    template_name = 'venues/control/contract_procedures_edit.html'
+
+    def get(self, request, pk):
+        contract_procedure = get_object_or_404(VenueContractProcedure, pk=pk)
+        contract_procedure_form = VenueContractProcedureFormManager(
+            request, instance=contract_procedure)
+        return render(request, self.template_name, contract_procedure_form.get_forms())
+
+    def post(self, request, pk):
+        contract_procedure = get_object_or_404(VenueContractProcedure, pk=pk)
+        contract_procedure_form = VenueContractProcedureFormManager(
+            request, instance=contract_procedure)
+
+        if contract_procedure_form.is_valid():
+            contract_procedure_form.save()
+
+            message = _('The changes have been saved')
+            messages.add_message(request, messages.SUCCESS, message)
+            return redirect(reverse('control:finance_contract_procedures_manage'))
+        return render(request, self.template_name, contract_procedure_form.get_forms())

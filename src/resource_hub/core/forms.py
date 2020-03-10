@@ -8,16 +8,20 @@ from django.conf import settings
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm, UserCreationForm
 from django.contrib.auth.hashers import check_password
-from django.forms import formset_factory, model_to_dict
+from django.forms import inlineformset_factory, model_to_dict
 from django.utils.dateparse import parse_date
 from django.utils.translation import ugettext_lazy as _
 
 from django_summernote.widgets import SummernoteWidget
+from djangoformsetjs.utils import formset_media_js
 from schwifty import BIC, IBAN
 
 from .fields import HTMLField
-from .models import (Actor, Address, BankAccount, Location, Organization,
-                     OrganizationMember, Price, User)
+from .models import (Actor, Address, BankAccount, ContractProcedure,
+                     ContractTrigger, Location, Organization,
+                     OrganizationMember, PaymentMethod, Price, PriceProfile,
+                     User)
+from .utils import get_associated_objects
 from .widgets import IBANInput, UISearchField
 
 
@@ -28,10 +32,15 @@ class FormManager():
         self.request = request
         for k, form in self.forms.items():
             instance = instances[k] if instances else None
-            self.forms[k] = form.__class__(
-                request.POST,
-                request.FILES, instance=instance
-            ) if request else form.__class__(instance=instance)
+
+            # check if reference has bin initiazlied already
+            if not callable(form):
+                form = form.__class__
+
+            self.forms[k] = form(
+                data=request.POST,
+                files=request.FILES, instance=instance
+            ) if request else form(instance=instance)
 
     def get_forms(self):
         return self.forms
@@ -336,6 +345,46 @@ class UserAccountFormManager():
 
 # PriceFormSet = formset_factory(PriceForm)
 
+class ContractProcedureForm(forms.ModelForm):
+    def __init__(self, request, *args, **kwargs):
+        self.request = request
+        user = request.user
+        super(ContractProcedureForm, self).__init__(*args, **kwargs)
+        self.fields['payment_methods'].queryset = get_associated_objects(
+            user,
+            PaymentMethod
+        ).select_subclasses()
+        self.fields['triggers'].queryset = get_associated_objects(
+            user,
+            ContractTrigger
+        )
+
+    terms_and_conditions = HTMLField()
+
+    class Meta:
+        model = ContractProcedure
+        fields = ['auto_accept', 'terms_and_conditions', 'notes',
+                  'triggers', 'tax_rate', 'payment_methods', ]
+
+        help_texts = {
+            'auto_accept': _('Automatically accept the booking?'),
+            'payment_methods': _('Choose the payment methods you want to use for this venue'),
+            'price_profiles': _('Define discounts for certain groups and actors'),
+        }
+
+
+class PriceProfileForm(forms.ModelForm):
+    class Meta:
+        model = PriceProfile
+        fields = ['addressee', 'description', 'discount', ]
+        help_texts = {
+            'addressee': _('When left empty, the discount is visible for everyone')
+        }
+
+
+PriceProfileFormSet = inlineformset_factory(
+    ContractProcedure, PriceProfile, form=PriceProfileForm, extra=1)
+
 
 class OrganizationFormManager():
     def __init__(self, request=None):
@@ -476,8 +525,8 @@ class LocationForm(forms.ModelForm):
 
 class LocationFormManager(FormManager):
     forms = {
-        'location_form': LocationForm(),
-        'address_form': AddressForm(),
+        'location_form': LocationForm,
+        'address_form': AddressForm,
     }
 
     def save(self, commit=True):

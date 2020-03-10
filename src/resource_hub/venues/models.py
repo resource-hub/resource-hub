@@ -28,6 +28,10 @@ class VenueContractProcedure(ContractProcedure):
     def form_link(self):
         return reverse('control:venues_contract_procedures_create')
 
+    @property
+    def edit_link(self):
+        return reverse('control:venues_contract_procedures_edit', kwargs={'pk': self.pk})
+
 
 class Venue(models.Model):
     """describing locations."""
@@ -73,6 +77,12 @@ class Venue(models.Model):
     )
     equipment = models.ManyToManyField(
         'Equipment',
+        blank=True,
+    )
+    contract_procedure = models.ForeignKey(
+        ContractProcedure,
+        null=True,
+        on_delete=models.PROTECT,
     )
     created_at = models.DateField(
         auto_now=True,
@@ -269,27 +279,28 @@ class VenueContract(Contract):
 
     # methods
     def claim_factory(self, occurrences=None):
-        for occurrence in occurrences:
-            start = occurrence[0]
-            end = occurrence[1]
-            delta = ((end - start).total_seconds())/3600
-            net = delta * float(self.price.value)
-            gross = net*(1 + (self.contract_procedure.tax_rate / 100))
-            print(gross)
+        for venue in self.venues.all():
+            for occurrence in occurrences:
+                start = occurrence[0]
+                end = occurrence[1]
+                delta = ((end - start).total_seconds())/3600
+                net = delta * float(venue.price.value)
+                gross = net*(1 + (self.contract_procedure.tax_rate / 100))
+                print(gross)
 
-            self.claims.create(
-                item='{}: {}-{}'.format(
-                    self.event.name,
-                    start,
-                    end
-                ),
-                quantity=delta,
-                unit='h',
-                price=self.price.value,
-                currency=self.price.currency,
-                tax_rate=self.contract_procedure.tax_rate,
-                net=net,
-                gross=gross,
-                period_start=start,
-                period_end=end,
-            )
+                self.claims.create(
+                    item='{}: {}-{}'.format(
+                        self.event.name,
+                        start,
+                        end
+                    ),
+                    quantity=delta,
+                    unit='h',
+                    price=venue.price.value,
+                    currency=venue.price.currency,
+                    tax_rate=self.contract_procedure.tax_rate,
+                    net=net,
+                    gross=gross,
+                    period_start=start,
+                    period_end=end,
+                )
