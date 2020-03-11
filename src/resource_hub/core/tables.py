@@ -101,7 +101,6 @@ class ContractProcedureTable(tables.Table):
     owner = tables.Column(verbose_name=_('Owner'))
 
     def render_pk(self, value, record):
-        print(record.name)
         return mark_safe('<a href="{}">{}</a>'.format(record.edit_link, record.type_name))
 
     class Meta:

@@ -1,6 +1,4 @@
-from django.forms.renderers import TemplatesSetting
 from django.forms.widgets import CheckboxInput, TextInput, TimeInput
-from django.template.context import make_context
 
 
 class UISearchField(TextInput):

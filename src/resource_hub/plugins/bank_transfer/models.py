@@ -1,8 +1,6 @@
-from collections import OrderedDict
 
 from django.db import models
 from django.shortcuts import reverse
-from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 
 from resource_hub.core.models import BankAccount, PaymentMethod
@@ -19,10 +17,6 @@ class BankTransfer(PaymentMethod):
     @property
     def verbose_name(self) -> str:
         return _('Bank transfer')
-
-    @property
-    def edit_url(self):
-        return reverse('control:bank_transfer_edit', kwargs={'pk': self.pk})
 
     @property
     def info(self) -> dict:

@@ -1,21 +1,15 @@
 from datetime import datetime
 
 from django import forms
-from django.contrib.admin.widgets import AdminDateWidget
 from django.db.models import Q
-from django.forms import inlineformset_factory
 from django.utils.timezone import get_current_timezone
 from django.utils.translation import ugettext_lazy as _
 
-from datetimepicker.widgets import DateTimePicker
-from django_summernote.widgets import SummernoteInplaceWidget
 from resource_hub.core.fields import HTMLField
 from resource_hub.core.forms import (ContractProcedureForm, FormManager,
                                      PriceProfileFormSet)
-from resource_hub.core.models import (ContractTrigger, Location, PaymentMethod,
-                                      PriceProfile)
+from resource_hub.core.models import Location, PriceProfile
 from resource_hub.core.utils import get_associated_objects
-from resource_hub.core.widgets import TimeInputCustom
 
 from .models import Event, Venue, VenueContract, VenueContractProcedure
 
@@ -40,9 +34,6 @@ class VenueForm(forms.ModelForm):
 
 
 class VenueContractProcedureForm(ContractProcedureForm):
-    def __init__(self, *args, **kwargs):
-        super(VenueContractProcedureForm, self).__init__(*args, **kwargs)
-
     class Meta(ContractProcedureForm.Meta):
         model = VenueContractProcedure
         new = {
@@ -67,7 +58,6 @@ class VenueContractProcedureForm(ContractProcedureForm):
 
 
 class VenueContractProcedureFormManager(FormManager):
-
     def __init__(self, request, instance=None):
         if not request.POST:
             self.forms = {

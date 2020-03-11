@@ -1,8 +1,7 @@
 from django.urls import reverse
 
-from resource_hub.core.models import Actor, Organization, User
 from resource_hub.core.serializers import ActorSerializer, LocationSerializer
-from resource_hub.venues.models import Event, Venue
+from resource_hub.venues.models import Venue
 from rest_framework import serializers
 
 
@@ -19,14 +18,3 @@ class VenueSerializer(serializers.ModelSerializer):
         model = Venue
         fields = ['id', 'name', 'description', 'venue_link', 'location',
                   'thumbnail', 'owner']
-
-
-# class EventSerializer(serializers.ModelSerializer):
-#     organizer = ActorSerializer(read_only=True)
-
-#     def to_representation(self, instance):
-
-
-#     class Meta:
-#         model = Event
-#         fields = ['id', 'name', 'description', 'organizer', ]

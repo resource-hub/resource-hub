@@ -1,6 +1,5 @@
 from datetime import datetime
 
-from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 
 import django_rq

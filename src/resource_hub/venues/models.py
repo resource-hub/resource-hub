@@ -10,9 +10,8 @@ from django.utils.translation import ugettext_lazy as _
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
 from recurrence.fields import RecurrenceField
-from resource_hub.core.models import (Actor, Claim, Contract,
-                                      ContractProcedure, Gallery, Location,
-                                      Price)
+from resource_hub.core.models import (Actor, Contract, ContractProcedure,
+                                      Gallery, Location, Price)
 
 
 class VenueContractProcedure(ContractProcedure):

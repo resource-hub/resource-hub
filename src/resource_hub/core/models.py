@@ -822,10 +822,6 @@ class Trigger(models.Model):
     def form_url(self) -> str:
         raise NotImplementedError()
 
-    @property
-    def edit_url(self, pk) -> str:
-        raise NotImplementedError()
-
     # methods
     def callback(self) -> None:
         raise NotImplementedError()

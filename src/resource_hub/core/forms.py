@@ -8,19 +8,16 @@ from django.conf import settings
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm, UserCreationForm
 from django.contrib.auth.hashers import check_password
-from django.forms import inlineformset_factory, model_to_dict
+from django.forms import inlineformset_factory
 from django.utils.dateparse import parse_date
 from django.utils.translation import ugettext_lazy as _
 
-from django_summernote.widgets import SummernoteWidget
-from djangoformsetjs.utils import formset_media_js
 from schwifty import BIC, IBAN
 
 from .fields import HTMLField
 from .models import (Actor, Address, BankAccount, ContractProcedure,
                      ContractTrigger, Location, Organization,
-                     OrganizationMember, PaymentMethod, Price, PriceProfile,
-                     User)
+                     OrganizationMember, PaymentMethod, PriceProfile, User)
 from .utils import get_associated_objects
 from .widgets import IBANInput, UISearchField
 
@@ -353,7 +350,6 @@ class UserAccountFormManager():
 class ContractProcedureForm(forms.ModelForm):
     def __init__(self, request, *args, **kwargs):
         self.request = request
-        user = request.user
         super(ContractProcedureForm, self).__init__(*args, **kwargs)
         self.fields['payment_methods'].queryset = get_associated_objects(
             request.actor,

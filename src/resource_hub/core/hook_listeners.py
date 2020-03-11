@@ -2,7 +2,6 @@
 import os
 
 from django.shortcuts import reverse
-from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 
 from resource_hub.control import sidebar_module_renderer
