@@ -134,7 +134,7 @@ class FinancePaymentMethodsManage(TableView):
 
     def get_queryset(self):
         methods = get_associated_objects(
-            self.request.user,
+            self.request.actor,
             PaymentMethod
         ).select_subclasses()
 
@@ -321,7 +321,7 @@ class FinanceContractProceduresManage(TableView):
 
     def get_queryset(self):
         return get_associated_objects(
-            self.request.user,
+            self.request.actor,
             ContractProcedure
         ).select_subclasses()
 
@@ -522,7 +522,7 @@ class LocationsManage(TableView):
 
     def get_queryset(self):
         return get_associated_objects(
-            self.request.user,
+            self.request.actor,
             Location
         )
 

@@ -12,6 +12,7 @@ from django.views.decorators.cache import cache_page
 
 from resource_hub.core.forms import PriceProfileFormSet
 from resource_hub.core.models import OrganizationMember
+from resource_hub.core.utils import get_associated_objects
 
 from .forms import (VenueContractFormManager,
                     VenueContractProcedureFormManager, VenueForm)
@@ -29,13 +30,10 @@ def index(request):
 @method_decorator(login_required, name='dispatch')
 class VenuesManage(View):
     def get(self, request):
-        user = request.user
-        query = Q(owner=user.pk)
-        sub_condition = Q(owner__organization__members=user)
-        sub_condition.add(
-            Q(owner__organization__organizationmember__role__gte=OrganizationMember.ADMIN), Q.AND)
-        query.add(sub_condition, Q.OR)
-        venues = Venue.objects.filter(query)
+        venues = get_associated_objects(
+            request.actor,
+            Venue
+        )
 
         if venues:
             data = []

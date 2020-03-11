@@ -42,14 +42,9 @@ class VenueForm(forms.ModelForm):
 class VenueContractProcedureForm(ContractProcedureForm):
     def __init__(self, *args, **kwargs):
         super(VenueContractProcedureForm, self).__init__(*args, **kwargs)
-        # self.fields['venues'].queryset = get_associated_objects(
-        #     self.request.user,
-        #     Venue
-        # )
 
     class Meta(ContractProcedureForm.Meta):
         model = VenueContractProcedure
-        # fields = ['venues', ] + ContractProcedureForm.Meta.fields
         new = {
             'venues': _('Select the venues that you want to make bookable. A venue can only be associated with one procedure. Existing connections will be overwritten.'),
         }

@@ -101,10 +101,9 @@ class UserBaseForm(UserCreationForm):
 class OrganizationForm(forms.ModelForm):
     name = forms.CharField(max_length=100, label=_(
         'Organization name'), help_text=_('Please include your legal form'))
+    email_public = forms.EmailField(required=True, help_text=_(
+        'This is the mail will be displayed on bills and on the profile'))
     info_text = HTMLField(required=False)
-
-    def clean_info_text(self):
-        return bleach.clean(self.cleaned_data['info_text'])
 
     def clean_name(self):
         name = self.cleaned_data['name']
@@ -116,10 +115,16 @@ class OrganizationForm(forms.ModelForm):
         raise forms.ValidationError(
             _('This organization name already exists'), code='organization-name-exists')
 
+    def clean_email_public(self):
+        if not self.cleaned_data['email_public']:
+            raise forms.ValidationError(
+                _('For organizations, a public email is required'))
+        return self.cleaned_data['email_public']
+
     class Meta:
         model = Organization
-        fields = ['name', 'image', 'telephone_public', 'telephone_private',
-                  'email_public', 'website', 'info_text']
+        fields = ['name', 'email_public', 'image', 'telephone_public', 'telephone_private',
+                  'website', 'info_text']
 
 
 class AddressForm(forms.ModelForm):
@@ -351,11 +356,11 @@ class ContractProcedureForm(forms.ModelForm):
         user = request.user
         super(ContractProcedureForm, self).__init__(*args, **kwargs)
         self.fields['payment_methods'].queryset = get_associated_objects(
-            user,
+            request.actor,
             PaymentMethod
         ).select_subclasses()
         self.fields['triggers'].queryset = get_associated_objects(
-            user,
+            request.actor,
             ContractTrigger
         )
 
