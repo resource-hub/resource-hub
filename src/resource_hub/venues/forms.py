@@ -92,6 +92,9 @@ class VenueContractProcedureFormManager(FormManager):
             form.contract_procedure = new_venue_contract_procedure
             form.save()
 
+        for deleted_form in self.forms['price_profile_form_set'].deleted_objects:
+            deleted_form.delete()
+
         return new_venue_contract_procedure
 
 

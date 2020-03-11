@@ -4,9 +4,8 @@
 {% load sekizai_tags %}
 
 <div id="formset" data-formset-prefix="{{ formset.prefix }}">
-    {{ formset.maagement_form }}
+    {{ formset.management_form }}
     <table class="ui table" data-formset-body>
-
         <!-- New forms will be inserted in here -->
         {% for form in formset %}
         {% if forloop.first %}
