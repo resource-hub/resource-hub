@@ -533,6 +533,9 @@ class PriceProfile(models.Model):
             self.addressee.name)
         return '{}%: {} {}'.format(self.discount, self.description, addressee)
 
+    def apply(self, net):
+        return net * (1 - (self.discount/100))
+
 
 class Claim(models.Model):
     item = models.CharField(max_length=255)
@@ -551,13 +554,28 @@ class Claim(models.Model):
         default='EUR',
         max_length=5,
     )
-    tax_rate = models.IntegerField(
-        default=0,
-        verbose_name=_('tax rate applied in percent'),
-    )
     net = models.DecimalField(
         decimal_places=5,
         max_digits=15,
+    )
+    discount = models.IntegerField(
+        default=0,
+        validators=[
+            MinValueValidator(0),
+            MaxValueValidator(99),
+        ],
+    )
+    discounted_net = models.DecimalField(
+        decimal_places=5,
+        max_digits=15,
+    )
+    tax_rate = models.IntegerField(
+        default=0,
+        verbose_name=_('tax rate applied in percent'),
+        validators=[
+            MinValueValidator(0),
+            MaxValueValidator(99),
+        ],
     )
     gross = models.DecimalField(
         decimal_places=5,
@@ -905,6 +923,10 @@ class ContractProcedure(models.Model):
     @property
     def type_name(self):
         raise NotImplementedError()
+
+    # methods
+    def apply_tax(self, net):
+        return net * (1 + (self.tax_rate/100))
 
 
 class Gallery(models.Model):

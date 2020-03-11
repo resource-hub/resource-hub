@@ -1,11 +1,14 @@
+from datetime import datetime
+
 from django import forms
 from django.contrib.admin.widgets import AdminDateWidget
 from django.db.models import Q
 from django.forms import inlineformset_factory
+from django.utils.timezone import get_current_timezone
 from django.utils.translation import ugettext_lazy as _
 
 from datetimepicker.widgets import DateTimePicker
-from django_summernote.widgets import SummernoteWidget
+from django_summernote.widgets import SummernoteInplaceWidget
 from resource_hub.core.fields import HTMLField
 from resource_hub.core.forms import (ContractProcedureForm, FormManager,
                                      PriceProfileFormSet)
@@ -89,59 +92,11 @@ class VenueContractProcedureFormManager(FormManager):
             form.contract_procedure = new_venue_contract_procedure
             form.save()
 
-        # for venue in new_venue_contract_procedure.venues.all():
-        #     venue.contract_procedure = new_venue_contract_procedure
-        #     venue.save()
-
         return new_venue_contract_procedure
-
-        # class VenueFormManager():
-        #     def __init__(self, user, request=None, instance=None):
-        #         self.request = request
-        #         venue = instance if instance else None
-        #         venue_procedure = instance.contract_procedure if instance else None
-
-        #         if request is None:
-        #             self.venue_form = VenueForm(user, instance=venue)
-        #             self.venue_procedure = VenueContractProcedureForm(
-        #                 user, instance=venue_procedure)
-        #         else:
-        #             self.venue_form = VenueForm(
-        #                 user, request.POST,
-        #                 request.FILES,
-        #                 instance=venue,
-        #             )
-        #             self.venue_procedure = VenueContractProcedureForm(
-        #                 user,
-        #                 data=request.POST,
-        #                 instance=venue_procedure,
-        #             )
-
-        #     def is_valid(self):
-        #         if self.request.POST.get('bookable', False):
-        #             return self.venue_form.is_valid() and self.venue_procedure.is_valid()
-        #         return self.venue_form.is_valid()
-
-        #     def get_forms(self):
-        #         return {
-        #             'venue_form': self.venue_form,
-        #             'venue_procedure': self.venue_procedure,
-        #         }
-
-        #     def save(self, owner, commit=True):
-        #         new_venue = self.venue_form.save(commit=False)
-        #         new_venue.owner = owner
-        #         if self.venue_form.cleaned_data['bookable']:
-        #             new_venue_procedure = self.venue_procedure.save(commit=True)
-        #             new_venue.contract_procedure = new_venue_procedure
-
-        #         if commit:
-        #             new_venue.save()
-        #         return new_venue
 
 
 class EventForm(forms.ModelForm):
-    description = forms.CharField(widget=SummernoteWidget())
+    description = HTMLField()
     thumbnail_original = forms.ImageField(required=True)
     is_public = forms.BooleanField(
         initial=True,
@@ -155,19 +110,27 @@ class EventForm(forms.ModelForm):
         label=_('End of the event'),
     )
 
-    def __init__(self, venue, *args, **kwargs):
+    def __init__(self, venue, request, *args, **kwargs):
         super(EventForm, self).__init__(*args, **kwargs)
-        self.venue = venue
+        self.request = request
         self.new_event = None
         self.dtlast = None
         self.occurrences = []
+        self.fields['venues'].queryset = Venue.objects.filter(
+            contract_procedure=venue.contract_procedure
+        )
+        self.initial['venues'] = venue
 
     class Meta:
         model = Event
-        fields = ['name', 'description', 'dtstart', 'dtend', 'recurrences', 'thumbnail_original',
+        fields = ['venues', 'name', 'description', 'dtstart', 'dtend', 'recurrences', 'thumbnail_original',
                   'tags', 'category', 'is_public', ]
         labels = {
-            'recurrences': _('Recurs on')
+            'recurrences': _('Recurs on'),
+            'name': _('Event name'),
+        }
+        help_texts = {
+            'venues': _('If available you can book several venues at once'),
         }
 
     def get_occurrences(self):
@@ -186,31 +149,7 @@ class EventForm(forms.ModelForm):
                 _('Start of event is equal to end'), code='start-equal-to-end')
         return dtend
 
-    def clean_recurrences(self):
-        '''
-        quick, dirty and naive conflict detection (polynomial runtime)
-        work in progress
-        '''
-
-        recurrences = self.cleaned_data['recurrences']
-        dtstart = self.cleaned_data['dtstart'].replace(tzinfo=None)
-        dtend = self.cleaned_data['dtend'].replace(tzinfo=None)
-        recurrences.dtstart = dtstart
-        dates = recurrences.occurrences()
-        for date in dates:
-            # get last occurrence and apply times to dates
-
-            t = dtstart.time()
-            occurrence_start = date.replace(
-                hour=t.hour, minute=t.minute, second=t.second)
-            t = dtend.time()
-            occurrence_end = date.replace(
-                hour=t.hour, minute=t.minute, second=t.second)
-            self.occurrences.append(
-                (occurrence_start, occurrence_end)
-            )
-            self.dtlast = occurrence_end
-
+    def _find_conflicts(self, venue, dtstart, dtlast, occurrences):
         # query existing events in planned timeframe
         start_inside = Q(
             dtstart__lte=dtstart,
@@ -220,25 +159,24 @@ class EventForm(forms.ModelForm):
             Q.AND
         )
         last_inside = Q(
-            dtstart__lte=self.dtlast,
+            dtstart__lte=dtlast,
         )
         last_inside.add(
-            Q(dtlast__gte=self.dtlast),
+            Q(dtlast__gte=dtlast),
             Q.AND
         )
         intersect = start_inside
         intersect.add(last_inside, Q.OR)
 
-        query = Q(venue=self.venue)
+        query = Q(venues=venue)
         query.add(Q(intersect), Q.AND)
 
         current_events = Event.objects.filter(
             query
         )
-
-        # iterate for conflicts (O(n^3) worst case ha!)
         conflicts = []
-        for occurrence in self.occurrences:
+        # iterate for conflicts (O(n^3) worst case ha!)
+        for occurrence in occurrences:
             new_date_start = occurrence[0]
             new_date_end = occurrence[1]
             for event in current_events:
@@ -250,28 +188,59 @@ class EventForm(forms.ModelForm):
                 )
 
                 for old_date in old_dates:
-                    t = event.dtstart.time()
-                    old_date_start = old_date.replace(
-                        hour=t.hour, minute=t.minute, second=t.second, tzinfo=None)
-                    t = event.dtlast.time()
-                    old_date_end = old_date.replace(
-                        hour=t.hour, minute=t.minute, second=t.second, tzinfo=None)
+                    old_date_start = datetime.combine(
+                        old_date.date(), event.dtstart.time(), event.dtstart.tzinfo)
+                    old_date_end = datetime.combine(
+                        old_date.date(), event.dtend.time(), event.dtend.tzinfo)
                     print("{} - {} | {} - {}".format(new_date_start,
                                                      new_date_end, old_date_start, old_date_end))
                     if (
                         (
-                            old_date_start <= new_date_start and
-                            old_date_end >= new_date_start
+                            old_date_start < new_date_start and
+                            old_date_end > new_date_start
                         ) or
                         (
-                            old_date_start <= new_date_end and
-                            old_date_start >= new_date_start
+                            old_date_start < new_date_end and
+                            old_date_start > new_date_start
                         )
                     ):
+                        client_tz = get_current_timezone()
+                        old_date_start = old_date_start.astimezone(client_tz)
+                        old_date_end = old_date_end.astimezone(client_tz)
                         conflicts.append(
-                            _('There is a conflict with {} on {} to {}'.format(
-                                event.name, new_date_start, new_date_end))
+                            _('There is a conflict with {}@{} at {} to {}'.format(
+                                event.name, venue.name, old_date_start.strftime('%c'), old_date_end.strftime('%c')))
                         )
+        return conflicts
+
+    def clean_recurrences(self):
+        '''
+        quick, dirty and naive conflict detection (polynomial runtime)
+        work in progress
+        '''
+
+        recurrences = self.cleaned_data['recurrences']
+        dtstart = self.cleaned_data['dtstart']
+        dtend = self.cleaned_data['dtend']
+        recurrences.dtstart = dtstart
+        dates = recurrences.occurrences()
+        for date in dates:
+            # get last occurrence and apply times to dates
+
+            occurrence_start = datetime.combine(
+                date.date(), dtstart.time(), dtstart.tzinfo)
+            occurrence_end = datetime.combine(
+                date.date(), dtend.time(), dtend.tzinfo)
+            self.occurrences.append(
+                (occurrence_start, occurrence_end)
+            )
+            self.dtlast = occurrence_end
+
+        conflicts = []
+        for venue in self.cleaned_data['venues']:
+            conflicts = conflicts + self._find_conflicts(
+                venue, dtstart, self.dtlast, self.occurrences)
+
         if conflicts:
             raise forms.ValidationError(
                 conflicts
@@ -279,19 +248,13 @@ class EventForm(forms.ModelForm):
 
         return recurrences
 
-    def pre_save(self, *args, **kwargs):
-        # print(self.new_event.recurrences.count())
-        return False
-
-    def save(self, request, *args, commit=True, **kwargs):
+    def save(self, *args, commit=True, **kwargs):
         self.new_event = super(EventForm, self).save(
             commit=False, *args, **kwargs)
-        self.new_event.organizer = request.actor
-        self.new_event.created_by = request.user
-        self.new_event.updated_by = request.user
-        self.new_event.venue = self.venue
-        self.new_event.recurrences.dtstart = self.new_event.dtstart.replace(
-            tzinfo=None)
+        self.new_event.organizer = self.request.actor
+        self.new_event.created_by = self.request.user
+        self.new_event.updated_by = self.request.user
+        self.new_event.recurrences.dtstart = self.new_event.dtstart
         if self.dtlast is None:
             self.new_event.dtlast = self.new_event.dtend
         else:
@@ -316,13 +279,10 @@ class VenueContractForm(forms.ModelForm):
             query
         ).order_by('-discount')
         self.initial['price_profile'] = self.fields['price_profile'].queryset[0]
-        self.fields['venues'].queryset = Venue.objects.filter(
-            contract_procedure=venue.contract_procedure
-        )
 
     class Meta:
         model = VenueContract
-        fields = ['price_profile', 'payment_method', 'venues', ]
+        fields = ['price_profile', 'payment_method', ]
         help_texts = {
             'price_profile': _('Available discounts granted to certain groups and entities')
         }
@@ -332,16 +292,18 @@ class VenueContractFormManager():
     def __init__(self, venue, request):
         self.request = request
         self.venue = venue
+
         self.venue_contract_form = VenueContractForm(
             self.venue,
             self.request,
-            request.POST
+            data=self.request.POST
         ) if request.POST else VenueContractForm(self.venue, self.request)
         self.event_form = EventForm(
             self.venue,
-            request.POST,
-            request.FILES
-        ) if request.POST else EventForm(self.venue)
+            self.request,
+            data=self.request.POST,
+            files=self.request.FILES
+        ) if self.request.POST else EventForm(self.venue, self.request)
 
     @property
     def occurrences(self):
@@ -368,7 +330,7 @@ class VenueContractFormManager():
         new_venue_contract.debitor = actor
         new_venue_contract.created_by = user
         new_venue_contract.contract_procedure = self.venue.contract_procedure
-        new_event = self.event_form.save(self.request, commit=True)
+        new_event = self.event_form.save()
         new_venue_contract.event = new_event
 
         if commit:

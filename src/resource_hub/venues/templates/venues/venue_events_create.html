@@ -25,6 +25,7 @@
 
 
 {% block scripts %}
+{{ event_form.media }}
 <script src="{% static 'datetimepicker/build/jquery.datetimepicker.full.min.js' %}"></script>
 <script>
     function setEnd(currentDateTime) {

@@ -253,7 +253,8 @@ RQ_QUEUES = {
 
 SUMMERNOTE_THEME = 'lite'
 SUMMERNOTE_CONFIG = {
-    'iframe': True,
+    'iframe': False,
+    'disable_attachment': False,
     'summernote': {
         'airMode': False,
 
@@ -263,5 +264,6 @@ SUMMERNOTE_CONFIG = {
 
     'css': (
         '/static/css/summernote.css',
+        '/static/css/summernote_dark.css',
     ),
 }

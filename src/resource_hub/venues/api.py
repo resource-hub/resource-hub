@@ -64,8 +64,8 @@ class VenueEvents(APIView):
                 detail=_('start or end parameter not set'))
 
         try:
-            start = dateutil.parser.parse(start_str).replace(tzinfo=None)
-            end = dateutil.parser.parse(end_str).replace(tzinfo=None)
+            start = dateutil.parser.parse(start_str)
+            end = dateutil.parser.parse(end_str)
         except ValueError as e:
             raise exceptions.ParseError(
                 detail=_('start or end parameter not valid iso_8601 string'))
@@ -76,24 +76,23 @@ class VenueEvents(APIView):
             raise exceptions.NotFound(
                 detail=_('No venue corresponds to the given id'))
 
-        events = Event.objects.filter(venue=venue_id)
+        events = Event.objects.filter(venues=venue_id)
         result = []
 
         for e in events:
-            print(e.dtstart)
             occurrences = e.recurrences.between(
                 start,
                 end,
                 inc=True,
-                dtstart=e.dtstart.replace(tzinfo=None)
+                dtstart=e.dtstart
             )
             for o in occurrences:
                 result.append({
                     'id': e.id,
                     'title': e.name,
                     'description': e.description,
-                    'start': datetime.combine(o.date(), e.dtstart.time()),
-                    'end': datetime.combine(o.date(), e.dtend.time()),
+                    'start': datetime.combine(o.date(), e.dtstart.time(), e.dtstart.tzinfo),
+                    'end': datetime.combine(o.date(), e.dtend.time(), e.dtend.tzinfo),
                 })
 
         return Response(result)

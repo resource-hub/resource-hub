@@ -4,8 +4,8 @@
 {% load sekizai_tags %}
 
 <div id="formset" data-formset-prefix="{{ formset.prefix }}">
-    <table class="ui table">
-        {{ formset.management_form }}
+    {{ formset.maagement_form }}
+    <table class="ui table" data-formset-body>
 
         <!-- New forms will be inserted in here -->
         {% for form in formset %}
@@ -24,7 +24,7 @@
             </tr>
         </thead>
         {% endif %}
-        <tbody data-formset-body>
+        <tbody>
             <tr data-formset-form>
                 {% for field in form.visible_fields %}
                 <td>
@@ -40,6 +40,9 @@
                     {% endfor %}
                 </td>
                 {% endfor %}
+                <!-- <td>
+                    <button type="button" data-formset-delete-button>Delete form</button>
+                </td> -->
             </tr>
         </tbody>
         {% endfor %}

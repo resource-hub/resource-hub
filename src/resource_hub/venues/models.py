@@ -99,7 +99,7 @@ class Venue(models.Model):
 
     # Methods
     def __str__(self):
-        return self.name
+        return '{} ({})'.format(self.name, self.location.name)
 
     def save(self, *args, **kwargs):
         if not self.id:
@@ -175,9 +175,8 @@ class Event(models.Model):
         on_delete=models.SET_NULL,
         null=True
     )
-    venue = models.ForeignKey(
+    venues = models.ManyToManyField(
         Venue,
-        on_delete=models.CASCADE
     )
     is_public = models.BooleanField(
         default=True,
@@ -255,9 +254,6 @@ class VenueContract(Contract):
         Event,
         on_delete=models.PROTECT,
     )
-    venues = models.ManyToManyField(
-        Venue,
-    )
     equipment = models.ManyToManyField(
         Equipment,
     )
@@ -279,27 +275,29 @@ class VenueContract(Contract):
 
     # methods
     def claim_factory(self, occurrences=None):
-        for venue in self.venues.all():
+        for venue in self.event.venues.all():
             for occurrence in occurrences:
                 start = occurrence[0]
                 end = occurrence[1]
                 delta = ((end - start).total_seconds())/3600
                 net = delta * float(venue.price.value)
-                gross = net*(1 + (self.contract_procedure.tax_rate / 100))
-                print(gross)
+                discounted_net = self.price_profile.apply(
+                    net)
+                gross = self.contract_procedure.apply_tax(discounted_net)
 
                 self.claims.create(
-                    item='{}: {}-{}'.format(
+                    item='{}@{}'.format(
                         self.event.name,
-                        start,
-                        end
+                        venue.name
                     ),
                     quantity=delta,
                     unit='h',
                     price=venue.price.value,
                     currency=venue.price.currency,
-                    tax_rate=self.contract_procedure.tax_rate,
                     net=net,
+                    discount=self.price_profile.discount,
+                    discounted_net=discounted_net,
+                    tax_rate=self.contract_procedure.tax_rate,
                     gross=gross,
                     period_start=start,
                     period_end=end,

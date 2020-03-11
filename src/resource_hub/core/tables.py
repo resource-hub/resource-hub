@@ -75,14 +75,19 @@ class LocationsTable(tables.Table):
 class ClaimTable(tables.Table):
     # columns
     item = tables.Column(verbose_name=_('Item'))
+    period_start = tables.Column(verbose_name=_('Performance period start'))
+    period_end = tables.Column(verbose_name=_('Performance period end'))
     quantity = tables.Column(verbose_name=_('Quantity'))
     unit = tables.Column(verbose_name=_('Unit'))
     price = tables.Column(verbose_name=_('Price/unit'))
-    currency = tables.Column(verbose_name=_('Currency'))
-    tax_rate = tables.Column(verbose_name=_('Tax (%)'))
     net = tables.Column(verbose_name=_('Net'))
+    discount = tables.Column(verbose_name=_('Discount (%)'))
+    discounted_net = tables.Column(verbose_name=_('Discounted net'))
+    tax_rate = tables.Column(verbose_name=_('Tax (%)'))
     gross = tables.Column(verbose_name=_(
         'Gross'), footer=lambda table: sum(x.gross for x in table.data))
+    currency = tables.Column(verbose_name=_(
+        'Currency'), footer=lambda table: table.data[0].currency)
 
     class Meta:
         attrs = {
