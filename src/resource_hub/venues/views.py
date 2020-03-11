@@ -13,6 +13,7 @@ from django.views.decorators.cache import cache_page
 from resource_hub.core.forms import PriceProfileFormSet
 from resource_hub.core.models import OrganizationMember
 from resource_hub.core.utils import get_associated_objects
+from resource_hub.core.views import TableView
 
 from .forms import (VenueContractFormManager,
                     VenueContractProcedureFormManager, VenueForm)
@@ -28,29 +29,17 @@ def index(request):
 
 # Admin section
 @method_decorator(login_required, name='dispatch')
-class VenuesManage(View):
-    def get(self, request):
-        venues = get_associated_objects(
-            request.actor,
+class VenuesManage(TableView):
+    header = _('Manage venues')
+
+    def get_queryset(self):
+        return get_associated_objects(
+            self.request.actor,
             Venue
         )
 
-        if venues:
-            data = []
-            for r in venues:
-                data.append({
-                    'name': r.name,
-                    'venue_id': r.id,
-                    'owner': r.owner,
-                })
-            venues_table = VenuesTable(data)
-        else:
-            venues_table = None
-
-        context = {
-            'venues_table': venues_table,
-        }
-        return render(request, 'venues/control/venues_manage.html', context)
+    def get_table(self):
+        return VenuesTable
 
 
 @method_decorator(login_required, name='dispatch')
@@ -85,7 +74,6 @@ class VenuesProfileEdit(View):
     def get(self, request, venue_id):
         venue = get_object_or_404(Venue, pk=venue_id)
         venue_form = VenueForm(request, instance=venue)
-        print(venue_form.fields)
         context = {
             'venue_form': venue_form,
         }

@@ -20,6 +20,7 @@ from ..signals import register_contract_procedures, register_payment_methods
 from ..tables import (ContractProcedureTable, LocationsTable, MembersTable,
                       OrganizationsTable, PaymentMethodsTable)
 from ..utils import get_associated_objects
+from . import TableView
 
 
 @method_decorator(login_required, name='dispatch')
@@ -38,33 +39,6 @@ class ScopeView(View):
         if self.scope_is_valid(kwargs['scope']):
             return super(ScopeView, self).dispatch(*args, **kwargs)
         raise Http404
-
-
-class TableView(View):
-    template_name = 'core/table_view.html'
-    header = 'Header'
-    request = None
-
-    def get_queryset(self):
-        raise NotImplementedError()
-
-    def get_table(self):
-        raise NotImplementedError()
-
-    def get(self, request):
-        self.request = request
-        queryset = self.get_queryset()
-
-        if queryset:
-            table = self.get_table()(queryset)
-        else:
-            table = None
-
-        context = {
-            'header': self.header,
-            'table': table,
-        }
-        return render(request, self.template_name, context)
 
 
 @method_decorator(login_required, name='dispatch')
