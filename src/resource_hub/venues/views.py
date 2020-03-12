@@ -47,10 +47,10 @@ class VenuesCreate(View):
         return render(request, 'venues/control/venues_create.html', context)
 
     def post(self, request):
-        venue_form = VenueForm(request, request.POST)
+        venue_form = VenueForm(request, data=request.POST, files=request.FILES)
 
         if venue_form.is_valid():
-            venue_form.save(request.actor)
+            venue_form.save()
 
             message = ('The venue has been created')
             messages.add_message(request, messages.SUCCESS, message)
@@ -108,7 +108,9 @@ class EventsCreate(View):
     def get(self, request, location_slug, venue_slug):
         venue = get_object_or_404(
             Venue, slug=venue_slug, location__slug=location_slug)
-        return render(request, self.template_name, VenueContractFormManager(venue, request).get_forms())
+        context = VenueContractFormManager(venue, request).get_forms()
+        context['venue'] = venue
+        return render(request, self.template_name, context)
 
     def post(self, request, location_slug, venue_slug):
         venue = get_object_or_404(

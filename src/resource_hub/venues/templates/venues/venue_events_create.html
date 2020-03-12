@@ -5,6 +5,8 @@
 <link rel="stylesheet" type="text/css" href="{% static 'datetimepicker/jquery.datetimepicker.css' %}" />
 {% endblock %}
 {% block content %}
+{% url 'venues:venue_details' venue_slug=venue.slug location_slug=venue.location.slug as url %}
+{% include '_back_button.html' with url=url %}
 <h1>
     {% trans 'create event' %}
 </h1>

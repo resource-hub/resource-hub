@@ -14,6 +14,8 @@ from ipware import get_client_ip
 from model_utils.fields import MonitorField
 from model_utils.managers import InheritanceManager
 
+from .utils import get_valid_slug
+
 
 class Actor(models.Model):
     # Fields
@@ -112,9 +114,8 @@ class User(AbstractUser, Actor):
     )
 
     def save(self, *args, **kwargs):
-        if not self.id:
-            # Newly created object, so set slug
-            self.slug = slugify(self.username)
+        if not self.pk:
+            self.slug = get_valid_slug(self, self.username)
 
         super(User, self).save(*args, **kwargs)
 
@@ -302,8 +303,8 @@ class Location(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        if not self.id:
-            self.slug = slugify(self.name)
+        if not self.pk:
+            self.slug = get_valid_slug(self, self.name)
 
         super(Location, self).save(*args, **kwargs)
 
@@ -333,13 +334,8 @@ class Organization(Actor):
         return super().name
 
     def save(self, *args, **kwargs):
-        if not self.id:
-            slug = slugify(self.name)
-            try:
-                Organization.objects.get(slug=slug)
-                self.slug = slug + str(datetime.now().date())
-            except Organization.DoesNotExist:
-                self.slug = slug
+        if not self.pk:
+            self.slug = get_valid_slug(self, self.name)
         super(Organization, self).save(*args, **kwargs)
 
 
@@ -502,6 +498,9 @@ class Price(models.Model):
             self.value,
             self.currency
         )
+
+    def display(self):
+        return '{} {}'.format(self.value.normalize(), self.currency)
 
 
 class PriceProfile(models.Model):

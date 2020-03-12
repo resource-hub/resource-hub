@@ -16,10 +16,10 @@ from .models import Event, Venue, VenueContract, VenueContractProcedure
 
 class VenueForm(forms.ModelForm):
     def __init__(self, request, *args, **kwargs):
-        user = request.user
         super(VenueForm, self).__init__(*args, **kwargs)
+        self.request = request
         self.fields['location'].queryset = get_associated_objects(
-            user,
+            self.request.actor,
             Location
         )
     description = HTMLField()
@@ -31,6 +31,13 @@ class VenueForm(forms.ModelForm):
         help_texts = {
             'bookable': _('Do you want to use the platform\'s booking logic?'),
         }
+
+    def save(self, *args, commit=True, **kwargs):
+        new_venue = super(VenueForm, self).save(*args, commit=False, **kwargs)
+        new_venue.owner = self.request.actor
+        if commit:
+            new_venue.save()
+        return new_venue
 
 
 class VenueContractProcedureForm(ContractProcedureForm):

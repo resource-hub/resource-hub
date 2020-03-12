@@ -2,6 +2,7 @@ import uuid
 from datetime import datetime
 
 from django.db import models
+from django.db.models import Q
 from django.shortcuts import reverse
 from django.template.loader import render_to_string
 from django.utils.text import slugify
@@ -12,6 +13,7 @@ from imagekit.processors import ResizeToFill
 from recurrence.fields import RecurrenceField
 from resource_hub.core.models import (Actor, Contract, ContractProcedure,
                                       Gallery, Location, Price)
+from resource_hub.core.utils import get_valid_slug
 
 
 class VenueContractProcedure(ContractProcedure):
@@ -98,16 +100,12 @@ class Venue(models.Model):
 
     # Methods
     def __str__(self):
-        return '{} ({})'.format(self.name, self.location.name)
+        return '{}: {}{} ({})'.format(self.name, self.price.value, self.price.currency, self.location.name)
 
     def save(self, *args, **kwargs):
-        if not self.id:
-            slug = slugify(self.name)
-            try:
-                Venue.objects.get(slug=slug, location=self.location)
-                self.slug = slug + str(datetime.now().date())
-            except Venue.DoesNotExist:
-                self.slug = slug
+        if not self.pk:
+            self.slug = get_valid_slug(
+                self, self.name, Q(location=self.location))
         super(Venue, self).save(*args, **kwargs)
 
 
@@ -222,13 +220,8 @@ class Event(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        if not self.id:
-            slug = slugify(self.name)
-            try:
-                Event.objects.get(slug=slug)
-                self.slug = slug + str(datetime.now().date())
-            except Event.DoesNotExist:
-                self.slug = slug
+        if not self.pk:
+            self.slug = get_valid_slug(self, self.name)
         super(Event, self).save(*args, **kwargs)
 
 

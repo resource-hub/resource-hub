@@ -61,6 +61,14 @@
             <div class="calendar" id='calendar'></div>
             {% if venue.bookable %}
             <div class="spacer">
+                <div class="ui list">
+                    <div class="item">
+                        <div class="header">
+                            {% trans 'Base price' %}
+                        </div>
+                        {{ venue.price.display }}
+                    </div>
+                </div>
                 <a class="ui right labeled positive icon button"
                     href="{% url 'venues:events_create' venue_slug=venue.slug location_slug=venue.location.slug %}">
                     {% trans 'book' %}
