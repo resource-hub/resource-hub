@@ -364,10 +364,11 @@ class ContractProcedureForm(forms.ModelForm):
 
     class Meta:
         model = ContractProcedure
-        fields = ['auto_accept', 'terms_and_conditions', 'notes',
+        fields = ['name', 'auto_accept', 'terms_and_conditions', 'notes',
                   'triggers', 'tax_rate', 'payment_methods', ]
 
         help_texts = {
+            'name': _('Give the procedure a name so you can identify it easier'),
             'auto_accept': _('Automatically accept the booking?'),
             'payment_methods': _('Choose the payment methods you want to use for this venue'),
             'price_profiles': _('Define discounts for certain groups and actors'),

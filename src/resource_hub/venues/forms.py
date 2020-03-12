@@ -22,6 +22,10 @@ class VenueForm(forms.ModelForm):
             self.request.actor,
             Location
         )
+        self.fields['contract_procedure'].queryset = get_associated_objects(
+            self.request.actor,
+            VenueContractProcedure
+        )
         self._update_attrs({
             'price': {'class': 'booking-item required'},
             'equipment': {'class': 'booking-item'},

@@ -889,7 +889,7 @@ class ContractProcedure(models.Model):
     )
     payment_methods = models.ManyToManyField(
         PaymentMethod,
-        blank=True,
+        blank=False,
     )
     tax_rate = models.IntegerField(
         default=0,
@@ -920,6 +920,9 @@ class ContractProcedure(models.Model):
         raise NotImplementedError()
 
     # methods
+    def __str__(self):
+        return '{}: {}'.format(self.type_name, self.name)
+
     def apply_tax(self, net):
         return net * (1 + (self.tax_rate/100))
 
