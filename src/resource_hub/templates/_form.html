@@ -17,7 +17,7 @@
 {% for field in form %}
 <div class="field">
     <label>
-        {{ field.label }}:{% if field.field.required %} *{% endif %}
+        {{ field.label }}:<span class="required-label-star">{% if field.field.required %} *{% endif %}</span>
     </label>
     {{ field }}
     {% if field.help_text %}

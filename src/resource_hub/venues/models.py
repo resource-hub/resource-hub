@@ -75,6 +75,7 @@ class Venue(models.Model):
         Price,
         on_delete=models.PROTECT,
         null=True,
+        blank=True,
     )
     equipment = models.ManyToManyField(
         'Equipment',
@@ -83,6 +84,7 @@ class Venue(models.Model):
     contract_procedure = models.ForeignKey(
         ContractProcedure,
         null=True,
+        blank=True,
         on_delete=models.PROTECT,
     )
     created_at = models.DateField(

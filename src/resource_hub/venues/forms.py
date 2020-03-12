@@ -22,6 +22,11 @@ class VenueForm(forms.ModelForm):
             self.request.actor,
             Location
         )
+        self._update_attrs({
+            'price': {'class': 'booking-item required'},
+            'equipment': {'class': 'booking-item'},
+            'contract_procedure': {'class': 'booking-item required'},
+        })
     description = HTMLField()
 
     class Meta:
@@ -31,6 +36,10 @@ class VenueForm(forms.ModelForm):
         help_texts = {
             'bookable': _('Do you want to use the platform\'s booking logic?'),
         }
+
+    def _update_attrs(self, fields):
+        for field, val in fields.items():
+            self.fields[field].widget.attrs.update(val)
 
     def save(self, *args, commit=True, **kwargs):
         new_venue = super(VenueForm, self).save(*args, commit=False, **kwargs)
