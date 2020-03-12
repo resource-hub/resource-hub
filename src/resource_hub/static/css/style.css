@@ -293,6 +293,12 @@ td>a {
     font-weight: 700 !important;
 }
 
+.center {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
 .inline {
     display: inline;
 }
@@ -437,7 +443,7 @@ td>a {
     .ui.card {
         box-shadow: 0 1px 3px 0 #666, 0 0 0 1px #666;
     }
-    .ui.positive {
+    .back.button {
         background-color: #66D9EF !important;
     }
     input, textarea, select, th, .dropdown>.menu, .ui.icon.message, .fc-widget-header, .fc-list-empty, .fc-button, .fc-button-primary {

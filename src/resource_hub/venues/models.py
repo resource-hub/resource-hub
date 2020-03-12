@@ -49,8 +49,6 @@ class Venue(models.Model):
         on_delete=models.CASCADE,
     )
     thumbnail_original = models.ImageField(
-        null=False,
-        blank=True,
         upload_to='images/',
     )
     thumbnail = ImageSpecField(

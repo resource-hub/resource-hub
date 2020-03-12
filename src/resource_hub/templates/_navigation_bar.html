@@ -51,9 +51,11 @@
                 <a id="role" class="item"><i class="address card outline icon"></i>{% trans 'Change role' %}</a>
                 <div class="divider"></div>
                 <div class="item">
-                    <a class="ui red button" href="{% url 'core:logout' %}">
-                        {% trans 'logout' %}
-                    </a>
+                    <div class="center">
+                        <a class="ui red button" href="{% url 'core:logout' %}">
+                            {% trans 'logout' %}
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
