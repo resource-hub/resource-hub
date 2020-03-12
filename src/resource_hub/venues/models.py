@@ -100,7 +100,7 @@ class Venue(models.Model):
 
     # Methods
     def __str__(self):
-        return '{}: {}{} ({})'.format(self.name, self.price.value, self.price.currency, self.location.name)
+        return '{}: {} ({})'.format(self.name, self.price, self.location.name)
 
     def save(self, *args, **kwargs):
         if not self.pk:

@@ -494,12 +494,6 @@ class Price(models.Model):
     )
 
     def __str__(self):
-        return '{} {}'.format(
-            self.value,
-            self.currency
-        )
-
-    def display(self):
         return '{} {}'.format(self.value.normalize(), self.currency)
 
 
