@@ -369,16 +369,6 @@ td>a {
     border-radius: .28571429rem;
 }
 
-/* .calendar {
-    height: 50em;
-} */
-
-/**
-  *
-  * Other   
-  *
-  */
-
 /**
   *
   * Mobile
@@ -419,6 +409,12 @@ td>a {
     }
 }
 
+/**
+  *
+  * dark mode   
+  *
+  */
+
 @media (prefers-color-scheme: dark) {
     :root {
         --bg-color: #272822;
@@ -428,7 +424,7 @@ td>a {
         --line-color: #666;
         --green: #a6e22e;
         --red: #fb5f97;
-        --organge: #fD971f;
+        --orange: #fd971f;
         --teal: #66d9ef;
     }
     a, b, p, span {
@@ -454,7 +450,7 @@ td>a {
         background-color: var(--bg-contrast);
     }
     div.item>a {
-        color: var(--organge) !important;
+        color: var(--orange) !important;
     }
     .ui.item, .ui.section.divider {
         color: var(--text-color) !important;
@@ -463,7 +459,7 @@ td>a {
         box-shadow: 0 1px 3px 0 var(--line-color), 0 0 0 1px var(--line-color);
     }
     .back.button {
-        background-color: var(--teal) !important;
+        background-color: var(--orange) !important;
     }
     .navigation-bar, .ui.footer, .ui.dropdown {
         background-color: var(--bg-shade) !important;
@@ -486,10 +482,15 @@ td>a {
         margin-bottom: 2em;
     }
     .fc-today {
-        background-color: var(--red) !important;
+        background-color: var(--bg-contrast) !important;
     }
     .fc-widget-header, .fc-list-empty, .fc-button, .fc-button-primary {
         background-color: var(--bg-contrast) !important;
+        color: var(--text-color) !important;
+    }
+    .fc-event, .fc-event-dot {
+        background-color: var(--orange) !important;
+        border-color: var(--orange) !important;
         color: var(--text-color) !important;
     }
 }

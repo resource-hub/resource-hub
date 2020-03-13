@@ -19,7 +19,7 @@ def get_valid_slug(obj, string, condition=None):
     count = 0
     while invalid_slug:
         try:
-            klass.objects.get(slug=slug)
+            klass.objects.get(query)
             if count == 0:
                 slug = '{}-{}'.format(slug, str(count))
             else:

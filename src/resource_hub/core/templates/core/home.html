@@ -2,7 +2,10 @@
 <link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %}">
 <script src="{% static 'leaflet/leaflet.js' %}"></script>
 <script src="{% static 'bouncemarker/bouncemarker.js' %}"></script>
-{% endblock %} {% block not_in_container %} {% include '_support-button.html' %}
+{% endblock %}
+
+{% block not_in_container %}
+{% include '_support-button.html' %}
 {% include '_map.html' %}
 {% endblock %}
 

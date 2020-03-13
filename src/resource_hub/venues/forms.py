@@ -2,12 +2,14 @@ from datetime import datetime
 
 from django import forms
 from django.db.models import Q
+from django.urls import reverse_lazy
+from django.utils.html import mark_safe
 from django.utils.timezone import get_current_timezone
 from django.utils.translation import ugettext_lazy as _
 
 from resource_hub.core.fields import HTMLField
 from resource_hub.core.forms import (ContractProcedureForm, FormManager,
-                                     PriceProfileFormSet)
+                                     PriceForm, PriceProfileFormSet)
 from resource_hub.core.models import Location, PriceProfile
 from resource_hub.core.utils import get_associated_objects
 
@@ -18,16 +20,15 @@ class VenueForm(forms.ModelForm):
     def __init__(self, request, *args, **kwargs):
         super(VenueForm, self).__init__(*args, **kwargs)
         self.request = request
-        self.fields['location'].queryset = get_associated_objects(
-            self.request.actor,
-            Location
+        self.fields['location'].queryset = Location.objects.filter(
+            Q(owner=self.request.actor) | Q(is_public=True)
         )
+        print(self.fields['location'].queryset.query)
         self.fields['contract_procedure'].queryset = get_associated_objects(
             self.request.actor,
             VenueContractProcedure
         )
         self._update_attrs({
-            'price': {'class': 'booking-item required'},
             'equipment': {'class': 'booking-item'},
             'contract_procedure': {'class': 'booking-item required'},
         })
@@ -36,9 +37,10 @@ class VenueForm(forms.ModelForm):
     class Meta:
         model = Venue
         fields = ['name', 'description', 'location',
-                  'thumbnail_original', 'bookable', 'price', 'equipment', 'contract_procedure', ]
+                  'thumbnail_original', 'bookable', 'equipment', 'contract_procedure', ]
         help_texts = {
             'bookable': _('Do you want to use the platform\'s booking logic?'),
+            # 'location': _(mark_safe('No location available? <a href="{}">Create one!</a>'.format(reverse_lazy('control:locations_create'))))
         }
 
     def _update_attrs(self, fields):
@@ -54,16 +56,38 @@ class VenueForm(forms.ModelForm):
 
 
 class VenueFormManager(FormManager):
-    def __init__(self, request, *args, **kwargs):
+    def __init__(self, request, instance=None):
         self.request = request
+        price_instance = instance.price if instance else None
         if self.request.POST:
             self.forms = {
                 'venue_form': VenueForm(
                     self.request,
                     data=self.request.POST,
-                    files=self.request.FILES
+                    files=self.request.FILES,
+                    instance=instance,
+                ),
+                'price_form': PriceForm(
+                    data=self.request.POST,
+                    instance=price_instance,
                 )
             }
+        else:
+            self.forms = {
+                'venue_form': VenueForm(
+                    self.request,
+                    instance=instance,
+                ),
+                'price_form': PriceForm(
+                    instance=price_instance,
+                )
+            }
+
+    def save(self):
+        new_venue = self.forms['venue_form'].save(commit=False)
+        new_venue.price = self.forms['price_form'].save()
+        new_venue.save()
+        return new_venue
 
 
 class VenueContractProcedureForm(ContractProcedureForm):

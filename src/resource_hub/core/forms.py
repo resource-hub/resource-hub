@@ -17,7 +17,8 @@ from schwifty import BIC, IBAN
 from .fields import HTMLField
 from .models import (Actor, Address, BankAccount, ContractProcedure,
                      ContractTrigger, Location, Organization,
-                     OrganizationMember, PaymentMethod, PriceProfile, User)
+                     OrganizationMember, PaymentMethod, Price, PriceProfile,
+                     User)
 from .utils import get_associated_objects
 from .widgets import IBANInput, UISearchField
 
@@ -375,6 +376,12 @@ class ContractProcedureForm(forms.ModelForm):
         }
 
 
+class PriceForm(forms.ModelForm):
+    class Meta:
+        model = Price
+        fields = ['value', 'currency']
+
+
 class PriceProfileForm(forms.ModelForm):
     class Meta:
         model = PriceProfile
@@ -513,8 +520,11 @@ class LocationForm(forms.ModelForm):
 
     class Meta:
         model = Location
-        fields = ['name', 'description', 'image',
+        fields = ['name', 'is_public', 'description', 'image',
                   'search', 'latitude', 'longitude']
+        help_texts = {
+            'is_public': _('Allow other users to link information to this location'),
+        }
 
     def save(self, owner=None, commit=True):
         new_location = super(LocationForm, self).save(commit=False)

@@ -3,6 +3,7 @@
 
 <form class="ui form" method="POST" enctype="multipart/form-data">
     {% include '_form.html' with form=venue_form %}
+    {% include '_form.html' with form=price_form %}
     {% include 'core/_identity.html' %}
     <button class="ui positive right labeled icon button" type="submit">
         {{ action }}

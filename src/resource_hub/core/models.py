@@ -14,6 +14,7 @@ from ipware import get_client_ip
 from model_utils.fields import MonitorField
 from model_utils.managers import InheritanceManager
 
+from .settings import CURRENCIES
 from .utils import get_valid_slug
 
 
@@ -271,6 +272,7 @@ class Location(models.Model):
             'quality': 60,
         }
     )
+    is_public = models.BooleanField(default=True)
     owner = models.ForeignKey(
         Actor,
         on_delete=models.CASCADE,
@@ -481,9 +483,11 @@ class Price(models.Model):
     value = models.DecimalField(
         decimal_places=5,
         max_digits=15,
+        verbose_name=_('Price'),
     )
     currency = models.CharField(
         default='EUR',
+        choices=CURRENCIES,
         max_length=5,
     )
     discounts = models.BooleanField(

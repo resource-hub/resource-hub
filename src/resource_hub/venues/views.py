@@ -11,7 +11,8 @@ from resource_hub.core.utils import get_associated_objects
 from resource_hub.core.views import TableView
 
 from .forms import (VenueContractFormManager,
-                    VenueContractProcedureFormManager, VenueForm)
+                    VenueContractProcedureFormManager, VenueForm,
+                    VenueFormManager)
 from .models import Venue, VenueContractProcedure
 from .tables import VenuesTable
 
@@ -40,14 +41,11 @@ class VenuesManage(TableView):
 @method_decorator(login_required, name='dispatch')
 class VenuesCreate(View):
     def get(self, request):
-        venue_form = VenueForm(request)
-        context = {
-            'venue_form': venue_form,
-        }
-        return render(request, 'venues/control/venues_create.html', context)
+        venue_form = VenueFormManager(request)
+        return render(request, 'venues/control/venues_create.html', venue_form.get_forms())
 
     def post(self, request):
-        venue_form = VenueForm(request, data=request.POST, files=request.FILES)
+        venue_form = VenueFormManager(request)
 
         if venue_form.is_valid():
             venue_form.save()
@@ -68,15 +66,12 @@ class VenuesProfileEdit(View):
 
     def get(self, request, venue_id):
         venue = get_object_or_404(Venue, pk=venue_id)
-        venue_form = VenueForm(request, instance=venue)
-        context = {
-            'venue_form': venue_form,
-        }
-        return render(request, self.template_name, context)
+        venue_form = VenueFormManager(request, instance=venue)
+        return render(request, self.template_name, venue_form.get_forms())
 
     def post(self, request, venue_id):
         venue = get_object_or_404(Venue, pk=venue_id)
-        venue_form = VenueForm(
+        venue_form = VenueFormManager(
             request,
             instance=venue,
         )
@@ -87,10 +82,7 @@ class VenuesProfileEdit(View):
             messages.add_message(request, messages.SUCCESS, message)
             return redirect(reverse('control:venues_profile_edit', kwargs={'venue_id': venue_id}))
 
-        context = {
-            'venue_form': venue_form,
-        }
-        return render(request, self.template_name, context)
+        return render(request, self.template_name, venue_form.get_forms())
 
 
 class VenuesDetails(View):
