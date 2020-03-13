@@ -420,51 +420,76 @@ td>a {
 }
 
 @media (prefers-color-scheme: dark) {
-    #map {
-        filter: invert(100%);
+    :root {
+        --bg-color: #272822;
+        --bg-shade: #1F201A;
+        --bg-contrast: #373844;
+        --text-color: #ffffff;
+        --line-color: #666;
+        --green: #a6e22e;
+        --red: #fb5f97;
+        --organge: #fD971f;
+        --teal: #66d9ef;
     }
     a, b, p, span {
-        color: #ffffff !important;
+        color: var(--text-color) !important;
+    }
+    h1, h2, h3, h4, h5, h6, label, strong, .header {
+        color: var(--green) !important;
+    }
+    body, nav, .ui.card, .ui.sidebar, .ui.segment, .ui.table, .ui.dropdown, .ui.pointing.dropdown>.menu::after, .ui.modal {
+        background-color: var(--bg-color) !important;
+        color: var(--text-color) !important;
+        border-top: var(--line-color) !important;
+    }
+    input, textarea, select, th {
+        background-color: var(--bg-contrast) !important;
+        color: var(--text-color) !important;
+    }
+    /* semantic */
+    .icon {
+        color: var(--text-color) !important;
+    }
+    .ui.dropdown>.menu, .ui.icon.message {
+        background-color: var(--bg-contrast);
     }
     div.item>a {
-        color: #F92672 !important;
+        color: var(--organge) !important;
     }
-    /* a, .ui.dropdown>span {
-        color: #F92672 !important;
-    } */
-    .ui.item {
-        color: #ffffff !important;
-    }
-    body, nav, .ui.card, .ui.sidebar, .ui.segment, .ui.table, .ui.dropdown, .ui.modal {
-        background-color: #272822 !important;
-        color: #ffffff !important;
-        border-top: #666 !important;
+    .ui.item, .ui.section.divider {
+        color: var(--text-color) !important;
     }
     .ui.card {
-        box-shadow: 0 1px 3px 0 #666, 0 0 0 1px #666;
+        box-shadow: 0 1px 3px 0 var(--line-color), 0 0 0 1px var(--line-color);
     }
     .back.button {
-        background-color: #66D9EF !important;
+        background-color: var(--teal) !important;
     }
-    input, textarea, select, th, .dropdown>.menu, .ui.icon.message, .fc-widget-header, .fc-list-empty, .fc-button, .fc-button-primary {
-        background-color: #373844 !important;
-        color: #ffffff !important;
+    .navigation-bar, .ui.footer, .ui.dropdown {
+        background-color: var(--bg-shade) !important;
     }
+    tr.td:hover {
+        color: var(--red) !important;
+    }
+    /* leaflet */
+    .leaflet-control-zoom-in, .leaflet-control-zoom-out {
+        background-color: var(--bg-contrast) !important;
+    }
+    .leaflet-popup-content-wrapper, .leaflet-popup-tip {
+        background-color: var(--bg-contrast) !important;
+    }
+    .leaflet-control-attribution {
+        background: rgba(100, 100, 100, 0.7) !important;
+    }
+    /* full calendar */
     .fc-list-empty {
         margin-bottom: 2em;
     }
     .fc-today {
-        background-color: #fb5f97 !important;
+        background-color: var(--red) !important;
     }
-    tr.td:hover {
-        color: #F92672 !important;
-        background-color: red;
-    }
-    h1, h2, h3, h4, h5, h6, label, strong, .header {
-        color: #A6E22E !important;
-    }
-    .ui.footer {
-        background-color: #303030 !important;
-        color: #ffffff !important;
+    .fc-widget-header, .fc-list-empty, .fc-button, .fc-button-primary {
+        background-color: var(--bg-contrast) !important;
+        color: var(--text-color) !important;
     }
 }

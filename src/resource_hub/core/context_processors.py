@@ -11,7 +11,9 @@ def actor(request):
 
 
 def map_api_token(request):
-    return {'MAP_API_TOKEN': settings.MAP_API_TOKEN}
+    return {
+        'MAP_API_TOKEN': settings.MAP_API_TOKEN,
+    }
 
 
 def contract_states(request):

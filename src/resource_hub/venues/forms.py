@@ -53,6 +53,19 @@ class VenueForm(forms.ModelForm):
         return new_venue
 
 
+class VenueFormManager(FormManager):
+    def __init__(self, request, *args, **kwargs):
+        self.request = request
+        if self.request.POST:
+            self.forms = {
+                'venue_form': VenueForm(
+                    self.request,
+                    data=self.request.POST,
+                    files=self.request.FILES
+                )
+            }
+
+
 class VenueContractProcedureForm(ContractProcedureForm):
     class Meta(ContractProcedureForm.Meta):
         model = VenueContractProcedure
@@ -79,15 +92,15 @@ class VenueContractProcedureForm(ContractProcedureForm):
 
 class VenueContractProcedureFormManager(FormManager):
     def __init__(self, request, instance=None):
-        if not request.POST:
-            self.forms = {
-                'contract_procedure_form': VenueContractProcedureForm(request, instance=instance),
-                'price_profile_form_set': PriceProfileFormSet(instance=instance)
-            }
-        else:
+        if request.POST:
             self.forms = {
                 'contract_procedure_form': VenueContractProcedureForm(request, data=request.POST, files=request.FILES, instance=instance),
                 'price_profile_form_set': PriceProfileFormSet(data=request.POST, files=request.FILES, instance=instance)
+            }
+        else:
+            self.forms = {
+                'contract_procedure_form': VenueContractProcedureForm(request, instance=instance),
+                'price_profile_form_set': PriceProfileFormSet(instance=instance)
             }
 
     def save(self):
@@ -292,7 +305,7 @@ class VenueContractForm(forms.ModelForm):
         model = VenueContract
         fields = ['price_profile', 'payment_method', ]
         help_texts = {
-            'price_profile': _('Available discounts granted to certain groups and entities')
+            'price_profile': _('Available discounts granted to certain groups and entities. The discounts will be applied to the base prices below.')
         }
 
 

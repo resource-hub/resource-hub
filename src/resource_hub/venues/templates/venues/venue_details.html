@@ -4,6 +4,7 @@
 
 {% block extra_head %}
 {% get_current_language as LANG %}
+{% if venue.bookable %}
 <link href="{% static 'fullcalendar/main.min.css' %}" rel="stylesheet">
 <link href="{% static 'fullcalendar/daygrid/main.min.css' %}" rel="stylesheet">
 <link href="{% static 'fullcalendar/timegrid/main.min.css' %}" rel="stylesheet">
@@ -41,6 +42,7 @@
         calendar.render();
     });
 </script>
+{% endif %}
 {% endblock %}
 
 {% block not_in_container %}
@@ -75,8 +77,6 @@
                     <i class="calendar alternate outline icon"></i>
                 </a>
             </div>
-            {% else %}
-            <img class="ui fluid image" src="{{ venue.thumbnail_original.url }}">
             {% endif %}
         </div>
     </div>
