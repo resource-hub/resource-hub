@@ -86,6 +86,11 @@ urlpatterns = [
     path('bug/', site.ReportBug.as_view(), name='report_bug'),
     path('language/', site.Language.as_view(), name='language'),
     path('terms/', site.Terms.as_view(), name='terms'),
+    path('locations/<slug:slug>/',
+         site.LocationsProfile.as_view(), name='locations_profile'),
+    path('actor/<slug:slug>/',
+         site.ActorProfile.as_view(),
+         name='actor_profile'),
 
     # path
     path('register/', auth.Register.as_view(), name='register'),
@@ -109,10 +114,4 @@ urlpatterns = [
     path('i18n/', include('django.conf.urls.i18n')),
     path('jsi18n.js', JavaScriptCatalog.as_view(
         packages=['recurrence']), name='jsi18n'),
-
-    path('locations/<slug:slug>/',
-         site.LocationsProfile.as_view(), name='locations_profile'),
-    path('actor/<slug:slug>/',
-         site.ActorProfile.as_view(),
-         name='actor_profile'),
 ]
