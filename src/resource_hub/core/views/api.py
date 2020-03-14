@@ -8,6 +8,7 @@ from resource_hub.core.utils import get_associated_objects
 from rest_framework import filters, generics
 from rest_framework.decorators import (authentication_classes,
                                        permission_classes)
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -48,9 +49,20 @@ class Locations(generics.ListCreateAPIView):
     serializer_class = LocationSerializer
 
 
-class Contracts(generics.ListCreateAPIView):
+class ContractsList(generics.ListCreateAPIView):
     http_method_names = ['get']
     serializer_class = ContractSerializer
 
     def get_queryset(self):
-        return Contract.objects.filter(Q(creditor=self.request.actor) | Q(debitor=self.request.actor)).select_subclasses().order_by('-created_at')
+        contract_type = self.request.query_params.get('type', None)
+        if contract_type is None:
+            raise ValidationError('type argument is not set')
+
+        if contract_type == 'creditor':
+            query = Q(creditor=self.request.actor)
+        elif contract_type == 'debitor':
+            query = Q(debitor=self.request.actor)
+        else:
+            raise ValidationError('invalid type argument')
+
+        return Contract.objects.filter(query).select_subclasses().order_by('-created_at')

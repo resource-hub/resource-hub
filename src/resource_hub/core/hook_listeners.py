@@ -36,11 +36,15 @@ def control_sidebar(context, *args, **kwargs):
                 'sub_items': [
                     {
                         'header': _('Contracts'),
-                        'url': get_parent(reverse('control:finance_contracts_manage')),
+                        'url': get_parent(reverse('control:finance_contracts_credited')),
                         'subsub_items': [
                             {
-                                'header': _('Manage'),
-                                'url': reverse('control:finance_contracts_manage'),
+                                'header': _('Credited'),
+                                'url': reverse('control:finance_contracts_credited'),
+                            },
+                            {
+                                'header': _('Debited'),
+                                'url': reverse('control:finance_contracts_debited'),
                             }
                         ]
                     },

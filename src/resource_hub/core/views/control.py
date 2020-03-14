@@ -205,9 +205,14 @@ class FinancePaymentMethodsAdd(View):
 
 
 @method_decorator(login_required, name='dispatch')
-class FinanceContractsManage(View):
+class FinanceContractsCredited(View):
     def get(self, request):
-        return render(request, 'core/control/finance_contracts_manage.html')
+        return render(request, 'core/control/finance_contracts_credited.html')
+
+
+class FinanceContractsDebited(View):
+    def get(self, request):
+        return render(request, 'core/control/finance_contracts_debited.html')
 
 
 @method_decorator(login_required, name='dispatch')

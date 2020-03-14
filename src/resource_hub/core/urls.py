@@ -19,6 +19,7 @@ control_urls.register([
     # notifications
     path('notifications/', control.Notifications.as_view(), name='notifications'),
 
+    # finance
     path('finance/bank-accounts/', control.FinanceBankAccounts.as_view(),
          name='finance_bank_accounts'),
     path('finance/payment-methods/manage/',
@@ -27,8 +28,10 @@ control_urls.register([
     ), name='finance_payment_methods_edit'),
     path('finance/payment-methods/add',
          control.FinancePaymentMethodsAdd.as_view(), name='finance_payment_methods_add'),
-    path('finance/contracts/manage/', control.FinanceContractsManage.as_view(),
-         name='finance_contracts_manage'),
+    path('finance/contracts/credited/', control.FinanceContractsCredited.as_view(),
+         name='finance_contracts_credited'),
+    path('finance/contracts/debited/', control.FinanceContractsDebited.as_view(),
+         name='finance_contracts_debited'),
     path('finance/contracts/manage/<int:pk>/', control.FinanceContractsManageDetails.as_view(),
          name='finance_contracts_manage_details'),
     path('finance/contract-procedures/manage/', control.FinanceContractProceduresManage.as_view(),
@@ -72,7 +75,7 @@ api_urls.register([
          api.ActorChange.as_view(), name='actor_change'),
     path('locations/search/', api.Locations.as_view(),
          name='locations_search'),
-    path('contracts/list', api.Contracts.as_view(), name='contracts_list'),
+    path('contracts/list', api.ContractsList.as_view(), name='contracts_list'),
 ])
 
 app_name = 'core'

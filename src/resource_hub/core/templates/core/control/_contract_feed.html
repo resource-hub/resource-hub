@@ -1,14 +1,11 @@
-{% extends "control/__base.html" %}
 {% load i18n %}
-
-{% block content %}
-<h1>{% trans 'Manage contracts' %}</h1>
+{% load sekizai_tags %}
 
 <div id="feed-loader" class="ui active centered inline loader"></div>
 <div id="contract-feed" class="ui stackable three column cards grid"></div>
-{% endblock %}
 
-{% block scripts %}
+
+{% addtoblock 'js' %}
 <script id="template" type="text/template">
     <div class="column">
         <a id='card' class="ui fluid card" href="%link%">
@@ -31,9 +28,10 @@
         var templateHtml = template.innerHTML;
 
         $.ajax({
-            'url': "{% url 'api:contracts_list' %}",
-            'type': 'GET',
-            'dataType': 'JSON'
+            url: "{% url 'api:contracts_list' %}",
+            type: 'GET',
+            dataType: 'JSON',
+            data: '&type=' + '{{ type }}'
         }).done(function (data) {
             var feed = "";
 
@@ -60,4 +58,4 @@
         create_feed();
     })
 </script>
-{% endblock %}
+{% endaddtoblock %}
