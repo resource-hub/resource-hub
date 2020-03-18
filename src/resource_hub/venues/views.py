@@ -48,16 +48,14 @@ class VenuesCreate(View):
         venue_form = VenueFormManager(request)
 
         if venue_form.is_valid():
-            venue_form.save()
+            with transaction.atomic():
+                venue_form.save()
 
             message = ('The venue has been created')
             messages.add_message(request, messages.SUCCESS, message)
             return redirect(reverse('control:venues_manage'))
 
-        context = {
-            'venue_form': venue_form,
-        }
-        return render(request, 'venues/control/venues_create.html', context)
+        return render(request, 'venues/control/venues_create.html', venue_form.get_forms())
 
 
 @method_decorator(login_required, name='dispatch')

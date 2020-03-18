@@ -1,11 +1,9 @@
 import uuid
-from datetime import datetime
 
 from django.db import models
 from django.db.models import Q
 from django.shortcuts import reverse
 from django.template.loader import render_to_string
-from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
 
 from imagekit.models import ImageSpecField
@@ -61,6 +59,12 @@ class Venue(models.Model):
             'quality': 70,
         }
     )
+    price = models.ForeignKey(
+        Price,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+    )
     gallery = models.ForeignKey(
         Gallery,
         on_delete=models.SET_NULL,
@@ -68,16 +72,6 @@ class Venue(models.Model):
     )
     bookable = models.BooleanField(
         default=True,
-    )
-    price = models.ForeignKey(
-        Price,
-        on_delete=models.PROTECT,
-        null=True,
-        blank=True,
-    )
-    equipment = models.ManyToManyField(
-        'Equipment',
-        blank=True,
     )
     contract_procedure = models.ForeignKey(
         ContractProcedure,
@@ -107,6 +101,14 @@ class Venue(models.Model):
             self.slug = get_valid_slug(
                 self, self.name, Q(location=self.location))
         super(Venue, self).save(*args, **kwargs)
+
+
+class VenuePrice(Price):
+    venue_ptr = models.ForeignKey(
+        Venue,
+        on_delete=models.PROTECT,
+        related_name='venue_price'
+    )
 
 
 class EventTag(models.Model):
@@ -226,18 +228,46 @@ class Event(models.Model):
 
 
 class Equipment(models.Model):
+    # fields
     name = models.CharField(
         max_length=128,
         unique=True,
     )
-    quantity = models.IntegerField()
+    venue = models.ForeignKey(
+        Venue,
+        on_delete=models.PROTECT,
+    )
+    thumbnail_original = models.ImageField()
+    thumbnail = ImageSpecField(
+        source='thumbnail_original',
+        processors=[ResizeToFill(200, 200)],
+        format='JPEG',
+        options={'quality': 70},
+    )
+    thumbnail_large = ImageSpecField(
+        source='thumbnail_original',
+        processors=[ResizeToFill(400, 400)],
+        format='JPEG',
+        options={'quality': 90},
+    )
     price = models.ForeignKey(
         Price,
         on_delete=models.PROTECT,
         null=True,
+        blank=True,
     )
-    apply_price_profile = models.BooleanField(
-        default=True,
+    quantity = models.IntegerField()
+
+    # methods
+    def __str__(self):
+        return '{}@{} ({})'.format(self.name, self.venue.name, self.price)
+
+
+class EquipmentPrice(Price):
+    equipment_ptr = models.ForeignKey(
+        Equipment,
+        on_delete=models.PROTECT,
+        related_name='equipment_price'
     )
 
 

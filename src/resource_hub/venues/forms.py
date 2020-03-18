@@ -2,6 +2,8 @@ from datetime import datetime
 
 from django import forms
 from django.db.models import Q
+from django.forms import inlineformset_factory
+from django.forms.models import BaseInlineFormSet
 from django.urls import reverse_lazy
 from django.utils.html import mark_safe
 from django.utils.timezone import get_current_timezone
@@ -13,7 +15,8 @@ from resource_hub.core.forms import (ContractProcedureForm, FormManager,
 from resource_hub.core.models import Location, PriceProfile
 from resource_hub.core.utils import get_associated_objects
 
-from .models import Event, Venue, VenueContract, VenueContractProcedure
+from .models import (Equipment, EquipmentPrice, Event, Venue, VenueContract,
+                     VenueContractProcedure, VenuePrice)
 
 
 class VenueForm(forms.ModelForm):
@@ -23,13 +26,11 @@ class VenueForm(forms.ModelForm):
         self.fields['location'].queryset = Location.objects.filter(
             Q(owner=self.request.actor) | Q(is_public=True)
         )
-        print(self.fields['location'].queryset.query)
         self.fields['contract_procedure'].queryset = get_associated_objects(
             self.request.actor,
             VenueContractProcedure
         )
         self._update_attrs({
-            'equipment': {'class': 'booking-item'},
             'contract_procedure': {'class': 'booking-item required'},
         })
     description = HTMLField()
@@ -37,7 +38,7 @@ class VenueForm(forms.ModelForm):
     class Meta:
         model = Venue
         fields = ['name', 'description', 'location',
-                  'thumbnail_original', 'bookable', 'equipment', 'contract_procedure', ]
+                  'thumbnail_original', 'bookable', 'contract_procedure', ]
         help_texts = {
             'bookable': _('Do you want to use the platform\'s booking logic?'),
             # 'location': _(mark_safe('No location available? <a href="{}">Create one!</a>'.format(reverse_lazy('control:locations_create'))))
@@ -58,7 +59,6 @@ class VenueForm(forms.ModelForm):
 class VenueFormManager(FormManager):
     def __init__(self, request, instance=None):
         self.request = request
-        price_instance = instance.price if instance else None
         if self.request.POST:
             self.forms = {
                 'venue_form': VenueForm(
@@ -67,10 +67,15 @@ class VenueFormManager(FormManager):
                     files=self.request.FILES,
                     instance=instance,
                 ),
-                'price_form': PriceForm(
+                'price_formset': VenuePriceFormset(
                     data=self.request.POST,
-                    instance=price_instance,
-                )
+                    instance=instance,
+                ),
+                'equipment_formset': EquipmentFormset(
+                    data=self.request.POST,
+                    files=self.request.FILES,
+                    instance=instance
+                ),
             }
         else:
             self.forms = {
@@ -78,15 +83,25 @@ class VenueFormManager(FormManager):
                     self.request,
                     instance=instance,
                 ),
-                'price_form': PriceForm(
-                    instance=price_instance,
-                )
+                'price_formset': VenuePriceFormset(
+                    instance=instance,
+                ),
+                'equipment_formset': EquipmentFormset(instance=instance),
             }
 
     def save(self):
-        new_venue = self.forms['venue_form'].save(commit=False)
-        new_venue.price = self.forms['price_form'].save()
-        new_venue.save()
+        new_venue = self.forms['venue_form'].save()
+        first = True
+
+        for price in self.forms['price_formset'].save(commit=False):
+            price.venue_ptr = new_venue
+            price.save()
+            if first:
+                new_venue.price = price
+                new_venue.save()
+                first = False
+        self.forms['equipment_formset'].instance = new_venue
+        self.forms['equipment_formset'].save()
         return new_venue
 
 
@@ -323,11 +338,12 @@ class VenueContractForm(forms.ModelForm):
         self.fields['price_profile'].queryset = PriceProfile.objects.filter(
             query
         ).order_by('-discount')
-        self.initial['price_profile'] = self.fields['price_profile'].queryset[0]
+        if self.fields['price_profile'].queryset:
+            self.initial['price_profile'] = self.fields['price_profile'].queryset[0]
 
     class Meta:
         model = VenueContract
-        fields = ['price_profile', 'payment_method', ]
+        fields = ['price_profile', 'payment_method', 'equipment', ]
         help_texts = {
             'price_profile': _('Available discounts granted to certain groups and entities. The discounts will be applied to the base prices below.')
         }
@@ -382,3 +398,91 @@ class VenueContractFormManager():
             new_venue_contract.save()
             self.venue_contract_form.save_m2m()
         return new_venue_contract
+
+
+VenuePriceFormset = inlineformset_factory(
+    Venue,
+    VenuePrice,
+    form=PriceForm,
+    extra=0,
+    min_num=1,
+    can_order=True,
+)
+
+
+class EquipmentForm(forms.ModelForm):
+    class Meta:
+        model = Equipment
+        fields = ['name', 'quantity',
+                  'thumbnail_original', ]
+
+
+EquipmentPriceFormset = inlineformset_factory(
+    Equipment,
+    EquipmentPrice,
+    form=PriceForm,
+    extra=0,
+    min_num=1,
+    can_order=True,
+)
+
+
+class BaseEquipmentFormset(BaseInlineFormSet):
+    def __init__(self, *args, **kwargs):
+        super(BaseEquipmentFormset, self).__init__(*args, **kwargs)
+        self.nested_empty_form = None
+        self.nested_empty_management_form = None
+
+    def add_fields(self, form, index):
+        super(BaseEquipmentFormset, self).add_fields(form, index)
+
+        # save the formset in the 'nested' property
+        form.nested = EquipmentPriceFormset(
+            instance=form.instance,
+            data=form.data if form.is_bound else None,
+            files=form.files if form.is_bound else None,
+            prefix='equipment-price-%s-%s' % (
+                form.prefix,
+                EquipmentPriceFormset.get_default_prefix()),
+        )
+
+        self.nested_empty_form = form.nested.empty_form
+        self.nested_empty_management_form = form.nested.management_form
+
+    def is_valid(self):
+        result = super(BaseEquipmentFormset, self).is_valid()
+
+        if self.is_bound:
+            for form in self.forms:
+                if hasattr(form, 'nested'):
+                    result = result and form.nested.is_valid()
+
+        return result
+
+    def save(self, commit=True):
+        result = super(BaseEquipmentFormset, self).save(commit=commit)
+        for form in self.forms:
+            if hasattr(form, 'nested'):
+                if not self._should_delete_form(form):
+                    form.nested.instance = form.instance
+                    first = True
+                    for nested_form in form.nested.save(commit=False):
+                        if first:
+                            first = False
+                            form.instance.price = nested_form.price_ptr
+                            form.instance.save()
+                            print(form.instance)
+                    if commit:
+                        form.nested.save()
+
+        return result
+
+
+EquipmentFormset = inlineformset_factory(
+    Venue,
+    Equipment,
+    formset=BaseEquipmentFormset,
+    form=EquipmentForm,
+    min_num=0,
+    extra=0,
+)

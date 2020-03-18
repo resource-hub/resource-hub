@@ -477,8 +477,9 @@ class Price(models.Model):
     addressee = models.ForeignKey(
         Actor,
         null=True,
+        blank=True,
         default=None,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
     )
     value = models.DecimalField(
         decimal_places=5,
@@ -491,7 +492,8 @@ class Price(models.Model):
         max_length=5,
     )
     discounts = models.BooleanField(
-        default=True
+        default=True,
+        blank=True,
     )
     created_at = models.DateTimeField(
         auto_now_add=True
@@ -644,6 +646,7 @@ class Contract(models.Model):
         PriceProfile,
         on_delete=models.PROTECT,
         null=True,
+        blank=True,
     )
     claims = models.ManyToManyField(
         Claim,
@@ -779,6 +782,8 @@ class Trigger(models.Model):
     )
     comment = models.CharField(
         max_length=255,
+        null=True,
+        blank=True,
     )
     owner = models.ForeignKey(
         Actor,

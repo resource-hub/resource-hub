@@ -3,15 +3,15 @@
 {% load static %}
 {% load sekizai_tags %}
 
-<div id="formset" data-formset-prefix="{{ formset.prefix }}">
+<div class="formset" data-formset-prefix="{{ formset.prefix }}">
     {{ formset.management_form }}
+    {{ formset.non_form_errors }}
     <table class="ui table" data-formset-body>
         <!-- New forms will be inserted in here -->
-        {% for form in formset %}
-        {% if forloop.first %}
+
         <thead>
             <tr>
-                {% for field in form.visible_fields %}
+                {% for field in formset.empty_form.visible_fields %}
                 <th>
                     {{ field.label|capfirst }}<br>
                     {% if field.help_text %}
@@ -22,9 +22,9 @@
                 {% endfor %}
             </tr>
         </thead>
-        {% endif %}
-        <tbody>
-            <tr data-formset-form>
+        {% for form in formset %}
+        <tbody class="data-formset-form">
+            <tr>
                 {% for field in form.visible_fields %}
                 <td>
                     {# Include the hidden fields in the form #}
@@ -39,10 +39,77 @@
                     {% endfor %}
                 </td>
                 {% endfor %}
-                <!-- <td>
-                    <button type="button" data-formset-delete-button>Delete form</button>
-                </td> -->
             </tr>
+            {% if form.nested %}
+            <tr>
+                <td>
+                </td>
+                <td colspan="{{ form.visible_fields|length|add:'-1' }}">
+                    <div class="nested-formset" data-formset-prefix="{{ form.nested.prefix }}">
+                        {{ form.nested.management_form }}
+                        {{ form.nested.non_form_errors }}
+
+                        <table class="ui table nested-data-formset-body">
+                            {% for nested_form in form.nested.forms %}
+                            {% if forloop.first %}
+                            <thead>
+                                <tr>
+                                    {% for field in nested_form.visible_fields %}
+                                    <th>
+                                        {{ field.label|capfirst }}<br>
+                                        {% if field.help_text %}
+                                        <small style="color: grey">{{ field.help_text }}</small>
+                                        {% endif %}
+
+                                    </th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            {% endif %}
+                            <tr class="nested-data-formset-form">
+                                {% for field in nested_form.visible_fields %}
+                                <td>
+                                    {# Include the hidden fields in the form #}
+                                    {% if forloop.first %}
+                                    {% for hidden in nested_form.hidden_fields %}
+                                    {{ hidden }}
+                                    {% endfor %}
+                                    {% endif %}
+                                    {{ field }}
+                                    {% for error in field.errors %}
+                                    <div class="ui pointing red basic label">{{ error }}</div>
+                                    {% endfor %}
+                                </td>
+                                {% endfor %}
+                                {% endfor %}
+                        </table>
+                        <a class="ui right labeled icon button nested-data-formset-add">
+                            {% trans 'Add another' %}
+                            <i class="plus icon"></i>
+                        </a>
+                        <script type="form-template" class="nested-data-formset-empty-form">
+                            {% escapescript %}
+                                <tr class="nested-data-formset-form">
+                                    {% for field in form.nested.empty_form.visible_fields %}
+                                    <td>
+                                        {# Include the hidden fields in the form #}
+                                        {% if forloop.first %}
+                                        {% for hidden in form.hidden_fields %}
+                                        {{ hidden }}
+                                        {% endfor %}
+                                        {% endif %}
+                                        {{ field.errors.as_ul }}
+                                        {{ field }}
+                                    </td>
+                                    {% endfor %}
+                                </tr>
+                            {% endescapescript %}
+                        </script>
+                    </div>
+
+                </td>
+            </tr>
+            {% endif %}
         </tbody>
         {% endfor %}
 
@@ -51,7 +118,8 @@
     any scripts -->
         <script type="form-template" data-formset-empty-form>
         {% escapescript %}
-            <tr data-formset-form>
+        <tbody class="data-formset-form">
+            <tr>
                 {% for field in formset.empty_form.visible_fields %}
                 <td>
                     {# Include the hidden fields in the form #}
@@ -65,22 +133,112 @@
                 </td>
                 {% endfor %}
             </tr>
-        {% endescapescript %}
-    </script>
-    </table>
-    <!-- This button will add a new form when clicked -->
-    <a class="ui right labeled icon button" id="data-formset-add">
-        {% trans 'Add another' %}
-        <i class="plus icon"></i>
-    </a>
+            {% if formset.nested_empty_form %}
+            {% with formset.nested_empty_form as child_form %}
+            <tr>
+                <td>
+                </td>
+                <td colspan="{{ child_form.visible_fields|length|add:'-1' }}">
+                    <div class="nested-formset" data-formset-prefix="{{ child_form.prefix }}">
+                        {{ formset.nested_empty_management_form }}
+
+                        <table class="ui table nested-data-formset-body">
+                            
+                            <thead>
+                                <tr>
+                                    {% for field in child_form.visible_fields %}
+                                    <th>
+                                        {{ field.label|capfirst }}<br>
+                                        {% if field.help_text %}
+                                        <small style="color: grey">{{ field.help_text }}</small>
+                                        {% endif %}
+
+                                    </th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tr class="nested-data-formset-form">
+                                {% for field in child_form.visible_fields %}
+                                <td>
+                                    {# Include the hidden fields in the form #}
+                                    {% if forloop.first %}
+                                    {% for hidden in child_form.hidden_fields %}
+                                    {{ hidden }}
+                                    {% endfor %}
+                                    {% endif %}
+                                    {{ field }}
+                                    {% for error in field.errors %}
+                                    <div class="ui pointing red basic label">{{ error }}</div>
+                                    {% endfor %}
+                                </td>
+                                {% endfor %}
+                        </table>
+                        <a class="ui right labeled icon button nested-data-formset-add">
+                            {% trans 'Add another' %}
+                            <i class="plus icon"></i>
+                        </a>
+                        <script type="form-template" class="nested-data-formset-empty-form">
+                            {% escapescript %}
+                                <tr class="nested-data-formset-form">
+                                    {% for field in child_form.visible_fields %}
+                                    <td>
+                                        {# Include the hidden fields in the form #}
+                                        {% if forloop.first %}
+                                        {% for hidden in form.hidden_fields %}
+                                        {{ hidden }}
+                                        {% endfor %}
+                                        {% endif %}
+                                        {{ field.errors.as_ul }}
+                                        {{ field }}
+                                    </td>
+                                    {% endfor %}
+                                </tr>
+                            {% endescapescript %}
+                        </script>
+</div>
+
+</td>
+</tr>
+{% endwith %}
+{% endif %}
+</tbody>
+{% endescapescript %}
+</script>
+</table>
+<!-- This button will add a new form when clicked -->
+<a class="ui right labeled icon button data-formset-add" id="">
+    {% trans 'Add another' %}
+    <i class="plus icon"></i>
+</a>
 </div>
 {% addtoblock 'js' %}
 <script src="{% static 'js/jquery.formset.js' %}"></script>
-<script>jQuery(function ($) {
-        $("#formset").formset({
+<script>
+    jQuery(function ($) {
+        $(".formset").formset({
             animateForms: true,
             reorderMode: 'dom',
-            add: '#data-formset-add'
+            add: '.data-formset-add',
+            form: '.data-formset-form'
         });
-    });</script>
+    });
+    $(".formset").bind("DOMSubtreeModified", function () {
+        jQuery(function ($) {
+            $(".nested-formset").formset({
+                animateForms: true,
+                reorderMode: 'dom',
+                form: '.nested-data-formset-form',
+                emptyForm: '.nested-data-formset-empty-form',
+                body: '.nested-data-formset-body',
+                add: '.nested-data-formset-add'
+            });
+        });
+        $('.formset').on('formAdded', function (event) {
+            newForm = event.target;
+            console.log(event);
+            console.log('hello')
+        });
+    });
+
+</script>
 {% endaddtoblock %}

@@ -7,6 +7,6 @@
 </h1>
 <div class="section-container tab-content">
     {% trans 'create' as action %}
-    {% include 'venues/control/_venue_form.html' with venue_form=venue_form venue_procedure_form=venue_procedure_form action=action %}
+    {% include 'venues/control/_venue_form.html' with action=action %}
 </div>
 {% endblock %}

@@ -442,7 +442,9 @@ td>a {
         background-color: var(--bg-contrast) !important;
         color: var(--text-color) !important;
     }
-    /* semantic */
+    /**
+      * semantic 
+      */
     .icon {
         color: var(--text-color) !important;
     }
@@ -458,6 +460,13 @@ td>a {
     .ui.card {
         box-shadow: 0 1px 3px 0 var(--line-color), 0 0 0 1px var(--line-color);
     }
+    .ui.table {
+        border: 1px solid var(--bg-contrast) !important;
+    }
+    .ui.table td {
+        border-top-color: var(--bg-contrast) !important;
+        border-bottom-color: var(--bg-contrast) !important;
+    }
     .back.button {
         background-color: var(--orange) !important;
     }
@@ -467,7 +476,9 @@ td>a {
     tr.td:hover {
         color: var(--red) !important;
     }
-    /* leaflet */
+    /**
+      * leaflet 
+      */
     .leaflet-control-zoom-in, .leaflet-control-zoom-out {
         background-color: var(--bg-contrast) !important;
     }
@@ -477,7 +488,9 @@ td>a {
     .leaflet-control-attribution {
         background: rgba(100, 100, 100, 0.7) !important;
     }
-    /* full calendar */
+    /** 
+      * full calendar 
+      */
     .fc-list-empty {
         margin-bottom: 2em;
     }
