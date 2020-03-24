@@ -14,6 +14,7 @@ from ipware import get_client_ip
 from model_utils.fields import MonitorField
 from model_utils.managers import InheritanceManager
 
+from .fields import PercentField
 from .settings import CURRENCIES
 from .utils import get_valid_slug
 
@@ -854,6 +855,9 @@ class PaymentMethod(Trigger):
         max_digits=13,
         default=0,
     )
+    fee_tax_rate = PercentField(
+        verbose_name=_('tax rate applied to payement fee')
+    )
 
     # attributes
     @staticmethod
@@ -871,6 +875,15 @@ class PaymentMethod(Trigger):
     @staticmethod
     def redirect_route() -> str:
         return reverse('core:finance_payment_methods_add')
+
+    # methods
+    def apply_fee(self, net):
+        if self.fee_absolute:
+            return self.fee_value
+        return float(net) * (float(self.fee_value)/100)
+
+    def apply_fee_tax(self, net):
+        return float(net) * (1 + (float(self.fee_tax_rate)/100))
 
 
 class ContractProcedure(models.Model):

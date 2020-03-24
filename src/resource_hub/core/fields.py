@@ -1,8 +1,13 @@
 import bleach
 from django import forms
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db.models import DecimalField
 
 from django_summernote.widgets import SummernoteWidget
 
+#
+# form fields
+#
 ALLOWED_TAGS = [
     'a', 'div', 'p', 'span', 'img', 'em', 'i', 'li', 'ol', 'ul', 'strong', 'br',
     'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
@@ -29,3 +34,18 @@ class HTMLField(forms.CharField):
         value = super(HTMLField, self).to_python(value)
         return bleach.clean(
             value, tags=ALLOWED_TAGS, attributes=ATTRIBUTES, styles=STYLES)
+
+
+#
+# model fields
+#
+class PercentField(DecimalField):
+    def __init__(self, *args, **kwargs):
+        kwargs['default'] = 0
+        kwargs['max_digits'] = 5
+        kwargs['decimal_places'] = 3
+        kwargs['validators'] = [
+            MinValueValidator(0),
+            MaxValueValidator(99.999),
+        ]
+        super().__init__(*args, **kwargs)

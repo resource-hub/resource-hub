@@ -297,6 +297,7 @@ class VenueContract(Contract):
 
     # methods
     def claim_factory(self, occurrences=None):
+        net_total = 0
         for venue in self.event.venues.all():
             for occurrence in occurrences:
                 start = occurrence[0]
@@ -304,7 +305,7 @@ class VenueContract(Contract):
                 delta = ((end - start).total_seconds())/3600
                 net = delta * float(venue.price.value)
                 discounted_net = self.price_profile.apply(
-                    net)
+                    net) if self.price_profile else net
                 gross = self.contract_procedure.apply_tax(discounted_net)
 
                 self.claims.create(
@@ -317,10 +318,34 @@ class VenueContract(Contract):
                     price=venue.price.value,
                     currency=venue.price.currency,
                     net=net,
-                    discount=self.price_profile.discount,
+                    discount=self.price_profile.discount if self.price_profile else 0,
                     discounted_net=discounted_net,
                     tax_rate=self.contract_procedure.tax_rate,
                     gross=gross,
                     period_start=start,
                     period_end=end,
                 )
+
+                net_total += net
+
+        if self.payment_method.fee_value > 0:
+            net_fee = self.payment_method.apply_fee(net_total)
+            discounted_net_fee = self.price_profile.apply(
+                net_fee) if self.price_profile else net_fee
+            gross_fee = self.payment_method.apply_fee_tax(
+                discounted_net_fee)
+
+            self.claims.create(
+                item=self.payment_method.verbose_name,
+                quantity=1,
+                unit='u',
+                price=net_fee,
+                currency=venue.price.currency,
+                net=net_fee,
+                discount=self.price_profile.discount if self.price_profile else 0,
+                discounted_net=discounted_net_fee,
+                tax_rate=self.payment_method.fee_tax_rate,
+                gross=gross_fee,
+                period_start=start,
+                period_end=end,
+            )

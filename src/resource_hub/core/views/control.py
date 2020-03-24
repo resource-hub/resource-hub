@@ -291,7 +291,7 @@ class FinanceContractsManageDetails(View):
                 message = _('Invalid Choice')
 
         messages.add_message(request, messages.SUCCESS, message)
-        return redirect(reverse('control:finance_contracts_manage'))
+        return redirect(reverse('control:finance_contracts_manage_details', {'pk': pk}))
 
 
 @method_decorator(login_required, name='dispatch')

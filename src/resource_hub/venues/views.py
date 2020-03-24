@@ -109,8 +109,9 @@ class EventsCreate(View):
         if venue_contract_form.is_valid():
             with transaction.atomic():
                 venue_contract = venue_contract_form.save()
-            venue_contract.set_pending(
-                occurrences=venue_contract_form.occurrences)
+                venue_contract.set_pending(
+                    occurrences=venue_contract_form.occurrences
+                )
             message = _(
                 'The event has been created successfully. You can review it and either confirm or cancel.')
             messages.add_message(request, messages.SUCCESS, message)

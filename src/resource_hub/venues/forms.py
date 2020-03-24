@@ -243,7 +243,7 @@ class EventForm(forms.ModelForm):
                 old_dates = event.recurrences.between(
                     dtstart,
                     self.dtlast,
-                    dtstart=dtstart,
+                    dtstart=event.dtstart,
                     inc=True
                 )
 
@@ -471,7 +471,6 @@ class BaseEquipmentFormset(BaseInlineFormSet):
                             first = False
                             form.instance.price = nested_form.price_ptr
                             form.instance.save()
-                            print(form.instance)
                     if commit:
                         form.nested.save()
 

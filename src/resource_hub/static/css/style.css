@@ -448,8 +448,8 @@ td>a {
     .icon {
         color: var(--text-color) !important;
     }
-    .ui.dropdown>.menu, .ui.icon.message {
-        background-color: var(--bg-contrast);
+    .ui.dropdown>.menu, .ui.icon.message, .ui.segment {
+        background-color: var(--bg-contrast) !important;
     }
     div.item>a {
         color: var(--orange) !important;
