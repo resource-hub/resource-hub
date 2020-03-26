@@ -42,10 +42,10 @@ class HTMLField(forms.CharField):
 class PercentField(DecimalField):
     def __init__(self, *args, **kwargs):
         kwargs['default'] = 0
-        kwargs['max_digits'] = 5
+        kwargs['max_digits'] = 6
         kwargs['decimal_places'] = 3
         kwargs['validators'] = [
             MinValueValidator(0),
-            MaxValueValidator(99.999),
+            MaxValueValidator(100),
         ]
         super().__init__(*args, **kwargs)

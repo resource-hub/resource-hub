@@ -1,11 +1,9 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from django.contrib.auth.models import AbstractUser
-from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.shortcuts import reverse
 from django.utils import timezone
-from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
 
 from imagekit.models import ImageSpecField
@@ -519,13 +517,7 @@ class PriceProfile(models.Model):
     description = models.CharField(
         max_length=64,
     )
-    discount = models.IntegerField(
-        default=0,
-        validators=[
-            MinValueValidator(0),
-            MaxValueValidator(100),
-        ]
-    )
+    discount = PercentField()
 
     # methods
     def __str__(self):
@@ -558,24 +550,13 @@ class Claim(models.Model):
         decimal_places=5,
         max_digits=15,
     )
-    discount = models.IntegerField(
-        default=0,
-        validators=[
-            MinValueValidator(0),
-            MaxValueValidator(99),
-        ],
-    )
+    discount = PercentField()
     discounted_net = models.DecimalField(
         decimal_places=5,
         max_digits=15,
     )
-    tax_rate = models.IntegerField(
-        default=0,
+    tax_rate = PercentField(
         verbose_name=_('tax rate applied in percent'),
-        validators=[
-            MinValueValidator(0),
-            MaxValueValidator(99),
-        ],
     )
     gross = models.DecimalField(
         decimal_places=5,
@@ -907,13 +888,8 @@ class ContractProcedure(models.Model):
         PaymentMethod,
         blank=False,
     )
-    tax_rate = models.IntegerField(
-        default=0,
+    tax_rate = PercentField(
         verbose_name=_('tax rate applied in percent'),
-        validators=[
-            MinValueValidator(0),
-            MaxValueValidator(99),
-        ]
     )
     triggers = models.ManyToManyField(
         ContractTrigger,
