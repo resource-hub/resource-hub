@@ -11,6 +11,18 @@ services:
       POSTGRES_PASSWORD: ${DB_PW}
       POSTGRES_DB: ${DB_NAME}
 
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+    volumes:
+       - ./:/root/.pgadmin
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+    logging:
+      driver: none # disable logging
+
   redis:
     image: redis:alpine
     command: redis-server

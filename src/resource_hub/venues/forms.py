@@ -157,12 +157,6 @@ class VenueContractProcedureFormManager(FormManager):
 
 class EventForm(forms.ModelForm):
     description = HTMLField()
-    thumbnail_original = forms.ImageField(required=True)
-    is_public = forms.BooleanField(
-        initial=True,
-        help_text=_(
-            'List the event in public feeds and show its content to third parties?'),
-    )
     dtstart = forms.DateTimeField(
         label=_('Start of the event'),
     )
@@ -191,6 +185,7 @@ class EventForm(forms.ModelForm):
         }
         help_texts = {
             'venues': _('If available you can book several venues at once'),
+            'is_public': _('List the event in public feeds and show its content to third parties?'),
         }
 
     def get_occurrences(self):
@@ -241,8 +236,8 @@ class EventForm(forms.ModelForm):
             new_date_end = occurrence[1]
             for event in current_events:
                 old_dates = event.recurrences.between(
-                    dtstart,
-                    self.dtlast,
+                    dtstart.replace(hour=0, minute=0, second=0),
+                    dtlast,
                     dtstart=event.dtstart,
                     inc=True
                 )
@@ -252,11 +247,11 @@ class EventForm(forms.ModelForm):
                         old_date.date(), event.dtstart.time(), event.dtstart.tzinfo)
                     old_date_end = datetime.combine(
                         old_date.date(), event.dtend.time(), event.dtend.tzinfo)
-                    print("{} - {} | {} - {}".format(new_date_start,
-                                                     new_date_end, old_date_start, old_date_end))
+                    # print("{} - {} | {} - {}".format(new_date_start,
+                    #                                  new_date_end, old_date_start, old_date_end))
                     if (
                         (
-                            old_date_start < new_date_start and
+                            old_date_start <= new_date_start and
                             old_date_end > new_date_start
                         ) or
                         (

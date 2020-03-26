@@ -47,7 +47,9 @@ class Venue(models.Model):
         on_delete=models.CASCADE,
     )
     thumbnail_original = models.ImageField(
+        null=True,
         upload_to='images/',
+        default='images/default.png',
     )
     thumbnail = ImageSpecField(
         source='thumbnail_original',
@@ -168,18 +170,20 @@ class Event(models.Model):
     )
     tags = models.ManyToManyField(
         EventTag,
+        blank=True,
     )
     category = models.ForeignKey(
         EventCategory,
         on_delete=models.SET_NULL,
-        null=True
+        null=True,
+        blank=True,
     )
     venues = models.ManyToManyField(
         Venue,
     )
     is_public = models.BooleanField(
         default=True,
-        null=False,
+        blank=True,
     )
     recurrences = RecurrenceField(
         null=False,
@@ -331,7 +335,8 @@ class VenueContract(Contract):
         if self.payment_method.fee_value > 0:
             net_fee = self.payment_method.apply_fee(net_total)
             discounted_net_fee = self.price_profile.apply(
-                net_fee) if self.price_profile else net_fee
+                net_fee
+            ) if self.price_profile else net_fee
             gross_fee = self.payment_method.apply_fee_tax(
                 discounted_net_fee)
 
