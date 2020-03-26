@@ -274,34 +274,42 @@ class EventForm(forms.ModelForm):
         work in progress
         '''
 
-        recurrences = self.cleaned_data['recurrences']
-        dtstart = self.cleaned_data['dtstart']
-        dtend = self.cleaned_data['dtend']
+        recurrences = self.cleaned_data.get('recurrences')
+        for rrule in recurrences.rrules:
+            if rrule.count or rrule.until:
+                continue
+            else:
+                raise forms.ValidationError(
+                    _('The recurrence has to be limited'), code='infinite-recurrence')
+
+        dtstart = self.cleaned_data.get('dtstart')
+        dtend = self.cleaned_data.get('dtend')
         recurrences.dtstart = dtstart
         dates = recurrences.occurrences()
-        for date in dates:
-            # get last occurrence and apply times to dates
+        if not self.errors:
+            for date in dates:
+                # get last occurrence and apply times to dates
 
-            occurrence_start = datetime.combine(
-                date.date(), dtstart.time(), dtstart.tzinfo)
-            occurrence_end = datetime.combine(
-                date.date(), dtend.time(), dtend.tzinfo)
-            self.occurrences.append(
-                (occurrence_start, occurrence_end)
-            )
-            self.dtlast = occurrence_end
+                occurrence_start = datetime.combine(
+                    date.date(), dtstart.time(), dtstart.tzinfo)
+                occurrence_end = datetime.combine(
+                    date.date(), dtend.time(), dtend.tzinfo)
+                self.occurrences.append(
+                    (occurrence_start, occurrence_end)
+                )
+                self.dtlast = occurrence_end
 
-        conflicts = []
-        for venue in self.cleaned_data['venues']:
-            conflicts = conflicts + self._find_conflicts(
-                venue, dtstart, self.dtlast, self.occurrences)
+            conflicts = []
+            for venue in self.cleaned_data['venues']:
+                conflicts = conflicts + self._find_conflicts(
+                    venue, dtstart, self.dtlast, self.occurrences)
 
-        if conflicts:
-            raise forms.ValidationError(
-                conflicts
-            )
+            if conflicts:
+                raise forms.ValidationError(
+                    conflicts
+                )
 
-        return recurrences
+            return recurrences
 
     def save(self, *args, commit=True, **kwargs):
         self.new_event = super(EventForm, self).save(

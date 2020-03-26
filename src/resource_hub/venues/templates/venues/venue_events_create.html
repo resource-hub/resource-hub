@@ -1,9 +1,13 @@
 {% extends 'core/__base.html' %}
 {% load i18n %}
 {% load static %}
+
 {% block extra_head %}
 <link rel="stylesheet" type="text/css" href="{% static 'datetimepicker/jquery.datetimepicker.css' %}" />
+<script src="{% url 'core:jsi18n' %}"></script>
+{{ event_form.media }}
 {% endblock %}
+
 {% block content %}
 {% url 'venues:venue_details' venue_slug=venue.slug location_slug=venue.location.slug as url %}
 {% include '_back_button.html' with url=url %}
@@ -27,7 +31,6 @@
 
 
 {% block scripts %}
-{{ event_form.media }}
 <script src="{% static 'datetimepicker/build/jquery.datetimepicker.full.min.js' %}"></script>
 <script>
     function setEnd(currentDateTime) {
@@ -53,17 +56,38 @@
         mask: true,
     });
 </script>
-<script src="{% url 'core:jsi18n' %}"></script>
-{{ event_form.media }}
 <script>
     $(document).ready(function () {
-        $('#container').bind('DOMSubtreeModified', function (e) {
-            // Content change handler
-            $('input[name="limit"]').prop('checked', true);
-            $('.until-count').removeClass('disabled');
-            $('input[name="until_count"]').prop('disabled', false);
-            $('.date-field').prop('disabled', false);
-        });
-    })
+        const targetNode = document.getElementById('container');
+
+        const config = { attributes: false, childList: true, subtree: true };
+
+        const callback = function (mutationsList, observer) {
+            for (let mutation of mutationsList) {
+                if (mutation.type === 'childList') {
+                    for (let node of mutation.addedNodes) {
+                        $(node).find('input[name="limit"]').prop('checked', true);
+                        $(node).find('.until-count').removeClass('disabled');
+                        $(node).find('input[name="until_count"]').prop('disabled', false);
+                        $(node).find('.date-field').prop('disabled', false);
+
+                        var date_limit = $(node).find('input[class="date-field"]');
+                        var count_limmit = $(node).find('input[name="count"]');
+                        $(node).find('li[class="until"]').find('input[name="until_count"]').on('click', function () {
+                            date_limit.prop('required', true).removeClass('disabled');
+                            count_limmit.prop('required', false).addClass('disabled');
+                        });
+                        $(node).find('li[class="count"]').find('input[name="until_count"]').on('click', function () {
+                            date_limit.prop('required', false).addClass('disabled');
+                            count_limmit.prop('required', true).removeClass('disabled');
+                        });
+                    }
+                }
+            }
+        };
+
+        const observer = new MutationObserver(callback);
+        observer.observe(targetNode, config);
+    });
 </script>
 {% endblock %}

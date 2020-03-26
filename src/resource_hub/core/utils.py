@@ -15,6 +15,7 @@ def get_valid_slug(obj, string, condition=None):
         if condition:
             query.add(condition, Q.AND)
         return query
+
     slug = slugify(string)
     invalid_slug = True
     klass = obj.__class__
