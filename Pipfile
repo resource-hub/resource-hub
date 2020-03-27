@@ -51,7 +51,7 @@ pyOpenSSL = "*"
 service_identity = "*"
 Twisted = "*" 
 zope = {interface = "*"}
-django-summernote = {git = "https://github.com/summernote/django-summernote.git",ref = "702b574920342766f56262725d87125719156878"}
+django-summernote = {git = "https://github.com/campfireman/django-summernote.git"}
 django-redis = "*"
 django-sekizai = "*"
 pycountry = "*"
