@@ -282,6 +282,7 @@ class VenueContract(Contract):
     )
     equipment = models.ManyToManyField(
         Equipment,
+        blank=True,
     )
 
     # attributes
