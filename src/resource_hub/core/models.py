@@ -724,7 +724,7 @@ class Contract(models.Model):
 
     # state setters
     def move_to(self, state):
-        if state in self.STATE_GRAPH[self.state]:
+        if self.state in self.STATE_GRAPH and state in self.STATE_GRAPH[self.state]:
             self.call_triggers(state)
             self.state = state
         else:
