@@ -355,3 +355,16 @@ class VenueContract(Contract):
                 period_start=start,
                 period_end=end,
             )
+
+    # state setters
+    def purge(self):
+        self.event.delete()
+        self.equipment.delete()
+
+    def set_expired(self):
+        super(VenueContract, self).set_expired()
+        self.purge()
+
+    def set_canceled(self):
+        super(VenueContract, self).set_cancelled()
+        self.purge()

@@ -396,7 +396,6 @@ class VenueContractFormManager():
         user = self.request.user
         actor = self.request.actor
         new_venue_contract = self.venue_contract_form.save(commit=False)
-        new_venue_contract.state = VenueContract.STATE.PENDING
         new_venue_contract.creditor = self.venue.owner
         new_venue_contract.debitor = actor
         new_venue_contract.created_by = user

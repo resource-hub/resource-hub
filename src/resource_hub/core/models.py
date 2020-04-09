@@ -17,10 +17,10 @@ from .settings import CURRENCIES
 from .utils import get_valid_slug
 
 
-class BaseModelMixin():
+class BaseModelMixin(models.Model):
     # fields
     is_deleted = models.BooleanField(
-        default=False
+        default=False,
     )
     created_at = models.DateTimeField(
         auto_now_add=True,
@@ -29,12 +29,15 @@ class BaseModelMixin():
         auto_now=True,
     )
 
+    class Meta:
+        abstract = True
+
     # methods
     def soft_delete(self):
         self.is_deleted = True
 
 
-class Actor(models.Model, BaseModelMixin):
+class Actor(BaseModelMixin):
     # Fields
     name = models.CharField(
         max_length=128,
@@ -337,9 +340,6 @@ class Organization(Actor):
         User,
         through='OrganizationMember',
     )
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-    )
     created_by = models.ForeignKey(
         User,
         related_name='organization_created_by',
@@ -589,6 +589,7 @@ class Claim(models.Model):
 class Contract(models.Model):
     # constants
     class STATE:
+        INIT = 'i'
         # active states
         PENDING = 'p'
         WAITING = 'w'
@@ -601,6 +602,7 @@ class Contract(models.Model):
         DECLINED = 'n'
 
     STATES = [
+        (STATE.INIT, _('initializing')),
         (STATE.PENDING, _('pending')),
         (STATE.WAITING, _('waiting')),
         (STATE.RUNNING, _('running')),
@@ -610,6 +612,15 @@ class Contract(models.Model):
         (STATE.CANCELED, _('canceled')),
         (STATE.DECLINED, _('declined')),
     ]
+
+    # availabe edges for node
+    STATE_GRAPH = {
+        STATE.INIT: [STATE.PENDING],
+        STATE.PENDING: [STATE.WAITING, STATE.CANCELED, ],
+        STATE.WAITING: [STATE.RUNNING, STATE.DECLINED, ],
+        STATE.RUNNING: [STATE.DISPUTING, STATE.FINALIZED, ],
+        STATE.DISPUTING: [STATE.RUNNING, STATE.FINALIZED, ]
+    }
 
     # fields
     contract_procedure = models.ForeignKey(
@@ -631,6 +642,7 @@ class Contract(models.Model):
     state = models.CharField(
         choices=STATES,
         max_length=2,
+        default=STATE.INIT,
     )
     state_changed = MonitorField(monitor='state')
     is_fixed_term = models.BooleanField(
@@ -682,7 +694,7 @@ class Contract(models.Model):
 
     @property
     def is_pending(self) -> bool:
-        return self.state is self.STATE.PENDING
+        return self.state == self.STATE.PENDING
 
     @property
     def expiration_period(self) -> int:
@@ -711,61 +723,46 @@ class Contract(models.Model):
         return
 
     # state setters
-    def move(self, state):
-        self.call_triggers(state)
-        self.state = state
+    def move_to(self, state):
+        if state in self.STATE_GRAPH[self.state]:
+            self.call_triggers(state)
+            self.state = state
+        else:
+            raise ValueError('Cannot move from state {} to state {}'.format(
+                self.get_state_display(), state))
 
     def set_pending(self, *args, **kwargs) -> None:
-        self.move(self.STATE.PENDING)
+        self.move_to(self.STATE.PENDING)
         self.claim_factory(**kwargs)
 
     def set_expired(self) -> None:
-        if self.state == self.STATE.PENDING:
-            self.move(self.STATE.EXPIRED)
-            self.save()
-            return
-        raise ValueError(
-            'Cannot move from {} to state expired'.format(self.state))
+        self.move_to(self.STATE.EXPIRED)
+        self.save()
 
-    def set_canceled(self, request) -> None:
-        if (self.state == self.STATE.PENDING):
-            self.move(self.STATE.CANCELED)
-            self.save()
-            return
-        raise ValueError(
-            'Cannot move from {} to state canceled'.format(self.state))
+    def set_cancelled(self) -> None:
+        self.move_to(self.STATE.CANCELED)
+        self.save()
 
-    def set_declined(self, request) -> None:
-        if self.STATE == self.STATE.WAITING:
-            self.move(self.STATE.DECLINED)
-            self.save()
-        raise ValueError(
-            'Cannot move from {} to state declined'.format(self.state))
+    def set_declined(self) -> None:
+        self.move_to(self.STATE.DECLINED)
+        self.save()
 
     def set_waiting(self, request) -> None:
-        if self.state == self.STATE.PENDING:
-            self.move(self.STATE.WAITING)
-            self.confirmation = DeclarationOfIntent.create(
-                request=request,
-            )
-            self.save()
+        self.move_to(self.STATE.WAITING)
+        self.confirmation = DeclarationOfIntent.create(
+            request=request,
+        )
+        self.save()
 
-            if self.contract_procedure.auto_accept or (self.creditor == self.debitor):
-                self.set_running(request)
-            return
-        raise ValueError(
-            'Cannot move from {} to state waiting'.format(self.state))
+        if self.contract_procedure.auto_accept or (self.creditor == self.debitor):
+            self.set_running(request)
 
     def set_running(self, request) -> None:
-        if self.state == self.STATE.WAITING:
-            self.move(self.STATE.RUNNING)
-            self.acceptance = DeclarationOfIntent.create(
-                request=request,
-            )
-            self.save()
-            return
-        raise ValueError(
-            'Cannot move from {} to state waiting'.format(self.state))
+        self.move_to(self.STATE.RUNNING)
+        self.acceptance = DeclarationOfIntent.create(
+            request=request,
+        )
+        self.save()
 
     def claim_factory(self):
         raise NotImplementedError()
