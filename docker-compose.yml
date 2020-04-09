@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 services:
   postgres:
@@ -17,7 +17,7 @@ services:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
     volumes:
-       - ./:/root/.pgadmin
+      - ./:/root/.pgadmin
     ports:
       - "${PGADMIN_PORT:-5050}:80"
     logging:
@@ -30,7 +30,7 @@ services:
   mail:
     image: djfarrelly/maildev:latest
     command: maildev -s 8025 -w 8080
-    ports: 
+    ports:
       - "8080:8080"
 
   worker:
@@ -42,7 +42,7 @@ services:
     volumes:
       - ./:/site:rw
     command: bash -c 'cd src && python3 manage.py rqworker default high low'
-    
+
   scheduler:
     environment:
       DJANGO_SETTINGS_MODULE: resource_hub.settings.dev
