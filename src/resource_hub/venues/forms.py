@@ -224,6 +224,7 @@ class EventForm(forms.ModelForm):
         intersect.add(last_inside, Q.OR)
 
         query = Q(venues=venue)
+        query.add(Q(is_deleted=False), Q.AND)
         query.add(Q(intersect), Q.AND)
 
         current_events = Event.objects.filter(

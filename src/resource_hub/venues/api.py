@@ -58,7 +58,7 @@ class VenueEvents(APIView):
             raise exceptions.NotFound(
                 detail=_('No venue corresponds to the given id'))
 
-        events = Event.objects.filter(venues=venue_id)
+        events = Event.objects.filter(venues=venue_id, is_deleted=False)
         result = []
 
         for e in events:

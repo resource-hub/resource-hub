@@ -17,7 +17,7 @@ from .settings import CURRENCIES
 from .utils import get_valid_slug
 
 
-class BaseModelMixin(models.Model):
+class BaseModel(models.Model):
     # fields
     is_deleted = models.BooleanField(
         default=False,
@@ -35,9 +35,10 @@ class BaseModelMixin(models.Model):
     # methods
     def soft_delete(self):
         self.is_deleted = True
+        self.save()
 
 
-class Actor(BaseModelMixin):
+class Actor(BaseModel):
     # Fields
     name = models.CharField(
         max_length=128,
@@ -546,7 +547,7 @@ class PriceProfile(models.Model):
         return float(net) * (1 - (float(self.discount)/100))
 
 
-class Claim(models.Model):
+class Claim(BaseModel):
     item = models.CharField(max_length=255)
     quantity = models.DecimalField(
         decimal_places=5,
@@ -581,9 +582,6 @@ class Claim(models.Model):
     )
     period_start = models.DateTimeField()
     period_end = models.DateTimeField()
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-    )
 
 
 class Contract(models.Model):
@@ -734,6 +732,7 @@ class Contract(models.Model):
     def set_pending(self, *args, **kwargs) -> None:
         self.move_to(self.STATE.PENDING)
         self.claim_factory(**kwargs)
+        self.save()
 
     def set_expired(self) -> None:
         self.move_to(self.STATE.EXPIRED)
@@ -765,7 +764,7 @@ class Contract(models.Model):
         self.save()
 
     def claim_factory(self):
-        raise NotImplementedError()
+        pass
 
 
 class Trigger(models.Model):

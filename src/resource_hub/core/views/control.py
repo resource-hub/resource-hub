@@ -269,7 +269,7 @@ class FinanceContractsManageDetails(View):
 
         if is_debitor:
             if choice == 'cancel':
-                contract.set_canceled(request)
+                contract.set_cancelled()
                 message = _('{} has been canceled'.format(
                     contract.verbose_name))
             elif choice == 'confirm':

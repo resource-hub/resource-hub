@@ -9,8 +9,9 @@ from django.utils.translation import ugettext_lazy as _
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
 from recurrence.fields import RecurrenceField
-from resource_hub.core.models import (Actor, Contract, ContractProcedure,
-                                      Gallery, Location, Price)
+from resource_hub.core.models import (Actor, BaseModel, Contract,
+                                      ContractProcedure, Gallery, Location,
+                                      Price)
 from resource_hub.core.utils import get_valid_slug
 
 
@@ -143,7 +144,7 @@ class EventCategory(models.Model):
         return self.name
 
 
-class Event(models.Model):
+class Event(BaseModel):
     # fields
     slug = models.SlugField(
         unique=True,
@@ -200,16 +201,12 @@ class Event(models.Model):
         format='JPEG',
         options={'quality': 70},
     )
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-    )
     created_by = models.ForeignKey(
         Actor,
         on_delete=models.SET_NULL,
         null=True,
         related_name='event_created_by',
     )
-    updated_at = models.DateTimeField(auto_now=True)
     updated_by = models.ForeignKey(
         Actor,
         on_delete=models.SET_NULL,
@@ -358,13 +355,16 @@ class VenueContract(Contract):
 
     # state setters
     def purge(self):
-        self.event.delete()
-        self.equipment.delete()
+        self.event.soft_delete()
+        for claim in self.claims.all():
+            claim.soft_delete()
 
     def set_expired(self):
+        self.purge()
         super(VenueContract, self).set_expired()
-        self.purge()
+        self.save()
 
-    def set_canceled(self):
-        super(VenueContract, self).set_cancelled()
+    def set_cancelled(self):
         self.purge()
+        super(VenueContract, self).set_cancelled()
+        self.save()
