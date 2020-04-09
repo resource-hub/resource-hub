@@ -344,6 +344,13 @@ class VenueContractForm(forms.ModelForm):
         if self.fields['price_profile'].queryset:
             self.initial['price_profile'] = self.fields['price_profile'].queryset[0]
 
+    def clean(self):
+        data = super(VenueContractForm, self).clean()
+        address = self.request.actor.address
+        if address.street is None or address.street_number is None or address.postal_code is None or address.city is None:
+            raise forms.ValidationError(
+                _('to create bookings you need to set your billing address'), code='address-not-set')
+
     class Meta:
         model = VenueContract
         fields = ['price_profile', 'payment_method', 'equipment', ]
