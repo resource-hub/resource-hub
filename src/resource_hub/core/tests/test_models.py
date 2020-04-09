@@ -36,6 +36,7 @@ class TestContract(TestCase):
             (state.INIT, state.FINALIZED),
             (state.INIT, state.RUNNING),
             (state.RUNNING, state.CANCELED),
+            (state.CANCELED, state.INIT),
         ]
         for edge in moves:
             self.contract.state = edge[0]
