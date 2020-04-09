@@ -34,11 +34,11 @@ class BankTransferForm(BankAccountForm):
             'bic': self.cleaned_data['bic'],
         }
         if self.has_instance:
-            new_bank_transfer.bank_account = BankAccount.objects.create(
-                **bank_account)
-        else:
             BankAccount.objects.filter(
                 pk=self.instance.bank_account.pk).update(**bank_account)
+        else:
+            new_bank_transfer.bank_account = BankAccount.objects.create(
+                **bank_account)
         new_bank_transfer.owner = request.actor
 
         if commit:

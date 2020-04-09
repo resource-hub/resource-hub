@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
@@ -17,7 +17,24 @@ from .settings import CURRENCIES
 from .utils import get_valid_slug
 
 
-class Actor(models.Model):
+class BaseModelMixin():
+    # fields
+    is_deleted = models.BooleanField(
+        default=False
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True,
+    )
+
+    # methods
+    def soft_delete(self):
+        self.is_deleted = True
+
+
+class Actor(models.Model, BaseModelMixin):
     # Fields
     name = models.CharField(
         max_length=128,
@@ -526,7 +543,7 @@ class PriceProfile(models.Model):
         return '{}%: {} {}'.format(self.discount, self.description, addressee)
 
     def apply(self, net):
-        return net * (1 - (self.discount/100))
+        return float(net) * (1 - (float(self.discount)/100))
 
 
 class Claim(models.Model):
@@ -916,7 +933,7 @@ class ContractProcedure(models.Model):
         return '{}: {}'.format(self.type_name, self.name)
 
     def apply_tax(self, net):
-        return net * (1 + (self.tax_rate/100))
+        return float(net) * (1 + (float(self.tax_rate)/100))
 
 
 class Gallery(models.Model):

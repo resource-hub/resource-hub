@@ -1508,7 +1508,7 @@
 <text text-anchor="start" x="2750" y="-2018.1" font-family="Roboto" font-size="8.00" fill="#000000">discount</text>
 <text text-anchor="start" x="2811" y="-2018.1" font-family="Roboto" font-size="8.00" fill="#000000"> &#160;&#160;&#160;&#160;&#160;</text>
 <text text-anchor="start" x="2936" y="-2018.1" font-family="Roboto" font-size="8.00" fill="#000000"> &#160;&#160;&#160;&#160;&#160;</text>
-<text text-anchor="start" x="2982" y="-2018.1" font-family="Roboto" font-size="8.00" fill="#000000">IntegerField</text>
+<text text-anchor="start" x="2982" y="-2018.1" font-family="Roboto" font-size="8.00" fill="#000000">PercentField</text>
 <text text-anchor="start" x="3073" y="-2018.1" font-family="Roboto" font-size="8.00" fill="#000000"> &#160;&#160;&#160;&#160;&#160;</text>
 <polygon fill="none" stroke="#000000" points="2700.5,-2011.5 2700.5,-2099.5 3143.5,-2099.5 3143.5,-2011.5 2700.5,-2011.5"/>
 </g>
@@ -1566,7 +1566,7 @@
 <text text-anchor="start" x="3011" y="-1542.1" font-family="Roboto" font-size="8.00" fill="#000000">tax_rate</text>
 <text text-anchor="start" x="3072" y="-1542.1" font-family="Roboto" font-size="8.00" fill="#000000"> &#160;&#160;&#160;&#160;&#160;</text>
 <text text-anchor="start" x="3212" y="-1542.1" font-family="Roboto" font-size="8.00" fill="#000000"> &#160;&#160;&#160;&#160;&#160;</text>
-<text text-anchor="start" x="3258" y="-1542.1" font-family="Roboto" font-size="8.00" fill="#000000">IntegerField</text>
+<text text-anchor="start" x="3258" y="-1542.1" font-family="Roboto" font-size="8.00" fill="#000000">PercentField</text>
 <text text-anchor="start" x="3349" y="-1542.1" font-family="Roboto" font-size="8.00" fill="#000000"> &#160;&#160;&#160;&#160;&#160;</text>
 <text text-anchor="start" x="2965" y="-1529.1" font-family="Roboto" font-size="8.00" fill="#000000"> &#160;&#160;&#160;&#160;&#160;</text>
 <text text-anchor="start" x="3011" y="-1529.1" font-family="Roboto" font-size="8.00" fill="#7b7b7b">terms_and_conditions</text>
@@ -1612,7 +1612,7 @@
 <text text-anchor="start" x="2317" y="-2089.1" font-family="Roboto" font-size="8.00" fill="#000000">discount</text>
 <text text-anchor="start" x="2378" y="-2089.1" font-family="Roboto" font-size="8.00" fill="#000000"> &#160;&#160;&#160;&#160;&#160;</text>
 <text text-anchor="start" x="2473" y="-2089.1" font-family="Roboto" font-size="8.00" fill="#000000"> &#160;&#160;&#160;&#160;&#160;</text>
-<text text-anchor="start" x="2519" y="-2089.1" font-family="Roboto" font-size="8.00" fill="#000000">IntegerField</text>
+<text text-anchor="start" x="2519" y="-2089.1" font-family="Roboto" font-size="8.00" fill="#000000">PercentField</text>
 <text text-anchor="start" x="2610" y="-2089.1" font-family="Roboto" font-size="8.00" fill="#000000"> &#160;&#160;&#160;&#160;&#160;</text>
 <text text-anchor="start" x="2271" y="-2076.1" font-family="Roboto" font-size="8.00" fill="#000000"> &#160;&#160;&#160;&#160;&#160;</text>
 <text text-anchor="start" x="2317" y="-2076.1" font-family="Roboto" font-size="8.00" fill="#000000">discounted_net</text>
@@ -1666,7 +1666,7 @@
 <text text-anchor="start" x="2317" y="-1972.1" font-family="Roboto" font-size="8.00" fill="#000000">tax_rate</text>
 <text text-anchor="start" x="2378" y="-1972.1" font-family="Roboto" font-size="8.00" fill="#000000"> &#160;&#160;&#160;&#160;&#160;</text>
 <text text-anchor="start" x="2473" y="-1972.1" font-family="Roboto" font-size="8.00" fill="#000000"> &#160;&#160;&#160;&#160;&#160;</text>
-<text text-anchor="start" x="2519" y="-1972.1" font-family="Roboto" font-size="8.00" fill="#000000">IntegerField</text>
+<text text-anchor="start" x="2519" y="-1972.1" font-family="Roboto" font-size="8.00" fill="#000000">PercentField</text>
 <text text-anchor="start" x="2610" y="-1972.1" font-family="Roboto" font-size="8.00" fill="#000000"> &#160;&#160;&#160;&#160;&#160;</text>
 <text text-anchor="start" x="2271" y="-1959.1" font-family="Roboto" font-size="8.00" fill="#000000"> &#160;&#160;&#160;&#160;&#160;</text>
 <text text-anchor="start" x="2317" y="-1959.1" font-family="Roboto" font-size="8.00" fill="#000000">unit</text>
