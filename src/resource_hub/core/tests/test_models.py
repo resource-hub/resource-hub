@@ -20,7 +20,15 @@ from resource_hub.core.models import Contract
 
 class TestContract(TestCase):
     def setUp(self):
+
         self.contract = Contract()
+
+    def test_legal_moves(self):
+        for node, edges in Contract.STATE_GRAPH.items():
+            for other_node in edges:
+                self.contract.state = node
+                self.contract.move_to(other_node)
+                self.assertEqual(self.contract.state, other_node)
 
     def test_illegal_moves(self):
         state = Contract.STATE
