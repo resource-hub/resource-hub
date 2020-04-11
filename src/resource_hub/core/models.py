@@ -415,6 +415,58 @@ class OrganizationMember(models.Model):
         return role
 
 
+class Notification(BaseModel):
+    class ACTION:
+        CREATE = 'c'
+        BOOK = 'b'
+        CONFIRM = 'co'
+
+    class LEVEL:
+        LOW = 0  # info
+        MEDIUM = 1  # action required, mail
+        HIGH = 2  # warning
+        CRITICAL = 3  # mandatory information
+
+    ACTIONS = [
+        (ACTION.CREATE, _('created')),
+        (ACTION.BOOK, _('booked')),
+        (ACTION.CONFIRM, _('confirmed')),
+    ]
+    LEVELS = [
+        (LEVEL.LOW, _('low')),
+        (LEVEL.MEDIUM, _('medium')),
+        (LEVEL.HIGH, _('high')),
+        (LEVEL.CRITICAL, _('critical')),
+    ]
+    sender = models.ForeignKey(
+        Actor,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name='notification_sender',
+    )
+    action = models.CharField(
+        choices=ACTIONS,
+        max_length=3,
+    )
+    target = models.CharField(
+        max_length=255,
+    )
+    link = models.URLField()
+    recipient = models.ForeignKey(
+        Actor,
+        on_delete=models.PROTECT,
+        related_name='notification_recipient',
+    )
+    level = models.CharField(
+        choices=LEVELS,
+        max_length=3,
+    )
+    message = models.TextField()
+    is_read = models.BooleanField(
+        default=False,
+    )
+
+
 class Payment(models.Model):
     # constants
     CREATED = 'c'
@@ -614,7 +666,7 @@ class Contract(models.Model):
     # availabe edges for node
     STATE_GRAPH = {
         STATE.INIT: [STATE.PENDING],
-        STATE.PENDING: [STATE.WAITING, STATE.CANCELED, ],
+        STATE.PENDING: [STATE.WAITING, STATE.CANCELED, STATE.EXPIRED, ],
         STATE.WAITING: [STATE.RUNNING, STATE.DECLINED, ],
         STATE.RUNNING: [STATE.DISPUTING, STATE.FINALIZED, ],
         STATE.DISPUTING: [STATE.RUNNING, STATE.FINALIZED, ]

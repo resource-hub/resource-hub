@@ -1,10 +1,11 @@
 from datetime import datetime
 
 from django.core.mail import EmailMultiAlternatives
+from django.utils.translation import ugettext_lazy as _
 
 import django_rq
 from django_rq import job
-from resource_hub.core.models import Contract
+from resource_hub.core.models import Contract, Notification
 
 
 def clear_schedule():
@@ -42,3 +43,28 @@ def send_mail(subject, message, recipient):
     email.attach_alternative(message, 'text/html')
 
     email.send(fail_silently=False)
+    print(email.recipients())
+
+
+@job('high')
+def notify(sender, action, target, link, recipient, level, message):
+    notification = Notification.objects.create(
+        sender=sender,
+        action=action,
+        target=target,
+        link=link,
+        recipient=recipient,
+        level=level,
+        message=message,
+    )
+    if level > Notification.LEVEL.LOW:
+        footer = _('See the link %(link)s for further information.') % {
+            'link': link}
+        message = message + footer
+        send_mail.delay(
+            '{} {} {}'.format(
+                sender, notification.get_action_display(), target
+            ),
+            message,
+            ['tu.cl@pm.me', 'test@ture.dev', ],
+        )

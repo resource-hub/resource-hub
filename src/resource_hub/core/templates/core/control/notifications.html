@@ -1,27 +1,112 @@
 {% extends 'control/__base.html' %}
 {% load i18n %}
+{% load sekizai_tags %}
+
+{% block admin-navigation %}
+<div id="mark_all_read" class="ui right floated icon button">
+    <i class="check icon"></i>
+    {% trans 'mark all read' %}
+</div>
+{% endblock %}
 
 {% block content %}
-<h1>{% trans 'notifications' %}</h1>
-<div class="ui feed">
-    <div class="event">
-        <div class="label">
-            <img src="/images/avatar/small/elliot.jpg">
-        </div>
-        <div class="content">
-            You added Elliot Fu to the group <a>Coworkers</a>
-        </div>
-    </div>
-    <div class="event">
-        <div class="label">
+<h1>{% trans 'Notifications' %}</h1>
+<div id="feed-loader" class="ui active centered inline loader"></div>
+<div id="feed" class="ui feed"></div>
+
+{% addtoblock 'js' %}
+<script id="template" type="text/template">
+    <div class="event %is_read%" pk="%pk%">
+        <div class="label" style="cursor: pointer;" onclick="show_notification('%link%', '%pk%');">
             <i class="pencil icon"></i>
         </div>
         <div class="content">
-            <div class="summary">
-                You posted on your friend <a>Stevie Feliciano's</a> wall.
-                <div class="date">Today</div>
+            <div class="summary" style="cursor: pointer;" onclick="show_notification('%link%', '%pk%');">
+                <span>%sender_name%</span> <span>%action%</span> <span>%target%</span>
+                <div class="date">%created_at%</div>
+            </div>
+            <div class="meta">
+                <a class="mark_read like %is_read%" pk="%pk%">
+                    <i class="check icon"></i>
+                    {% trans 'mark read' %}
+                </a>
             </div>
         </div>
     </div>
-</div>
+</script>
+<script>
+    function show_notification(link, pk) {
+        mark_read(pk, function () {
+            window.location = link;
+        })
+    }
+    function mark_read(pk, all = false, _callback = null) {
+        var csrftoken = getCookie('csrftoken');
+        var data = all ? "" : {
+            pk: pk,
+        }
+        $.ajax({
+            url: "{% url 'api:notifications_mark_read' %}",
+            type: "PUT",
+            dataType: "JSON",
+            data: data,
+            headers: { 'X-CSRFToken': csrftoken },
+        }).done(function (data) {
+            update_notification_indicator();
+            button = all ? $('.mark_read') : $('a[pk=' + pk + ']');
+            container = all ? $('.event') : $('div[pk=' + pk + ']');
+            button.hide();
+            container.removeClass('not_read');
+            if (_callback) {
+                return _callback()
+            } else {
+                return _callback
+            }
+        });
+    }
+    function create_feed(name = null, id = null) {
+        var template = document.getElementById("template");
+        var templateHtml = template.innerHTML;
+
+        $.ajax({
+            url: "{% url 'api:notifications_list' %}",
+            type: "GET",
+            dataType: "JSON",
+        }).done(function (data) {
+            var feed = "";
+
+            $.each(data, function (i, notification) {
+                var read_flag = notification['is_read'] ? 'read' : 'not_read';
+                feed += templateHtml
+                    .replace(/%pk%/g, notification['pk'])
+                    .replace(/%sender_name%/g, notification['sender'].name)
+                    .replace(/%action%/g, notification['action'])
+                    .replace(/%target%/g, notification['target'])
+                    .replace(/%link%/g, notification['link'])
+                    .replace(/%is_read%/g, read_flag)
+                    .replace(/%created_at%/g, notification['created_at'])
+            });
+
+            remove_loader("#feed-loader");
+            $("#feed").html(feed);
+            $(".thumbnail").on("load", function () {
+                $(".placeholder").hide();
+            });
+
+            $('.mark_read').on('click', function () {
+                var pk = $(this).attr('pk');
+                mark_read(pk);
+            })
+        });
+    }
+    $(document).ready(function () {
+        create_feed();
+
+        $('#mark_all_read').on('click', function () {
+            $(this).prop('disabled', true);
+            mark_read(null, true);
+        })
+    });
+</script>
+{% endaddtoblock %}
 {% endblock %}

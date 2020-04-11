@@ -76,6 +76,12 @@ api_urls.register([
     path('locations/search/', api.Locations.as_view(),
          name='locations_search'),
     path('contracts/list', api.ContractsList.as_view(), name='contracts_list'),
+    path('notifications/list', api.NotificationsList.as_view(),
+         name='notifications_list'),
+    path('notifications/unread', api.NotificationsUnread.as_view(),
+         name='notifications_unread'),
+    path('notifications/mark/read/', api.NotificationsMarkRead.as_view(),
+         name='notifications_mark_read'),
 ])
 
 app_name = 'core'

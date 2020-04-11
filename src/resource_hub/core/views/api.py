@@ -1,9 +1,11 @@
 from django.db.models import Q
 
-from resource_hub.core.models import (Actor, Contract, Location,
+from resource_hub.core.models import (Actor, Contract, Location, Notification,
                                       OrganizationMember, User)
 from resource_hub.core.serializers import (ActorSerializer, ContractSerializer,
-                                           LocationSerializer, UserSerializer)
+                                           LocationSerializer,
+                                           NotificationSerializer,
+                                           UserSerializer)
 from resource_hub.core.utils import get_associated_objects
 from rest_framework import filters, generics
 from rest_framework.decorators import (authentication_classes,
@@ -66,3 +68,30 @@ class ContractsList(generics.ListCreateAPIView):
             raise ValidationError('invalid type argument')
 
         return Contract.objects.filter(query).select_subclasses().order_by('-created_at')
+
+
+class NotificationsList(generics.ListCreateAPIView):
+    http_method_name = ['get']
+    serializer_class = NotificationSerializer
+
+    def get_queryset(self):
+        actor = self.request.actor
+        return Notification.objects.filter(recipient=actor).order_by('-created_at')
+
+
+class NotificationsUnread(APIView):
+    def get(self, request):
+        actor = request.actor
+        data = {
+            'count': Notification.objects.filter(is_read=False, recipient=actor).count(),
+        }
+        return Response(data)
+
+
+class NotificationsMarkRead(APIView):
+    def put(self, request):
+        pk = request.POST.get('pk')
+        actor = request.actor
+        query = Q(pk=pk, recipient=actor) if pk else Q(recipient=actor)
+        Notification.objects.filter(query).update(is_read=True)
+        return Response({'detail': 'updated notification status as read'})

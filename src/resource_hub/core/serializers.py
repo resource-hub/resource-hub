@@ -1,6 +1,7 @@
 from django.shortcuts import reverse
 
-from resource_hub.core.models import Actor, Address, Contract, Location, User
+from resource_hub.core.models import (Actor, Address, Contract, Location,
+                                      Notification, User)
 from rest_framework import serializers
 
 
@@ -74,3 +75,16 @@ class LocationSerializer(serializers.ModelSerializer):
         model = Location
         fields = ['name', 'latitude',
                   'longitude', 'address', 'owner', 'thumbnail', 'location_link', ]
+
+
+class NotificationSerializer(serializers.ModelSerializer):
+    sender = ActorSerializer()
+    action = serializers.SerializerMethodField()
+
+    def get_action(self, obj):
+        return obj.get_action_display()
+
+    class Meta:
+        model = Notification
+        fields = ['pk', 'sender', 'action', 'target', 'link',
+                  'recipient', 'level', 'is_read', 'created_at', ]

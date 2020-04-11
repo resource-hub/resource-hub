@@ -9,9 +9,10 @@ from django.utils.translation import ugettext_lazy as _
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
 from recurrence.fields import RecurrenceField
+from resource_hub.core.jobs import notify
 from resource_hub.core.models import (Actor, BaseModel, Contract,
                                       ContractProcedure, Gallery, Location,
-                                      Price)
+                                      Notification, Price)
 from resource_hub.core.utils import get_valid_slug
 
 
@@ -368,3 +369,16 @@ class VenueContract(Contract):
         self.purge()
         super(VenueContract, self).set_cancelled()
         self.save()
+
+    def set_waiting(self, request):
+        super(VenueContract, self).set_waiting(request)
+        notify.delay(
+            self.debitor,
+            Notification.ACTION.BOOK,
+            self.event.name,
+            reverse('control:finance_contracts_manage_details',
+                    kwargs={'pk': self.pk}),
+            self.creditor,
+            Notification.LEVEL.MEDIUM,
+            ''
+        )
