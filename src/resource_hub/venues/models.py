@@ -10,7 +10,7 @@ from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
 from recurrence.fields import RecurrenceField
 from resource_hub.core.jobs import notify
-from resource_hub.core.models import (Actor, BaseModel, Contract,
+from resource_hub.core.models import (Actor, BaseModel, Claim, Contract,
                                       ContractProcedure, Gallery, Location,
                                       Notification, Price)
 from resource_hub.core.utils import get_valid_slug
@@ -311,7 +311,8 @@ class VenueContract(Contract):
                     net) if self.price_profile else net
                 gross = self.contract_procedure.apply_tax(discounted_net)
 
-                self.claims.create(
+                Claim.objects.create(
+                    contract=self,
                     item='{}@{}'.format(
                         self.event.name,
                         venue.name
@@ -339,7 +340,8 @@ class VenueContract(Contract):
             gross_fee = self.payment_method.apply_fee_tax(
                 discounted_net_fee)
 
-            self.claims.create(
+            Claim.objects.create(
+                contract=self,
                 item=self.payment_method.verbose_name,
                 quantity=1,
                 unit='u',
@@ -357,7 +359,7 @@ class VenueContract(Contract):
     # state setters
     def purge(self):
         self.event.soft_delete()
-        for claim in self.claims.all():
+        for claim in self.claim_set.all():
             claim.soft_delete()
 
     def set_expired(self):

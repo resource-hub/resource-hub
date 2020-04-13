@@ -599,43 +599,6 @@ class PriceProfile(models.Model):
         return float(net) * (1 - (float(self.discount)/100))
 
 
-class Claim(BaseModel):
-    item = models.CharField(max_length=255)
-    quantity = models.DecimalField(
-        decimal_places=5,
-        max_digits=15,
-    )
-    unit = models.CharField(
-        max_length=5,
-    )
-    price = models.DecimalField(
-        decimal_places=5,
-        max_digits=15,
-    )
-    currency = models.CharField(
-        default='EUR',
-        max_length=5,
-    )
-    net = models.DecimalField(
-        decimal_places=5,
-        max_digits=15,
-    )
-    discount = PercentField()
-    discounted_net = models.DecimalField(
-        decimal_places=5,
-        max_digits=15,
-    )
-    tax_rate = PercentField(
-        verbose_name=_('tax rate applied in percent'),
-    )
-    gross = models.DecimalField(
-        decimal_places=5,
-        max_digits=15,
-    )
-    period_start = models.DateTimeField()
-    period_end = models.DateTimeField()
-
-
 class Contract(models.Model):
     # constants
     class STATE:
@@ -709,10 +672,6 @@ class Contract(models.Model):
         null=True,
         blank=True,
     )
-    claims = models.ManyToManyField(
-        Claim,
-        blank=True
-    )
     confirmation = models.OneToOneField(
         DeclarationOfIntent,
         null=True,
@@ -766,7 +725,7 @@ class Contract(models.Model):
     @property
     def claim_table(self):
         from .tables import ClaimTable
-        return ClaimTable(self.claims.all())
+        return ClaimTable(self.claim_set.all())
 
     # methods
     def call_triggers(self, state):
@@ -817,6 +776,49 @@ class Contract(models.Model):
 
     def claim_factory(self):
         pass
+
+
+class Claim(BaseModel):
+    contract = models.ForeignKey(
+        Contract,
+        on_delete=models.PROTECT,
+    )
+    item = models.CharField(
+        max_length=255,
+    )
+    quantity = models.DecimalField(
+        decimal_places=5,
+        max_digits=15,
+    )
+    unit = models.CharField(
+        max_length=5,
+    )
+    price = models.DecimalField(
+        decimal_places=5,
+        max_digits=15,
+    )
+    currency = models.CharField(
+        default='EUR',
+        max_length=5,
+    )
+    net = models.DecimalField(
+        decimal_places=5,
+        max_digits=15,
+    )
+    discount = PercentField()
+    discounted_net = models.DecimalField(
+        decimal_places=5,
+        max_digits=15,
+    )
+    tax_rate = PercentField(
+        verbose_name=_('tax rate applied in percent'),
+    )
+    gross = models.DecimalField(
+        decimal_places=5,
+        max_digits=15,
+    )
+    period_start = models.DateTimeField()
+    period_end = models.DateTimeField()
 
 
 class Trigger(models.Model):
@@ -933,6 +935,12 @@ class PaymentMethod(Trigger):
 
 
 class ContractProcedure(models.Model):
+    SETTLEMENT_INTERVALS = [
+        (7, _('weekly')),
+        (14, _('every two weeks')),
+        (30, _('monthly')),
+    ]
+
     name = models.CharField(
         max_length=64,
     )
@@ -955,6 +963,10 @@ class ContractProcedure(models.Model):
     )
     tax_rate = PercentField(
         verbose_name=_('tax rate applied in percent'),
+    )
+    settlement_interval = models.IntegerField(
+        choices=SETTLEMENT_INTERVALS,
+        default=SETTLEMENT_INTERVALS[0][0],
     )
     triggers = models.ManyToManyField(
         ContractTrigger,

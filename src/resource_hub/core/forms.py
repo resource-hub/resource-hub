@@ -367,7 +367,7 @@ class ContractProcedureForm(forms.ModelForm):
     class Meta:
         model = ContractProcedure
         fields = ['name', 'auto_accept', 'terms_and_conditions', 'notes',
-                  'triggers', 'tax_rate', 'payment_methods', ]
+                  'triggers', 'tax_rate', 'payment_methods', 'settlement_interval', ]
 
         help_texts = {
             'name': _('Give the procedure a name so you can identify it easier'),
