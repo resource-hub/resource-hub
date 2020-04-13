@@ -269,22 +269,28 @@ class FinanceContractsManageDetails(View):
 
         if is_debitor:
             if choice == 'cancel':
-                contract.set_cancelled()
+                with transaction.atomic():
+                    contract.set_cancelled()
                 message = _('{} has been canceled'.format(
                     contract.verbose_name))
             elif choice == 'confirm':
-                contract.set_waiting(request)
+                with transaction.atomic():
+                    if contract.payment_method.is_prepayment:
+                        return contract.set_waiting(request)
+                    contract.set_waiting(request)
                 message = _('{} has been confirmed'.format(
                     contract.verbose_name))
             else:
                 message = _('Invalid Choice')
         else:
             if choice == 'decline':
-                contract.set_declined(request)
+                with transaction.atomic():
+                    contract.set_declined(request)
                 message = _('{} has been decline'.format(
                     contract.verbose_name))
             elif choice == 'accept':
-                contract.set_running(request)
+                with transaction.atomic():
+                    contract.set_running(request)
                 message = _('{} has been accepted'.format(
                     contract.verbose_name))
             else:

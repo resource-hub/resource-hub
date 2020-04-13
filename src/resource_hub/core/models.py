@@ -757,15 +757,17 @@ class Contract(models.Model):
         self.move_to(self.STATE.DECLINED)
         self.save()
 
-    def set_waiting(self, request) -> None:
+    def set_waiting(self, request) -> str:
         self.move_to(self.STATE.WAITING)
         self.confirmation = DeclarationOfIntent.create(
             request=request,
         )
         self.save()
-
         if self.contract_procedure.auto_accept or (self.creditor == self.debitor):
             self.set_running(request)
+        if self.payment_method.is_prepayment:
+            return self.payment_method.initialize(self.claim_set.filter(status=Claim.STATUS.OPEN), self.contract_procedure.settlement_interval)
+        return
 
     def set_running(self, request) -> None:
         self.move_to(self.STATE.RUNNING)
@@ -777,11 +779,27 @@ class Contract(models.Model):
     def claim_factory(self):
         pass
 
+    def settle_claims(self):
+        open_claims = self.claim_set.filter(status=Claim.STATUS.OPEN)
+
 
 class Claim(BaseModel):
+    class STATUS:
+        OPEN = 'o'
+        CLOSED = 'c'
+
+    STATI = [
+        (STATUS.OPEN, _('open')),
+        (STATUS.CLOSED, _('closed')),
+    ]
+
     contract = models.ForeignKey(
         Contract,
         on_delete=models.PROTECT,
+    )
+    status = models.CharField(
+        choices=STATI,
+        max_length=3,
     )
     item = models.CharField(
         max_length=255,
@@ -916,8 +934,8 @@ class PaymentMethod(Trigger):
     def default_condition() -> str:
         return Contract.STATE.RUNNING
 
-    @staticmethod
-    def is_prepayment() -> bool:
+    @property
+    def is_prepayment(self) -> bool:
         return False
 
     @staticmethod

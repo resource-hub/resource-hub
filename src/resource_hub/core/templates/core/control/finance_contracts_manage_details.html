@@ -56,6 +56,12 @@
             </div>
             {{ contract.payment_method.is_prepayment }}
         </div>
+        <div class="item">
+            <div class="header">
+                {% trans 'Settlement interval' %}
+            </div>
+            {{ contract.contract_procedure.settlement_interval }} {% trans 'days' %}
+        </div>
     </div>
     <h3>{% trans 'Terms and Conditions' %}</h3>
     <div class="ui accordion">
