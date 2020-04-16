@@ -1180,7 +1180,7 @@ def today():
     return timezone.now().date()
 
 
-class Invoice(models.Model):
+class Invoice(BaseModel):
     contract = models.ForeignKey(
         Contract, related_name='invoices', db_index=True, on_delete=models.CASCADE)
     prefix = models.CharField(max_length=160, db_index=True)
@@ -1474,7 +1474,7 @@ class InvoicePosition(models.Model):
 
     @property
     def net_value(self):
-        return self.gross_value - self.tax_value
+        return self.gross - self.discounted_net
 
     class Meta:
         ordering = ('position', 'pk')

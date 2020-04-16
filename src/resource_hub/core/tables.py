@@ -117,3 +117,22 @@ class ContractProcedureTable(tables.Table):
         attrs = {
             "class": "ui selectable table"
         }
+
+
+class InvoiceTable(tables.Table):
+    pk = tables.Column(verbose_name=_('Invoice Number'))
+    invoice_to_name = tables.Column(verbose_name=_('Invoice to'))
+    invoice_from_name = tables.Column(verbose_name=_('Invoice from'))
+    file = tables.Column(verbose_name=_('File'))
+    created_at = tables.DateColumn(verbose_name=('Date'))
+
+    def render_pk(self, value, record):
+        return record.number
+
+    def render_file(self, value, record):
+        return mark_safe('<a href="{}"><i class="icon file"></i></a>'.format(value.url))
+
+    class Meta:
+        attrs = {
+            "class": "ui selectable table"
+        }

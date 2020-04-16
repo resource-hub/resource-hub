@@ -17,8 +17,8 @@ from ..decorators import organization_admin_required
 from ..forms import *
 from ..models import *
 from ..signals import register_contract_procedures, register_payment_methods
-from ..tables import (ContractProcedureTable, LocationsTable, MembersTable,
-                      OrganizationsTable, PaymentMethodsTable)
+from ..tables import (ContractProcedureTable, InvoiceTable, LocationsTable,
+                      MembersTable, OrganizationsTable, PaymentMethodsTable)
 from ..utils import get_associated_objects
 from . import TableView
 
@@ -327,6 +327,30 @@ class FinanceContractProceduresCreate(View):
             'contract_procedures': contract_procedures
         }
         return render(request, 'core/control/finance_contract_procedures_create.html', context)
+
+
+@method_decorator(login_required, name='dispatch')
+class FinanceInvoicesOutgoing(TableView):
+    header = _('Outgoing invoices')
+
+    def get_queryset(self):
+        actor = self.request.actor
+        return Invoice.objects.filter(contract__creditor=actor).order_by('-created_at')
+
+    def get_table(self):
+        return InvoiceTable
+
+
+@method_decorator(login_required, name='dispatch')
+class FinanceInvoicesIncoming(TableView):
+    header = _('Incoming invoices')
+
+    def get_queryset(self):
+        actor = self.request.actor
+        return Invoice.objects.filter(contract__debitor=actor).order_by('-created_at')
+
+    def get_table(self):
+        return InvoiceTable
 
 
 @method_decorator(login_required, name='dispatch')

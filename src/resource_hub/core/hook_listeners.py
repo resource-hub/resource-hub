@@ -76,6 +76,20 @@ def control_sidebar(context, *args, **kwargs):
                             }
                         ]
                     },
+                    {
+                        'header': _('Invoices'),
+                        'url': get_parent(reverse('control:finance_invoices_outgoing')),
+                        'subsub_items': [
+                            {
+                                'header': _('Outgoing'),
+                                'url': reverse('control:finance_invoices_outgoing'),
+                            },
+                            {
+                                'header': _('Incoming'),
+                                'url': reverse('control:finance_invoices_incoming'),
+                            }
+                        ]
+                    },
                 ]
             },
             {

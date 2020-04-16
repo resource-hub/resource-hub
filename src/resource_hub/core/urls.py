@@ -38,6 +38,10 @@ control_urls.register([
          name='finance_contract_procedures_manage'),
     path('finance/contract-procedures/create/', control.FinanceContractProceduresCreate.as_view(),
          name='finance_contract_procedures_create'),
+    path('finance/invoices/outgoing/', control.FinanceInvoicesOutgoing.as_view(),
+         name='finance_invoices_outgoing'),
+    path('finance/invoices/incoming/', control.FinanceInvoicesIncoming.as_view(),
+         name='finance_invoices_incoming'),
 
     # organizations
     path('organizations/manage/',
