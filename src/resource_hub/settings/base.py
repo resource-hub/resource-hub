@@ -78,6 +78,7 @@ INSTALLED_APPS = [
     'resource_hub.api',
     'resource_hub.control',
     'resource_hub.plugins.bank_transfer',
+    'resource_hub.plugins.sepa',
     'resource_hub.venues',
 ]
 

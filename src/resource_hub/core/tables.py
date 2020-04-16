@@ -82,6 +82,11 @@ class LocationsTable(tables.Table):
         }
 
 
+def create_footer(table):
+    if table.data:
+        return table.data[0].currency
+
+
 class ClaimTable(tables.Table):
     # columns
     item = tables.Column(verbose_name=_('Item'))
@@ -97,7 +102,7 @@ class ClaimTable(tables.Table):
     gross = tables.Column(verbose_name=_(
         'Gross'), footer=lambda table: sum(x.gross for x in table.data))
     currency = tables.Column(verbose_name=_(
-        'Currency'), footer=lambda table: table.data[0].currency)
+        'Currency'), footer=create_footer)
 
     class Meta:
         attrs = {

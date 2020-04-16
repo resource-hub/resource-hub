@@ -7,3 +7,7 @@ register_payment_methods = Signal(
 register_contract_procedures = Signal(
     providing_args=[],
 )
+
+control_sidebar_finance = Signal(
+    providing_args=[]
+)

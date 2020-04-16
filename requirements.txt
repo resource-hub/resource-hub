@@ -18,7 +18,7 @@ constantly==15.1.0
 coverage==5.1
 croniter==0.3.31
 cryptography==2.9
-daphne==2.4.1
+daphne==2.5.0
 datetime==4.3
 django-appconf==1.0.4
 django-classy-tags==1.0.0
@@ -37,6 +37,7 @@ django-tables2==2.3.1
 django==3.0.5
 djangorestframework==3.11.0
 documenttemplate==3.2.2
+elementpath==1.4.3
 extensionclass==4.4
 git+https://github.com/campfireman/django-summernote.git@2ec3d9b8f646f10acfc8131990deb98b44943254#egg=django-summernote
 git+https://github.com/escodebar/django-datetimepicker.git@6ab8ed0be1beae0cf36cd888bc33426776796ce6#egg=django-datetimepicker
@@ -70,10 +71,12 @@ roman==3.2
 rq-scheduler==0.9.1
 rq==1.3.0
 schwifty==2020.4.1
+sepaxml==2.2.0
 service-identity==18.1.0
 six==1.14.0
 soupsieve==2.0
 sqlparse==0.3.1
+text-unidecode==1.3
 transaction==3.0.0
 twisted[tls]==20.3.0
 txaio==20.4.1
@@ -83,6 +86,7 @@ webencodings==0.5.1
 webob==1.8.6
 webtest==2.0.34
 wsgiproxy2==0.4.6
+xmlschema==1.1.2
 z3c.pt==3.3.0
 zc.lockfile==2.0
 zconfig==3.5.0

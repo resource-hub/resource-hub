@@ -33,16 +33,8 @@ class BankTransfer(PaymentMethod):
         return BankTransferForm
 
     @property
-    def form_url(self) -> str:
-        return reverse('control:bank_transfer_create')
-
-    @property
     def prefix(self) -> str:
         return 'bnk'
-
-    # methods
-    def callback(self):
-        return
 
     def initialize(self, contract, request):
         if not self.is_prepayment:
@@ -52,3 +44,6 @@ class BankTransfer(PaymentMethod):
             'name': contract.verbose_name}
         messages.add_message(request, messages.SUCCESS, message)
         return redirect(reverse('control:finance_contracts_manage_details', kwargs={'pk': contract.pk}))
+
+    def settle(self, contract, claims, invoice):
+        pass

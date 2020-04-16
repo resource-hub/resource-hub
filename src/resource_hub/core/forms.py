@@ -152,7 +152,7 @@ class BankAccountForm(forms.ModelForm):
         fields = ['account_holder', 'iban', 'bic', ]
 
     def clean_iban(self):
-        iban = self.cleaned_data['iban'].replace(' ', '')
+        iban = self.cleaned_data['iban'].replace(' ', '').upper()
         if iban:
             try:
                 IBAN(iban)
@@ -162,7 +162,7 @@ class BankAccountForm(forms.ModelForm):
         return iban
 
     def clean_bic(self):
-        bic = self.cleaned_data['bic']
+        bic = self.cleaned_data['bic'].upper()
         if bic:
             try:
                 BIC(bic)

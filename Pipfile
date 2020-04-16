@@ -63,6 +63,7 @@ django-datetimepicker = {git = "https://github.com/escodebar/django-datetimepick
 bleach = "*"
 django-formset-js-improved = "*"
 reportlab = "*"
+sepaxml = "*"
 
 [requires]
 python_version = "*"

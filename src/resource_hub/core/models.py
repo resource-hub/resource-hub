@@ -662,7 +662,7 @@ class PriceProfile(models.Model):
         return float(net) * (1 - (float(self.discount)/100))
 
 
-class Contract(BaseModel):
+class BaseContract(BaseModel):
     # constants
     class STATE:
         INIT = 'i'
@@ -725,6 +725,7 @@ class Contract(BaseModel):
         default=STATE.INIT,
     )
     state_changed = MonitorField(monitor='state')
+    # fields
     is_fixed_term = models.BooleanField(
         default=True
     )
@@ -739,6 +740,7 @@ class Contract(BaseModel):
         null=True,
         blank=True,
     )
+
     confirmation = models.OneToOneField(
         DeclarationOfIntent,
         null=True,
@@ -761,6 +763,69 @@ class Contract(BaseModel):
     # attributes
     objects = InheritanceManager()
 
+    class Meta:
+        abstract = True
+
+    @property
+    def verbose_name(self) -> str:
+        raise NotImplementedError()
+
+    @property
+    def is_pending(self) -> bool:
+        return self.state == self.STATE.PENDING
+
+    @property
+    def overview(self) -> str:
+        '''
+        Returns description (may use html) of the contents of the contract
+        '''
+        raise NotImplementedError()
+
+    def call_triggers(self, state):
+        pass
+
+    def create_confirmation(self, request):
+        self.confirmation = DeclarationOfIntent.create(
+            request=request,
+        )
+
+    def create_acceptance(self, request):
+        self.acceptance = DeclarationOfIntent.create(
+            request=request,
+        )
+
+    # state setters
+    def move_to(self, state):
+        if self.state in self.STATE_GRAPH and state in self.STATE_GRAPH[self.state]:
+            self.call_triggers(state)
+            self.state = state
+        else:
+            raise ValueError('Cannot move from state {} to state {}'.format(
+                self.get_state_display(), state))
+
+    def set_pending(self, *args, **kwargs) -> None:
+        raise NotImplementedError()
+
+    def set_expired(self) -> None:
+        raise NotImplementedError()
+
+    def set_cancelled(self) -> None:
+        raise NotImplementedError()
+
+    def set_declined(self) -> None:
+        raise NotImplementedError()
+
+    def set_waiting(self, request) -> None:
+        raise NotImplementedError()
+
+    def set_running(self, request) -> None:
+        raise NotImplementedError()
+
+    def set_finalized(self) -> None:
+        raise NotImplementedError()
+
+
+class Contract(BaseContract):
     @property
     def verbose_name(self) -> str:
         raise NotImplementedError()
@@ -816,7 +881,8 @@ class Contract(BaseModel):
 
     def set_pending(self, *args, **kwargs) -> None:
         self.move_to(self.STATE.PENDING)
-        self.claim_factory(**kwargs)
+        if self.creditor != self.debitor:
+            self.claim_factory(**kwargs)
         self.save()
 
     def set_expired(self) -> None:
@@ -833,18 +899,14 @@ class Contract(BaseModel):
 
     def set_waiting(self, request) -> None:
         self.move_to(self.STATE.WAITING)
-        self.confirmation = DeclarationOfIntent.create(
-            request=request,
-        )
+        self.create_confirmation(request)
         self.save()
         if self.contract_procedure.auto_accept or (self.creditor == self.debitor):
             self.set_running(request)
 
     def set_running(self, request) -> None:
         self.move_to(self.STATE.RUNNING)
-        self.acceptance = DeclarationOfIntent.create(
-            request=request,
-        )
+        self.create_acceptance(request)
         if self.payment_method.is_prepayment:
             self.settle_claims()
         else:
@@ -872,6 +934,7 @@ class Contract(BaseModel):
             with transaction.atomic():
                 invoice = Invoice.build(self, open_claims)
                 invoice.save()
+                self.payment_method.settle(self, open_claims, invoice)
                 open_claims.update(status=Claim.STATUS.CLOSED)
                 notify(
                     self.creditor,
@@ -1006,10 +1069,6 @@ class Trigger(models.Model):
             'thumbnail': 'images/default.png',
         }
 
-    @property
-    def form_url(self) -> str:
-        raise NotImplementedError()
-
     # methods
     def callback(self) -> None:
         raise NotImplementedError()
@@ -1053,6 +1112,9 @@ class PaymentMethod(Trigger):
     def initialize(self, contract, request) -> HttpResponse:
         raise NotImplementedError()
 
+    def settle(self, contract, claims, invoice) -> None:
+        raise NotImplementedError()
+
     def apply_fee(self, net):
         if self.fee_absolute:
             return self.fee_value
@@ -1060,16 +1122,6 @@ class PaymentMethod(Trigger):
 
     def apply_fee_tax(self, net):
         return float(net) * (1 + (float(self.fee_tax_rate)/100))
-
-    def settle(self, open_claims, settlement_interval):
-        selector = timezone.now + \
-            timedelta(
-                days=settlement_interval
-            ) if self.is_prepayment else timezone.now
-        bill_items = []
-        for claim in open_claims:
-            if claim.period_end < selector:
-                bill_items.append(claim)
 
 
 class ContractProcedure(models.Model):

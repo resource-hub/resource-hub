@@ -33,6 +33,8 @@ class ScopeView(View):
     legal_scope = []
 
     def scope_is_valid(self, scope):
+        if '*' in self.legal_scope:
+            return True
         return scope in self.legal_scope
 
     def dispatch(self, *args, **kwargs):
@@ -180,6 +182,7 @@ class FinancePaymentMethodsAdd(View):
 
                 }
             )
+        print(payment_methods_list)
         return payment_methods_list
 
     def get(self, request):
