@@ -1075,7 +1075,7 @@ class PaymentMethod(Trigger):
 class ContractProcedure(models.Model):
     SETTLEMENT_INTERVALS = [
         (7, _('weekly')),
-        (14, _('every two weeks')),
+        (14, _('biweekly')),
         (30, _('monthly')),
     ]
 
