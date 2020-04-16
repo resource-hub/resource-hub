@@ -64,6 +64,7 @@ class TestContract(TestCase):
             payment_method=payment_method,
             creditor=actor,
             debitor=actor2,
+            state=Contract.STATE.RUNNING,
         )
 
     def test_legal_moves(self):
@@ -89,12 +90,14 @@ class TestContract(TestCase):
             )
 
     def test_claim_settlement(self):
-        n = 10
+        n = 10  # only even numbers
+        claim_length = 5
 
         for i in range(1, n + 1):
             now = timezone.now()
-            interval = timedelta(days=self.settlement_interval)
-            length = timedelta(hours=5)
+            length = timedelta(hours=claim_length)
+            interval = timedelta(
+                days=self.settlement_interval)
             if i > n/2:
                 period_start = now - interval
             else:
@@ -119,6 +122,16 @@ class TestContract(TestCase):
         closed_claims = self.contract.claim_set.filter(
             status=Claim.STATUS.CLOSED)
         self.assertEqual(len(closed_claims), n//2)
+        self.assertEqual(self.contract.state, Contract.STATE.RUNNING)
+
+        self.contract.payment_method.is_prepayment = True
+        self.contract.contract_procedure.settlement_interval += 1
+        self.contract.save()
+        self.contract.settle_claims()
+        closed_claims = self.contract.claim_set.filter(
+            status=Claim.STATUS.CLOSED)
+        self.assertEqual(len(closed_claims), n)
+        self.assertEqual(self.contract.state, Contract.STATE.FINALIZED)
         # for invoice in self.contract.invoices.all():
         #     invoice.file.delete()
 

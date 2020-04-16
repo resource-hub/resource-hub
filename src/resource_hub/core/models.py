@@ -842,6 +842,10 @@ class Contract(BaseModel):
         )
         self.save()
 
+    def set_finalized(self) -> None:
+        self.move_to(self.STATE.FINALIZED)
+        self.save()
+
     def claim_factory(self):
         pass
 
@@ -854,6 +858,7 @@ class Contract(BaseModel):
             ) if self.payment_method.is_prepayment else now
         open_claims = self.claim_set.filter(
             status=Claim.STATUS.OPEN, period_end__lte=selector)
+        print(open_claims)
         if open_claims:
             invoice = None
             with transaction.atomic():
@@ -871,10 +876,19 @@ class Contract(BaseModel):
                         'sender': self.creditor.name},
                     [invoice.file.path],
                 )
-
+                if self.is_fixed_term:
+                    if not self.claim_set.filter(status=Claim.STATUS.OPEN).exists():
+                        self.set_finalized()
         # self.payment_method.settle(
             # open_claims, self.contract_procedure.settlement_interval)
-        return
+
+
+class SettlementLog(BaseModel):
+    contract = models.ForeignKey(
+        Contract,
+        on_delete=models.CASCADE,
+        related_name='settlement_logs',
+    )
 
 
 class Claim(BaseModel):
@@ -1019,6 +1033,9 @@ class PaymentMethod(Trigger):
     fee_tax_rate = PercentField(
         verbose_name=_('tax rate applied to payement fee')
     )
+    is_prepayment = models.BooleanField(
+        default=False,
+    )
 
     # attributes
     @staticmethod
@@ -1028,10 +1045,6 @@ class PaymentMethod(Trigger):
     @staticmethod
     def default_condition() -> str:
         return Contract.STATE.RUNNING
-
-    @property
-    def is_prepayment(self) -> bool:
-        return False
 
     @staticmethod
     def redirect_route() -> str:

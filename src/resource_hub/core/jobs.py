@@ -2,7 +2,6 @@ from datetime import datetime
 
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
-from django.utils.translation import ugettext_lazy as _
 
 import django_rq
 from django_rq import job
@@ -77,6 +76,6 @@ def notify(sender, action, target, link, recipient, level, message, attachments=
         )
 
 
-@job('low')
-def settle_claims():
-    Contract.objects.filter(state=Contract.STATE.RUNNING)
+# @job('low')
+# def settle_claims():
+#     for Contract.objects.filter(state=Contract.STATE.RUNNING):
