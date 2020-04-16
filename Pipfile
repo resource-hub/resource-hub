@@ -62,6 +62,7 @@ django-ipware = "*"
 django-datetimepicker = {git = "https://github.com/escodebar/django-datetimepicker.git"}
 bleach = "*"
 django-formset-js-improved = "*"
+reportlab = "*"
 
 [requires]
 python_version = "*"

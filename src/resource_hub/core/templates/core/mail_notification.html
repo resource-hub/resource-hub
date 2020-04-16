@@ -1,0 +1,17 @@
+{% extends '__mail.html' %}
+{% load i18n %}
+
+{% block content %}
+<p>
+    Hi, {{ recipient.name }}!
+</p>
+<p>
+    {{ message }}
+</p>
+{% if link %}
+<p>
+    {% trans 'See this link for further information: ' %}
+    <a href="{{ link }}">{{ link }}</a>
+</p>
+{% endif %}
+{% endblock %}

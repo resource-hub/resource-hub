@@ -189,6 +189,10 @@ LOCALE_PATHS = (
     os.path.join(PROJECT_DIR, 'locale'),
 )
 
+CURRENCY_PLACES = {
+    'EUR': 2,
+    'USD': 2,
+}
 
 # Static files (CSS, JavaScript, Images)
 

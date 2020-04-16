@@ -10,6 +10,7 @@ src/media/*
 !src/media/images
 src/media/images/*
 !src/media/images/default.png
+!src/media/images/logo.png
 a.out
 cov
 .coverage

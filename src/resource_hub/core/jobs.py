@@ -1,11 +1,12 @@
 from datetime import datetime
 
 from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 
 import django_rq
 from django_rq import job
-from resource_hub.core.models import Contract, Notification
+from resource_hub.core.models import Actor, Contract, Notification
 
 
 def clear_schedule():
@@ -34,20 +35,22 @@ def expire_contracts():
 
 
 @job('default')
-def send_mail(subject, message, recipient):
+def send_mail(subject, message, recipient, attachments=None):
     email = EmailMultiAlternatives(
         subject,
         message,
         to=recipient,
     )
     email.attach_alternative(message, 'text/html')
+    if attachments:
+        for attachment in attachments:
+            email.attach_file(attachment)
 
     email.send(fail_silently=False)
-    print(email.recipients())
 
 
 @job('high')
-def notify(sender, action, target, link, recipient, level, message):
+def notify(sender, action, target, link, recipient, level, message, attachments=None):
     notification = Notification.objects.create(
         sender=sender,
         action=action,
@@ -58,13 +61,22 @@ def notify(sender, action, target, link, recipient, level, message):
         message=message,
     )
     if level > Notification.LEVEL.LOW:
-        footer = _('See the link %(link)s for further information.') % {
-            'link': link}
-        message = message + footer
+        recipient = Actor.objects.get_subclass(pk=recipient.pk)
+        message = render_to_string('core/mail_notification.html', context={
+            'recipient': recipient,
+            'link': link,
+            'message': message,
+        })
         send_mail.delay(
             '{} {} {}'.format(
                 sender, notification.get_action_display(), target
             ),
             message,
-            ['tu.cl@pm.me', 'test@ture.dev', ],
+            recipient.notification_recipients,
+            attachments
         )
+
+
+@job('low')
+def settle_claims():
+    Contract.objects.filter(state=Contract.STATE.RUNNING)
