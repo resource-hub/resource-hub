@@ -1,18 +1,15 @@
 import string
 import uuid
-from datetime import datetime, timedelta
-from decimal import Decimal
+from datetime import timedelta
 
 from django.contrib.auth.models import AbstractUser
 from django.core.files.base import ContentFile
 from django.db import DatabaseError, models, transaction
-from django.db.models import DurationField, ExpressionWrapper, F, Max
+from django.db.models import Max, Min
 from django.db.models.functions import Cast
 from django.http import HttpResponse
-from django.shortcuts import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
-from django.utils.functional import cached_property
 from django.utils.translation import pgettext
 from django.utils.translation import ugettext_lazy as _
 
@@ -795,6 +792,16 @@ class Contract(BaseModel):
         return ClaimTable(self.claim_set.all())
 
     # methods
+    def set_initial_settlement_log(self):
+        if self.payment_method.is_prepayment:
+            raise ValueError(
+                'initial settlement logs cannot be set for prepayments')
+        if len(self.settlement_logs.all()) > 0:
+            raise ValueError('there already is a settlement log entry')
+        smallest_start = self.claim_set.aggregate(Min('period_start'))
+        self.settlement_logs.create(
+            timestamp=smallest_start['period_start__min'])
+
     def call_triggers(self, state):
         return
 
@@ -840,6 +847,8 @@ class Contract(BaseModel):
         )
         if self.payment_method.is_prepayment:
             self.settle_claims()
+        else:
+            self.set_initial_settlement_log()
         self.save()
 
     def set_finalized(self) -> None:
@@ -886,6 +895,9 @@ class SettlementLog(BaseModel):
         Contract,
         on_delete=models.CASCADE,
         related_name='settlement_logs',
+    )
+    timestamp = models.DateTimeField(
+        default=timezone.now
     )
 
 

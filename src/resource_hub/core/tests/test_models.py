@@ -1,5 +1,6 @@
 from datetime import timedelta
 
+from django.db.models import Min
 from django.test import TestCase
 from django.utils import timezone
 
@@ -138,3 +139,17 @@ class TestContract(BaseContractTest):
         self.assertEqual(len(self.contract.settlement_logs.all()), 2)
         # for invoice in self.contract.invoices.all():
         #     invoice.file.delete()
+
+    def test_inital_settlement_log(self):
+        self.contract.set_initial_settlement_log()
+        first_start = self.contract.claim_set.aggregate(Min('period_start'))[
+            'period_start__min']
+        first_log = self.contract.settlement_logs.aggregate(Min('timestamp'))[
+            'timestamp__min']
+        self.assertEqual(first_start, first_log)
+
+        self.assertRaises(ValueError, self.contract.set_initial_settlement_log)
+
+        self.contract.payment_method.is_prepayment = True
+        self.contract.save()
+        self.assertRaises(ValueError, self.contract.set_initial_settlement_log)

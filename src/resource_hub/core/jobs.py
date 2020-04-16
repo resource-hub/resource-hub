@@ -90,6 +90,6 @@ def notify(sender, action, target, link, recipient, level, message, attachments=
 @job('low')
 def settle_claims():
     for contract in Contract.objects.filter(state=Contract.STATE.RUNNING):
-        last_settlement = contract.settlement_logs.aggregate(Max('created_at'))
-        if timezone.now() - timedelta(days=contract.contract_procedure.settlement_interval) < last_settlement['created_at__max']:
+        last_settlement = contract.settlement_logs.aggregate(Max('timestamp'))
+        if timezone.now() - timedelta(days=contract.contract_procedure.settlement_interval) < last_settlement['timestamp__max']:
             contract.settle_claims()
