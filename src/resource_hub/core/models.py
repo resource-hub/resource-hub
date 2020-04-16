@@ -8,6 +8,7 @@ from django.core.files.base import ContentFile
 from django.db import DatabaseError, models, transaction
 from django.db.models import DurationField, ExpressionWrapper, F, Max
 from django.db.models.functions import Cast
+from django.http import HttpResponse
 from django.shortcuts import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
@@ -823,7 +824,7 @@ class Contract(BaseModel):
         self.move_to(self.STATE.DECLINED)
         self.save()
 
-    def set_waiting(self, request) -> str:
+    def set_waiting(self, request) -> None:
         self.move_to(self.STATE.WAITING)
         self.confirmation = DeclarationOfIntent.create(
             request=request,
@@ -831,15 +832,14 @@ class Contract(BaseModel):
         self.save()
         if self.contract_procedure.auto_accept or (self.creditor == self.debitor):
             self.set_running(request)
-        if self.payment_method.is_prepayment:
-            return self.payment_method.initialize(self.claim_set.filter(status=Claim.STATUS.OPEN), self.contract_procedure.settlement_interval)
-        return
 
     def set_running(self, request) -> None:
         self.move_to(self.STATE.RUNNING)
         self.acceptance = DeclarationOfIntent.create(
             request=request,
         )
+        if self.payment_method.is_prepayment:
+            self.settle_claims()
         self.save()
 
     def set_finalized(self) -> None:
@@ -1033,22 +1033,14 @@ class PaymentMethod(Trigger):
     )
     is_prepayment = models.BooleanField(
         default=False,
+        help_text=_(
+            'If activated claims within the first settlement interval are charged immediatly')
     )
 
-    # attributes
-    @staticmethod
-    def fixed_condtion() -> bool:
-        return True
-
-    @staticmethod
-    def default_condition() -> str:
-        return Contract.STATE.RUNNING
-
-    @staticmethod
-    def redirect_route() -> str:
-        return reverse('core:finance_payment_methods_add')
-
     # methods
+    def initialize(self, contract, request) -> HttpResponse:
+        raise NotImplementedError()
+
     def apply_fee(self, net):
         if self.fee_absolute:
             return self.fee_value

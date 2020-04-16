@@ -5,10 +5,20 @@ import django_tables2 as tables
 from django_tables2.utils import Accessor as A
 
 
+class BoolColumn(tables.Column):
+    def render(self, record, value):
+        if value:
+            return mark_safe('<i class="large green checkmark icon"></i>')
+        return ''
+
+
 class PaymentMethodsTable(tables.Table):
     name = tables.Column(
         linkify=('control:finance_payment_methods_edit', {'pk': A('pk')}))
     method_type = tables.Column()
+    is_prepayment = BoolColumn(
+        verbose_name=_('Prepayment'),
+    )
     owner = tables.Column(verbose_name=_('Owner'))
 
     class Meta:

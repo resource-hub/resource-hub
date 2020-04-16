@@ -119,6 +119,7 @@ class FinancePaymentMethodsManage(TableView):
                     'pk': method.pk,
                     'name': method.name,
                     'owner': method.owner,
+                    'is_prepayment': method.is_prepayment,
                     'method_type': method.verbose_name,
                 }
             )
@@ -275,9 +276,9 @@ class FinanceContractsManageDetails(View):
                     contract.verbose_name))
             elif choice == 'confirm':
                 with transaction.atomic():
-                    if contract.payment_method.is_prepayment:
-                        return contract.set_waiting(request)
                     contract.set_waiting(request)
+                    if contract.payment_method.is_prepayment:
+                        return get_subobject_or_404(PaymentMethod, pk=contract.payment_method.pk).initialize(contract, request)
                 message = _('{} has been confirmed'.format(
                     contract.verbose_name))
             else:
