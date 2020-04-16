@@ -858,7 +858,6 @@ class Contract(BaseModel):
             ) if self.payment_method.is_prepayment else now
         open_claims = self.claim_set.filter(
             status=Claim.STATUS.OPEN, period_end__lte=selector)
-        print(open_claims)
         if open_claims:
             invoice = None
             with transaction.atomic():
@@ -879,8 +878,7 @@ class Contract(BaseModel):
                 if self.is_fixed_term:
                     if not self.claim_set.filter(status=Claim.STATUS.OPEN).exists():
                         self.set_finalized()
-        # self.payment_method.settle(
-            # open_claims, self.contract_procedure.settlement_interval)
+        self.settlement_logs.create()
 
 
 class SettlementLog(BaseModel):

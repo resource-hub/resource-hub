@@ -22,10 +22,12 @@ from resource_hub.core.models import (Actor, Address, Claim, Contract,
 #         user = User.objects.get(username='testmate')
 #         first_name = user.first_name
 #         self.assertEqual('Test', first_name)
-
-class TestContract(TestCase):
+class BaseContractTest(TestCase):
     def setUp(self):
         self.settlement_interval = 7
+        self.no_of_claims = 10  # only even numbers
+        self.claim_length = 5
+
         address = Address.objects.create(
             street='test',
             street_number=12,
@@ -67,6 +69,34 @@ class TestContract(TestCase):
             state=Contract.STATE.RUNNING,
         )
 
+        for i in range(1, self.no_of_claims + 1):
+            now = timezone.now()
+            length = timedelta(hours=self.claim_length)
+            interval = timedelta(
+                days=self.settlement_interval)
+            if i > self.no_of_claims/2:
+                period_start = now - interval
+            else:
+                period_start = now + interval
+            period_end = period_start + length
+
+            Claim.objects.create(
+                contract=self.contract,
+                item='test',
+                quantity=i,
+                unit='u',
+                price=i,
+                net=i*i,
+                discount=0,
+                discounted_net=i*i,
+                tax_rate=self.contract_procedure.tax_rate,
+                gross=self.contract_procedure.apply_tax(i*i),
+                period_start=period_start,
+                period_end=period_end,
+            )
+
+
+class TestContract(BaseContractTest):
     def test_legal_moves(self):
         for node, edges in Contract.STATE_GRAPH.items():
             for other_node in edges:
@@ -90,38 +120,10 @@ class TestContract(TestCase):
             )
 
     def test_claim_settlement(self):
-        n = 10  # only even numbers
-        claim_length = 5
-
-        for i in range(1, n + 1):
-            now = timezone.now()
-            length = timedelta(hours=claim_length)
-            interval = timedelta(
-                days=self.settlement_interval)
-            if i > n/2:
-                period_start = now - interval
-            else:
-                period_start = now + interval
-            period_end = period_start + length
-
-            Claim.objects.create(
-                contract=self.contract,
-                item='test',
-                quantity=i,
-                unit='u',
-                price=i,
-                net=i*i,
-                discount=0,
-                discounted_net=i*i,
-                tax_rate=self.contract_procedure.tax_rate,
-                gross=self.contract_procedure.apply_tax(i*i),
-                period_start=period_start,
-                period_end=period_end,
-            )
         self.contract.settle_claims()
         closed_claims = self.contract.claim_set.filter(
             status=Claim.STATUS.CLOSED)
-        self.assertEqual(len(closed_claims), n//2)
+        self.assertEqual(len(closed_claims), self.no_of_claims//2)
         self.assertEqual(self.contract.state, Contract.STATE.RUNNING)
 
         self.contract.payment_method.is_prepayment = True
@@ -130,9 +132,9 @@ class TestContract(TestCase):
         self.contract.settle_claims()
         closed_claims = self.contract.claim_set.filter(
             status=Claim.STATUS.CLOSED)
-        self.assertEqual(len(closed_claims), n)
+        self.assertEqual(len(closed_claims), self.no_of_claims)
         self.assertEqual(self.contract.state, Contract.STATE.FINALIZED)
+
+        self.assertEqual(len(self.contract.settlement_logs.all()), 2)
         # for invoice in self.contract.invoices.all():
         #     invoice.file.delete()
-
-        # invoice = Invoice.objects.get(contract=self.contract)

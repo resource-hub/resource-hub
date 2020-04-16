@@ -1,7 +1,9 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.core.mail import EmailMultiAlternatives
+from django.db.models import Max
 from django.template.loader import render_to_string
+from django.utils import timezone
 
 import django_rq
 from django_rq import job
@@ -17,11 +19,20 @@ def clear_schedule():
 
 def init_schedule():
     scheduler = django_rq.get_scheduler('default')
+    ### contracts ###
+    # expire contracts
     scheduler.schedule(
         scheduled_time=datetime.utcnow(),
         func=expire_contracts,
         args=[],
         interval=60,
+    )
+    # settle claims
+    scheduler.schedule(
+        scheduled_time=datetime.utcnow(),
+        func=settle_claims,
+        args=[],
+        interval=600,
     )
 
 
@@ -76,6 +87,9 @@ def notify(sender, action, target, link, recipient, level, message, attachments=
         )
 
 
-# @job('low')
-# def settle_claims():
-#     for Contract.objects.filter(state=Contract.STATE.RUNNING):
+@job('low')
+def settle_claims():
+    for contract in Contract.objects.filter(state=Contract.STATE.RUNNING):
+        last_settlement = contract.settlement_logs.aggregate(Max('created_at'))
+        if timezone.now() - timedelta(days=contract.contract_procedure.settlement_interval) < last_settlement['created_at__max']:
+            contract.settle_claims()
