@@ -109,6 +109,7 @@
 </div>
 
 {% addtoblock 'prio-js' %}
+{% if user.is_authenticated %}
 <script>
     function update_notification_indicator() {
         $.ajax({
@@ -127,4 +128,5 @@
         update_notification_indicator()
     })
 </script>
+{% endif %}
 {% endaddtoblock %}

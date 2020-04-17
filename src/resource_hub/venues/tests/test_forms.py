@@ -96,13 +96,25 @@ class TestEventForm(TestCase):
                 datetime(2020, 1, 1, 14, 30, 0, tzinfo=timezone.utc),
                 ''
             ),
+            # single event with start and end within other event,
+            (
+                datetime(2020, 1, 1, 13, 30, 0, tzinfo=timezone.utc),
+                datetime(2020, 1, 1, 14, 00, 0, tzinfo=timezone.utc),
+                ''
+            ),
             # recurring event, same starting date
             (
 
                 datetime(2020, 1, 1, 12, 30, 0, tzinfo=timezone.utc),
                 datetime(2020, 1, 1, 14, 30, 0, tzinfo=timezone.utc),
                 'DTSTART:20200101T123000Z\nRRULE:FREQ=WEEKLY;COUNT=5;'
-            )
+            ),
+            # recurring event with start and end within other event,
+            (
+                datetime(2020, 1, 1, 13, 30, 0, tzinfo=timezone.utc),
+                datetime(2020, 1, 1, 14, 00, 0, tzinfo=timezone.utc),
+                'DTSTART:20200101T123000Z\nRRULE:FREQ=WEEKLY;COUNT=5;'
+            ),
 
         ]
         for event in events:
