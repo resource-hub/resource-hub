@@ -1,10 +1,10 @@
-
+from django import forms
 from django.forms.models import model_to_dict
 
 from resource_hub.core.forms import BankAccountForm
 from resource_hub.core.models import BankAccount
 
-from .models import SEPA
+from .models import SEPA, SEPADirectDebitXML
 
 
 class SEPAForm(BankAccountForm):
@@ -44,3 +44,9 @@ class SEPAForm(BankAccountForm):
         if commit:
             new_sepa.save()
         return new_sepa
+
+
+class SEPADirectDebitXMLForm(forms.ModelForm):
+    class Meta:
+        model = SEPADirectDebitXML
+        fields = ['batch', 'collection_date']

@@ -19,15 +19,19 @@ def control_sidebar_finance_items(sender, **kwargs):
     return [
         {
             'header': _('SEPA'),
-            'url': get_parent(reverse('control:finance_invoices_outgoing')),
+            'url': get_parent(reverse('control:finance_sepa_files_manage')),
             'subsub_items': [
                 {
-                    'header': _('XML Files'),
-                    'url': reverse('control:finance_invoices_outgoing'),
+                    'header': _('Files manage'),
+                    'url': reverse('control:finance_sepa_files_manage'),
+                },
+                {
+                    'header': _('Files create'),
+                    'url': reverse('control:finance_sepa_files_create'),
                 },
                 {
                     'header': _('Open payments'),
-                    'url': reverse('control:finance_invoices_incoming'),
+                    'url': reverse('control:finance_sepa_open_payments'),
                 }
             ]
         },

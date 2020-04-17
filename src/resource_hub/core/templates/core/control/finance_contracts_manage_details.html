@@ -40,8 +40,11 @@
     {{ contract.overview }}
 </div>
 <div class="section-container">
+    {% if contract.claim_table %}
     <h2>{% trans 'Claims' %}</h2>
     {% render_table contract.claim_table %}
+    {% endif %}
+    {% if contract.payment_method %}
     <h3>{% trans 'Payment method' %}</h3>
     <div class="ui list">
         <div class="item">
@@ -63,6 +66,8 @@
             {{ contract.contract_procedure.settlement_interval }} {% trans 'days' %}
         </div>
     </div>
+    {% endif %}
+    {% if contract.contract_procedure %}
     <h3>{% trans 'Terms and Conditions' %}</h3>
     <div class="ui accordion">
         <div class="title">
@@ -73,6 +78,7 @@
             {{ contract.contract_procedure.terms_and_conditions|safe }}
         </div>
     </div>
+    {% endif %}
 </div>
 {% if contract.state == CONTRACT_STATE.WAITING and not is_debitor %}
 {% include 'core/_identity.html' with actor=actor %}

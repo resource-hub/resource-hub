@@ -6,6 +6,34 @@ from resource_hub.api.urls import api_urls
 from resource_hub.control.urls import control_urls
 from resource_hub.core.views import api, auth, control, site
 
+from .hooks import UrlHook
+
+finance_urls = UrlHook()
+finance_urls.register([
+    path('bank-accounts/', control.FinanceBankAccounts.as_view(),
+         name='finance_bank_accounts'),
+    path('payment-methods/manage/',
+         control.FinancePaymentMethodsManage.as_view(), name='finance_payment_methods_manage'),
+    path('payment-methods/manage/<int:pk>/', control.FinancePaymentMethodsEdit.as_view(
+    ), name='finance_payment_methods_edit'),
+    path('payment-methods/add',
+         control.FinancePaymentMethodsAdd.as_view(), name='finance_payment_methods_add'),
+    path('contracts/credited/', control.FinanceContractsCredited.as_view(),
+         name='finance_contracts_credited'),
+    path('contracts/debited/', control.FinanceContractsDebited.as_view(),
+         name='finance_contracts_debited'),
+    path('contracts/manage/<int:pk>/', control.FinanceContractsManageDetails.as_view(),
+         name='finance_contracts_manage_details'),
+    path('contract-procedures/manage/', control.FinanceContractProceduresManage.as_view(),
+         name='finance_contract_procedures_manage'),
+    path('contract-procedures/create/', control.FinanceContractProceduresCreate.as_view(),
+         name='finance_contract_procedures_create'),
+    path('invoices/outgoing/', control.FinanceInvoicesOutgoing.as_view(),
+         name='finance_invoices_outgoing'),
+    path('invoices/incoming/', control.FinanceInvoicesIncoming.as_view(),
+         name='finance_invoices_incoming'),
+])
+
 control_urls.register([
     # account
     path('', control.Home.as_view(), name='home'),
@@ -20,28 +48,7 @@ control_urls.register([
     path('notifications/', control.Notifications.as_view(), name='notifications'),
 
     # finance
-    path('finance/bank-accounts/', control.FinanceBankAccounts.as_view(),
-         name='finance_bank_accounts'),
-    path('finance/payment-methods/manage/',
-         control.FinancePaymentMethodsManage.as_view(), name='finance_payment_methods_manage'),
-    path('finance/payment-methods/manage/<int:pk>/', control.FinancePaymentMethodsEdit.as_view(
-    ), name='finance_payment_methods_edit'),
-    path('finance/payment-methods/add',
-         control.FinancePaymentMethodsAdd.as_view(), name='finance_payment_methods_add'),
-    path('finance/contracts/credited/', control.FinanceContractsCredited.as_view(),
-         name='finance_contracts_credited'),
-    path('finance/contracts/debited/', control.FinanceContractsDebited.as_view(),
-         name='finance_contracts_debited'),
-    path('finance/contracts/manage/<int:pk>/', control.FinanceContractsManageDetails.as_view(),
-         name='finance_contracts_manage_details'),
-    path('finance/contract-procedures/manage/', control.FinanceContractProceduresManage.as_view(),
-         name='finance_contract_procedures_manage'),
-    path('finance/contract-procedures/create/', control.FinanceContractProceduresCreate.as_view(),
-         name='finance_contract_procedures_create'),
-    path('finance/invoices/outgoing/', control.FinanceInvoicesOutgoing.as_view(),
-         name='finance_invoices_outgoing'),
-    path('finance/invoices/incoming/', control.FinanceInvoicesIncoming.as_view(),
-         name='finance_invoices_incoming'),
+    path('finance/', include(finance_urls.get())),
 
     # organizations
     path('organizations/manage/',

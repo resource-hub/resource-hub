@@ -248,9 +248,9 @@ class FinanceContractsManageDetails(View):
                 minutes, seconds = divmod(remainder, 60)
                 timer = '{0:02d}:{1:02d}:{2:02d}'.format(
                     hours, minutes, seconds)
-
-        contract.payment_method = PaymentMethod.objects.get_subclass(
-            pk=contract.payment_method.pk)
+        if contract.payment_method:
+            contract.payment_method = PaymentMethod.objects.get_subclass(
+                pk=contract.payment_method.pk)
 
         context = {
             'contract': contract,
@@ -279,9 +279,9 @@ class FinanceContractsManageDetails(View):
                     contract.verbose_name))
             elif choice == 'confirm':
                 with transaction.atomic():
-                    contract.set_waiting(request)
                     if contract.payment_method.is_prepayment:
                         return get_subobject_or_404(PaymentMethod, pk=contract.payment_method.pk).initialize(contract, request)
+                    contract.set_waiting(request)
                 message = _('{} has been confirmed'.format(
                     contract.verbose_name))
             else:

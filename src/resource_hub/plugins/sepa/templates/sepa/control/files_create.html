@@ -1,0 +1,36 @@
+{% extends 'control/__base.html' %}
+
+{% load i18n %}
+{% load static %}
+
+{% block extra_head %}
+<link rel="stylesheet" type="text/css" href="{% static 'datetimepicker/jquery.datetimepicker.css' %}" />
+{% endblock %}
+
+{% block content %}
+<h1>{% trans 'Create SEPA DD XML File' %}</h1>
+<p>
+    {% trans 'Total collectable amount:' %} {{ total }}
+</p>
+<form class="ui form" method="POST">
+    {% include '_form.html' with form=form %}
+    <button class="ui right labeled icon button">
+        {% trans 'Create' %}
+        <i class="file icon"></i>
+    </button>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'datetimepicker/build/jquery.datetimepicker.full.min.js' %}"></script>
+<script>
+    var locale = "{% get_current_language as LANG %}{{ LANG }}";
+    jQuery.datetimepicker.setLocale(locale);
+    var picker = $('#id_collection_date').datetimepicker({
+        step: 30,
+        format: 'Y-m-d',
+        mask: true,
+        timepicker: false
+    });
+</script>
+{% endblock %}

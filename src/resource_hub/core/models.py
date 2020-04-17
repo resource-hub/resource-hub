@@ -706,6 +706,7 @@ class BaseContract(BaseModel):
     contract_procedure = models.ForeignKey(
         'ContractProcedure',
         on_delete=models.PROTECT,
+        null=True,
     )
     creditor = models.ForeignKey(
         Actor,
@@ -854,7 +855,10 @@ class Contract(BaseContract):
     @property
     def claim_table(self):
         from .tables import ClaimTable
-        return ClaimTable(self.claim_set.all())
+        claims = self.claim_set.all()
+        if claims:
+            return ClaimTable(claims)
+        return ''
 
     # methods
     def set_initial_settlement_log(self):
@@ -906,7 +910,8 @@ class Contract(BaseContract):
 
     def set_running(self, request) -> None:
         self.move_to(self.STATE.RUNNING)
-        self.create_acceptance(request)
+        if not self.contract_procedure.auto_accept:
+            self.create_acceptance(request)
         if self.payment_method.is_prepayment:
             self.settle_claims()
         else:
@@ -934,7 +939,8 @@ class Contract(BaseContract):
             with transaction.atomic():
                 invoice = Invoice.build(self, open_claims)
                 invoice.save()
-                self.payment_method.settle(self, open_claims, invoice)
+                PaymentMethod.objects.get_subclass(
+                    pk=self.payment_method.pk).settle(self, open_claims, invoice)
                 open_claims.update(status=Claim.STATUS.CLOSED)
                 notify(
                     self.creditor,
@@ -1113,7 +1119,7 @@ class PaymentMethod(Trigger):
         raise NotImplementedError()
 
     def settle(self, contract, claims, invoice) -> None:
-        raise NotImplementedError()
+        pass
 
     def apply_fee(self, net):
         if self.fee_absolute:

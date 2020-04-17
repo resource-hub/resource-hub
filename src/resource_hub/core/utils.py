@@ -57,5 +57,5 @@ def round_decimal(dec, currency=None, places_dict=settings.CURRENCY_PLACES):
     return Decimal(dec).quantize(Decimal('0.01'), ROUND_HALF_UP)
 
 
-def money_filter(dec, currency):
+def money_filter(dec, currency='EUR'):
     return '{} {}'.format(round_decimal(dec, currency), currency)

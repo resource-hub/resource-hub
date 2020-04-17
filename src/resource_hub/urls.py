@@ -2,10 +2,17 @@
 resource_hub URL Configuration
 
 """
+import importlib
+
+from django.apps import apps
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
+
+for app in apps.get_app_configs():
+    if importlib.util.find_spec(app.name + '.urls'):
+        importlib.import_module(app.name + '.urls')
 
 urlpatterns = [
     # apps

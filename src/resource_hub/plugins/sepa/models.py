@@ -1,17 +1,19 @@
 import string
 import uuid
 from collections import defaultdict
+from decimal import Decimal
 
 from django.contrib import messages
 from django.db import DatabaseError, models, transaction
 from django.db.models import Max
 from django.db.models.functions import Cast
 from django.shortcuts import redirect, reverse
+from django.template.loader import render_to_string
 from django.utils.crypto import get_random_string
 from django.utils.translation import ugettext_lazy as _
 
-from resource_hub.core.models import (Actor, BankAccount, BaseModel, Contract,
-                                      PaymentMethod)
+from resource_hub.core.models import (Actor, BankAccount, BaseModel, Claim,
+                                      Contract, PaymentMethod)
 from resource_hub.core.utils import round_decimal
 
 
@@ -22,7 +24,7 @@ class SEPAMandate(Contract):
 
     @property
     def overview(self):
-        return
+        return render_to_string('sepa/_mandate.html')
 
     # state setters
     def set_pending(self):
@@ -80,15 +82,28 @@ class SEPA(PaymentMethod):
             debitor=contract.debitor,
             state=SEPAMandate.STATE.RUNNING
         ).exists():
+            contract.set_waiting(request)
             message = _('%(name)s has been confirmed successfully') % {
                 'name': contract.verbose_name}
             messages.add_message(request, messages.SUCCESS, message)
             return redirect(reverse('control:finance_contracts_manage_details', kwargs={'pk': contract.pk}))
-        else:
-            pass
+        mandate = SEPAMandate.objects.create(
+            creditor=contract.creditor,
+            debitor=contract.debitor,
+            state=Contract.STATE.PENDING,
+
+        )
+        return redirect(
+            reverse(
+                'control:sepa_mandate',
+                kwargs={
+                    'contract_pk': contract.pk,
+                    'mandate_pk': mandate.pk}
+            )
+        )
 
     def settle(self, contract, claims, invoice):
-        currency_map = defaultdict()
+        currency_map = defaultdict(Decimal)
         for claim in claims:
             currency_map[claim.currency] += claim.gross
             if claim.contract != contract:
@@ -101,10 +116,13 @@ class SEPA(PaymentMethod):
             sepa_type = 'RCUR' if SEPADirectDebitPayment.objects.filter(
                 debitor=contract.debitor, mandate=mandate).exists() else 'FRST'
             SEPADirectDebitPayment.objects.create(
+                payment_method=self,
+                creditor=contract.creditor,
+                debitor=contract.debitor,
                 name=contract.debitor.name,
                 iban=contract.debitor.bank_account.iban,
                 bic=contract.debitor.bank_account.bic,
-                amount=round_decimal(total, currency=currency),
+                amount=100*round_decimal(total, currency=currency),
                 currency=currency,
                 sepa_type=sepa_type,
                 mandate=mandate,
@@ -117,15 +135,23 @@ def sepaxml_filename(instance, filename: str) -> str:
     secret = get_random_string(
         length=32, allowed_chars=string.ascii_letters + string.digits)
     return 'sepaxml/{cred}/{no}--{secret}.{ext}'.format(
-        cred=instance.owner.slug,
+        cred=instance.creditor.slug,
         no=instance.number, secret=secret,
         ext=filename.split('.')[-1]
     )
 
 
-class SEPADirectDebitXML(models.Model):
+class SEPADirectDebitXML(BaseModel):
+    creditor = models.ForeignKey(
+        Actor,
+        on_delete=models.PROTECT,
+    )
+    creditor_identifier = models.CharField(
+        max_length=25,
+    )
     xml_no = models.CharField(max_length=19, db_index=True)
     full_xml_no = models.CharField(max_length=190, db_index=True)
+    collection_date = models.DateField()
     name = models.CharField(
         max_length=70,
     )
@@ -138,25 +164,20 @@ class SEPADirectDebitXML(models.Model):
     batch = models.BooleanField(
         default=True,
         blank=True,
-    )
-    creditor_id = models.CharField(
-        max_length=25,
+        verbose_name=_('Batch booking'),
     )
     currency = models.CharField(
         max_length=3,
         default='EUR',
     )
-    file = models.FileField()
-    owner = models.ForeignKey(
-        Actor,
-        on_delete=models.PROTECT,
-    )
+    file = models.FileField(upload_to=sepaxml_filename)
     @property
     def prefix(self):
         return 'SEPA-DD'
 
     @property
     def number(self):
+        print(self.xml_no)
         return '{prefix}-{no}'.format(
             prefix=self.prefix,
             no=self.xml_no,
@@ -164,11 +185,9 @@ class SEPADirectDebitXML(models.Model):
 
     def _get_xml_number(self):
         xml_number = SEPADirectDebitXML.objects.filter(
-            owner=self.owner,
-        ).annotate(
-            numeric_number=Cast('xml_no', models.IntegerField())
+            creditor=self.creditor,
         ).aggregate(
-            max=Max('numeric_number')
+            max=Max('xml_no')
         )['max'] or 0
         return xml_number + 1
 
@@ -197,18 +216,33 @@ class SEPADirectDebitPayment(BaseModel):
         (STATUS.OPEN, _('open')),
         (STATUS.CLOSED, _('closed')),
     ]
+    sepa_dd_file = models.ForeignKey(
+        SEPADirectDebitXML,
+        on_delete=models.PROTECT,
+        null=True,
+    )
     endtoend_id = models.UUIDField(
         default=uuid.uuid1,
         editable=False,
     )
-    status = models.CharField(
-        max_length=2,
-        choices=STATI,
-        default=STATUS.CLOSED,
+    payment_method = models.ForeignKey(
+        SEPA,
+        on_delete=models.PROTECT,
     )
     debitor = models.ForeignKey(
         Actor,
         on_delete=models.PROTECT,
+        related_name='sepa_dd_debitor',
+    )
+    creditor = models.ForeignKey(
+        Actor,
+        on_delete=models.PROTECT,
+        related_name='sepa_dd_creditor',
+    )
+    status = models.CharField(
+        max_length=2,
+        choices=STATI,
+        default=STATUS.OPEN,
     )
     name = models.CharField(
         max_length=70,

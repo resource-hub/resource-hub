@@ -22,7 +22,6 @@ def hook_tag(context, name, *args, **kwargs):
     responses marked as safe (conditionally)
     :rtype: str
     """
-    # print(context)
     return format_html_join(
         sep="\n",
         format_string="{}",

@@ -1,0 +1,40 @@
+{% extends 'control/__base.html' %}
+
+{% load i18n %}
+
+{% block content %}
+<div class="ui segment">
+    <p class="">
+        <i class="info circle icon"></i>
+        {% trans 'Before you can continue to use SEPA direct debit as payment method, you need to agree to this mandate'  %}
+    </p>
+</div>
+<h1>{{ contract.verbose_name }}</h1>
+<div class="ui grid">
+    <div class="ui eight wide column">
+        <div class="ui tiny header">{% trans 'Creditor' %}</div>
+        {% include 'core/_actor_profile_small.html' with actor=contract.creditor %}
+    </div>
+    <div class="ui eight wide column">
+        <div class="ui tiny header">{% trans 'Debitor' %}</div>
+        {% include 'core/_actor_profile_small.html' with actor=contract.debitor %}
+    </div>
+</div>
+<div class="section-container">
+    <h2>{% trans 'Terms and conditions ' %}</h2>
+    {{ contract.overview }}
+</div>
+
+{% include 'core/_identity.html' with actor=actor %}
+<form id="choices" class="small-container" method="POST">
+    {% csrf_token %}
+    <button class="ui negative right labeled icon button" name="choice" value="cancel" type="submit">
+        {% trans 'Cancel' %}
+        <i class="close icon"></i>
+    </button>
+    <button class="ui positive right labeled right floated icon button" name="choice" value="confirm" type="submit">
+        {% trans 'Confirm' %}
+        <i class="check icon"></i>
+    </button>
+</form>
+{% endblock %}

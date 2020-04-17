@@ -23,6 +23,8 @@ from resource_hub.core.models import (Actor, Address, Claim, Contract,
 #         user = User.objects.get(username='testmate')
 #         first_name = user.first_name
 #         self.assertEqual('Test', first_name)
+
+
 class BaseContractTest(TestCase):
     def setUp(self):
         self.settlement_interval = 7
