@@ -1111,7 +1111,7 @@ class PaymentMethod(Trigger):
     is_prepayment = models.BooleanField(
         default=False,
         help_text=_(
-            'If activated claims within the first settlement interval are charged immediatly')
+            'If activated, claims within the following settlement interval are charged in advance')
     )
 
     # methods
