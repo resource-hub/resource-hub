@@ -10,6 +10,8 @@ Welcome to Resource Hub's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   architecture
+
 
 
 Indices and tables
