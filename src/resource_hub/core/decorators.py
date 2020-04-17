@@ -3,7 +3,7 @@ from functools import wraps
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
 
-from resource_hub.core.models import OrganizationMember, User
+from resource_hub.core.models import OrganizationMember
 
 
 def organization_admin_required(function):
@@ -16,6 +16,5 @@ def organization_admin_required(function):
 
         if member.is_admin():
             return function(request, *args, **kwargs)
-        else:
-            raise PermissionDenied
+        raise PermissionDenied()
     return wrap

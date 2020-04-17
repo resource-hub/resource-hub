@@ -1,6 +1,7 @@
 {% load i18n %}
 {% load static %}
 {% load hook_tags %}
+{% load sekizai_tags %}
 
 <nav class="navigation-bar">
     <a id="main-menu-toggle"><i class="sidebar icon"></i>
@@ -41,6 +42,7 @@
         <div class="ui pointing dropdown" style="margin-top: 9px;">
             <span>
                 {{ actor.name }}
+                <div id="notification_indicator" class="hidden mini floating ui red msg label"></div>
             </span>
             <i class="dropdown icon"></i>
             <div class="menu">
@@ -51,9 +53,11 @@
                 <a id="role" class="item"><i class="address card outline icon"></i>{% trans 'Change role' %}</a>
                 <div class="divider"></div>
                 <div class="item">
-                    <a class="ui red button" href="{% url 'core:logout' %}">
-                        {% trans 'logout' %}
-                    </a>
+                    <div class="center">
+                        <a class="ui red button" href="{% url 'core:logout' %}">
+                            {% trans 'logout' %}
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -103,3 +107,24 @@
         </div>
     </div>
 </div>
+
+{% addtoblock 'prio-js' %}
+<script>
+    function update_notification_indicator() {
+        $.ajax({
+            url: "{% url 'api:notifications_unread' %}",
+            type: "GET",
+            dataType: "JSON",
+        }).done(function (data) {
+            if (data.count > 0) {
+                $('#notification_indicator').html(data.count).removeClass('hidden');
+            } else {
+                $('#notification_indicator').addClass('hidden');
+            }
+        });
+    }
+    $(document).ready(function () {
+        update_notification_indicator()
+    })
+</script>
+{% endaddtoblock %}

@@ -1,34 +1,16 @@
-import re
 from datetime import datetime
 
 import dateutil.parser
 from django.db.models import Q
-from django.forms.models import model_to_dict
 from django.utils.translation import ugettext_lazy as _
 
-from rest_framework import exceptions, filters, generics, status
-from rest_framework.decorators import (api_view, authentication_classes,
+from resource_hub.venues.models import Event, Venue
+from resource_hub.venues.serializers import VenueSerializer
+from rest_framework import exceptions, generics
+from rest_framework.decorators import (authentication_classes,
                                        permission_classes)
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from resource_hub.venues.models import Event, Venue
-from resource_hub.venues.serializers import VenueSerializer
-
-'''
-Thanks to https://stackoverflow.com/questions/41129921/validate-an-iso-8601-datetime-string-in-python
-'''
-
-regex = r'^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(\.[0-9]+)?(Z|[+-](?:2[0-3]|[01][0-9]):[0-5][0-9])?$'
-match_iso8601 = re.compile(regex).match
-
-
-def is_valid_iso8601(val):
-    try:
-        if match_iso8601(val) is not None:
-            return True
-    except:
-        pass
-    return False
 
 
 @authentication_classes([])
@@ -64,8 +46,8 @@ class VenueEvents(APIView):
                 detail=_('start or end parameter not set'))
 
         try:
-            start = dateutil.parser.parse(start_str).replace(tzinfo=None)
-            end = dateutil.parser.parse(end_str).replace(tzinfo=None)
+            start = dateutil.parser.parse(start_str)
+            end = dateutil.parser.parse(end_str)
         except ValueError as e:
             raise exceptions.ParseError(
                 detail=_('start or end parameter not valid iso_8601 string'))
@@ -76,21 +58,23 @@ class VenueEvents(APIView):
             raise exceptions.NotFound(
                 detail=_('No venue corresponds to the given id'))
 
-        events = Event.objects.filter(venue=venue_id)
+        events = Event.objects.filter(venues=venue_id, is_deleted=False)
         result = []
 
         for e in events:
             occurrences = e.recurrences.between(
                 start,
                 end,
+                inc=True,
+                dtstart=e.dtstart
             )
             for o in occurrences:
                 result.append({
                     'id': e.id,
                     'title': e.name,
                     'description': e.description,
-                    'start': datetime.combine(o.date(), e.start),
-                    'end': datetime.combine(o.date(), e.end),
+                    'start': datetime.combine(o.date(), e.dtstart.time(), e.dtstart.tzinfo),
+                    'end': datetime.combine(o.date(), e.dtend.time(), e.dtend.tzinfo),
                 })
 
         return Response(result)

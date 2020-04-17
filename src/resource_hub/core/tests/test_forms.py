@@ -1,5 +1,5 @@
-from datetime import datetime, timedelta
 import os
+from datetime import datetime, timedelta
 
 from django.forms import ValidationError
 from django.http.request import HttpRequest
@@ -77,27 +77,6 @@ class TestBankAccountForm(TestCase):
                 invalid_data['iban'] = iban
                 form = BankAccountForm(data=invalid_data)
                 self.assertFalse(form.is_valid())
-
-
-class TestActorFormManager(TestCase):
-    def setUp(self):
-        self.data = DATA.copy()
-
-    def test_empty_form(self):
-        forms = ActorFormManager().get_forms()
-        self.assertTrue('actor_form' in forms)
-        self.assertTrue('address_form' in forms)
-        self.assertTrue('bank_account_form' in forms)
-
-    def test_valid_data(self):
-        request = HttpRequest()
-        request.POST = self.data
-        actor_form = ActorFormManager(request)
-        self.assertTrue(actor_form.is_valid())
-
-        new_actor = actor_form.save()
-        actor = Actor.objects.get(pk=1)
-        self.assertEqual(new_actor, actor)
 
 
 class TestEmailChangeForm(TestCase):

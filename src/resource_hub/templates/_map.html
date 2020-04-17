@@ -10,18 +10,25 @@
 <link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %}">
 <script src="{% static 'leaflet/leaflet.js' %}"></script>
 <script src="{% static 'bouncemarker/bouncemarker.js' %}"></script>
-<script id="pop-up-template" type="text/tempate">
-    <h5>%name%</h5>
-    <p><i class="map marker alternate icon"></i>%address_string%</p>
-</script>
+{% if location %}
 {% localize off %}
 <script>
-    var popup_template = document.getElementById("pop-up-template").innerHTML;
-    var latitude = parseFloat('{{ location.latitude }}');
-    var longitude = parseFloat('{{ location.longitude }}');
-
-    var map = L.map('map').setView([latitude, longitude], 14);
-    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+    var position = [parseFloat('{{ location.latitude }}'), parseFloat('{{ location.longitude }}')] 
+</script>
+{% endlocalize %}
+{% else %}
+<script>
+    var position = [52.3783212, 9.72492];
+</script>
+{% endif %}
+<script>
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        var url = 'https://api.mapbox.com/styles/v1/mark-weyde/ck7qf0hz80iq31ipm6dfvk4so/tiles/256/{z}/{x}/{y}@2x?access_token={accessToken}'
+    } else {
+        var url = 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}';
+    }
+    var map = L.map('map').setView(position, 14);
+    L.tileLayer(url, {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
         maxZoom: 20,
         id: 'mapbox.streets',
@@ -34,11 +41,18 @@
         iconAnchor: [11.5, 39],
         popupAnchor: [0, -40]
     });
-
+</script>
+{% if location %}
+<script id="pop-up-template" type="text/tempate">
+    <h5>%name%</h5>
+    <p><i class="map marker alternate icon"></i>%address_string%</p>
+</script>
+<script>
+    var popup_template = document.getElementById("pop-up-template").innerHTML;
     var popup = popup_template
         .replace(/%name%/g, '{{ location.name }}')
         .replace(/%address_string%/g, '{{ location.address }}');
-    L.marker([latitude, longitude], {
+    L.marker(position, {
         bounceOnAdd: true,
         bounceOnAddOptions: { duration: 500, height: 70 },
         icon: marker,
@@ -46,5 +60,5 @@
         clickable: true,
     }).bindPopup(popup).addTo(map).openPopup();
 </script>
-{% endlocalize %}
+{% endif %}
 {% endaddtoblock %}

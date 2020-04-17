@@ -36,7 +36,7 @@ pyparsing = "*"
 python-dateutil = "*" 
 pytz = "*"
 redis = "*"   
-requests = "*"
+requests = "==2.22"
 rq = "*"  
 schwifty = "*"
 six = "*" 
@@ -51,13 +51,19 @@ pyOpenSSL = "*"
 service_identity = "*"
 Twisted = "*" 
 zope = {interface = "*"}
-django-summernote = {git = "https://github.com/summernote/django-summernote.git",ref = "702b574920342766f56262725d87125719156878"}
+django-summernote = {git = "https://github.com/campfireman/django-summernote.git"}
 django-redis = "*"
 django-sekizai = "*"
 pycountry = "*"
 django-countries = "*"
 rq-scheduler = "*"
 django-model-utils = "*"
+django-ipware = "*"
+django-datetimepicker = {git = "https://github.com/escodebar/django-datetimepicker.git"}
+bleach = "*"
+django-formset-js-improved = "*"
+reportlab = "*"
+sepaxml = "*"
 
 [requires]
 python_version = "*"

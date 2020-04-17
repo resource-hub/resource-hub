@@ -1,5 +1,6 @@
 
 from django.apps import AppConfig
+from django.db.utils import ProgrammingError
 
 from resource_hub.core.hooks import hook
 from resource_hub.venues.hook_listeners import (control_sidebar,
@@ -17,8 +18,13 @@ class VenuesConfig(AppConfig):
 
         # register default options
         from resource_hub.venues.models import EventCategory, EventTag
-        EventCategory.objects.get_or_create(name='Sport')
-        EventTag.objects.get_or_create(name='wild')
+        try:
+            EventCategory.objects.get_or_create(name='Sport')
+            EventTag.objects.get_or_create(name='wild')
+        except ProgrammingError:
+            pass
+
+        from . import signals
 
 
 default_app_config = 'resource_hub.venues.VenuesConfig'

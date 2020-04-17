@@ -1,8 +1,6 @@
-from collections import OrderedDict
-
+from django.contrib import messages
 from django.db import models
-from django.shortcuts import reverse
-from django.template.loader import render_to_string
+from django.shortcuts import redirect, reverse
 from django.utils.translation import ugettext_lazy as _
 
 from resource_hub.core.models import BankAccount, PaymentMethod
@@ -21,10 +19,6 @@ class BankTransfer(PaymentMethod):
         return _('Bank transfer')
 
     @property
-    def edit_url(self):
-        return reverse('control:bank_transfer_edit', kwargs={'pk': self.pk})
-
-    @property
     def info(self) -> dict:
         return {
             'name': BankTransfer.verbose_name,
@@ -39,13 +33,17 @@ class BankTransfer(PaymentMethod):
         return BankTransferForm
 
     @property
-    def form_url(self) -> str:
-        return reverse('control:bank_transfer_create')
-
-    @property
     def prefix(self) -> str:
         return 'bnk'
 
-    # methods
-    def callback(self):
-        return
+    def initialize(self, contract, request):
+        if not self.is_prepayment:
+            raise ValueError(
+                'payment method can only initialized if it is a prepayment')
+        message = _('%(name)s has been confirmed successfully') % {
+            'name': contract.verbose_name}
+        messages.add_message(request, messages.SUCCESS, message)
+        return redirect(reverse('control:finance_contracts_manage_details', kwargs={'pk': contract.pk}))
+
+    def settle(self, contract, claims, invoice):
+        pass

@@ -1,40 +1,114 @@
 {% extends "control/__base.html" %}
 {% load i18n %}
+{% load django_tables2 %}
 
 {% block content %}
-<h1>{% trans 'Contract details' %}</h1>
-{% ifequal contract.state 'p' %}
+<h1>{% trans 'Contract details' %} <a class="ui {{ contract.state }} tag label">{{ contract.get_state_display }}</a>
+</h1>
+{% if contract.state == CONTRACT_STATE.PENDING and is_debitor %}
 <div class="ui segment">
-    <div class="ui grid">
-        <div class="eight wide column">
-            <p class="">
-                <i class="info circle icon"></i>
-                {% trans 'The contract is still pending. Until confirmation, cancellation or expiration the items will appear as booked.'  %}
-            </p>
-        </div>
-        <div class="eight wide column">
-            <div class="ui tiny red right floated statistic">
-                <div id="timer" class="value">
-                    {{ timer }}
-                </div>
-                <!-- <div class="label">
-                    {% trans 'to expiration' %}
-                </div> -->
-            </div>
+    <div class="ui tiny red right floated statistic">
+        <div id="timer" class="value" style="margin-top: 0 !important; line-height: inherit;">
+            {{ timer }}
         </div>
     </div>
-    <form id="choices" class="small-container" method="POST">
-        <button class="ui negative right labeled icon button" name="choice" value="cancel" type="submit">
-            {% trans 'Cancel' %}
-            <i class="close icon"></i>
-        </button>
-        <button class="ui positive right labeled right floated icon button" name="choice" value="confirm" type="submit">
-            {% trans 'Confirm' %}
-            <i class="check icon"></i>
-        </button>
-    </form>
+    <p class="">
+        <i class="info circle icon"></i>
+        {% trans 'The contract is still pending. Until confirmation, cancellation or expiration the items will appear as booked.'  %}
+    </p>
 </div>
-{% endifequal %}
+{% endif %}
+{% if contract.state == CONTRACT_STATE.WAITING and not is_debitor %}
+<div class="ui segment">
+    <i class="info circle icon"></i>
+    {% trans 'The contract is waiting. You can either accept or decline the offer.'  %}
+</div>
+{% endif %}
+
+<h2>{{ contract.verbose_name }}</h2>
+<div class="ui grid">
+    <div class="ui eight wide column">
+        <div class="ui tiny header">{% trans 'Creditor' %}</div>
+        {% include 'core/_actor_profile_small.html' with actor=contract.creditor %}
+    </div>
+    <div class="ui eight wide column">
+        <div class="ui tiny header">{% trans 'Debitor' %}</div>
+        {% include 'core/_actor_profile_small.html' with actor=contract.debitor %}
+    </div>
+</div>
+<div class="section-container">
+    {{ contract.overview }}
+</div>
+<div class="section-container">
+    {% if contract.claim_table %}
+    <h2>{% trans 'Claims' %}</h2>
+    {% render_table contract.claim_table %}
+    {% endif %}
+    {% if contract.payment_method %}
+    <h3>{% trans 'Payment method' %}</h3>
+    <div class="ui list">
+        <div class="item">
+            <div class="header">
+                {% trans 'Name' %}
+            </div>
+            {{ contract.payment_method.verbose_name }}
+        </div>
+        <div class="item">
+            <div class="header">
+                {% trans 'Prepayment' %}
+            </div>
+            {{ contract.payment_method.is_prepayment }}
+        </div>
+        <div class="item">
+            <div class="header">
+                {% trans 'Settlement interval' %}
+            </div>
+            {{ contract.contract_procedure.settlement_interval }} {% trans 'days' %}
+        </div>
+    </div>
+    {% endif %}
+    {% if contract.contract_procedure %}
+    <h3>{% trans 'Terms and Conditions' %}</h3>
+    <div class="ui accordion">
+        <div class="title">
+            <i class="dropdown icon"></i>
+            <b>{% trans 'show' %}</b>
+        </div>
+        <div class="content">
+            {{ contract.contract_procedure.terms_and_conditions|safe }}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% if contract.state == CONTRACT_STATE.WAITING and not is_debitor %}
+{% include 'core/_identity.html' with actor=actor %}
+<form id="choices" class="small-container" method="POST">
+    {% csrf_token %}
+    <button class="ui negative right labeled icon button" name="choice" value="decline" type="submit">
+        {% trans 'Decline' %}
+        <i class="close icon"></i>
+    </button>
+    <button class="ui positive right labeled right floated icon button" name="choice" value="accept" type=" submit">
+        {% trans 'Accept' %}
+        <i class="check icon"></i>
+    </button>
+</form>
+{% endif %}
+
+{% if contract.state == CONTRACT_STATE.PENDING and is_debitor %}
+{% include 'core/_identity.html' with actor=actor %}
+<form id="choices" class="small-container" method="POST">
+    {% csrf_token %}
+    <button class="ui negative right labeled icon button" name="choice" value="cancel" type="submit">
+        {% trans 'Cancel' %}
+        <i class="close icon"></i>
+    </button>
+    <button class="ui positive right labeled right floated icon button" name="choice" value="confirm" type="submit">
+        {% trans 'Confirm' %}
+        <i class="check icon"></i>
+    </button>
+</form>
+{% endif %}
 {% endblock %}
 
 {% block scripts %}
@@ -46,7 +120,7 @@
                 return parseInt(x);
             });
 
-            var x = setInterval(function () {
+            let x = setInterval(function () {
                 time[2] = time[2] - 1;
                 if (time[2] < 0) {
                     time[2] = 59;
@@ -73,6 +147,11 @@
                 );
             }
         }
+    });
+</script>
+<script language='javascript'>
+    $(document).ready(function () {
+        $('.ui.accordion').accordion();
     });
 </script>
 {% endblock %}

@@ -1,0 +1,13 @@
+{% extends "control/__base.html" %}
+{% load i18n %}
+
+{% block content %}
+<h1>{% trans 'Create contract procedure' %}</h1>
+{% for procedure in contract_procedures %}
+<h2>{{ procedure.type_name }}</h2>
+<a class="ui positive right labeled icon button" href="{{ procedure.form_link }}">
+    {% trans 'Create' %}
+    <i class="plus icon"></i>
+</a>
+{% endfor %}
+{% endblock %}

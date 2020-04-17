@@ -1,20 +1,27 @@
+import re
 from datetime import datetime
 
+import bleach
 import requests
 from django import forms
 from django.conf import settings
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm, UserCreationForm
 from django.contrib.auth.hashers import check_password
-from django.forms import model_to_dict
+from django.forms import inlineformset_factory
 from django.utils.dateparse import parse_date
 from django.utils.translation import ugettext_lazy as _
 
-from django_summernote.widgets import SummernoteWidget
-from resource_hub.core.models import (Actor, Address, BankAccount, Location,
-                                      Organization, OrganizationMember, User)
-from resource_hub.core.widgets import UISearchField
 from schwifty import BIC, IBAN
+
+from .fields import HTMLField
+from .models import (Actor, Address, BankAccount, ContractProcedure,
+                     ContractTrigger, Location, Organization,
+                     OrganizationMember, PaymentMethod, Price, PriceProfile,
+                     User)
+from .settings import CURRENCIES
+from .utils import get_associated_objects
+from .widgets import IBANInput, UISearchField
 
 
 class FormManager():
@@ -23,11 +30,16 @@ class FormManager():
     def __init__(self, request=None, instances=None):
         self.request = request
         for k, form in self.forms.items():
-            self.forms[k] = form.__class__(
-                form,
-                request.POST,
-                request.FILES, instance=instances[k]
-            ) if request else form.__class__(instance=instances[k])
+            instance = instances[k] if instances else None
+
+            # check if reference has bin initiazlied already
+            if not callable(form):
+                form = form.__class__
+
+            self.forms[k] = form(
+                data=request.POST,
+                files=request.FILES, instance=instance
+            ) if request else form(instance=instance)
 
     def get_forms(self):
         return self.forms
@@ -44,7 +56,7 @@ class FormManager():
 
 
 class ActorForm(forms.ModelForm):
-    info_text = forms.CharField(widget=SummernoteWidget(), required=False)
+    info_text = HTMLField(required=False)
 
     class Meta:
         model = Actor
@@ -55,13 +67,16 @@ class ActorForm(forms.ModelForm):
 class UserBaseForm(UserCreationForm):
     birth_date = forms.CharField(
         widget=forms.widgets.DateTimeInput(attrs={"type": "date"}))
-    info_text = forms.CharField(widget=SummernoteWidget(), required=False)
+    info_text = HTMLField(required=False)
 
     class Meta:
         model = User
         fields = ['username', 'first_name', 'last_name',
                   'email', 'birth_date', 'password1', 'password2', 'image', 'telephone_public', 'telephone_private',
                   'email_public', 'website', 'info_text']
+
+    def clean_info_text(self):
+        return bleach.clean(self.cleaned_data['info_text'])
 
     def clean_birth_date(self):
         OLDEST_PERSON = 44694
@@ -85,7 +100,9 @@ class UserBaseForm(UserCreationForm):
 class OrganizationForm(forms.ModelForm):
     name = forms.CharField(max_length=100, label=_(
         'Organization name'), help_text=_('Please include your legal form'))
-    info_text = forms.CharField(widget=SummernoteWidget(), required=False)
+    email_public = forms.EmailField(required=True, help_text=_(
+        'This is the mail will be displayed on bills and on the profile'))
+    info_text = HTMLField(required=False)
 
     def clean_name(self):
         name = self.cleaned_data['name']
@@ -97,10 +114,16 @@ class OrganizationForm(forms.ModelForm):
         raise forms.ValidationError(
             _('This organization name already exists'), code='organization-name-exists')
 
+    def clean_email_public(self):
+        if not self.cleaned_data['email_public']:
+            raise forms.ValidationError(
+                _('For organizations, a public email is required'))
+        return self.cleaned_data['email_public']
+
     class Meta:
         model = Organization
-        fields = ['name', 'image', 'telephone_public', 'telephone_private',
-                  'email_public', 'website', 'info_text']
+        fields = ['name', 'email_public', 'image', 'telephone_public', 'telephone_private',
+                  'website', 'info_text']
 
 
 class AddressForm(forms.ModelForm):
@@ -109,14 +132,27 @@ class AddressForm(forms.ModelForm):
         fields = ['street', 'street_number',
                   'postal_code', 'city', 'country', ]
 
+    def clean_postal_code(self):
+        postal_code = self.cleaned_data['postal_code']
+        if not postal_code:
+            return
+        if re.fullmatch(r'^[0-9]{5}$', postal_code):
+            return postal_code
+        raise forms.ValidationError(
+            _('Invalid postal code'), code='invalid-postal-code')
+
 
 class BankAccountForm(forms.ModelForm):
+    account_holder = forms.CharField(max_length=70, label=_('Account holder'))
+    iban = forms.CharField(widget=IBANInput(), label=_('IBAN'))
+    bic = forms.CharField(max_length=11, label=_('BIC'))
+
     class Meta:
         model = BankAccount
         fields = ['account_holder', 'iban', 'bic', ]
 
     def clean_iban(self):
-        iban = self.cleaned_data['iban']
+        iban = self.cleaned_data['iban'].replace(' ', '').upper()
         if iban:
             try:
                 IBAN(iban)
@@ -126,7 +162,7 @@ class BankAccountForm(forms.ModelForm):
         return iban
 
     def clean_bic(self):
-        bic = self.cleaned_data['bic']
+        bic = self.cleaned_data['bic'].upper()
         if bic:
             try:
                 BIC(bic)
@@ -134,41 +170,6 @@ class BankAccountForm(forms.ModelForm):
                 raise forms.ValidationError(
                     _('Invalid BIC: ') + str(e), code='invalid-bic')
         return bic
-
-
-class ActorFormManager():
-    def __init__(self, request=None):
-        if request is None:
-            self.actor_form = ActorForm()
-            self.address_form = AddressForm()
-            self.bank_account_form = BankAccountForm()
-        else:
-            self.actor_form = ActorForm(request.POST, request.FILES)
-            self.address_form = AddressForm(request.POST)
-            self.bank_account_form = BankAccountForm(request.POST)
-
-    def get_forms(self):
-        return {
-            'actor_form': self.actor_form,
-            'address_form': self.address_form,
-            'bank_account_form': self.bank_account_form,
-        }
-
-    def is_valid(self):
-        return (self.actor_form.is_valid() and
-                self.address_form.is_valid() and
-                self.bank_account_form.is_valid())
-
-    def save(self):
-        new_bank_account = self.bank_account_form.save()
-        new_address = self.address_form.save()
-
-        new_actor = self.actor_form.save(commit=False)
-        new_actor.address = new_address
-        new_actor.bank_account = new_bank_account
-        new_actor.save()
-
-        return new_actor
 
 
 class UserFormManager():
@@ -212,11 +213,11 @@ class ProfileFormManager():
         self.is_valid = True
         self.request = request
         self.entity = entity
-        self.actor_form = ActorForm(initial=model_to_dict(self.entity))
+        self.actor_form = ActorForm(instance=self.entity)
         self.address_form = AddressForm(
-            initial=model_to_dict(self.entity.address))
+            instance=self.entity.address)
         self.bank_account_form = BankAccountForm(
-            initial=model_to_dict(self.entity.bank_account))
+            instance=self.entity.bank_account)
 
     def change_info(self):
         self.actor_form = ActorForm(
@@ -342,6 +343,63 @@ class UserAccountFormManager():
         }
 
 
+# class PriceForm(forms.Form):
+#     addressee = models.
+
+
+# PriceFormSet = formset_factory(PriceForm)
+
+class ContractProcedureForm(forms.ModelForm):
+    def __init__(self, request, *args, **kwargs):
+        self.request = request
+        super(ContractProcedureForm, self).__init__(*args, **kwargs)
+        self.fields['payment_methods'].queryset = get_associated_objects(
+            request.actor,
+            PaymentMethod
+        ).select_subclasses()
+        self.fields['triggers'].queryset = get_associated_objects(
+            request.actor,
+            ContractTrigger
+        )
+
+    terms_and_conditions = HTMLField()
+
+    class Meta:
+        model = ContractProcedure
+        fields = ['name', 'auto_accept', 'terms_and_conditions', 'notes',
+                  'triggers', 'tax_rate', 'payment_methods', 'settlement_interval', ]
+
+        help_texts = {
+            'name': _('Give the procedure a name so you can identify it easier'),
+            'auto_accept': _('Automatically accept the booking?'),
+            'payment_methods': _('Choose the payment methods you want to use for this venue'),
+            'price_profiles': _('Define discounts for certain groups and actors'),
+        }
+
+
+class PriceForm(forms.ModelForm):
+
+    class Meta:
+        model = Price
+        fields = ['addressee', 'value', 'currency', 'discounts', ]
+        help_text = {
+            'discounts': _('Apply discounts from prices profiles?'),
+        }
+
+
+class PriceProfileForm(forms.ModelForm):
+    class Meta:
+        model = PriceProfile
+        fields = ['addressee', 'description', 'discount', ]
+        help_texts = {
+            'addressee': _('When left empty, the discount is visible for everyone')
+        }
+
+
+PriceProfileFormSet = inlineformset_factory(
+    ContractProcedure, PriceProfile, form=PriceProfileForm, extra=1)
+
+
 class OrganizationFormManager():
     def __init__(self, request=None):
         if request is None:
@@ -463,12 +521,15 @@ class RoleChangeForm(forms.Form):
 class LocationForm(forms.ModelForm):
     search = forms.CharField(widget=UISearchField, required=False, help_text=_(
         'You can use this search field for the address to autofill the location data!'))
-    description = forms.CharField(widget=SummernoteWidget())
+    description = HTMLField()
 
     class Meta:
         model = Location
-        fields = ['name', 'description', 'image',
+        fields = ['name', 'is_public', 'description', 'image',
                   'search', 'latitude', 'longitude']
+        help_texts = {
+            'is_public': _('Allow other users to link information to this location'),
+        }
 
     def save(self, owner=None, commit=True):
         new_location = super(LocationForm, self).save(commit=False)
@@ -481,8 +542,8 @@ class LocationForm(forms.ModelForm):
 
 class LocationFormManager(FormManager):
     forms = {
-        'location_form': LocationForm(),
-        'address_form': AddressForm(),
+        'location_form': LocationForm,
+        'address_form': AddressForm,
     }
 
     def save(self, commit=True):

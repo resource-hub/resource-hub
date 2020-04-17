@@ -1,3 +1,5 @@
+from django.utils.translation import ugettext_lazy as _
+
 COUNTRIES_WITH_STATE_IN_ADDRESS = {
     # Source: http://www.bitboost.com/ref/international-address-formats.html
     # This is not a list of countries that *have* states, this is a list of countries where states
@@ -11,3 +13,7 @@ COUNTRIES_WITH_STATE_IN_ADDRESS = {
     'MX': (['State', 'Federal District'], 'short'),
     'US': (['State', 'Outlying area', 'District'], 'short'),
 }
+
+CURRENCIES = [
+    ('EUR', _('Euro (EUR)'))
+]

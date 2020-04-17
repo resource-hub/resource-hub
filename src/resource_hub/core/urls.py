@@ -6,9 +6,33 @@ from resource_hub.api.urls import api_urls
 from resource_hub.control.urls import control_urls
 from resource_hub.core.views import api, auth, control, site
 
-JS_INFO_DICT = {
-    'packages': ('recurrence', ),
-}
+from .hooks import UrlHook
+
+finance_urls = UrlHook()
+finance_urls.register([
+    path('bank-accounts/', control.FinanceBankAccounts.as_view(),
+         name='finance_bank_accounts'),
+    path('payment-methods/manage/',
+         control.FinancePaymentMethodsManage.as_view(), name='finance_payment_methods_manage'),
+    path('payment-methods/manage/<int:pk>/', control.FinancePaymentMethodsEdit.as_view(
+    ), name='finance_payment_methods_edit'),
+    path('payment-methods/add',
+         control.FinancePaymentMethodsAdd.as_view(), name='finance_payment_methods_add'),
+    path('contracts/credited/', control.FinanceContractsCredited.as_view(),
+         name='finance_contracts_credited'),
+    path('contracts/debited/', control.FinanceContractsDebited.as_view(),
+         name='finance_contracts_debited'),
+    path('contracts/manage/<int:pk>/', control.FinanceContractsManageDetails.as_view(),
+         name='finance_contracts_manage_details'),
+    path('contract-procedures/manage/', control.FinanceContractProceduresManage.as_view(),
+         name='finance_contract_procedures_manage'),
+    path('contract-procedures/create/', control.FinanceContractProceduresCreate.as_view(),
+         name='finance_contract_procedures_create'),
+    path('invoices/outgoing/', control.FinanceInvoicesOutgoing.as_view(),
+         name='finance_invoices_outgoing'),
+    path('invoices/incoming/', control.FinanceInvoicesIncoming.as_view(),
+         name='finance_invoices_incoming'),
+])
 
 control_urls.register([
     # account
@@ -23,18 +47,8 @@ control_urls.register([
     # notifications
     path('notifications/', control.Notifications.as_view(), name='notifications'),
 
-    path('finance/bank-accounts/', control.FinanceBankAccounts.as_view(),
-         name='finance_bank_accounts'),
-    path('finance/payment-methods/manage/',
-         control.FinancePaymentMethodsManage.as_view(), name='finance_payment_methods_manage'),
-    path('finance/payment-methods/manage/<int:pk>/', control.FinancePaymentMethodsEdit.as_view(
-    ), name='finance_payment_methods_edit'),
-    path('finance/payment-methods/add',
-         control.FinancePaymentMethodsAdd.as_view(), name='finance_payment_methods_add'),
-    path('finance/contracts/manage/', control.FinanceContractsManage.as_view(),
-         name='finance_contracts_manage'),
-    path('finance/contracts/manage/<int:pk>/', control.FinanceContractsManageDetails.as_view(),
-         name='finance_contracts_manage_details'),
+    # finance
+    path('finance/', include(finance_urls.get())),
 
     # organizations
     path('organizations/manage/',
@@ -70,8 +84,15 @@ api_urls.register([
     path('actors/list', api.ActorList.as_view(), name='actor_list'),
     path('actors/change',
          api.ActorChange.as_view(), name='actor_change'),
-    path(r'locations/search/', api.Locations.as_view(),
-         name='locations_search')
+    path('locations/search/', api.Locations.as_view(),
+         name='locations_search'),
+    path('contracts/list', api.ContractsList.as_view(), name='contracts_list'),
+    path('notifications/list', api.NotificationsList.as_view(),
+         name='notifications_list'),
+    path('notifications/unread', api.NotificationsUnread.as_view(),
+         name='notifications_unread'),
+    path('notifications/mark/read/', api.NotificationsMarkRead.as_view(),
+         name='notifications_mark_read'),
 ])
 
 app_name = 'core'
@@ -82,6 +103,11 @@ urlpatterns = [
     path('bug/', site.ReportBug.as_view(), name='report_bug'),
     path('language/', site.Language.as_view(), name='language'),
     path('terms/', site.Terms.as_view(), name='terms'),
+    path('locations/<slug:slug>/',
+         site.LocationsProfile.as_view(), name='locations_profile'),
+    path('actor/<slug:slug>/',
+         site.ActorProfile.as_view(),
+         name='actor_profile'),
 
     # path
     path('register/', auth.Register.as_view(), name='register'),
@@ -103,13 +129,6 @@ urlpatterns = [
 
     # locale stuff
     path('i18n/', include('django.conf.urls.i18n')),
-    path('jsi18n/', JavaScriptCatalog.as_view(), JS_INFO_DICT),
     path('jsi18n.js', JavaScriptCatalog.as_view(
         packages=['recurrence']), name='jsi18n'),
-
-    path('locations/<slug:slug>/',
-         site.LocationsProfile.as_view(), name='locations_profile'),
-    path('actor/<slug:slug>/',
-         site.ActorProfile.as_view(),
-         name='actor_profile'),
 ]

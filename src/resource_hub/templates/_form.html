@@ -1,4 +1,11 @@
+{% load i18n %}
+
 {% csrf_token %}
+{% if form.errors %}
+<div class="ui red message">
+    {% trans 'Form contains errors!' %}
+</div>
+{% endif %}
 {% if form.non_field_errors %}
 <div class="ui red message">
     {% for error in form.non_field_errors %}
@@ -9,7 +16,9 @@
 
 {% for field in form %}
 <div class="field">
-    {{ field.label_tag }}
+    <label>
+        {{ field.label }}:<span class="required-label-star">{% if field.field.required %} *{% endif %}</span>
+    </label>
     {{ field }}
     {% if field.help_text %}
     <small style="color: grey">{{ field.help_text }}</small>

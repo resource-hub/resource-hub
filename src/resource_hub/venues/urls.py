@@ -1,4 +1,3 @@
-from django.conf.urls import url
 from django.urls import path
 
 from resource_hub.core.urls import api_urls, control_urls
@@ -17,13 +16,17 @@ control_urls.register([
     path('venues/manage/<int:venue_id>/profile/edit/',
          views.VenuesProfileEdit.as_view(), name='venues_profile_edit'),
     path('venues/create/', views.VenuesCreate.as_view(), name='venues_create'),
+    path('venues/contract-procedures/create', views.ContractProceduresCreate.as_view(),
+         name='venues_contract_procedures_create'),
+    path('venues/contract-procedures/edit/<int:pk>/', views.ContractProceduresEdit.as_view(),
+         name='venues_contract_procedures_edit'),
 ])
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('<int:venue_id>/details',
+    path('<slug:location_slug>/<slug:venue_slug>',
          views.VenuesDetails.as_view(), name='venue_details'),
-    path('<int:venue_id>/events/create/',
+    path('<slug:location_slug>/<slug:venue_slug>/events/create/',
          views.EventsCreate.as_view(), name='events_create'),
 
 ]

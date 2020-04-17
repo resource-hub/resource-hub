@@ -2,10 +2,11 @@
 import os
 
 from django.shortcuts import reverse
-from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 
 from resource_hub.control import sidebar_module_renderer
+
+from .signals import control_sidebar_finance
 
 
 def get_parent(path):
@@ -13,6 +14,8 @@ def get_parent(path):
 
 
 def control_sidebar(context, *args, **kwargs):
+    additional_finance_items = list(
+        *map(lambda x: x[1], control_sidebar_finance.send(None)))
     first_child = reverse('control:account_profile', kwargs={'scope': 'info'})
     root = get_parent(first_child)
     return sidebar_module_renderer(
@@ -37,11 +40,29 @@ def control_sidebar(context, *args, **kwargs):
                 'sub_items': [
                     {
                         'header': _('Contracts'),
-                        'url': get_parent(reverse('control:finance_contracts_manage')),
+                        'url': get_parent(reverse('control:finance_contracts_credited')),
+                        'subsub_items': [
+                            {
+                                'header': _('Credited'),
+                                'url': reverse('control:finance_contracts_credited'),
+                            },
+                            {
+                                'header': _('Debited'),
+                                'url': reverse('control:finance_contracts_debited'),
+                            }
+                        ]
+                    },
+                    {
+                        'header': _('Contract procedures'),
+                        'url': get_parent(reverse('control:finance_contract_procedures_manage')),
                         'subsub_items': [
                             {
                                 'header': _('Manage'),
-                                'url': reverse('control:finance_contracts_manage'),
+                                'url': reverse('control:finance_contract_procedures_manage'),
+                            },
+                            {
+                                'header': _('Create'),
+                                'url': reverse('control:finance_contract_procedures_create'),
                             }
                         ]
                     },
@@ -59,6 +80,21 @@ def control_sidebar(context, *args, **kwargs):
                             }
                         ]
                     },
+                    {
+                        'header': _('Invoices'),
+                        'url': get_parent(reverse('control:finance_invoices_outgoing')),
+                        'subsub_items': [
+                            {
+                                'header': _('Outgoing'),
+                                'url': reverse('control:finance_invoices_outgoing'),
+                            },
+                            {
+                                'header': _('Incoming'),
+                                'url': reverse('control:finance_invoices_incoming'),
+                            }
+                        ]
+                    },
+                    *additional_finance_items,
                 ]
             },
             {
@@ -88,7 +124,7 @@ def control_sidebar(context, *args, **kwargs):
                         'url': reverse('control:locations_create'),
                     },
                 ]
-            }
+            },
         ],
         request=context.request,
     )
