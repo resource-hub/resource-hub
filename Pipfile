@@ -67,3 +67,6 @@ sepaxml = "*"
 
 [requires]
 python_version = "*"
+
+[dev-packages]
+sphinx = "*"
