@@ -33,9 +33,25 @@
             
   <div class="section" id="architecture">
 <h1>Architecture<a class="headerlink" href="#architecture" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="contracts">
+<h2>Contracts<a class="headerlink" href="#contracts" title="Permalink to this headline">¶</a></h2>
+<p>Every interaction on Resource Hub is based on contracts: Everything is a contract!
+These contracts are produced by contract procedures. They define the framework of potential contracts. Available payment methods, assets, terms and conditions …</p>
 <div class="figure align-default" id="id1">
+<img alt="_images/statemachine-contract-procedure.png" src="_images/statemachine-contract-procedure.png" />
+<p class="caption"><span class="caption-text">The contract procedure as factory for new contracts</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</div>
+<p>Each individual contract is a state machine. The states represent the different stages that have different actions attached to them. Contracts emit events, that decoupled code can listen to. The change of a state is a very fundamental event emitted by a contract. The audience that listens to these events is called Trigger:  Event -&gt; Condition -&gt; Action</p>
+<div class="figure align-default">
 <img alt="_images/statemachine-state-graph.png" src="_images/statemachine-state-graph.png" />
-<p class="caption"><span class="caption-text">Every contract is a state machine. The states represent the different stages that have different actions attached to them.</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</div>
+</div>
+<div class="section" id="deployment">
+<h2>Deployment<a class="headerlink" href="#deployment" title="Permalink to this headline">¶</a></h2>
+<p>Currently the application is deployed in a container.</p>
+<div class="figure align-default">
+<img alt="_images/deployment-architecture.png" src="_images/deployment-architecture.png" />
+</div>
 </div>
 </div>
 
@@ -58,7 +74,11 @@
 <h3>Navigation</h3>
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Architecture</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Architecture</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#contracts">Contracts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#deployment">Deployment</a></li>
+</ul>
+</li>
 </ul>
 
 <div class="relations">
