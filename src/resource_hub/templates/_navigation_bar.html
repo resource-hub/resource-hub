@@ -126,6 +126,28 @@
     }
     $(document).ready(function () {
         update_notification_indicator()
+        // display role selection modal and get list of roles
+        $("#role").on("click", function (e) {
+            e.preventDefault();
+            $("#select-roles").modal("show");
+
+            $.ajax({
+                url: "{% url 'api:actor_list' %}",
+                type: "GET",
+                dataType: "JSON",
+            }).done(function (list) {
+                remove_loader("#role-loader");
+                $("#role-form").removeClass("hidden");
+                var list_items = "";
+                if (list.length > 0) {
+                    $.each(list, function (key, actor) {
+                        list_items +=
+                            '<option value="' + actor.id + '">' + actor.name + "</option>";
+                    });
+                }
+                $("#role-list").html(list_items);
+            });
+        });
     })
 </script>
 {% endif %}
