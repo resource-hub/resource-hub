@@ -24,7 +24,7 @@ services:
     image: registry.gitlab.com/resource-hub/resource-hub:master
     volumes:
       - ./:/site:rw
-    command: bash -c 'rqscheduler --host redis --port 6379'
+    command: bash -c 'rqscheduler --host localhost --port 6379'
     network_mode: host
 
   app:
