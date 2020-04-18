@@ -18,7 +18,7 @@ from django.views.decorators.clickjacking import xframe_options_exempt
 
 from resource_hub.core.forms import RoleChangeForm, UserFormManager
 from resource_hub.core.jobs import notify, send_mail
-from resource_hub.core.models import User
+from resource_hub.core.models import Notification, User
 from resource_hub.core.tokens import TokenGenerator
 
 
@@ -76,9 +76,21 @@ class Activate(View):
         except(TypeError, ValueError, OverflowError, User.DoesNotExist):
             user = None
         if user is not None and token_generator.check_token(user, token):
-            user.is_active = True
-            user.save()
-            login(request, user)
+            with transaction.atomic():
+                user.is_active = True
+                user.save()
+                login(request, user)
+            notify.delay(
+                Notification.TYPE.INFO,
+                sender=None,
+                action='',
+                target='',
+                link='',
+                recipient=user,
+                level=Notification.LEVEL.LOW,
+                message=_('%(name)s, welcome to Resouce Hub!') % {
+                    'name': user.first_name}
+            )
 
             message = _('Your account has been activated successfully.')
             messages.add_message(request, messages.SUCCESS, message)
