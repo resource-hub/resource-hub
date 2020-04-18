@@ -1,0 +1,7 @@
+{% extends "control/__base.html" %}
+{% load i18n %}
+
+{% block content %}
+<h1>{% trans 'Manage credited contracts' %}</h1>
+{% include 'core/control/_contract_feed.html' with type='creditor' %}
+{% endblock %}

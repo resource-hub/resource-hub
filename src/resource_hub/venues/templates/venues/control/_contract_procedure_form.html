@@ -1,0 +1,14 @@
+{% load i18n %}
+
+<form class="ui form" method="POST" enctype="multipart/form-data">
+    {% include '_form.html' with form=contract_procedure_form %}
+    <div class="field">
+        <label>{% trans 'Price profiles:' %}</label>
+        {% include '_formset.html' with formset=price_profile_form_set %}
+    </div>
+    {% include 'core/_identity.html' %}
+    <button class="ui positive right labeled icon button" type="submit">
+        {{ action }}
+        <i class="file alternate outline icon"></i>
+    </button>
+</form>

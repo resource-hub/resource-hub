@@ -1,6 +1,7 @@
 from django.shortcuts import reverse
 
-from resource_hub.core.models import Actor, Address, Location, User
+from resource_hub.core.models import (Actor, Address, Contract, Location,
+                                      Notification, User)
 from rest_framework import serializers
 
 
@@ -35,6 +36,32 @@ class AddressSerializer(serializers.ModelSerializer):
                   'postal_code', 'city', 'address_string']
 
 
+class ContractSerializer(serializers.ModelSerializer):
+    type_name = serializers.SerializerMethodField()
+    state_display = serializers.SerializerMethodField()
+    created_at = serializers.SerializerMethodField()
+    creditor = ActorSerializer()
+    debitor = ActorSerializer()
+    link = serializers.SerializerMethodField()
+
+    def get_type_name(self, obj):
+        return obj.verbose_name
+
+    def get_created_at(self, obj):
+        return obj.created_at.strftime('%m.%d.%Y %H:%m:%S')
+
+    def get_state_display(self, obj):
+        return obj.get_state_display()
+
+    def get_link(self, obj):
+        return reverse('control:finance_contracts_manage_details', kwargs={'pk': obj.pk})
+
+    class Meta:
+        model = Contract
+        fields = ['type_name', 'state', 'state_display', 'creditor',
+                  'debitor', 'link', 'created_at', ]
+
+
 class LocationSerializer(serializers.ModelSerializer):
     address = AddressSerializer()
     owner = ActorSerializer()
@@ -48,3 +75,16 @@ class LocationSerializer(serializers.ModelSerializer):
         model = Location
         fields = ['name', 'latitude',
                   'longitude', 'address', 'owner', 'thumbnail', 'location_link', ]
+
+
+class NotificationSerializer(serializers.ModelSerializer):
+    sender = ActorSerializer()
+    action = serializers.SerializerMethodField()
+
+    def get_action(self, obj):
+        return obj.get_action_display()
+
+    class Meta:
+        model = Notification
+        fields = ['pk', 'sender', 'action', 'target', 'link',
+                  'recipient', 'level', 'is_read', 'created_at', ]

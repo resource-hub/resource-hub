@@ -1,0 +1,18 @@
+@media (prefers-color-scheme: dark) {
+    .note-editable, .note-toolbar, .note-resizebar, .note-dropdown-menu, .note-modal-content, .note-btn:not(.note-color-btn), .note-btn>i {
+        background-color: #373844 !important;
+        color: #ffffff !important;
+        caret-color: #ffffff;
+    }
+    .note-btn {
+        border: 1px solid #666 !important;
+        border-color: 666 !important;
+        border-radius: .28571429rem;
+    }
+    h1, h2, h3, h4, h5, h6, strong, label, .header {
+        color: #A6E22E !important;
+    }
+    a, b, p, span, blockquote, code, strike, pre {
+        color: #ffffff !important;
+    }
+}

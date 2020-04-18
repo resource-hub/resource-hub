@@ -16,12 +16,14 @@ class ActorMiddleware:
         response = self.get_response(request)
         return response
 
+    @staticmethod
     @receiver(user_logged_in)
     def set_initial_actor(sender, request, user, **kwargs):
-        actor_id = actor = Actor.objects.get(
+        actor_id = Actor.objects.get(
             user=user, organization__isnull=True).id
         request.session['actor_id'] = actor_id
 
+    @staticmethod
     def get_actor(request):
         if 'actor_id' in request.session:
             actor_id = request.session['actor_id']

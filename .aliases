@@ -5,3 +5,5 @@ alias dvisu="sudo  docker-compose exec app python src/manage.py graph_models --p
 alias dtest="sudo docker-compose exec app bash -c 'cd src && python manage.py test --verbosity 2'"
 alias dcov="sudo docker-compose exec app bash -c 'cd src && coverage run manage.py test -v 2 && coverage html -d ../cov && coverage report'"
 alias dinteractive="sudo docker-compose run --rm app"
+alias dev="./scripts/init_dev.sh"
+alias dtestm="./scripts/dtest_module.sh"

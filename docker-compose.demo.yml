@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 services:
   redis:
@@ -7,20 +7,30 @@ services:
     network_mode: host
 
   worker:
-    image: registry.gitlab.com/resource-hub/resource-hub:master
     environment:
-      DJANGO_SETTINGS_MODULE: resource_hub.settings.demo
+      DJANGO_SETTINGS_MODULE: resource_hub.settings.dev
     env_file:
       - .env
-    command: bash -c 'cd src && python3 manage.py rqworker high low'
+    image: registry.gitlab.com/resource-hub/resource-hub:master
+    command: bash -c 'cd src && python3 manage.py rqworker default high low'
     network_mode: host
-  
+
+  scheduler:
+    environment:
+      DJANGO_SETTINGS_MODULE: resource_hub.settings.dev
+    env_file:
+      - .env
+    restart: on-failure
+    image: app
+    volumes:
+      - ./:/site:rw
+    command: bash -c 'rqscheduler --host redis --port 6379'
+
   app:
     image: registry.gitlab.com/resource-hub/resource-hub:master
     environment:
       DJANGO_SETTINGS_MODULE: resource_hub.settings.demo
-    env_file:
-      .env
+    env_file: .env
     volumes:
       - ${DEMO_PATH}/static:/static
       - ${DEMO_PATH}/media:/media

@@ -11,6 +11,8 @@ build:
   stage: build
   tags:
     - shell
+  only:
+    - master
   script:
     - docker login -u gitlab-ci-token -p ${CI_JOB_TOKEN} registry.gitlab.com
     - docker build -t ${CONTAINER_TEST_IMAGE} .
@@ -20,6 +22,8 @@ test:
   stage: test
   tags:
     - shell
+  only:
+    - master
   script:
     - cat ${TEST_ENV} > .env
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
@@ -35,16 +39,15 @@ demo:
   only:
     - master
   before_script:
-    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - "which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )"
     - eval $(ssh-agent -s)
     - echo "${DEMO_SSH_KEY}" | ssh-add -
     - mkdir -p ~/.ssh
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
   script:
-    - ssh demo@${DEMO_SERVER_IP} "cd ${DEMO_PATH} && docker login -u gitlab-ci-token -p ${CI_JOB_TOKEN} registry.gitlab.com && docker pull ${CONTAINER_TEST_IMAGE}"
     - cat ${DEMO_ENV} > demo.env
     - scp demo.env demo@${DEMO_SERVER_IP}:${DEMO_PATH}/.env
     - ssh demo@${DEMO_SERVER_IP} "chmod 600 ${DEMO_PATH}/.env"
     - rm demo.env
     - scp docker-compose.demo.yml demo@${DEMO_SERVER_IP}:${DEMO_PATH}/docker-compose.yml
-    - ssh demo@${DEMO_SERVER_IP} "cd ${DEMO_PATH} && docker-compose stop && docker-compose -f docker-compose.yml -p demo up -d --force-recreate --build"
+    - ssh demo@${DEMO_SERVER_IP} "cd ${DEMO_PATH} && docker login -u gitlab-ci-token -p ${CI_JOB_TOKEN} && registry.gitlab.com && docker pull ${CONTAINER_TEST_IMAGE} docker-compose stop && docker-compose -f docker-compose.yml -p demo up -d --force-recreate --build"

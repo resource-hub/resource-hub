@@ -6,7 +6,7 @@ $(document).ready(function () {
     $('#main-menu-toggle').on('click', function () {
         $('#main-menu-sidebar')
             .sidebar({
-                dimPage: true,
+                dimPage: false,
                 transition: 'overlay'
             })
             .sidebar('toggle')
@@ -15,7 +15,7 @@ $(document).ready(function () {
     $('#admin-sidebar-toggle').on('click', function () {
         $('#admin-sidebar')
             .sidebar({
-                dimPage: true,
+                dimPage: false,
                 transition: 'overlay'
             })
             .sidebar('toggle')

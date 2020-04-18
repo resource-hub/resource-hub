@@ -1,33 +1,37 @@
 import uuid
-from datetime import datetime
 
 from django.db import models
-from django.utils.text import slugify
+from django.db.models import Q
+from django.shortcuts import reverse
+from django.template.loader import render_to_string
+from django.utils.translation import ugettext_lazy as _
 
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
 from recurrence.fields import RecurrenceField
-from resource_hub.core.models import (Actor, BaseContractProcedure, Contract,
-                                      Gallery, Location)
+from resource_hub.core.jobs import notify
+from resource_hub.core.models import (Actor, BaseModel, Claim, Contract,
+                                      ContractProcedure, Gallery, Location,
+                                      Notification, Price)
+from resource_hub.core.utils import get_valid_slug
 
 
-class VenueContractProcedure(BaseContractProcedure):
-    price_per_h = models.DecimalField(
-        null=True,
-        blank=True,
-        max_digits=8,
-        decimal_places=2,
+class VenueContractProcedure(ContractProcedure):
+    venues = models.ManyToManyField(
+        'Venue',
     )
-    max_price_per_d = models.DecimalField(
-        null=True,
-        blank=True,
-        max_digits=8,
-        decimal_places=2,
-    )
-    equipment = models.ManyToManyField(
-        'Equipment',
-        blank=True,
-    )
+
+    @property
+    def type_name(self):
+        return _('Venue contract procedure')
+
+    @property
+    def form_link(self):
+        return reverse('control:venues_contract_procedures_create')
+
+    @property
+    def edit_link(self):
+        return reverse('control:venues_contract_procedures_edit', kwargs={'pk': self.pk})
 
 
 class Venue(models.Model):
@@ -45,9 +49,9 @@ class Venue(models.Model):
         on_delete=models.CASCADE,
     )
     thumbnail_original = models.ImageField(
-        null=False,
-        blank=True,
+        null=True,
         upload_to='images/',
+        default='images/default.png',
     )
     thumbnail = ImageSpecField(
         source='thumbnail_original',
@@ -59,6 +63,12 @@ class Venue(models.Model):
             'quality': 70,
         }
     )
+    price = models.ForeignKey(
+        Price,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+    )
     gallery = models.ForeignKey(
         Gallery,
         on_delete=models.SET_NULL,
@@ -67,10 +77,11 @@ class Venue(models.Model):
     bookable = models.BooleanField(
         default=True,
     )
-    contract_procedure = models.OneToOneField(
-        VenueContractProcedure,
+    contract_procedure = models.ForeignKey(
+        ContractProcedure,
         null=True,
-        on_delete=models.SET_NULL
+        blank=True,
+        on_delete=models.PROTECT,
     )
     created_at = models.DateField(
         auto_now=True,
@@ -87,7 +98,21 @@ class Venue(models.Model):
 
     # Methods
     def __str__(self):
-        return self.name
+        return '{}: {} ({})'.format(self.name, self.price, self.location.name)
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.slug = get_valid_slug(
+                self, self.name, Q(location=self.location))
+        super(Venue, self).save(*args, **kwargs)
+
+
+class VenuePrice(Price):
+    venue_ptr = models.ForeignKey(
+        Venue,
+        on_delete=models.PROTECT,
+        related_name='venue_price'
+    )
 
 
 class EventTag(models.Model):
@@ -120,7 +145,7 @@ class EventCategory(models.Model):
         return self.name
 
 
-class Event(models.Model):
+class Event(BaseModel):
     # fields
     slug = models.SlugField(
         unique=True,
@@ -137,8 +162,9 @@ class Event(models.Model):
     description = models.CharField(
         max_length=128,
     )
-    start = models.TimeField()
-    end = models.TimeField()
+    dtstart = models.DateTimeField()
+    dtend = models.DateTimeField()
+    dtlast = models.DateTimeField()
     organizer = models.ForeignKey(
         Actor,
         on_delete=models.CASCADE,
@@ -146,26 +172,28 @@ class Event(models.Model):
     )
     tags = models.ManyToManyField(
         EventTag,
+        blank=True,
     )
     category = models.ForeignKey(
         EventCategory,
         on_delete=models.SET_NULL,
-        null=True
+        null=True,
+        blank=True,
     )
-    venue = models.ForeignKey(
+    venues = models.ManyToManyField(
         Venue,
-        on_delete=models.CASCADE
     )
     is_public = models.BooleanField(
         default=True,
-        null=False,
+        blank=True,
     )
     recurrences = RecurrenceField(
         null=False,
+        blank=True,
+        include_dtstart=True,
     )
     thumbnail_original = models.ImageField(
         null=False,
-        blank=True,
         upload_to='images/'
     )
     thumbnail = ImageSpecField(
@@ -174,16 +202,12 @@ class Event(models.Model):
         format='JPEG',
         options={'quality': 70},
     )
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-    )
     created_by = models.ForeignKey(
         Actor,
         on_delete=models.SET_NULL,
         null=True,
         related_name='event_created_by',
     )
-    updated_at = models.DateTimeField(auto_now=True)
     updated_by = models.ForeignKey(
         Actor,
         on_delete=models.SET_NULL,
@@ -200,24 +224,52 @@ class Event(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        if not self.id:
-            slug = slugify(self.name)
-            try:
-                Event.objects.get(slug=slug)
-                self.slug = slug + str(datetime.now().date())
-            except Event.DoesNotExist:
-                self.slug = slug
+        if not self.pk:
+            self.slug = get_valid_slug(self, self.name)
         super(Event, self).save(*args, **kwargs)
 
 
 class Equipment(models.Model):
+    # fields
     name = models.CharField(
         max_length=128,
         unique=True,
     )
-    price = models.DecimalField(
-        max_digits=13,
-        decimal_places=2,
+    venue = models.ForeignKey(
+        Venue,
+        on_delete=models.PROTECT,
+    )
+    thumbnail_original = models.ImageField()
+    thumbnail = ImageSpecField(
+        source='thumbnail_original',
+        processors=[ResizeToFill(200, 200)],
+        format='JPEG',
+        options={'quality': 70},
+    )
+    thumbnail_large = ImageSpecField(
+        source='thumbnail_original',
+        processors=[ResizeToFill(400, 400)],
+        format='JPEG',
+        options={'quality': 90},
+    )
+    price = models.ForeignKey(
+        Price,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+    )
+    quantity = models.IntegerField()
+
+    # methods
+    def __str__(self):
+        return '{}@{} ({})'.format(self.name, self.venue.name, self.price)
+
+
+class EquipmentPrice(Price):
+    equipment_ptr = models.ForeignKey(
+        Equipment,
+        on_delete=models.PROTECT,
+        related_name='equipment_price'
     )
 
 
@@ -228,4 +280,107 @@ class VenueContract(Contract):
     )
     equipment = models.ManyToManyField(
         Equipment,
+        blank=True,
     )
+
+    # attributes
+    @property
+    def verbose_name(self):
+        return _('Venue booking')
+
+    @property
+    def overview(self):
+
+        return render_to_string(
+            'venues/_contract_overview.html',
+            context={
+                'contract': self,
+            }
+        )
+
+    # methods
+    def claim_factory(self, occurrences=None):
+        net_total = 0
+        for venue in self.event.venues.all():
+            for occurrence in occurrences:
+                start = occurrence[0]
+                end = occurrence[1]
+                delta = ((end - start).total_seconds())/3600
+                net = delta * float(venue.price.value)
+                discounted_net = self.price_profile.apply(
+                    net) if self.price_profile else net
+                gross = self.contract_procedure.apply_tax(discounted_net)
+
+                Claim.objects.create(
+                    contract=self,
+                    item='{}@{}'.format(
+                        self.event.name,
+                        venue.name
+                    ),
+                    quantity=delta,
+                    unit='h',
+                    price=venue.price.value,
+                    currency=venue.price.currency,
+                    net=net,
+                    discount=self.price_profile.discount if self.price_profile else 0,
+                    discounted_net=discounted_net,
+                    tax_rate=self.contract_procedure.tax_rate,
+                    gross=gross,
+                    period_start=start,
+                    period_end=end,
+                )
+
+                net_total += net
+
+        if self.payment_method.fee_value > 0:
+            net_fee = self.payment_method.apply_fee(net_total)
+            discounted_net_fee = self.price_profile.apply(
+                net_fee
+            ) if self.price_profile else net_fee
+            gross_fee = self.payment_method.apply_fee_tax(
+                discounted_net_fee)
+
+            Claim.objects.create(
+                contract=self,
+                item=self.payment_method.verbose_name,
+                quantity=1,
+                unit='u',
+                price=net_fee,
+                currency=venue.price.currency,
+                net=net_fee,
+                discount=self.price_profile.discount if self.price_profile else 0,
+                discounted_net=discounted_net_fee,
+                tax_rate=self.payment_method.fee_tax_rate,
+                gross=gross_fee,
+                period_start=start,
+                period_end=end,
+            )
+
+    # state setters
+    def purge(self):
+        self.event.soft_delete()
+        for claim in self.claim_set.all():
+            claim.soft_delete()
+
+    def set_expired(self):
+        self.purge()
+        super(VenueContract, self).set_expired()
+        self.save()
+
+    def set_cancelled(self):
+        self.purge()
+        super(VenueContract, self).set_cancelled()
+        self.save()
+
+    def set_waiting(self, request):
+        super(VenueContract, self).set_waiting(request)
+        notify.delay(
+            self.debitor,
+            Notification.ACTION.BOOK,
+            self.event.name,
+            reverse('control:finance_contracts_manage_details',
+                    kwargs={'pk': self.pk}),
+            self.creditor,
+            Notification.LEVEL.MEDIUM,
+            ''
+        )

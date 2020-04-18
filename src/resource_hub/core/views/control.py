@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.db.models import F, Q
 from django.forms import Form
-from django.http import Http404
+from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
@@ -13,13 +13,14 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.views import View
 
-from resource_hub.core.decorators import organization_admin_required
-from resource_hub.core.forms import *
-from resource_hub.core.models import *
-from resource_hub.core.signals import register_payment_methods
-from resource_hub.core.tables import (LocationsTable, MembersTable,
-                                      OrganizationsTable, PaymentMethodsTable)
-from resource_hub.core.utils import get_associated_objects
+from ..decorators import organization_admin_required
+from ..forms import *
+from ..models import *
+from ..signals import register_contract_procedures, register_payment_methods
+from ..tables import (ContractProcedureTable, InvoiceTable, LocationsTable,
+                      MembersTable, OrganizationsTable, PaymentMethodsTable)
+from ..utils import get_associated_objects
+from . import TableView
 
 
 @method_decorator(login_required, name='dispatch')
@@ -32,39 +33,14 @@ class ScopeView(View):
     legal_scope = []
 
     def scope_is_valid(self, scope):
+        if '*' in self.legal_scope:
+            return True
         return scope in self.legal_scope
 
     def dispatch(self, *args, **kwargs):
         if self.scope_is_valid(kwargs['scope']):
             return super(ScopeView, self).dispatch(*args, **kwargs)
         raise Http404
-
-
-class TableView(View):
-    template_name = 'core/table_view.html'
-    header = 'Header'
-    request = None
-
-    def get_queryset(self):
-        raise NotImplementedError()
-
-    def get_table(self):
-        raise NotImplementedError()
-
-    def get(self, request):
-        self.request = request
-        queryset = self.get_queryset()
-
-        if queryset:
-            table = self.get_table()(queryset)
-        else:
-            table = None
-
-        context = {
-            'header': self.header,
-            'table': table,
-        }
-        return render(request, self.template_name, context)
 
 
 @method_decorator(login_required, name='dispatch')
@@ -134,7 +110,7 @@ class FinancePaymentMethodsManage(TableView):
 
     def get_queryset(self):
         methods = get_associated_objects(
-            self.request.user,
+            self.request.actor,
             PaymentMethod
         ).select_subclasses()
 
@@ -145,6 +121,7 @@ class FinancePaymentMethodsManage(TableView):
                     'pk': method.pk,
                     'name': method.name,
                     'owner': method.owner,
+                    'is_prepayment': method.is_prepayment,
                     'method_type': method.verbose_name,
                 }
             )
@@ -205,6 +182,7 @@ class FinancePaymentMethodsAdd(View):
 
                 }
             )
+        print(payment_methods_list)
         return payment_methods_list
 
     def get(self, request):
@@ -231,9 +209,14 @@ class FinancePaymentMethodsAdd(View):
 
 
 @method_decorator(login_required, name='dispatch')
-class FinanceContractsManage(View):
+class FinanceContractsCredited(View):
     def get(self, request):
-        return render(request, 'core/control/finance_contracts_manage.html')
+        return render(request, 'core/control/finance_contracts_credited.html')
+
+
+class FinanceContractsDebited(View):
+    def get(self, request):
+        return render(request, 'core/control/finance_contracts_debited.html')
 
 
 @method_decorator(login_required, name='dispatch')
@@ -242,19 +225,135 @@ class FinanceContractsManageDetails(View):
 
     def get(self, request, pk):
         contract = get_subobject_or_404(Contract, pk=pk)
+        actor = request.actor
+
+        if contract.debitor == actor:
+            is_debitor = True
+        elif contract.creditor == actor:
+            is_debitor = False
+        else:
+            return HttpResponseForbidden
+
         timer = None
-        if contract.is_pending:
-            diff = (timedelta(
-                minutes=contract.expiration_period) - (timezone.now() - contract.created_at)).seconds
-            hours, remainder = divmod(diff, 3600)
-            minutes, seconds = divmod(remainder, 60)
-            timer = '{0:02d}:{1:02d}:{2:02d}'.format(
-                hours, minutes, seconds)
+        if contract.is_pending and is_debitor:
+            delta = (timedelta(
+                minutes=contract.expiration_period) - (timezone.now() - contract.created_at))
+
+            # double check in case scheduler hasnt updated the state
+            if delta.total_seconds() <= 0:
+                contract.set_expired()
+            else:
+                diff = delta.seconds
+                hours, remainder = divmod(diff, 3600)
+                minutes, seconds = divmod(remainder, 60)
+                timer = '{0:02d}:{1:02d}:{2:02d}'.format(
+                    hours, minutes, seconds)
+        if contract.payment_method:
+            contract.payment_method = PaymentMethod.objects.get_subclass(
+                pk=contract.payment_method.pk)
+
         context = {
             'contract': contract,
+            'is_debitor': is_debitor,
             'timer': timer,
         }
         return render(request, self.template_name, context)
+
+    def post(self, request, pk):
+        contract = get_subobject_or_404(Contract, pk=pk)
+        actor = request.actor
+
+        choice = request.POST.get('choice', None)
+        if contract.debitor == actor:
+            is_debitor = True
+        elif contract.creditor == actor:
+            is_debitor = False
+        else:
+            return HttpResponseForbidden
+
+        if is_debitor:
+            if choice == 'cancel':
+                with transaction.atomic():
+                    contract.set_cancelled()
+                message = _('{} has been canceled'.format(
+                    contract.verbose_name))
+            elif choice == 'confirm':
+                with transaction.atomic():
+                    if contract.payment_method.is_prepayment:
+                        return get_subobject_or_404(PaymentMethod, pk=contract.payment_method.pk).initialize(contract, request)
+                    contract.set_waiting(request)
+                message = _('{} has been confirmed'.format(
+                    contract.verbose_name))
+            else:
+                message = _('Invalid Choice')
+        else:
+            if choice == 'decline':
+                with transaction.atomic():
+                    contract.set_declined(request)
+                message = _('{} has been decline'.format(
+                    contract.verbose_name))
+            elif choice == 'accept':
+                with transaction.atomic():
+                    contract.set_running(request)
+                message = _('{} has been accepted'.format(
+                    contract.verbose_name))
+            else:
+                message = _('Invalid Choice')
+
+        messages.add_message(request, messages.SUCCESS, message)
+        return redirect(reverse('control:finance_contracts_manage_details', kwargs={'pk': pk}))
+
+
+@method_decorator(login_required, name='dispatch')
+class FinanceContractProceduresManage(TableView):
+    header = _('Manage contract procedures')
+
+    def get_queryset(self):
+        return get_associated_objects(
+            self.request.actor,
+            ContractProcedure
+        ).select_subclasses()
+
+    def get_table(self):
+        return ContractProcedureTable
+
+
+@method_decorator(login_required, name='dispatch')
+class FinanceContractProceduresCreate(View):
+    def get(self, request):
+        contract_procedures = register_contract_procedures.send(
+            sender=self.__class__)
+        if contract_procedures:
+            contract_procedures = list(
+                map(lambda x: x[1], contract_procedures))
+        context = {
+            'contract_procedures': contract_procedures
+        }
+        return render(request, 'core/control/finance_contract_procedures_create.html', context)
+
+
+@method_decorator(login_required, name='dispatch')
+class FinanceInvoicesOutgoing(TableView):
+    header = _('Outgoing invoices')
+
+    def get_queryset(self):
+        actor = self.request.actor
+        return Invoice.objects.filter(contract__creditor=actor).order_by('-created_at')
+
+    def get_table(self):
+        return InvoiceTable
+
+
+@method_decorator(login_required, name='dispatch')
+class FinanceInvoicesIncoming(TableView):
+    header = _('Incoming invoices')
+
+    def get_queryset(self):
+        actor = self.request.actor
+        return Invoice.objects.filter(contract__debitor=actor).order_by('-created_at')
+
+    def get_table(self):
+        return InvoiceTable
 
 
 @method_decorator(login_required, name='dispatch')
@@ -436,7 +535,7 @@ class LocationsManage(TableView):
 
     def get_queryset(self):
         return get_associated_objects(
-            self.request.user,
+            self.request.actor,
             Location
         )
 

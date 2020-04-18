@@ -1,19 +1,20 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
-from django.forms import model_to_dict
+from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.views import View
-from django.views.decorators.cache import cache_page
 
-from resource_hub.core.models import OrganizationMember
-from resource_hub.venues.forms import (VenueContractFormManager, VenueForm,
-                                       VenueFormManager)
-from resource_hub.venues.models import Venue
-from resource_hub.venues.tables import VenuesTable
+from resource_hub.core.utils import get_associated_objects
+from resource_hub.core.views import TableView
+
+from .forms import (VenueContractFormManager,
+                    VenueContractProcedureFormManager, VenueForm,
+                    VenueFormManager)
+from .models import Venue, VenueContractProcedure
+from .tables import VenuesTable
 
 TTL = 60 * 5
 
@@ -24,46 +25,31 @@ def index(request):
 
 # Admin section
 @method_decorator(login_required, name='dispatch')
-class VenuesManage(View):
-    def get(self, request):
-        user = request.user
-        query = Q(owner=user.pk)
-        sub_condition = Q(owner__organization__members=user)
-        sub_condition.add(
-            Q(owner__organization__organizationmember__role__gte=OrganizationMember.ADMIN), Q.AND)
-        query.add(sub_condition, Q.OR)
-        venues = Venue.objects.filter(query)
+class VenuesManage(TableView):
+    header = _('Manage venues')
 
-        if venues:
-            data = []
-            for r in venues:
-                data.append({
-                    'name': r.name,
-                    'venue_id': r.id,
-                    'owner': r.owner,
-                })
-            venues_table = VenuesTable(data)
-        else:
-            venues_table = None
+    def get_queryset(self):
+        return get_associated_objects(
+            self.request.actor,
+            Venue
+        )
 
-        context = {
-            'venues_table': venues_table,
-        }
-        return render(request, 'venues/control/venues_manage.html', context)
+    def get_table(self):
+        return VenuesTable
 
 
 @method_decorator(login_required, name='dispatch')
 class VenuesCreate(View):
     def get(self, request):
-        venue_form = VenueFormManager(request.user)
-
+        venue_form = VenueFormManager(request)
         return render(request, 'venues/control/venues_create.html', venue_form.get_forms())
 
     def post(self, request):
-        venue_form = VenueFormManager(request.user, request)
+        venue_form = VenueFormManager(request)
 
         if venue_form.is_valid():
-            venue_form.save(request.actor)
+            with transaction.atomic():
+                venue_form.save()
 
             message = ('The venue has been created')
             messages.add_message(request, messages.SUCCESS, message)
@@ -78,19 +64,18 @@ class VenuesProfileEdit(View):
 
     def get(self, request, venue_id):
         venue = get_object_or_404(Venue, pk=venue_id)
-        venue_form = VenueFormManager(request.user, instance=venue)
+        venue_form = VenueFormManager(request, instance=venue)
         return render(request, self.template_name, venue_form.get_forms())
 
     def post(self, request, venue_id):
         venue = get_object_or_404(Venue, pk=venue_id)
         venue_form = VenueFormManager(
-            request.user,
             request,
             instance=venue,
         )
 
         if venue_form.is_valid():
-            venue_form.save(venue.owner)
+            venue_form.save()
             message = _('The venue has been updated')
             messages.add_message(request, messages.SUCCESS, message)
             return redirect(reverse('control:venues_profile_edit', kwargs={'venue_id': venue_id}))
@@ -99,8 +84,9 @@ class VenuesProfileEdit(View):
 
 
 class VenuesDetails(View):
-    def get(self, request, venue_id):
-        venue = get_object_or_404(Venue, pk=venue_id)
+    def get(self, request, location_slug, venue_slug):
+        venue = get_object_or_404(
+            Venue, slug=venue_slug, location__slug=location_slug)
         context = {'venue': venue}
         return render(request, 'venues/venue_details.html', context)
 
@@ -109,16 +95,23 @@ class VenuesDetails(View):
 class EventsCreate(View):
     template_name = 'venues/venue_events_create.html'
 
-    def get(self, request, venue_id):
-        venue = get_object_or_404(Venue, pk=venue_id)
-        return render(request, self.template_name, VenueContractFormManager(venue).get_forms())
+    def get(self, request, location_slug, venue_slug):
+        venue = get_object_or_404(
+            Venue, slug=venue_slug, location__slug=location_slug)
+        context = VenueContractFormManager(venue, request).get_forms()
+        context['venue'] = venue
+        return render(request, self.template_name, context)
 
-    def post(self, request, venue_id):
-        venue = get_object_or_404(Venue, pk=venue_id)
+    def post(self, request, location_slug, venue_slug):
+        venue = get_object_or_404(
+            Venue, slug=venue_slug, location__slug=location_slug)
         venue_contract_form = VenueContractFormManager(venue, request)
         if venue_contract_form.is_valid():
-            venue_contract = venue_contract_form.save()
-            print(venue_contract)
+            with transaction.atomic():
+                venue_contract = venue_contract_form.save()
+                venue_contract.set_pending(
+                    occurrences=venue_contract_form.occurrences
+                )
             message = _(
                 'The event has been created successfully. You can review it and either confirm or cancel.')
             messages.add_message(request, messages.SUCCESS, message)
@@ -130,3 +123,47 @@ class EventsCreate(View):
 class EventsManageDetails(View):
     def get(self, request, event):
         return
+
+
+@method_decorator(login_required, name='dispatch')
+class ContractProceduresCreate(View):
+    template_name = 'venues/control/contract_procedures_create.html'
+
+    def get(self, request):
+        contract_procedure_form = VenueContractProcedureFormManager(request)
+        return render(request, self.template_name, contract_procedure_form.get_forms())
+
+    def post(self, request):
+        contract_procedure_form = VenueContractProcedureFormManager(request)
+
+        if contract_procedure_form.is_valid():
+            contract_procedure_form.save()
+            message = _(
+                'The event contract procedure has been saved successfully')
+            messages.add_message(request, messages.SUCCESS, message)
+            return redirect(reverse('control:finance_contract_procedures_manage'))
+        return render(request, self.template_name, contract_procedure_form.get_forms())
+
+
+@method_decorator(login_required, name='dispatch')
+class ContractProceduresEdit(View):
+    template_name = 'venues/control/contract_procedures_edit.html'
+
+    def get(self, request, pk):
+        contract_procedure = get_object_or_404(VenueContractProcedure, pk=pk)
+        contract_procedure_form = VenueContractProcedureFormManager(
+            request, instance=contract_procedure)
+        return render(request, self.template_name, contract_procedure_form.get_forms())
+
+    def post(self, request, pk):
+        contract_procedure = get_object_or_404(VenueContractProcedure, pk=pk)
+        contract_procedure_form = VenueContractProcedureFormManager(
+            request, instance=contract_procedure)
+
+        if contract_procedure_form.is_valid():
+            contract_procedure_form.save()
+
+            message = _('The changes have been saved')
+            messages.add_message(request, messages.SUCCESS, message)
+            return redirect(reverse('control:finance_contract_procedures_manage'))
+        return render(request, self.template_name, contract_procedure_form.get_forms())
