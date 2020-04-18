@@ -182,7 +182,6 @@ class FinancePaymentMethodsAdd(View):
 
                 }
             )
-        print(payment_methods_list)
         return payment_methods_list
 
     def get(self, request):

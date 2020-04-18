@@ -177,7 +177,6 @@ class SEPADirectDebitXML(BaseModel):
 
     @property
     def number(self):
-        print(self.xml_no)
         return '{prefix}-{no}'.format(
             prefix=self.prefix,
             no=self.xml_no,
