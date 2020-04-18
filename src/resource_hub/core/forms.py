@@ -65,6 +65,8 @@ class ActorForm(forms.ModelForm):
 
 
 class UserBaseForm(UserCreationForm):
+    first_name = forms.CharField(label=_('First name'), required=True)
+    last_name = forms.CharField(label=_('Last name'), required=True)
     birth_date = forms.CharField(
         widget=forms.widgets.DateTimeInput(attrs={"type": "date"}))
     info_text = HTMLField(required=False)
