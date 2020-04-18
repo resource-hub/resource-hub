@@ -489,6 +489,15 @@ class Notification(BaseModel):
         HIGH = 2  # warning
         CRITICAL = 3  # mandatory information
 
+    class TYPE:
+        INFO = 'i'
+        ACTION = 'a'
+
+    TYPES = [
+        (TYPE.INFO, _('info')),
+        (TYPE.ACTION, _('action')),
+    ]
+
     ACTIONS = [
         (ACTION.CREATE, _('created')),
         (ACTION.BOOK, _('booked')),
@@ -500,6 +509,10 @@ class Notification(BaseModel):
         (LEVEL.HIGH, _('high')),
         (LEVEL.CRITICAL, _('critical')),
     ]
+    typ = models.CharField(
+        max_length=2,
+        choices=TYPES,
+    )
     sender = models.ForeignKey(
         Actor,
         null=True,
@@ -942,6 +955,7 @@ class Contract(BaseContract):
                     pk=self.payment_method.pk).settle(self, open_claims, invoice)
                 open_claims.update(status=Claim.STATUS.CLOSED)
                 notify(
+                    Notification.TYPE.ACTION,
                     self.creditor,
                     Notification.ACTION.CREATE,
                     '{} {}'.format(_('invoice'), invoice.number),

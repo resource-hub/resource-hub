@@ -375,9 +375,10 @@ class VenueContract(Contract):
     def set_waiting(self, request):
         super(VenueContract, self).set_waiting(request)
         notify.delay(
+            Notification.TYPE.ACTION,
             self.debitor,
             Notification.ACTION.BOOK,
-            self.event.name,
+            'Event: {} ({})'.format(self.event.name, self.verbose_name),
             reverse('control:finance_contracts_manage_details',
                     kwargs={'pk': self.pk}),
             self.creditor,

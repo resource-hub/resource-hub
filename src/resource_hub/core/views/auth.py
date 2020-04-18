@@ -16,8 +16,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.views import View
 from django.views.decorators.clickjacking import xframe_options_exempt
 
-from resource_hub.core.jobs import send_mail
-from resource_hub.core.forms import UserFormManager, RoleChangeForm
+from resource_hub.core.forms import RoleChangeForm, UserFormManager
+from resource_hub.core.jobs import notify, send_mail
 from resource_hub.core.models import User
 from resource_hub.core.tokens import TokenGenerator
 
@@ -79,6 +79,7 @@ class Activate(View):
             user.is_active = True
             user.save()
             login(request, user)
+
             message = _('Your account has been activated successfully.')
             messages.add_message(request, messages.SUCCESS, message)
             return redirect(reverse('control:home'))

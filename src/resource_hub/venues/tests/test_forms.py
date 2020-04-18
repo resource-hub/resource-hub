@@ -24,7 +24,7 @@ class TestEventForm(TestCase):
             street_number=12,
             postal_code='12345',
             city='test',
-            country='testland'
+            country='de'
         )
         location = Location.objects.create(
             name='Location',

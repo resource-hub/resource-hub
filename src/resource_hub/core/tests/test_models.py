@@ -36,7 +36,7 @@ class BaseContractTest(TestCase):
             street_number=12,
             postal_code='12345',
             city='test',
-            country='test',
+            country='de',
         )
         actor = User.objects.create(
             name='test',

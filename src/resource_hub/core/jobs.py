@@ -60,8 +60,9 @@ def send_mail(subject, message, recipient, attachments=None):
 
 
 @job('high')
-def notify(sender, action, target, link, recipient, level, message, attachments=None):
+def notify(typ, sender, action, target, link, recipient, level, message, attachments=None):
     notification = Notification.objects.create(
+        typ=typ,
         sender=sender,
         action=action,
         target=target,

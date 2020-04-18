@@ -31,8 +31,7 @@ DATA = {
     "street_number": "12A",
     "postal_code": "12345",
     "city": "Test City",
-    "country": "Germany"
-
+    "country": "de",
 }
 
 

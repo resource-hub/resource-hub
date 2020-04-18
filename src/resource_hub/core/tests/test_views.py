@@ -1,7 +1,7 @@
-from django.test import TestCase, Client
+from django.test import Client, TestCase
 from django.urls import reverse
-from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
 
 from resource_hub.core.models import *
 from resource_hub.core.tokens import TokenGenerator
@@ -19,7 +19,6 @@ DATA = {
     'street_number': '12',
     'postal_code': '12345',
     'city': 'Hannover',
-    'country': 'Germany',
     'account_holder': 'Peter Popper',
     'iban': 'DE12500105170648489890',
     'bic': 'INGDDEFFXXX',
