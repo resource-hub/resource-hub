@@ -21,10 +21,11 @@ services:
     env_file:
       - .env
     restart: on-failure
-    image: app
+    image: registry.gitlab.com/resource-hub/resource-hub:master
     volumes:
       - ./:/site:rw
     command: bash -c 'rqscheduler --host redis --port 6379'
+    network_mode: host
 
   app:
     image: registry.gitlab.com/resource-hub/resource-hub:master

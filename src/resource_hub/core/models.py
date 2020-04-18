@@ -240,25 +240,24 @@ class Address(models.Model):
     street = models.CharField(
         max_length=50,
         null=True,
-        blank=True,
+        blank=False,
     )
     street_number = models.CharField(
         max_length=10,
         null=True,
-        blank=True,
+        blank=False,
     )
     postal_code = models.CharField(
         max_length=5,
         null=True,
-        blank=True,
+        blank=False,
     )
     city = models.CharField(
         max_length=128,
         null=True,
-        blank=True,
+        blank=False,
     )
-    country = models.CharField(
-        max_length=50,
+    country = CountryField(
         null=True,
         blank=True,
     )
