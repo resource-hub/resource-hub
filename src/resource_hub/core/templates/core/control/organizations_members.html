@@ -8,22 +8,16 @@
 {% endblock %}
 
 {% block content %}
-<h1>
-    {{ organization.name }}
-</h1>
 
 <div class="section-container tab-content">
-    <div>
+    <h1>
+        {{ organization.name }} {% trans 'members' %}
         <a class="ui labeled icon right floated green button"
             href="{% url 'control:organizations_members_add' organization_id=organization.id %}">
             <i class="plus icon"></i>
             {% trans 'add' %}
         </a>
-        <h3 class="inline">
-            {% trans 'members' %}
-        </h3>
-
-    </div>
+    </h1>
     <div>
         {% if members_table %}
         {% render_table members_table %}
