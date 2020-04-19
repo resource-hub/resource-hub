@@ -26,6 +26,14 @@
             {% endfor %}
         </div>
         {% endif %}
+        {% if not user.is_verified %}
+        <div class="messages">
+            <div class="ui info message">
+                <i class="close icon"></i>
+                {% trans 'Please verify your account with the email that you have recieved' %}
+            </div>
+        </div>
+        {% endif %}
         {% block content %}
         {% endblock %}
     </div>

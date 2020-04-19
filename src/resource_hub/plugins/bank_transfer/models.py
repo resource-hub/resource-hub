@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.db import models
+from django.db import models, transaction
 from django.shortcuts import redirect, reverse
 from django.utils.translation import ugettext_lazy as _
 
@@ -40,6 +40,8 @@ class BankTransfer(PaymentMethod):
         if not self.is_prepayment:
             raise ValueError(
                 'payment method can only initialized if it is a prepayment')
+        with transaction.atomic():
+            contract.set_waiting(request)
         message = _('%(name)s has been confirmed successfully') % {
             'name': contract.verbose_name}
         messages.add_message(request, messages.SUCCESS, message)
