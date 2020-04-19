@@ -332,7 +332,7 @@ class VenueContract(Contract):
 
                 net_total += net
 
-        if self.payment_method.fee_value > 0:
+        if self.payment_method.fee_absolute_value > 0 or self.payment_method.fee_relative_value > 0:
             net_fee = self.payment_method.apply_fee(net_total)
             discounted_net_fee = self.price_profile.apply(
                 net_fee

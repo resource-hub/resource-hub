@@ -331,7 +331,8 @@ class VenueContractForm(forms.ModelForm):
     def __init__(self, venue, request, *args, **kwargs):
         super(VenueContractForm, self).__init__(*args, **kwargs)
         self.request = request
-        self.fields['payment_method'].queryset = venue.contract_procedure.payment_methods.select_subclasses()
+        self.fields['payment_method'].queryset = venue.contract_procedure.payment_methods.select_subclasses(
+        ).order_by('fee_absolute_value')
 
         # discounts for actors
         query = Q(addressee__isnull=True)
@@ -345,7 +346,7 @@ class VenueContractForm(forms.ModelForm):
         )
         price_profiles = PriceProfile.objects.filter(
             query
-        )
+        ).distinct()
         self.fields['price_profile'].queryset = price_profiles.order_by(
             '-discount')
         if self.fields['price_profile'].queryset:

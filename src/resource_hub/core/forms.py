@@ -19,7 +19,6 @@ from .models import (Actor, Address, BankAccount, ContractProcedure,
                      ContractTrigger, Location, Organization,
                      OrganizationMember, PaymentMethod, Price, PriceProfile,
                      User)
-from .settings import CURRENCIES
 from .utils import get_associated_objects
 from .widgets import IBANInput, UISearchField
 

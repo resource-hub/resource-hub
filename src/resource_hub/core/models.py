@@ -1017,10 +1017,7 @@ class Claim(BaseModel):
         decimal_places=5,
         max_digits=15,
     )
-    currency = models.CharField(
-        default='EUR',
-        max_length=5,
-    )
+    currency = CurrencyField()
     net = models.DecimalField(
         decimal_places=5,
         max_digits=15,
@@ -1111,39 +1108,32 @@ class ContractTrigger(Trigger):
         return Contract.STATE.RUNNING
 
 
-class PaymentFee(BaseModel):
-    payment_method = models.ForeignKey(
-        PaymentMethod,
-        on_delete=models.PROTECT,
-    )
-    currency = CurrencyField()
-    absolute_fee_value = models.IntegerField(
-        verbose_name=_('Absolute fee value'),
-    )
-
-    fee_value = models.DecimalField(
-        decimal_places=3,
-        max_digits=13,
-        default=0,
-    )
-
-
 class PaymentMethod(Trigger):
     # fields
-    fee_value = models.DecimalField(
-        decimal_places=3,
-        max_digits=13,
-        default=0,
-    )
-
-    fee_tax_rate = PercentField(
-        verbose_name=_('tax rate applied to payement fee')
-    )
+    currency = CurrencyField()
     is_prepayment = models.BooleanField(
         default=False,
         help_text=_(
             'If activated, claims within the following settlement interval are charged in advance')
     )
+    fee_absolute_value = models.IntegerField(
+        verbose_name=_('Absolute fee'),
+        default=0,
+        help_text=_('A constant value that is added to every transaction')
+    )
+    fee_relative_value = PercentField(
+        verbose_name=_('Relative fee (%)'),
+        default=0,
+        help_text=_(
+            'A relative value that is based on the total value of a transaction')
+    )
+    fee_tax_rate = PercentField(
+        verbose_name=_('tax rate applied to payement fee (%)')
+    )
+
+    def __str__(self):
+        prepayment = _('(prepayment)') if self.is_prepayment else ''
+        return '{} {}: {}{} + {}%'.format(self.verbose_name, prepayment, self.fee_absolute_value, self.currency, self.fee_relative_value)
 
     # methods
     def initialize(self, contract, request) -> HttpResponse:
@@ -1153,9 +1143,9 @@ class PaymentMethod(Trigger):
         pass
 
     def apply_fee(self, net):
-        if self.fee_absolute:
-            return self.fee_value
-        return float(net) * (float(self.fee_value)/100)
+        total = self.fee_absolute_value
+        total += float(net) * (float(self.fee_relative_value/100))
+        return total
 
     def apply_fee_tax(self, net):
         return float(net) * (1 + (float(self.fee_tax_rate)/100))
@@ -1538,10 +1528,7 @@ class InvoicePosition(models.Model):
         decimal_places=5,
         max_digits=15,
     )
-    currency = models.CharField(
-        default='EUR',
-        max_length=5,
-    )
+    currency = CurrencyField()
     net = models.DecimalField(
         decimal_places=5,
         max_digits=15,

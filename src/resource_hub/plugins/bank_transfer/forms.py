@@ -23,7 +23,7 @@ class BankTransferForm(BankAccountForm):
     class Meta:
         model = BankTransfer
         fields = ['name', 'comment', 'is_prepayment', 'account_holder', 'iban', 'bic',
-                  'fee_absolute', 'fee_value', 'fee_tax_rate', ]
+                  'currency', 'fee_absolute_value', 'fee_relative_value', 'fee_tax_rate', ]
 
     def save(self, request=None, commit=True):
         new_bank_transfer = super(BankTransferForm, self).save(

@@ -12,6 +12,7 @@ from django.template.loader import render_to_string
 from django.utils.crypto import get_random_string
 from django.utils.translation import ugettext_lazy as _
 
+from resource_hub.core.fields import CurrencyField
 from resource_hub.core.models import (Actor, BankAccount, BaseModel, Claim,
                                       Contract, PaymentMethod)
 from resource_hub.core.utils import round_decimal
@@ -166,10 +167,7 @@ class SEPADirectDebitXML(BaseModel):
         blank=True,
         verbose_name=_('Batch booking'),
     )
-    currency = models.CharField(
-        max_length=3,
-        default='EUR',
-    )
+    currency = CurrencyField()
     file = models.FileField(upload_to=sepaxml_filename)
     @property
     def prefix(self):
@@ -253,10 +251,7 @@ class SEPADirectDebitPayment(BaseModel):
         max_length=11,
     )
     amount = models.IntegerField()
-    currency = models.CharField(
-        max_length=3,
-        default='EUR',
-    )
+    currency = CurrencyField()
     sepa_type = models.CharField(
         max_length=4,
         default='RCUR'

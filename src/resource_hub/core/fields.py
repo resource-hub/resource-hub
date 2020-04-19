@@ -34,3 +34,4 @@ class CurrencyField(CharField):
         kwargs['choices'] = settings.CURRENCIES
         kwargs['verbose_name'] = _('Currency')
         kwargs['default'] = settings.CURRENCIES[0][0]
+        super().__init__(*args, **kwargs)
