@@ -72,7 +72,6 @@ INSTALLED_APPS = [
     'recurrence',
     'rest_framework',
     'sekizai',
-    'datetimepicker',
     # project apps
     'resource_hub.core',
     'resource_hub.api',
@@ -189,6 +188,10 @@ DATETIME_INPUT_FORMATS = [
 LOCALE_PATHS = (
     os.path.join(PROJECT_DIR, 'locale'),
 )
+
+CURRENCIES = [
+    ('EUR', _('Euro (EUR)'))
+]
 
 CURRENCY_PLACES = {
     'EUR': 2,

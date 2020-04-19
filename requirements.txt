@@ -40,7 +40,6 @@ documenttemplate==3.2.2
 elementpath==1.4.3
 extensionclass==4.4
 git+https://github.com/campfireman/django-summernote.git@2ec3d9b8f646f10acfc8131990deb98b44943254#egg=django-summernote
-git+https://github.com/escodebar/django-datetimepicker.git@6ab8ed0be1beae0cf36cd888bc33426776796ce6#egg=django-datetimepicker
 hyperlink==19.0.0
 idna==2.8
 incremental==17.5.0

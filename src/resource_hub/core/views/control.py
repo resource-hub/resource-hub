@@ -44,8 +44,8 @@ class ScopeView(View):
 
 
 @method_decorator(login_required, name='dispatch')
-class AccountSettings(ScopeView):
-    template_name = 'core/control/account_settings.html'
+class AccountSecurity(ScopeView):
+    template_name = 'core/control/account_security.html'
     legal_scope = ['email', 'password', ]
 
     def get(self, request, scope):
@@ -64,23 +64,22 @@ class AccountSettings(ScopeView):
 
         if account_form.is_valid:
             messages.add_message(request, messages.SUCCESS, message)
-            return redirect(reverse('control:account_settings', kwargs={'scope': scope}))
-        else:
-            return render(request, self.template_name, account_form.get_forms(scope))
+            return redirect(reverse('control:account_security', kwargs={'scope': scope}))
+        return render(request, self.template_name, account_form.get_forms(scope))
 
 
 @method_decorator(login_required, name='dispatch')
-class AccountProfile(ScopeView):
-    template_name = 'core/control/account_profile.html'
-    redirect_url = 'control:account_profile'
-    legal_scope = ['info', 'address', 'bank_account', ]
+class AccountSettings(ScopeView):
+    template_name = 'core/control/account_settings.html'
+    redirect_url = 'control:account_settings'
+    legal_scope = ['info', 'address', 'bank_account', 'invoicing_settings', ]
 
     def get(self, request, scope):
-        profile_form = ProfileFormManager(request, request.user)
+        profile_form = ProfileFormManager(request, request.actor)
         return render(request, self.template_name, profile_form.get_forms(scope))
 
     def post(self, request, scope):
-        profile_form = ProfileFormManager(request, request.user)
+        profile_form = ProfileFormManager(request, request.actor)
         if scope == 'info':
             profile_form.change_info()
             message = _('Your info has been updated')
@@ -90,12 +89,14 @@ class AccountProfile(ScopeView):
         elif scope == 'bank_account':
             profile_form.change_bank_account()
             message = _('Your bank account has been updated')
+        elif scope == 'invoicing_settings':
+            profile_form.change_invoicing_settings()
+            message = _('Your bank invoicing settings have been updated')
 
         if profile_form.is_valid:
             messages.add_message(request, messages.SUCCESS, message)
             return redirect(reverse(self.redirect_url, kwargs={'scope': scope}))
-        else:
-            return render(request, self.template_name, profile_form.get_forms(scope))
+        return render(request, self.template_name, profile_form.get_forms(scope))
 
 
 @method_decorator(login_required, name='dispatch')

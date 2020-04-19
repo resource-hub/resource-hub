@@ -4,6 +4,8 @@ services:
   redis:
     image: redis:alpine
     command: redis-server
+    volumes:
+      - /tmp:/data
     network_mode: host
 
   worker:
@@ -37,7 +39,7 @@ services:
       - ${DEMO_PATH}/media:/media
     depends_on:
       - redis
-    command: bash -c "cd src && python3 manage.py collectstatic --noinput && python3 manage.py migrate && daphne -b 0.0.0.0 -p ${DJANGO_PORT} resource_hub.asgi:application"
+    command: bash -c "cd src && python3 manage.py collectstatic --noinput && python3 manage.py migrate && python3 manage.py init_schedule && daphne -b 0.0.0.0 -p ${DJANGO_PORT} resource_hub.asgi:application"
     ports:
       - "${DJANGO_PORT}:${DJANGO_PORT}"
     network_mode: host

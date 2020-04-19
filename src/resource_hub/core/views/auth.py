@@ -14,7 +14,6 @@ from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.utils.translation import ugettext_lazy as _
 from django.views import View
-from django.views.decorators.clickjacking import xframe_options_exempt
 
 from resource_hub.core.forms import RoleChangeForm, UserFormManager
 from resource_hub.core.jobs import notify, send_mail
@@ -22,11 +21,9 @@ from resource_hub.core.models import Notification, User
 from resource_hub.core.tokens import TokenGenerator
 
 
-@method_decorator(xframe_options_exempt, name='dispatch')
 class Register(View):
     template_name = 'core/register.html'
 
-    @xframe_options_exempt
     def get(self, request):
         if request.user.is_authenticated:
             message = _('You are already logged in.')
@@ -42,8 +39,6 @@ class Register(View):
         if (user_form.is_valid()):
             with transaction.atomic():
                 new_user = user_form.save()
-                new_user.is_active = False
-                new_user.save()
 
             current_site = get_current_site(request)
             subject = _('Activate your account')
@@ -55,14 +50,26 @@ class Register(View):
                 'uid': urlsafe_base64_encode(force_bytes(new_user.pk)),
                 'token': token_generator.make_token(new_user),
             })
+            notify.delay(
+                Notification.TYPE.INFO,
+                sender=None,
+                action='',
+                target='',
+                link='',
+                recipient=new_user,
+                level=Notification.LEVEL.LOW,
+                message=_('%(name)s, welcome to Resouce Hub!') % {
+                    'name': new_user.first_name}
+            )
 
             recipient = new_user.email
             send_mail.delay(subject, message, [recipient])
+            login(request, new_user)
 
             message = _(
                 'Please confirm your email address to complete the registration')
             messages.add_message(request, messages.SUCCESS, message)
-            return redirect(reverse('core:login'))
+            return redirect(reverse('control:home'))
 
         return render(request, 'core/register.html', user_form.get_forms())
 
@@ -77,20 +84,8 @@ class Activate(View):
             user = None
         if user is not None and token_generator.check_token(user, token):
             with transaction.atomic():
-                user.is_active = True
+                user.is_verified = True
                 user.save()
-                login(request, user)
-            notify.delay(
-                Notification.TYPE.INFO,
-                sender=None,
-                action='',
-                target='',
-                link='',
-                recipient=user,
-                level=Notification.LEVEL.LOW,
-                message=_('%(name)s, welcome to Resouce Hub!') % {
-                    'name': user.first_name}
-            )
 
             message = _('Your account has been activated successfully.')
             messages.add_message(request, messages.SUCCESS, message)

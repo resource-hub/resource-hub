@@ -16,7 +16,14 @@ def get_parent(path):
 def control_sidebar(context, *args, **kwargs):
     additional_finance_items = list(
         *map(lambda x: x[1], control_sidebar_finance.send(None)))
-    first_child = reverse('control:account_profile', kwargs={'scope': 'info'})
+    if context.request.user.pk == context.request.actor.pk:
+        user_settings = {
+            'header': _('Security'),
+            'url': reverse('control:account_security', kwargs={'scope': 'email'}),
+        }
+    else:
+        user_settings = None
+    first_child = reverse('control:account_settings', kwargs={'scope': 'info'})
     root = get_parent(first_child)
     return sidebar_module_renderer(
         [
@@ -25,13 +32,10 @@ def control_sidebar(context, *args, **kwargs):
                 'url': os.path.dirname(root),
                 'sub_items': [
                     {
-                        'header': _('Profile'),
+                        'header': _('Settings'),
                         'url': first_child,
                     },
-                    {
-                        'header': _('Settings'),
-                        'url': reverse('control:account_settings', kwargs={'scope': 'email'}),
-                    },
+                    user_settings
                 ]
             },
             {

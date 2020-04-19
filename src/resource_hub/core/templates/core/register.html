@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block content %}
-<h1>{% trans 'register' %}</h1>
+<h1>{% trans 'Register' %}</h1>
 <div class="segment-container">
     <form class="ui form" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
@@ -24,13 +24,13 @@
             <input type="checkbox" name="terms" required>
             <label for="terms">
                 <b>
-                    {% trans 'i fully understand and agree to the given terms and conditions.' %}
+                    {% trans 'I fully understand and agree to the given terms and conditions.' %}
                 </b>
             </label>
         </div>
         <p>
             <button class="ui positive right labeled icon button" type="submit">
-                {% trans 'sign Up' %}
+                {% trans 'Sign up' %}
                 <i class="checkmark icon"></i>
             </button>
         </p>

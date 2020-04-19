@@ -122,23 +122,23 @@ class TestAdmin(TestView, TestCase):
     view_name = 'control:home'
 
 
-class TestAccountSettings(TestView, TestCase):
+class TestAccountSecurity(TestView, TestCase):
     def test_status_code(self):
         scope = ['email', 'password', ]
 
         for s in scope:
             response = self.client.get(
-                reverse('control:account_settings', kwargs={'scope': s}))
+                reverse('control:account_security', kwargs={'scope': s}))
             self.assertEqual(response.status_code, 200)
 
 
-class TestAccountProfile(TestView, TestCase):
+class TestAccountSettings(TestView, TestCase):
     def test_status_code(self):
         scope = ['info', 'address', 'bank_account', ]
 
         for s in scope:
             response = self.client.get(
-                reverse('control:account_profile', kwargs={'scope': s}))
+                reverse('control:account_settings', kwargs={'scope': s}))
             self.assertEqual(response.status_code, 200)
 
 

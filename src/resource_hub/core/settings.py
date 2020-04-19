@@ -13,7 +13,3 @@ COUNTRIES_WITH_STATE_IN_ADDRESS = {
     'MX': (['State', 'Federal District'], 'short'),
     'US': (['State', 'Outlying area', 'District'], 'short'),
 }
-
-CURRENCIES = [
-    ('EUR', _('Euro (EUR)'))
-]

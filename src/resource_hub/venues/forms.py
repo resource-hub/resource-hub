@@ -4,15 +4,13 @@ from django import forms
 from django.db.models import Q
 from django.forms import inlineformset_factory
 from django.forms.models import BaseInlineFormSet
-from django.urls import reverse_lazy
-from django.utils.html import mark_safe
 from django.utils.timezone import get_current_timezone
 from django.utils.translation import ugettext_lazy as _
 
 from resource_hub.core.fields import HTMLField
 from resource_hub.core.forms import (ContractProcedureForm, FormManager,
                                      PriceForm, PriceProfileFormSet)
-from resource_hub.core.models import Location, PriceProfile
+from resource_hub.core.models import Location, OrganizationMember, PriceProfile
 from resource_hub.core.utils import get_associated_objects
 
 from .models import (Equipment, EquipmentPrice, Event, Venue, VenueContract,
@@ -178,7 +176,7 @@ class EventForm(forms.ModelForm):
     class Meta:
         model = Event
         fields = ['venues', 'name', 'description', 'dtstart', 'dtend', 'recurrences', 'thumbnail_original',
-                  'tags', 'category', 'is_public', ]
+                  'category', 'is_public', ]
         labels = {
             'recurrences': _('Recurs on'),
             'name': _('Event name'),
@@ -334,16 +332,25 @@ class VenueContractForm(forms.ModelForm):
         super(VenueContractForm, self).__init__(*args, **kwargs)
         self.request = request
         self.fields['payment_method'].queryset = venue.contract_procedure.payment_methods.select_subclasses()
+
+        # discounts for actors
         query = Q(addressee__isnull=True)
         query.add(
             Q(addressee=self.request.actor),
             Q.OR
         )
-        self.fields['price_profile'].queryset = PriceProfile.objects.filter(
+        query.add(
+            Q(addressee__organization__organizationmember__user=self.request.user),
+            Q.OR
+        )
+        price_profiles = PriceProfile.objects.filter(
             query
-        ).order_by('-discount')
+        )
+        self.fields['price_profile'].queryset = price_profiles.order_by(
+            '-discount')
         if self.fields['price_profile'].queryset:
             self.initial['price_profile'] = self.fields['price_profile'].queryset[0]
+            self.initial['payment_method'] = self.fields['payment_method'].queryset[0]
 
     def clean(self):
         data = super(VenueContractForm, self).clean()
@@ -354,7 +361,7 @@ class VenueContractForm(forms.ModelForm):
 
     class Meta:
         model = VenueContract
-        fields = ['price_profile', 'payment_method', 'equipment', ]
+        fields = ['price_profile', 'payment_method', ]
         help_texts = {
             'price_profile': _('Available discounts granted to certain groups and entities. The discounts will be applied to the base prices below.')
         }

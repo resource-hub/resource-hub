@@ -128,6 +128,13 @@ class OrganizationForm(forms.ModelForm):
                   'website', 'info_text']
 
 
+class InvoicingSettings(forms.ModelForm):
+    class Meta:
+        model = Actor
+        fields = ['tax_id', 'vat_id', 'invoice_logo_image', 'invoice_numbers_prefix', 'invoice_numbers_prefix_cancellations',
+                  'invoice_introductory_text', 'invoice_additional_text', 'invoice_footer_text']
+
+
 class AddressForm(forms.ModelForm):
     class Meta:
         model = Address
@@ -211,19 +218,22 @@ class UserFormManager():
 
 
 class ProfileFormManager():
-    def __init__(self, request, entity):
+    def __init__(self, request, actor):
         self.is_valid = True
         self.request = request
-        self.entity = entity
-        self.actor_form = ActorForm(instance=self.entity)
+        self.actor = actor
+        self.actor_form = ActorForm(instance=self.actor)
         self.address_form = AddressForm(
-            instance=self.entity.address)
+            instance=self.actor.address)
         self.bank_account_form = BankAccountForm(
-            instance=self.entity.bank_account)
+            instance=self.actor.bank_account)
+        self.invoicing_settings_form = InvoicingSettings(
+            instance=self.actor
+        )
 
     def change_info(self):
         self.actor_form = ActorForm(
-            self.request.POST, self.request.FILES, instance=self.entity)
+            self.request.POST, self.request.FILES, instance=self.actor)
 
         if self.actor_form.is_valid():
             self.actor_form.save()
@@ -232,7 +242,7 @@ class ProfileFormManager():
 
     def change_address(self):
         self.address_form = AddressForm(
-            self.request.POST, instance=self.entity.address)
+            self.request.POST, instance=self.actor.address)
 
         if self.address_form.is_valid():
             self.address_form.save()
@@ -241,10 +251,19 @@ class ProfileFormManager():
 
     def change_bank_account(self):
         self.bank_account_form = BankAccountForm(
-            self.request.POST, instance=self.entity.bank_account)
+            self.request.POST, instance=self.actor.bank_account)
 
         if self.bank_account_form.is_valid():
             self.bank_account_form.save()
+        else:
+            self.is_valid = False
+
+    def change_invoicing_settings(self):
+        self.invoicing_settings_form = InvoicingSettings(
+            self.request.POST, self.request.FILES, instance=self.actor,
+        )
+        if self.invoicing_settings_form.is_valid():
+            self.invoicing_settings_form.save()
         else:
             self.is_valid = False
 
@@ -253,6 +272,7 @@ class ProfileFormManager():
             'actor_form': self.actor_form,
             'address_form': self.address_form,
             'bank_account_form': self.bank_account_form,
+            'invoicing_settings_form': self.invoicing_settings_form,
             scope: 'active',
         }
 

@@ -2,36 +2,58 @@
 {% load i18n %}
 
 {% block content %}
-{% url 'control:account_settings' as url %}
-<h1>Settings</h1>
+<h1>{% trans 'Settings' %}</h1>
 <div id="secondary-menu" class="ui secondary pointing menu">
-    <a class="{{ email }} item" tab-id="email">
-        {% trans 'Email' %}
+    <a class="{{ info }} item" tab-id="info">
+        {% trans 'Profile' %}
     </a>
-    <a class="{{ password }} item" tab-id="password">
-        {% trans 'Password' %}
+    <a class="{{ bank_account }} item" tab-id="bank_account">
+        {% trans 'Bank account' %}
+    </a>
+    <a class="{{ address }} item" tab-id="address">
+        {% trans 'Invoicing address' %}
+    </a>
+    <a class="{{ invoicing_settings }} item" tab-id="invoicing_settings">
+        {% trans 'Invoicing settings' %}
     </a>
 </div>
 
 <div class="section-container tab-content">
-    <div id="email" class="{{ email }} tab">
+    <div id="info" class="{{ info }} tab">
         <h3>
-            {% trans 'Change email' %}
+            {% trans 'Edit profile' %}
         </h3>
-        <form class="ui form" method="POST" action="{{ url }}">
-            {% include "_form.html" with form=email_form %}
+        <form class="ui form" method="POST" enctype="multipart/form-data">
+            {% include '_form.html' with form=actor_form %}
             {% include '_save_button.html' %}
         </form>
     </div>
-    <div id="password" class="{{ password }} tab">
+    <div id="address" class="{{ address }} tab">
         <h3>
-            {% trans 'Change password' %}
+            {% trans 'Edit address' %}
         </h3>
-        <form class="ui form" method="POST" action="{{ url }}">
-            {% include "_form.html" with form=password_form %}
+        <form class="ui form" method="POST">
+            {% include '_form.html' with form=address_form %}
+            {% include '_save_button.html' %}
+        </form>
+    </div>
+    <div id="bank_account" class="{{ bank_account }} tab">
+        <h3>
+            {% trans 'Edit bank information' %}
+        </h3>
+        <form class="ui form" method="POST">
+            {% include '_form.html' with form=bank_account_form %}
+            {% include '_save_button.html' %}
+        </form>
+    </div>
+    <div id="invoicing_settings" class="{{ invoicing_settings }} tab">
+        <h3>
+            {% trans 'Edit invoicing settings' %}
+        </h3>
+        <form class="ui form" method="POST" enctype="multipart/form-data">
+            {% include '_form.html' with form=invoicing_settings_form %}
             {% include '_save_button.html' %}
         </form>
     </div>
 </div>
-
 {% endblock %}

@@ -8,6 +8,7 @@ from django.db import DatabaseError, models, transaction
 from django.db.models import Max, Min
 from django.db.models.functions import Cast
 from django.http import HttpResponse
+from django.shortcuts import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.utils.translation import pgettext
@@ -21,9 +22,9 @@ from ipware import get_client_ip
 from model_utils.fields import MonitorField
 from model_utils.managers import InheritanceManager
 
-from .fields import PercentField
+from .fields import CurrencyField, PercentField
 from .renderer import InvoiceRenderer
-from .settings import COUNTRIES_WITH_STATE_IN_ADDRESS, CURRENCIES
+from .settings import COUNTRIES_WITH_STATE_IN_ADDRESS
 from .utils import get_valid_slug, language
 
 
@@ -187,6 +188,10 @@ class User(AbstractUser, Actor):
     )
     birth_date = models.DateField(
         null=True,
+    )
+    is_verified = models.BooleanField(
+        default=False,
+        blank=True,
     )
 
     @property
@@ -630,11 +635,7 @@ class Price(models.Model):
         max_digits=15,
         verbose_name=_('Price'),
     )
-    currency = models.CharField(
-        default='EUR',
-        choices=CURRENCIES,
-        max_length=5,
-    )
+    currency = CurrencyField()
     discounts = models.BooleanField(
         default=True,
         blank=True,
@@ -959,7 +960,7 @@ class Contract(BaseContract):
                     self.creditor,
                     Notification.ACTION.CREATE,
                     '{} {}'.format(_('invoice'), invoice.number),
-                    '',
+                    reverse('control:finance_invoices_incoming'),
                     self.debitor,
                     Notification.LEVEL.MEDIUM,
                     _('%(sender)s has created a new invoice. See the attached file.') % {
@@ -1110,14 +1111,31 @@ class ContractTrigger(Trigger):
         return Contract.STATE.RUNNING
 
 
-class PaymentMethod(Trigger):
-    # fields
-    fee_absolute = models.BooleanField(default=False)
+class PaymentFee(BaseModel):
+    payment_method = models.ForeignKey(
+        PaymentMethod,
+        on_delete=models.PROTECT,
+    )
+    currency = CurrencyField()
+    absolute_fee_value = models.IntegerField(
+        verbose_name=_('Absolute fee value'),
+    )
+
     fee_value = models.DecimalField(
         decimal_places=3,
         max_digits=13,
         default=0,
     )
+
+
+class PaymentMethod(Trigger):
+    # fields
+    fee_value = models.DecimalField(
+        decimal_places=3,
+        max_digits=13,
+        default=0,
+    )
+
     fee_tax_rate = PercentField(
         verbose_name=_('tax rate applied to payement fee')
     )

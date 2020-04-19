@@ -37,12 +37,12 @@ finance_urls.register([
 control_urls.register([
     # account
     path('', control.Home.as_view(), name='home'),
-    path('account/profile/<str:scope>/',
-         control.AccountProfile.as_view(),
-         name='account_profile'),
     path('account/settings/<str:scope>/',
          control.AccountSettings.as_view(),
          name='account_settings'),
+    path('account/security/<str:scope>/',
+         control.AccountSecurity.as_view(),
+         name='account_security'),
 
     # notifications
     path('notifications/', control.Notifications.as_view(), name='notifications'),

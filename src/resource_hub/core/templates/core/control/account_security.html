@@ -1,0 +1,36 @@
+{% extends "control/__base.html" %}
+{% load i18n %}
+
+{% block content %}
+<h1>{% trans 'Security' %}</h1>
+<div id="secondary-menu" class="ui secondary pointing menu">
+    <a class="{{ email }} item" tab-id="email">
+        {% trans 'Email' %}
+    </a>
+    <a class="{{ password }} item" tab-id="password">
+        {% trans 'Password' %}
+    </a>
+</div>
+
+<div class="section-container tab-content">
+    <div id="email" class="{{ email }} tab">
+        <h3>
+            {% trans 'Change email' %}
+        </h3>
+        <form class="ui form" method="POST">
+            {% include "_form.html" with form=email_form %}
+            {% include '_save_button.html' %}
+        </form>
+    </div>
+    <div id="password" class="{{ password }} tab">
+        <h3>
+            {% trans 'Change password' %}
+        </h3>
+        <form class="ui form" method="POST">
+            {% include "_form.html" with form=password_form %}
+            {% include '_save_button.html' %}
+        </form>
+    </div>
+</div>
+
+{% endblock %}
