@@ -65,11 +65,15 @@ class ContractSerializer(serializers.ModelSerializer):
 class LocationSerializer(serializers.ModelSerializer):
     address = AddressSerializer()
     owner = ActorSerializer()
-    thumbnail = serializers.ImageField()
+    # thumbnail = serializers.ImageField(use_url=False)
+    thumbnail = serializers.SerializerMethodField()
     location_link = serializers.SerializerMethodField()
 
     def get_location_link(self, obj):
         return reverse('core:locations_profile', kwargs={'slug': obj.slug})
+
+    def get_thumbnail(self, obj):
+        return obj.thumbnail.url
 
     class Meta:
         model = Location

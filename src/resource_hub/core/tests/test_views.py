@@ -91,7 +91,7 @@ class TestRegistration(TestView, TestCase):
 
 
 class TestActivate(TestView, TestCase):
-    view_name = 'core:activate'
+    view_name = 'core:verify'
 
     def test_status_code(self):
         response = self.client.get(reverse(self.view_name, kwargs={

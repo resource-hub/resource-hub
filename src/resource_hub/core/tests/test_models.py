@@ -53,8 +53,8 @@ class BaseContractTest(TestCase):
             email_public='joe@joe.de',
         )
         payment_method = PaymentMethod.objects.create(
-            fee_absolute=False,
-            fee_value=0,
+            fee_absolute_value=0,
+            fee_relative_value=0,
             fee_tax_rate=0,
             owner=actor,
         )
