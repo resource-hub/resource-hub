@@ -1,0 +1,15 @@
+{% extends "control/__base.html" %}
+{% load i18n %}
+
+{% block content %}
+<h1>{% trans 'Resend verification' %}</h1>
+<p>
+</p>
+<form method="POST">
+    {% csrf_token %}
+    <button class="ui right labeled icon button">
+        {% trans 'resend mail' %}
+        <i class="mail icon"></i>
+    </button>
+</form>
+{% endblock %}

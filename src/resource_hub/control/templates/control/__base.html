@@ -30,7 +30,10 @@
         <div class="messages">
             <div class="ui info message">
                 <i class="close icon"></i>
-                {% trans 'Please verify your account with the email that you have recieved' %}
+                {% trans 'Please verify your account with the email that you have recieved.' %}
+                <a href="{% url 'control:account_verification_resend' %}">
+                    {% trans 'Resend mail' %}
+                </a>
             </div>
         </div>
         {% endif %}

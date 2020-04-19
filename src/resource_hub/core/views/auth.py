@@ -21,6 +21,22 @@ from resource_hub.core.models import Notification, User
 from resource_hub.core.tokens import TokenGenerator
 
 
+def send_verification_mail(user, request):
+    subject = _('Activate your account')
+    token_generator = TokenGenerator()
+    link = request.build_absolute_uri(reverse('core:verify', kwargs={
+        'uidb64': urlsafe_base64_encode(force_bytes(user.pk)),
+        'token':  token_generator.make_token(user),
+    }))
+
+    message = render_to_string('core/mail_verification.html', context={
+        'user': user,
+        'link': link,
+    })
+    recipient = user.email
+    send_mail.delay(subject, message, [recipient])
+
+
 class Register(View):
     template_name = 'core/register.html'
 
@@ -40,16 +56,6 @@ class Register(View):
             with transaction.atomic():
                 new_user = user_form.save()
 
-            current_site = get_current_site(request)
-            subject = _('Activate your account')
-            token_generator = TokenGenerator()
-
-            message = render_to_string('core/mail_activation.html', context={
-                'user': new_user,
-                'domain': current_site.domain,
-                'uid': urlsafe_base64_encode(force_bytes(new_user.pk)),
-                'token': token_generator.make_token(new_user),
-            })
             notify.delay(
                 Notification.TYPE.INFO,
                 sender=None,
@@ -61,9 +67,7 @@ class Register(View):
                 message=_('%(name)s, welcome to Resouce Hub!') % {
                     'name': new_user.first_name}
             )
-
-            recipient = new_user.email
-            send_mail.delay(subject, message, [recipient])
+            send_verification_mail(new_user, request)
             login(request, new_user)
 
             message = _(
@@ -74,7 +78,7 @@ class Register(View):
         return render(request, 'core/register.html', user_form.get_forms())
 
 
-class Activate(View):
+class Verify(View):
     def get(self, request, uidb64, token):
         token_generator = TokenGenerator()
         try:
@@ -87,13 +91,24 @@ class Activate(View):
                 user.is_verified = True
                 user.save()
 
-            message = _('Your account has been activated successfully.')
+            message = _('Your account has been verified successfully.')
             messages.add_message(request, messages.SUCCESS, message)
             return redirect(reverse('control:home'))
 
-        message = _('Your activation-link is invalid!')
+        message = _('Your verification-link is invalid!')
         messages.add_message(request, messages.ERROR, message)
         return redirect(reverse('core:login'))
+
+
+class VerificationResend(View):
+    template_name = 'core/control/account_verification_resend.html'
+
+    def get(self, request):
+        return render(request, self.template_name)
+
+    def post(self, request):
+        send_verification_mail(self.request.user, request)
+        return redirect(reverse('control:account_verification_resend'))
 
 
 def custom_login(request):

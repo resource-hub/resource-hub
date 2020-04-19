@@ -43,6 +43,8 @@ control_urls.register([
     path('account/security/<str:scope>/',
          control.AccountSecurity.as_view(),
          name='account_security'),
+    path('account/verification/resend', auth.VerificationResend.as_view(),
+         name='account_verification_resend'),
 
     # notifications
     path('notifications/', control.Notifications.as_view(), name='notifications'),
@@ -114,8 +116,8 @@ urlpatterns = [
     path('login/', auth.custom_login, name='login'),
     path('logout/', dj_auth.LogoutView.as_view(
         template_name='core/logout.html'), name='logout'),
-    re_path(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
-            auth.Activate.as_view(), name='activate'),
+    re_path(r'^verify/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+            auth.Verify.as_view(), name='verify'),
     path('password/reset/', dj_auth.PasswordResetView.as_view(
         template_name='core/password_reset.html', success_url='/password/reset/done/', email_template_name='core/mail_password_reset.html'), name='password_reset'),
     path('password/reset/done/', dj_auth.PasswordResetDoneView.as_view(

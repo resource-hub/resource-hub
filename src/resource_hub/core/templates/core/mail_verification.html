@@ -9,7 +9,7 @@
     {% trans "Thank you for signing up. Before you can get startetd you need to verify your email. Just click the link below." %}
 </p>
 <p>
-    <a href="http://{{ domain }}{% url 'core:activate' uidb64=uid token=token %}">
+    <a href="{{ link }}">
         {% trans 'activate account' %}
     </a>
 </p>
