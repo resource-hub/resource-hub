@@ -27,6 +27,7 @@
                 </a>
             </div>
         </div>
+        {% endif %}
         <nav class="admin-navigation">
             <button id="admin-sidebar-toggle" class="ui hidden left floated button">
                 <i class="ul list icon"></i>
@@ -35,7 +36,6 @@
             {% block admin-navigation %}
             {% endblock %}
         </nav>
-        {% endif %}
         {% block content %}
         {% endblock %}
     </div>
