@@ -8,14 +8,6 @@
 {% block main %}
 <div class="admin wrapper">
     <div class="main container">
-        <nav class="admin-navigation">
-            <button id="admin-sidebar-toggle" class="ui hidden left floated button">
-                <i class="ul list icon"></i>
-                Menu
-            </button>
-            {% block admin-navigation %}
-            {% endblock %}
-        </nav>
         {% if messages %}
         <div class="messages">
             {% for message in messages %}
@@ -29,13 +21,20 @@
         {% if not user.is_verified %}
         <div class="messages">
             <div class="ui info message">
-                <i class="close icon"></i>
                 {% trans 'Please verify your account with the email that you have recieved.' %}
                 <a href="{% url 'control:account_verification_resend' %}">
                     {% trans 'Resend mail' %}
                 </a>
             </div>
         </div>
+        <nav class="admin-navigation">
+            <button id="admin-sidebar-toggle" class="ui hidden left floated button">
+                <i class="ul list icon"></i>
+                Menu
+            </button>
+            {% block admin-navigation %}
+            {% endblock %}
+        </nav>
         {% endif %}
         {% block content %}
         {% endblock %}
