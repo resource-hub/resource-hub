@@ -56,7 +56,7 @@
         var feed = "";
         var template = document.getElementById("location-item-template");
         var templateHtml = template.innerHTML;
-        $.each(data, function (i, location) {
+        $.each(data.results, function (i, location) {
             feed += templateHtml
                 .replace(/%owner_name%/g, location.owner['name'])
                 .replace(/%owner_thumbnail%/g, location.owner['thumbnail'])
@@ -80,7 +80,7 @@
         $.get('{% url "api:locations_search" %}', function (data) {
             var popup_template = document.getElementById("pop-up-template").innerHTML;
 
-            $.each(data, function (i, location) {
+            $.each(data.results, function (i, location) {
                 var popup = popup_template
                     .replace(/%name%/g, location.name)
                     .replace(/%address_string%/g, location.address.address_string)

@@ -35,7 +35,7 @@
         }).done(function (data) {
             var feed = "";
 
-            $.each(data, function (i, contract) {
+            $.each(data.results, function (i, contract) {
                 feed += templateHtml
                     .replace(/%type_name%/g, contract['type_name'])
                     .replace(/%state%/g, contract['state'])

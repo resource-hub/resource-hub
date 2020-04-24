@@ -346,6 +346,10 @@ td>a {
   display: none !important;
 }
 
+.invisible {
+  visibility: hidden;
+}
+
 .spacer {
   margin-top: 1em;
 }

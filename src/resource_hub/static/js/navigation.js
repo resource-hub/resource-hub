@@ -1,6 +1,9 @@
 function remove_loader(name) {
   $(name).removeClass("active").addClass("disabled");
 }
+function add_loader(name) {
+  $(name).addClass("active").removeClass("disabled");
+}
 
 $(document).ready(function () {
   $("#main-menu-toggle").on("click", function () {

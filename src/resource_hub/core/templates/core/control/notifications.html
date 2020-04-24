@@ -94,7 +94,7 @@
         }).done(function (data) {
             var feed = "";
 
-            $.each(data, function (i, notification) {
+            $.each(data.results, function (i, notification) {
                 var read_flag = notification['is_read'] ? 'read' : 'not_read';
                 if (notification['typ'] == 'i') {
                     var template = infoTemplate
