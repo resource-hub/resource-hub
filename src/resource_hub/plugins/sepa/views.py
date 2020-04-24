@@ -64,7 +64,7 @@ class SEPAMandateDetails(View):
 class XMLFilesManage(TableView):
     header = _('SEPA Direct Debit XML files')
 
-    def get_queryset(self):
+    def get_queryset(self, request):
         return SEPADirectDebitXML.objects.filter(creditor=self.request.actor)
 
     def get_table(self):
@@ -150,7 +150,7 @@ class XMLFilesCreate(View):
 class OpenPayments(TableView):
     header = _('Open SEPA Direct Debit payments')
 
-    def get_queryset(self):
+    def get_queryset(self, request):
         return SEPADirectDebitPayment.objects.filter(
             creditor=self.request.actor,
             status=SEPADirectDebitPayment.STATUS.OPEN,

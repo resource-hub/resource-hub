@@ -108,6 +108,9 @@ class ClaimTable(tables.Table):
         attrs = {
             "class": "ui selectable table"
         }
+        pagination = {
+            'class': 'ui'
+        }
 
 
 class ContractProcedureTable(tables.Table):

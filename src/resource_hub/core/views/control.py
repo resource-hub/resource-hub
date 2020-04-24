@@ -109,9 +109,9 @@ class FinanceBankAccounts(View):
 class FinancePaymentMethodsManage(TableView):
     header = _('Payment methods')
 
-    def get_queryset(self):
+    def get_queryset(self, request):
         methods = get_associated_objects(
-            self.request.actor,
+            request.actor,
             PaymentMethod
         ).select_subclasses()
 
@@ -308,9 +308,9 @@ class FinanceContractsManageDetails(View):
 class FinanceContractProceduresManage(TableView):
     header = _('Manage contract procedures')
 
-    def get_queryset(self):
+    def get_queryset(self, request):
         return get_associated_objects(
-            self.request.actor,
+            request.actor,
             ContractProcedure
         ).select_subclasses()
 
@@ -336,9 +336,9 @@ class FinanceContractProceduresCreate(View):
 class FinanceInvoicesOutgoing(TableView):
     header = _('Outgoing invoices')
 
-    def get_queryset(self):
+    def get_queryset(self, request):
         actor = self.request.actor
-        return Invoice.objects.filter(contract__creditor=actor).order_by('-created_at')
+        return Invoice.objects.filter(contract__creditor=actor)
 
     def get_table(self):
         return InvoiceTable
@@ -348,9 +348,9 @@ class FinanceInvoicesOutgoing(TableView):
 class FinanceInvoicesIncoming(TableView):
     header = _('Incoming invoices')
 
-    def get_queryset(self):
+    def get_queryset(self, request):
         actor = self.request.actor
-        return Invoice.objects.filter(contract__debitor=actor).order_by('-created_at')
+        return Invoice.objects.filter(contract__debitor=actor)
 
     def get_table(self):
         return InvoiceTable
@@ -371,7 +371,7 @@ class OrganizationsManage(TableView):
     def get_table(self):
         return OrganizationsTable
 
-    def get_queryset(self):
+    def get_queryset(self, request):
         user = self.request.user
         query = Q(members=user)
         query.add(
@@ -533,9 +533,9 @@ class LocationsCreate(View):
 class LocationsManage(TableView):
     header = _('Manage locations')
 
-    def get_queryset(self):
+    def get_queryset(self, request):
         return get_associated_objects(
-            self.request.actor,
+            request.actor,
             Location
         )
 
