@@ -17,7 +17,10 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class ActorSerializer(serializers.ModelSerializer):
-    thumbnail = serializers.ImageField()
+    thumbnail = serializers.SerializerMethodField()
+
+    def get_thumbnail(self, obj):
+        return obj.thumbnail.url
 
     class Meta:
         model = Actor
