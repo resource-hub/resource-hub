@@ -1396,8 +1396,8 @@ class Invoice(BaseModel):
                 'Every invoice needs to be connected to a contract')
         if not self.prefix:
             self.prefix = self.contract.creditor.invoice_numbers_prefix
-            # if self.is_cancellation:
-            #     self.prefix = self.contract.creditor.invoice_numbers_prefix_cancellations or self.prefix
+            if self.is_cancellation:
+                self.prefix = self.contract.creditor.invoice_numbers_prefix_cancellations or self.prefix
 
         if not self.invoice_no:
             for i in range(10):
