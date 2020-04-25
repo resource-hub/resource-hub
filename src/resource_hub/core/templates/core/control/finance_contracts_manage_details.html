@@ -2,6 +2,11 @@
 {% load i18n %}
 {% load django_tables2 %}
 
+{% block admin-navigation %}
+{% url 'control:finance_contracts_credited' as url %}
+{% include '_back_button.html' with url=url %}
+{% endblock %}
+
 {% block content %}
 <h1>{% trans 'Contract details' %} <a class="ui {{ contract.state }} tag label">{{ contract.get_state_display }}</a>
 </h1>
