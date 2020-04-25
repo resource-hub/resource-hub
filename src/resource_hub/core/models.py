@@ -1277,8 +1277,8 @@ class Invoice(BaseModel):
     is_cancellation = models.BooleanField(default=False)
     refers = models.ForeignKey(
         'Invoice', related_name='referred', null=True, blank=True, on_delete=models.CASCADE)
-    invoice_from_name = models.CharField(max_length=190, null=True)
     invoice_from = models.TextField(null=True)
+    invoice_from_name = models.CharField(max_length=190, null=True)
     invoice_from_postal_code = models.CharField(max_length=190, null=True)
     invoice_from_city = models.CharField(max_length=190, null=True)
     invoice_from_country = CountryField(null=True)
@@ -1347,7 +1347,7 @@ class Invoice(BaseModel):
             self.invoice_from,
             (self.invoice_from_postal_code or "") +
             " " + (self.invoice_from_city or ""),
-            self.invoice_from_country,
+            self.invoice_from_country.name,
         ]
         return '\n'.join([p.strip() for p in parts if p and p.strip()])
 
@@ -1470,38 +1470,36 @@ class Invoice(BaseModel):
             invoice.invoice_from_name = creditor.name
             invoice.invoice_from_postal_code = creditor.address.postal_code
             invoice.invoice_from_city = creditor.address.city
-            # invoice.invoice_from_country = creditor.address.country
+            invoice.invoice_from_country = creditor.address.country
             invoice.invoice_from_tax_id = creditor.tax_id
             invoice.invoice_from_vat_id = creditor.vat_id
 
-            additional = PaymentMethod.objects.get_subclass(
-                pk=contract.payment_method.pk).get_invoice_text() + '\n\n'
             introductory = creditor.invoice_introductory_text
-            additional += creditor.invoice_additional_text
+            additional = creditor.invoice_additional_text
             footer = creditor.invoice_footer_text
 
             invoice.introductory_text = str(
                 introductory).replace('\n', '<br />')
             invoice.additional_text = str(additional).replace('\n', '<br />')
             invoice.footer_text = str(footer)
-            # invoice.payment_provider_text = str(
-            #     payment).replace('\n', '<br />')
+            invoice.payment_provider_text = (PaymentMethod.objects.get_subclass(
+                pk=contract.payment_method.pk).get_invoice_text() + '\n\n').replace('\n', '<br />')
             ia = debitor.address
             addr_template = pgettext("invoice", """
 {name}
 {i.street}
 {i.postal_code} {i.city}""")
-            # invoice.invoice_to = "\n".join(
-            #     a.strip() for a in addr_template.format(
-            #         i=ia,
-            #         name=debitor.name,
-            #     ).split("\n") if a.strip()
-            # )
+            invoice.invoice_to = "\n".join(
+                a.strip() for a in addr_template.format(
+                    i=ia,
+                    name=debitor.name,
+                ).split("\n") if a.strip()
+            )
             invoice.invoice_to_name = debitor.name
             invoice.invoice_to_street = ia.street
             invoice.invoice_to_postal_code = ia.postal_code
             invoice.invoice_to_city = ia.city
-            # invoice.invoice_to_country = ia.country
+            invoice.invoice_to_country = ia.country
 
             if debitor.vat_id:
                 invoice.invoice_to += "\n" + \

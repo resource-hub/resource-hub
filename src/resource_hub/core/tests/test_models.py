@@ -139,8 +139,8 @@ class TestContract(BaseContractTest):
         self.assertEqual(len(closed_claims), self.no_of_claims)
         self.assertEqual(self.contract.state, Contract.STATE.FINALIZED)
         self.assertEqual(len(self.contract.settlement_logs.all()), 2)
-        # for invoice in self.contract.invoices.all():
-        #     invoice.file.delete()
+        for invoice in self.contract.invoices.all():
+            invoice.file.delete()
 
     def test_inital_settlement_log(self):
         self.contract.set_initial_settlement_log()
