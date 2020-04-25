@@ -366,6 +366,10 @@ td>a {
   margin: 2vh 0 3vh 0;
 }
 
+.padded-section-container {
+  padding: 2vh 0 3vh 0 !important;
+}
+
 .indent {
   margin-left: 0.5em;
 }

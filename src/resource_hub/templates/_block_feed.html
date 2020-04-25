@@ -6,35 +6,34 @@
 <div id="feed"
     class="{% if custom_class %}{{ custom_class }}{% else %}ui stackable {{ blocks }} column cards grid{% endif %}">
 </div>
-<div class="ui one column stackable center aligned page grid">
+<div class="ui one column stackable center aligned page grid padded-section-container">
     <span id="none-found" class="hidden">{% trans 'No objects found' %}</span>
+    <div id="feed-loader" class="ui active inline loader"></div>
     <button id="load-more" class="ui invisible green icon button">
         {% trans 'Load more' %}
         <i class="sync icon"></i>
     </button>
 </div>
-<div id="feed-loader" class="ui active centered inline loader"></div>
 
 {% addtoblock 'js' %}
 <script>
     var next = '';
 
     function load_feed(url, _feed_renderer, append = false) {
+        $('#load-more').addClass('invisible');
         add_loader('#feed-loader');
         $.ajax({
             'url': url,
             'type': 'GET',
             'dataType': 'JSON'
         }).done(function (data) {
+            remove_loader('#feed-loader');
             var feed = _feed_renderer(data.results);
 
             if (data.next) {
                 $('#load-more').removeClass('invisible');
                 next = data.next;
-            } else {
-                $('#load-more').addClass('invisible');
             }
-            remove_loader('#feed-loader');
             if (append) {
                 $('#feed').append(feed);
             } else {
