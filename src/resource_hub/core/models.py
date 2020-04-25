@@ -1467,7 +1467,7 @@ class Invoice(BaseModel):
         invoice.contract = contract
         creditor = contract.creditor
         debitor = contract.debitor
-        with language('en'):
+        with language(creditor.address.country.code):
             invoice.invoice_from = '{} {}'.format(
                 creditor.address.street, creditor.address.street_number)
             invoice.invoice_from_name = creditor.name
