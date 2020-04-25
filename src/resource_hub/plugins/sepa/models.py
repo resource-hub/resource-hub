@@ -132,6 +132,9 @@ class SEPA(PaymentMethod):
                 description=description,
             )
 
+    def get_invoice_text(self):
+        return _('This invoice has been settled with SEPA Direct Debit')
+
 
 def sepaxml_filename(instance, filename: str) -> str:
     secret = get_random_string(

@@ -49,3 +49,12 @@ class BankTransfer(PaymentMethod):
 
     def settle(self, contract, claims, invoice):
         pass
+
+    def get_invoice_text(self) -> str:
+        return _(
+            'Please make a SEPA credit transfer of the above mentioned gross amount to the following account: \n {account_holder} \n {iban} \n {bic}'.format(
+                account_holder=self.bank_account.account_holder,
+                iban=self.bank_account.iban,
+                bic=self.bank_account.bic
+            )
+        )

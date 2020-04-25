@@ -1143,7 +1143,7 @@ class PaymentMethod(Trigger):
     def apply_fee_tax(self, net) -> float:
         return float(net) * (1 + (float(self.fee_tax_rate)/100))
 
-    def get_invoice_text(self, contract) -> str:
+    def get_invoice_text(self) -> str:
         '''
         text appended to the end of invoices informing about the payment, possibly further instructions
         '''
@@ -1474,9 +1474,8 @@ class Invoice(BaseModel):
             invoice.invoice_from_tax_id = creditor.tax_id
             invoice.invoice_from_vat_id = creditor.vat_id
 
-            additional = contract.payment_method.get_invoice_text(
-                contract
-            ) + '\n'
+            additional = PaymentMethod.objects.get_subclass(
+                pk=contract.payment_method.pk).get_invoice_text() + '\n\n'
             introductory = creditor.invoice_introductory_text
             additional += creditor.invoice_additional_text
             footer = creditor.invoice_footer_text
