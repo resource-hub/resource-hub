@@ -198,6 +198,9 @@ CURRENCY_PLACES = {
     'USD': 2,
 }
 
+DEFAULT_COUNTRY = 'DE'
+
+
 # Static files (CSS, JavaScript, Images)
 
 STATIC_URL = '/static/'

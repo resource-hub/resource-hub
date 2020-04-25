@@ -2,6 +2,7 @@ import string
 import uuid
 from datetime import timedelta
 
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.core.files.base import ContentFile
 from django.db import DatabaseError, models, transaction
@@ -265,6 +266,7 @@ class Address(models.Model):
     country = CountryField(
         null=True,
         blank=True,
+        default=settings.DEFAULT_COUNTRY,
     )
     updated_at = models.DateTimeField(
         auto_now=True,
