@@ -5,7 +5,7 @@ from django.test import TestCase
 from django.utils import timezone
 
 from resource_hub.core.models import (Actor, Address, Claim, Contract,
-                                      ContractProcedure, Organization,
+                                      ContractProcedure, Invoice, Organization,
                                       PaymentMethod, User)
 
 # from django.contrib.auth.models import User
@@ -135,9 +135,9 @@ class TestContract(BaseContractTest):
         self.contract.settle_claims()
         closed_claims = self.contract.claim_set.filter(
             status=Claim.STATUS.CLOSED)
+        # test if all claims correctly closed
         self.assertEqual(len(closed_claims), self.no_of_claims)
         self.assertEqual(self.contract.state, Contract.STATE.FINALIZED)
-
         self.assertEqual(len(self.contract.settlement_logs.all()), 2)
         # for invoice in self.contract.invoices.all():
         #     invoice.file.delete()
@@ -155,3 +155,19 @@ class TestContract(BaseContractTest):
         self.contract.payment_method.is_prepayment = True
         self.contract.save()
         self.assertRaises(ValueError, self.contract.set_initial_settlement_log)
+
+    def test_invoice_creation(self):
+        self.contract.settle_claims()
+        self.assertEqual(
+            len(Invoice.objects.filter(contract=self.contract)),
+            1
+        )
+
+    def test_invoice_settings(self):
+        self.contract_procedure.is_invoicing = False
+        self.contract_procedure.save()
+        self.contract.settle_claims()
+        self.assertEqual(
+            len(Invoice.objects.filter(contract=self.contract)),
+            0
+        )

@@ -106,13 +106,6 @@ class VenueFormManager(FormManager):
 class VenueContractProcedureForm(ContractProcedureForm):
     class Meta(ContractProcedureForm.Meta):
         model = VenueContractProcedure
-        new = {
-            'venues': _('Select the venues that you want to make bookable. A venue can only be associated with one procedure. Existing connections will be overwritten.'),
-        }
-        help_texts = {
-            **ContractProcedureForm.Meta.help_texts,
-            **new
-        }
 
     def save(self, commit=True, **kwargs):
         new_venue_contract_procedure = super(

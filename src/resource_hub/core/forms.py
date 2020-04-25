@@ -364,12 +364,6 @@ class UserAccountFormManager():
         }
 
 
-# class PriceForm(forms.Form):
-#     addressee = models.
-
-
-# PriceFormSet = formset_factory(PriceForm)
-
 class ContractProcedureForm(forms.ModelForm):
     def __init__(self, request, *args, **kwargs):
         self.request = request
@@ -387,15 +381,8 @@ class ContractProcedureForm(forms.ModelForm):
 
     class Meta:
         model = ContractProcedure
-        fields = ['name', 'auto_accept', 'terms_and_conditions', 'notes',
+        fields = ['name', 'auto_accept', 'is_invoicing', 'terms_and_conditions', 'notes',
                   'triggers', 'tax_rate', 'payment_methods', 'settlement_interval', ]
-
-        help_texts = {
-            'name': _('Give the procedure a name so you can identify it easier'),
-            'auto_accept': _('Automatically accept the booking?'),
-            'payment_methods': _('Choose the payment methods you want to use for this venue'),
-            'price_profiles': _('Define discounts for certain groups and actors'),
-        }
 
 
 class PriceForm(forms.ModelForm):

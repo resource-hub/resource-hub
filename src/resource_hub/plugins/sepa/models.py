@@ -112,6 +112,8 @@ class SEPA(PaymentMethod):
                     'claims have to be related to the same contract')
 
         for currency, total in currency_map.items():
+            description = '{}: {}'.format(
+                contract.verbose_name, invoice.number) if invoice else contract.verbose_name
             mandate = SEPAMandate.objects.get(
                 creditor=contract.creditor, debitor=contract.debitor, state=Contract.STATE.RUNNING)
             sepa_type = 'RCUR' if SEPADirectDebitPayment.objects.filter(
@@ -127,8 +129,7 @@ class SEPA(PaymentMethod):
                 currency=currency,
                 sepa_type=sepa_type,
                 mandate=mandate,
-                description='{}: {}'.format(
-                    contract.verbose_name, invoice.number),
+                description=description,
             )
 
 

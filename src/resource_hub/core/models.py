@@ -941,7 +941,6 @@ class Contract(BaseContract):
         pass
 
     def settle_claims(self):
-        from .jobs import notify
         now = timezone.now()
         selector = now + \
             timedelta(
@@ -950,25 +949,17 @@ class Contract(BaseContract):
         open_claims = self.claim_set.filter(
             status=Claim.STATUS.OPEN, period_end__lte=selector)
         if open_claims:
-            invoice = None
             with transaction.atomic():
-                invoice = Invoice.build(self, open_claims)
-                invoice.save()
-                PaymentMethod.objects.get_subclass(
-                    pk=self.payment_method.pk).settle(self, open_claims, invoice)
+                payment_method = PaymentMethod.objects.get_subclass(
+                    pk=self.payment_method.pk)
+                if self.contract_procedure.is_invoicing:
+                    invoice = Invoice.build(self, open_claims)
+                    invoice.create_pdf()
+                else:
+                    invoice = None
+
+                payment_method.settle(self, open_claims, invoice)
                 open_claims.update(status=Claim.STATUS.CLOSED)
-                notify(
-                    Notification.TYPE.ACTION,
-                    self.creditor,
-                    Notification.ACTION.CREATE,
-                    '{} {}'.format(_('invoice'), invoice.number),
-                    reverse('control:finance_invoices_incoming'),
-                    self.debitor,
-                    Notification.LEVEL.MEDIUM,
-                    _('%(sender)s has created a new invoice. See the attached file.') % {
-                        'sender': self.creditor.name},
-                    [invoice.file.path],
-                )
                 if self.is_fixed_term:
                     if not self.claim_set.filter(status=Claim.STATUS.OPEN).exists():
                         self.set_finalized()
@@ -1144,13 +1135,19 @@ class PaymentMethod(Trigger):
     def settle(self, contract, claims, invoice) -> None:
         pass
 
-    def apply_fee(self, net):
+    def apply_fee(self, net) -> float:
         total = self.fee_absolute_value
         total += float(net) * (float(self.fee_relative_value/100))
         return total
 
-    def apply_fee_tax(self, net):
+    def apply_fee_tax(self, net) -> float:
         return float(net) * (1 + (float(self.fee_tax_rate)/100))
+
+    def get_invoice_text(self, contract) -> str:
+        '''
+        text appended to the end of invoices informing about the payment, possibly further instructions
+        '''
+        return ''
 
 
 class ContractProcedure(models.Model):
@@ -1162,9 +1159,17 @@ class ContractProcedure(models.Model):
 
     name = models.CharField(
         max_length=64,
+        help_text=_('Give the procedure a name so you can identify it easier'),
     )
     auto_accept = models.BooleanField(
-        default=False
+        default=False,
+        help_text=_('Automatically accept the booking?'),
+    )
+    is_invoicing = models.BooleanField(
+        blank=True,
+        default=True,
+        verbose_name=_('Create invoices'),
+        help_text=_('Create invoices upon settlement of claims'),
     )
     terms_and_conditions = models.TextField(
         null=True,
@@ -1179,6 +1184,8 @@ class ContractProcedure(models.Model):
     payment_methods = models.ManyToManyField(
         PaymentMethod,
         blank=False,
+        help_text=_(
+            'Choose the payment methods you want to use for this venue'),
     )
     tax_rate = PercentField(
         verbose_name=_('tax rate applied in percent'),
@@ -1438,7 +1445,18 @@ class Invoice(BaseModel):
             fname, ftype, fcontent = InvoiceRenderer().generate(self)
             self.file.save(fname, ContentFile(fcontent))
             self.save()
-            return self.file.name
+        Notification.objects.create(
+            typ=Notification.TYPE.INFO,
+            sender=self.contract.creditor,
+            action=Notification.ACTION.CREATE,
+            target='{} {}'.format(_('invoice'), self.number),
+            link=reverse('control:finance_invoices_incoming'),
+            recipient=self.contract.debitor,
+            level=Notification.LEVEL.LOW,
+            message=_('%(sender)s has created a new invoice. See the attached file.') % {
+                'sender': self.contract.creditor.name},
+        )
+        return self.file.name
 
     @classmethod
     def build(cls, contract, claims):
@@ -1456,8 +1474,11 @@ class Invoice(BaseModel):
             invoice.invoice_from_tax_id = creditor.tax_id
             invoice.invoice_from_vat_id = creditor.vat_id
 
+            additional = contract.payment_method.get_invoice_text(
+                contract
+            ) + '\n'
             introductory = creditor.invoice_introductory_text
-            additional = creditor.invoice_additional_text
+            additional += creditor.invoice_additional_text
             footer = creditor.invoice_footer_text
 
             invoice.introductory_text = str(
@@ -1508,7 +1529,6 @@ class Invoice(BaseModel):
                     period_end=c.period_end,
                 )
 
-            invoice.create_pdf()
             return invoice
 
 
