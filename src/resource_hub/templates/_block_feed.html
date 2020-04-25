@@ -45,7 +45,7 @@
                     $('#none-found').removeClass('hidden');
                 }
             }
-            if (feed_listeners) {
+            if (typeof feed_listeners !== 'undefined') {
                 feed_listeners();
             }
             $('.thumbnail').on('load', function () {
