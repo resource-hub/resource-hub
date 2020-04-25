@@ -1269,6 +1269,9 @@ def today():
 
 
 class Invoice(BaseModel):
+    '''
+    thanks to https://github.com/pretix/pretix/blob/master/src/pretix/base/models/invoices.py
+    '''
     contract = models.ForeignKey(
         Contract, related_name='invoices', db_index=True, on_delete=models.CASCADE)
     prefix = models.CharField(max_length=160, db_index=True)
