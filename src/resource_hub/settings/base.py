@@ -198,6 +198,7 @@ CURRENCY_PLACES = {
     'USD': 2,
 }
 
+# has to be caps, for country field
 DEFAULT_COUNTRY = 'DE'
 
 
