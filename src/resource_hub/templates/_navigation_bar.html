@@ -135,12 +135,12 @@
                 url: "{% url 'api:actor_list' %}",
                 type: "GET",
                 dataType: "JSON",
-            }).done(function (list) {
+            }).done(function (data) {
                 remove_loader("#role-loader");
                 $("#role-form").removeClass("hidden");
                 var list_items = "";
-                if (list.length > 0) {
-                    $.each(list, function (key, actor) {
+                if (data.results.length > 0) {
+                    $.each(data.results, function (key, actor) {
                         list_items +=
                             '<option value="' + actor.id + '">' + actor.name + "</option>";
                     });

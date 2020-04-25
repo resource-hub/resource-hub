@@ -1,9 +1,7 @@
 {% load i18n %}
 {% load sekizai_tags %}
 
-<div id="feed-loader" class="ui active centered inline loader"></div>
-<div id="contract-feed" class="ui stackable three column cards grid"></div>
-
+{% include '_block_feed.html' with blocks='three' %}
 
 {% addtoblock 'js' %}
 <script id="template" type="text/template">
@@ -23,39 +21,25 @@
     </div>
 </script>
 <script>
-    function create_feed(name = null, id = null) {
+    function render_feed(data) {
         var template = document.getElementById("template");
         var templateHtml = template.innerHTML;
+        var feed = "";
 
-        $.ajax({
-            url: "{% url 'api:contracts_list' %}",
-            type: 'GET',
-            dataType: 'JSON',
-            data: '&type=' + '{{ type }}'
-        }).done(function (data) {
-            var feed = "";
-
-            $.each(data.results, function (i, contract) {
-                feed += templateHtml
-                    .replace(/%type_name%/g, contract['type_name'])
-                    .replace(/%state%/g, contract['state'])
-                    .replace(/%state_display%/g, contract['state_display'])
-                    .replace(/%link%/g, contract['link'])
-                    .replace(/%created_at%/g, contract['created_at'])
-                    .replace(/%creditor_name%/g, contract.creditor['name'])
-                    .replace(/%creditor_thumbnail%/g, contract.creditor['thumbnail'])
-            });
-
-            remove_loader('#feed-loader');
-            $('#contract-feed').html(feed);
-            $('.thumbnail').on('load', function () {
-                $('.placeholder').hide();
-            });
+        $.each(data, function (i, contract) {
+            feed += templateHtml
+                .replace(/%type_name%/g, contract['type_name'])
+                .replace(/%state%/g, contract['state'])
+                .replace(/%state_display%/g, contract['state_display'])
+                .replace(/%link%/g, contract['link'])
+                .replace(/%created_at%/g, contract['created_at'])
+                .replace(/%creditor_name%/g, contract.creditor['name'])
+                .replace(/%creditor_thumbnail%/g, contract.creditor['thumbnail'])
         });
-
+        return feed;
     }
     $(document).ready(function () {
-        create_feed();
-    })
+        create_feed("{% url 'api:contracts_list' %}", { type: '{{ type }}' });
+    });
 </script>
 {% endaddtoblock %}

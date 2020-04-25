@@ -11,8 +11,7 @@
 
 {% block content %}
 <h1>{% trans 'Notifications' %}</h1>
-<div id="feed-loader" class="ui active centered inline loader"></div>
-<div id="feed" class="ui feed"></div>
+{% include '_block_feed.html' with custom_class='ui feed' %}
 
 {% addtoblock 'js' %}
 <script id="action_template" type="text/template">
@@ -83,49 +82,38 @@
             }
         });
     }
-    function create_feed(name = null, id = null) {
+    function render_feed(data) {
         var actionTemplate = document.getElementById("action_template").innerHTML;
         var infoTemplate = document.getElementById("info_template").innerHTML;
-
-        $.ajax({
-            url: "{% url 'api:notifications_list' %}",
-            type: "GET",
-            dataType: "JSON",
-        }).done(function (data) {
-            var feed = "";
-
-            $.each(data.results, function (i, notification) {
-                var read_flag = notification['is_read'] ? 'read' : 'not_read';
-                if (notification['typ'] == 'i') {
-                    var template = infoTemplate
-                        .replace(/%message%/g, notification['message']);
-                } else {
-                    var template = actionTemplate
-                        .replace(/%sender_name%/g, notification['sender'].name)
-                }
-                feed += template
-                    .replace(/%pk%/g, notification['pk'])
-                    .replace(/%action%/g, notification['action'])
-                    .replace(/%target%/g, notification['target'])
-                    .replace(/%link%/g, notification['link'])
-                    .replace(/%is_read%/g, read_flag)
-                    .replace(/%created_at%/g, notification['created_at'])
-            });
-
-            remove_loader("#feed-loader");
-            $("#feed").html(feed);
-            $(".thumbnail").on("load", function () {
-                $(".placeholder").hide();
-            });
-
-            $('.mark_read').on('click', function () {
-                var pk = $(this).attr('pk');
-                mark_read(pk);
-            })
+        var feed = '';
+        $.each(data, function (i, notification) {
+            var read_flag = notification['is_read'] ? 'read' : 'not_read';
+            console.log(notification)
+            if (notification['typ'] == 'i') {
+                var template = infoTemplate
+                    .replace(/%message%/g, notification['message']);
+            } else {
+                var template = actionTemplate
+                    .replace(/%sender_name%/g, notification['sender'].name)
+            }
+            feed += template
+                .replace(/%pk%/g, notification['pk'])
+                .replace(/%action%/g, notification['action'])
+                .replace(/%target%/g, notification['target'])
+                .replace(/%link%/g, notification['link'])
+                .replace(/%is_read%/g, read_flag)
+                .replace(/%created_at%/g, notification['created_at'])
+        });
+        return feed;
+    }
+    function feed_listeners() {
+        $('.mark_read').on('click', function () {
+            var pk = $(this).attr('pk');
+            mark_read(pk);
         });
     }
     $(document).ready(function () {
-        create_feed();
+        create_feed("{% url 'api:notifications_list' %}");
 
         $('#mark_all_read').on('click', function () {
             $(this).prop('disabled', true);

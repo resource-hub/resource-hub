@@ -1,4 +1,8 @@
-{% extends "core/__base.html" %} {% load i18n %} {% load static %} {% block extra_head %}
+{% extends "core/__base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block extra_head %}
 <link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %}">
 <script src="{% static 'leaflet/leaflet.js' %}"></script>
 <script src="{% static 'bouncemarker/bouncemarker.js' %}"></script>
@@ -11,12 +15,11 @@
 
 {% block content %}
 <h1>{% trans 'Locations' %}</h1>
-<div id="feed-loader" class="ui active centered inline loader"></div>
-<div id="location-feed" class="ui stackable three column cards grid"></div>
-
+{% include '_block_feed.html' with blocks='three' %}
 {% endblock %}
+
 {% block scripts %}
-<script id="pop-up-template" type="text/tempate">
+<script id="popup-template" type="text/tempate">
     <h5>%name%</h5>
     <p><i class="map marker alternate icon"></i>%address_string%</p>
     <a class="ui positive button" href="%location_link%">{% trans 'Details' %}</a>
@@ -52,11 +55,12 @@
 </script>
 
 <script>
-    function create_feed(query, data = null) {
+    function render_feed(data) {
         var feed = "";
         var template = document.getElementById("location-item-template");
         var templateHtml = template.innerHTML;
-        $.each(data.results, function (i, location) {
+
+        $.each(data, function (i, location) {
             feed += templateHtml
                 .replace(/%owner_name%/g, location.owner['name'])
                 .replace(/%owner_thumbnail%/g, location.owner['thumbnail'])
@@ -64,38 +68,30 @@
                 .replace(/%location_thumbnail%/g, location['thumbnail'])
                 .replace(/%location_name%/g, location.name)
                 .replace(/%address_string%/g, location.address['address_string']);
-        });
 
-        remove_loader('#feed-loader');
-        $('#location-feed').html(feed);
-        $('.thumbnail').on('load', function () {
-            $('.placeholder').hide();
+            location_markers(location);
         });
-        $('.fluid.card .image').dimmer({
-            on: 'hover'
-        });
+        return feed;
+
+    }
+
+    function location_markers(location) {
+        var popup_template = document.getElementById('popup-template').innerHTML;
+        var popup = popup_template
+            .replace(/%name%/g, location.name)
+            .replace(/%address_string%/g, location.address.address_string)
+            .replace(/%location_link%/g, location['location_link']);
+        L.marker([location.latitude, location.longitude], {
+            bounceOnAdd: true,
+            bounceOnAddOptions: { duration: 500, height: 70 },
+            icon: marker,
+            title: location.name,
+            clickable: true,
+        }).bindPopup(popup).addTo(map);
     }
 
     $(document).ready(function () {
-        $.get('{% url "api:locations_search" %}', function (data) {
-            var popup_template = document.getElementById("pop-up-template").innerHTML;
-
-            $.each(data.results, function (i, location) {
-                var popup = popup_template
-                    .replace(/%name%/g, location.name)
-                    .replace(/%address_string%/g, location.address.address_string)
-                    .replace(/%location_link%/g, location['location_link']);
-                L.marker([location.latitude, location.longitude], {
-                    bounceOnAdd: true,
-                    bounceOnAddOptions: { duration: 500, height: 70 },
-                    icon: marker,
-                    title: location.name,
-                    clickable: true,
-                }).bindPopup(popup).addTo(map);
-
-            });
-            create_feed('', data);
-        });
+        create_feed('{% url "api:locations_search" %}');
     });
 </script>
 {% endblock %}

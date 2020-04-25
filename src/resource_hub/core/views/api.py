@@ -6,13 +6,25 @@ from resource_hub.core.serializers import (ActorSerializer, ContractSerializer,
                                            LocationSerializer,
                                            NotificationSerializer,
                                            UserSerializer)
-from resource_hub.core.utils import get_associated_objects
 from rest_framework import filters, generics
 from rest_framework.decorators import (authentication_classes,
                                        permission_classes)
 from rest_framework.exceptions import ValidationError
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+
+class SmallResultsSetPagination(PageNumberPagination):
+    page_size = 9
+    page_size_query_param = 'page_size'
+    max_page_size = 1000
+
+
+class NotificationResultsSetPagination(PageNumberPagination):
+    page_size = 5
+    page_size_query_param = 'page_size'
+    max_page_size = 1000
 
 
 class UserSearch(generics.ListCreateAPIView):
@@ -54,6 +66,7 @@ class Locations(generics.ListCreateAPIView):
 class ContractsList(generics.ListCreateAPIView):
     http_method_names = ['get']
     serializer_class = ContractSerializer
+    pagination_class = SmallResultsSetPagination
 
     def get_queryset(self):
         contract_type = self.request.query_params.get('type', None)
@@ -73,6 +86,7 @@ class ContractsList(generics.ListCreateAPIView):
 class NotificationsList(generics.ListCreateAPIView):
     http_method_name = ['get']
     serializer_class = NotificationSerializer
+    pagination_class = NotificationResultsSetPagination
 
     def get_queryset(self):
         actor = self.request.actor

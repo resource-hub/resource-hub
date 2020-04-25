@@ -4,20 +4,14 @@ import dateutil.parser
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
+from resource_hub.core.views.api import SmallResultsSetPagination
 from resource_hub.venues.models import Event, Venue
 from resource_hub.venues.serializers import VenueSerializer
 from rest_framework import exceptions, generics
 from rest_framework.decorators import (authentication_classes,
                                        permission_classes)
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
-
-class SmallResultsSetPagination(PageNumberPagination):
-    page_size = 3
-    page_size_query_param = 'page_size'
-    max_page_size = 1000
 
 
 @authentication_classes([])
