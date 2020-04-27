@@ -549,6 +549,17 @@ class Notification(BaseModel):
     )
 
 
+class NotificationAttachment(BaseModel):
+    notification = models.ForeignKey(
+        Notification,
+        on_delete=models.PROTECT,
+        related_name='attachments',
+    )
+    path = models.CharField(
+        max_length=255,
+    )
+
+
 class Payment(models.Model):
     # constants
     CREATED = 'c'
@@ -706,11 +717,11 @@ class BaseContract(BaseModel):
 
     # availabe edges for node
     STATE_GRAPH = {
-        STATE.INIT: [STATE.PENDING],
-        STATE.PENDING: [STATE.WAITING, STATE.CANCELED, STATE.EXPIRED, ],
-        STATE.WAITING: [STATE.RUNNING, STATE.DECLINED, ],
-        STATE.RUNNING: [STATE.DISPUTING, STATE.FINALIZED, ],
-        STATE.DISPUTING: [STATE.RUNNING, STATE.FINALIZED, ]
+        STATE.INIT: {STATE.PENDING},
+        STATE.PENDING: {STATE.WAITING, STATE.CANCELED, STATE.EXPIRED, },
+        STATE.WAITING: {STATE.RUNNING, STATE.DECLINED, },
+        STATE.RUNNING: {STATE.DISPUTING, STATE.FINALIZED, },
+        STATE.DISPUTING: {STATE.RUNNING, STATE.FINALIZED, },
     }
 
     # fields
