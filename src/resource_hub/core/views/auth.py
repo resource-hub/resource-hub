@@ -71,7 +71,7 @@ class Register(View):
             login(request, new_user)
 
             message = _(
-                'Please confirm your email address to complete the registration')
+                'Welcome to Resource Hub!')
             messages.add_message(request, messages.SUCCESS, message)
             return redirect(reverse('control:home'))
 
