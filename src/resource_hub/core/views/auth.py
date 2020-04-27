@@ -56,8 +56,8 @@ class Register(View):
             with transaction.atomic():
                 new_user = user_form.save()
 
-            notify.delay(
-                Notification.TYPE.INFO,
+            Notification.build(
+                type_=Notification.TYPE.INFO,
                 sender=None,
                 action='',
                 target='',

@@ -2,12 +2,11 @@ from datetime import datetime, timedelta
 
 from django.core.mail import EmailMultiAlternatives
 from django.db.models import Max
-from django.template.loader import render_to_string
 from django.utils import timezone
 
 import django_rq
 from django_rq import job
-from resource_hub.core.models import Actor, Contract, Notification
+from resource_hub.core.models import Contract, Notification
 
 
 def clear_schedule():
@@ -60,32 +59,8 @@ def send_mail(subject, message, recipient, attachments=None):
 
 
 @job('high')
-def notify(typ, sender, action, target, link, recipient, level, message, attachments=None):
-    notification = Notification.objects.create(
-        typ=typ,
-        sender=sender,
-        action=action,
-        target=target,
-        link=link,
-        recipient=recipient,
-        level=level,
-        message=message,
-    )
-    if level > Notification.LEVEL.LOW:
-        recipient = Actor.objects.get_subclass(pk=recipient.pk)
-        message = render_to_string('core/mail_notification.html', context={
-            'recipient': recipient,
-            'link': link,
-            'message': message,
-        })
-        send_mail.delay(
-            '{} {} {}'.format(
-                sender, notification.get_action_display(), target
-            ),
-            message,
-            recipient.notification_recipients,
-            attachments
-        )
+def send_notification_mails():
+    Notification.send_open_mails()
 
 
 @job('low')

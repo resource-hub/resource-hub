@@ -10,6 +10,7 @@ from django.db.models import Max, Min
 from django.db.models.functions import Cast
 from django.http import HttpResponse
 from django.shortcuts import reverse
+from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.utils.translation import pgettext
@@ -20,6 +21,7 @@ from django_countries.fields import CountryField
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
 from ipware import get_client_ip
+from jobs import send_mail
 from model_utils.fields import MonitorField
 from model_utils.managers import InheritanceManager
 
@@ -490,13 +492,34 @@ class Notification(BaseModel):
         BOOK = 'b'
         CONFIRM = 'co'
 
+    ACTIONS = [
+        (ACTION.CREATE, _('created')),
+        (ACTION.BOOK, _('booked')),
+        (ACTION.CONFIRM, _('confirmed')),
+    ]
+
     class LEVEL:
+        '''
+        the level of a message is the basis for user notification 
+        preferences
+        '''
         LOW = 0  # info
         MEDIUM = 1  # action required, mail
         HIGH = 2  # warning
         CRITICAL = 3  # mandatory information
 
+    LEVELS = [
+        (LEVEL.LOW, _('low')),
+        (LEVEL.MEDIUM, _('medium')),
+        (LEVEL.HIGH, _('high')),
+        (LEVEL.CRITICAL, _('critical')),
+    ]
+
     class TYPE:
+        '''
+        the type is based on the content of the message
+        and determines the display of the notification
+        '''
         INFO = 'i'
         ACTION = 'a'
 
@@ -505,18 +528,29 @@ class Notification(BaseModel):
         (TYPE.ACTION, _('action')),
     ]
 
-    ACTIONS = [
-        (ACTION.CREATE, _('created')),
-        (ACTION.BOOK, _('booked')),
-        (ACTION.CONFIRM, _('confirmed')),
+    class STATUS:
+        '''
+        The status indicates whether the message has been picked
+        up and delivered via a secondary messaging service (e.g. mail)
+
+        The type of service depends on the users preferences
+        and settings
+        '''
+        PENDING = 'p'
+        SENT = 's'
+
+    STATI = [
+        (STATUS.PENDING, _('pending')),
+        (STATUS.SENT, _('send')),
     ]
-    LEVELS = [
-        (LEVEL.LOW, _('low')),
-        (LEVEL.MEDIUM, _('medium')),
-        (LEVEL.HIGH, _('high')),
-        (LEVEL.CRITICAL, _('critical')),
-    ]
-    typ = models.CharField(
+
+    # fields
+    status = models.CharField(
+        max_length=1,
+        choices=STATI,
+        default=STATUS.PENDING,
+    )
+    type_ = models.CharField(
         max_length=2,
         choices=TYPES,
     )
@@ -547,6 +581,52 @@ class Notification(BaseModel):
     is_read = models.BooleanField(
         default=False,
     )
+
+    # methods
+    def send_mail(self):
+        attachments = NotificationAttachment.objects.filter(
+            notification=self
+        )
+        if self.level > Notification.LEVEL.LOW:
+            recipient = Actor.objects.get_subclass(pk=self.recipient.pk)
+            message = render_to_string('core/mail_notification.html', context={
+                'recipient': recipient,
+                'link': self.link,
+                'message': self.message,
+            })
+            send_mail.delay(
+                '{} {} {}'.format(
+                    self.sender, self.get_action_display(), self.target
+                ),
+                self.message,
+                recipient.notification_recipients,
+                attachments
+            )
+        self.status = self.STATUS.SENT
+
+    @classmethod
+    def build(cls, type_, sender, action, target, link, recipient, level, message, attachments=None):
+        notification = cls.objects.create(
+            type_=type_,
+            sender=sender,
+            action=action,
+            target=target,
+            link=link,
+            recipient=recipient,
+            level=level,
+            message=message,
+        )
+
+        for attachment in attachments:
+            notification.attachments.create(
+                path=attachment,
+            )
+        return notification
+
+    @classmethod
+    def send_open_mails(cls):
+        for notification in cls.objetcs.filter(status=cls.STATUS.PENDING):
+            notification.send_mail()
 
 
 class NotificationAttachment(BaseModel):
@@ -1460,7 +1540,7 @@ class Invoice(BaseModel):
             self.file.save(fname, ContentFile(fcontent))
             self.save()
         Notification.objects.create(
-            typ=Notification.TYPE.INFO,
+            type_=Notification.TYPE.INFO,
             sender=self.contract.creditor,
             action=Notification.ACTION.CREATE,
             target='{} {}'.format(_('invoice'), self.number),
