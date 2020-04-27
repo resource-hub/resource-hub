@@ -6,15 +6,14 @@ from decimal import Decimal
 from django.contrib import messages
 from django.db import DatabaseError, models, transaction
 from django.db.models import Max
-from django.db.models.functions import Cast
 from django.shortcuts import redirect, reverse
 from django.template.loader import render_to_string
 from django.utils.crypto import get_random_string
 from django.utils.translation import ugettext_lazy as _
 
 from resource_hub.core.fields import CurrencyField
-from resource_hub.core.models import (Actor, BankAccount, BaseModel, Claim,
-                                      Contract, PaymentMethod)
+from resource_hub.core.models import (Actor, BankAccount, BaseModel, Contract,
+                                      Payment, PaymentMethod)
 from resource_hub.core.utils import round_decimal
 
 
@@ -122,6 +121,7 @@ class SEPA(PaymentMethod):
                 payment_method=self,
                 creditor=contract.creditor,
                 debitor=contract.debitor,
+                value=total,
                 name=contract.debitor.name,
                 iban=contract.debitor.bank_account.iban,
                 bic=contract.debitor.bank_account.bic,
@@ -208,15 +208,7 @@ class SEPADirectDebitXML(BaseModel):
         return super().save(*args, **kwargs)
 
 
-class SEPADirectDebitPayment(BaseModel):
-    class STATUS:
-        OPEN = 'o'
-        CLOSED = 'c'
-
-    STATI = [
-        (STATUS.OPEN, _('open')),
-        (STATUS.CLOSED, _('closed')),
-    ]
+class SEPADirectDebitPayment(Payment):
     sepa_dd_file = models.ForeignKey(
         SEPADirectDebitXML,
         on_delete=models.PROTECT,
@@ -225,25 +217,6 @@ class SEPADirectDebitPayment(BaseModel):
     endtoend_id = models.UUIDField(
         default=uuid.uuid1,
         editable=False,
-    )
-    payment_method = models.ForeignKey(
-        SEPA,
-        on_delete=models.PROTECT,
-    )
-    debitor = models.ForeignKey(
-        Actor,
-        on_delete=models.PROTECT,
-        related_name='sepa_dd_debitor',
-    )
-    creditor = models.ForeignKey(
-        Actor,
-        on_delete=models.PROTECT,
-        related_name='sepa_dd_creditor',
-    )
-    status = models.CharField(
-        max_length=2,
-        choices=STATI,
-        default=STATUS.OPEN,
     )
     name = models.CharField(
         max_length=70,
@@ -255,7 +228,6 @@ class SEPADirectDebitPayment(BaseModel):
         max_length=11,
     )
     amount = models.IntegerField()
-    currency = CurrencyField()
     sepa_type = models.CharField(
         max_length=4,
         default='RCUR'

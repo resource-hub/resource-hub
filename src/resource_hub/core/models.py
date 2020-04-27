@@ -640,29 +640,56 @@ class NotificationAttachment(BaseModel):
     )
 
 
-class Payment(models.Model):
+class Payment(BaseModel):
     # constants
-    CREATED = 'c'
-    PENDING = 'p'
-    FINALIZED = 'f'
-    FAILED = 'fa'
-    CANCELED = 'ca'
-    REFUNDED = 'r'
+    class STATE:
+        # active states
+        INIT = 'i'
+        PENDING = 'p'
+        # final states
+        FAILED = 'fa'
+        CANCELED = 'ca'
+        REFUNDED = 'r'
+        # pseudo final states
+        FINALIZED = 'f'
 
     STATES = [
-        (PENDING, _('pending')),
-        (FINALIZED, _('finalized')),
-        (FAILED, _('failed')),
-        (CANCELED, _('canceled')),
-        (REFUNDED, _('refunded')),
+        (STATE.INIT, _('initializing')),
+        (STATE.PENDING, _('pending')),
+        (STATE.FINALIZED, _('finalized')),
+        (STATE.FAILED, _('failed')),
+        (STATE.CANCELED, _('canceled')),
+        (STATE.REFUNDED, _('refunded')),
     ]
+
+    STATE_GRAPH = {
+        STATE.INIT: {STATE.PENDING},
+        STATE.PENDING: {STATE.FINALIZED, STATE.CANCELED, STATE.FAILED},
+        STATE.FINALIZED: {STATE.REFUNDED},
+    }
 
     # fields
     state = models.CharField(
         choices=STATES,
         max_length=2,
+        default=STATE.INIT,
     )
     state_changed = MonitorField(monitor='state')
+    debitor = models.ForeignKey(
+        Actor,
+        on_delete=models.PROTECT,
+        related_name='payment_debitor',
+    )
+    creditor = models.ForeignKey(
+        Actor,
+        on_delete=models.PROTECT,
+        related_name='payment_creditor',
+    )
+    value = models.DecimalField(
+        decimal_places=5,
+        max_digits=15,
+    )
+    currency = CurrencyField()
     notes = models.TextField(
         null=True,
         blank=True,
@@ -676,9 +703,6 @@ class Payment(models.Model):
         'PaymentMethod',
         null=True,
         on_delete=models.SET_NULL,
-    )
-    created_at = models.DateTimeField(
-        auto_now_add=True,
     )
 
 
