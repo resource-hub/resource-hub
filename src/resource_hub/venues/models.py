@@ -9,7 +9,6 @@ from django.utils.translation import ugettext_lazy as _
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
 from recurrence.fields import RecurrenceField
-from resource_hub.core.jobs import notify
 from resource_hub.core.models import (Actor, BaseModel, Claim, Contract,
                                       ContractProcedure, Gallery, Location,
                                       Notification, Price)

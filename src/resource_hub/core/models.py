@@ -21,7 +21,6 @@ from django_countries.fields import CountryField
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
 from ipware import get_client_ip
-from jobs import send_mail
 from model_utils.fields import MonitorField
 from model_utils.managers import InheritanceManager
 
@@ -550,7 +549,7 @@ class Notification(BaseModel):
         choices=STATI,
         default=STATUS.PENDING,
     )
-    type_ = models.CharField(
+    typ = models.CharField(
         max_length=2,
         choices=TYPES,
     )
@@ -581,9 +580,13 @@ class Notification(BaseModel):
     is_read = models.BooleanField(
         default=False,
     )
+    @property
+    def type_(self):
+        return self.typ
 
     # methods
     def send_mail(self):
+        from .jobs import send_mail
         attachments = NotificationAttachment.objects.filter(
             notification=self
         )
@@ -607,7 +610,7 @@ class Notification(BaseModel):
     @classmethod
     def build(cls, type_, sender, action, target, link, recipient, level, message, attachments=None):
         notification = cls.objects.create(
-            type_=type_,
+            typ=type_,
             sender=sender,
             action=action,
             target=target,
@@ -617,10 +620,11 @@ class Notification(BaseModel):
             message=message,
         )
 
-        for attachment in attachments:
-            notification.attachments.create(
-                path=attachment,
-            )
+        if attachments:
+            for attachment in attachments:
+                notification.attachments.create(
+                    path=attachment,
+                )
         return notification
 
     @classmethod

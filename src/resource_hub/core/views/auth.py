@@ -16,7 +16,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.views import View
 
 from resource_hub.core.forms import RoleChangeForm, UserFormManager
-from resource_hub.core.jobs import notify, send_mail
+from resource_hub.core.jobs import send_mail
 from resource_hub.core.models import Notification, User
 from resource_hub.core.tokens import TokenGenerator
 
