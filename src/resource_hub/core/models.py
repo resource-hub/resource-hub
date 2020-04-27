@@ -572,9 +572,8 @@ class Notification(BaseModel):
         on_delete=models.PROTECT,
         related_name='notification_recipient',
     )
-    level = models.CharField(
+    level = models.IntegerField(
         choices=LEVELS,
-        max_length=3,
     )
     message = models.TextField()
     is_read = models.BooleanField(
@@ -606,6 +605,7 @@ class Notification(BaseModel):
                 attachments
             )
         self.status = self.STATUS.SENT
+        self.save()
 
     @classmethod
     def build(cls, type_, sender, action, target, link, recipient, level, message, attachments=None):
@@ -629,7 +629,7 @@ class Notification(BaseModel):
 
     @classmethod
     def send_open_mails(cls):
-        for notification in cls.objetcs.filter(status=cls.STATUS.PENDING):
+        for notification in cls.objects.filter(status=cls.STATUS.PENDING):
             notification.send_mail()
 
 
@@ -1567,7 +1567,7 @@ class Invoice(BaseModel):
             fname, ftype, fcontent = InvoiceRenderer().generate(self)
             self.file.save(fname, ContentFile(fcontent))
             self.save()
-        Notification.objects.create(
+        Notification.build(
             type_=Notification.TYPE.INFO,
             sender=self.contract.creditor,
             action=Notification.ACTION.CREATE,

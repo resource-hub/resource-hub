@@ -4,9 +4,10 @@ from django.db.models import Min
 from django.test import TestCase
 from django.utils import timezone
 
+from django_rq import get_worker
 from resource_hub.core.models import (Actor, Address, Claim, Contract,
-                                      ContractProcedure, Invoice, Organization,
-                                      PaymentMethod, User)
+                                      ContractProcedure, Invoice, Notification,
+                                      Organization, PaymentMethod, User)
 
 # from django.contrib.auth.models import User
 # from django.utils.dateparse import parse_date
@@ -24,6 +25,30 @@ from resource_hub.core.models import (Actor, Address, Claim, Contract,
 #         first_name = user.first_name
 #         self.assertEqual('Test', first_name)
 
+def create_users():
+    address = Address.objects.create(
+        street='test',
+        street_number=12,
+        postal_code='12345',
+        city='test',
+        country='de',
+    )
+    actor = User.objects.create(
+        name='test',
+        slug='test',
+        address=address,
+        email='test@test.de',
+    )
+    address.pk = None
+    address.save()
+    actor2 = Organization.objects.create(
+        name='test2',
+        slug='test2',
+        address=address,
+        email_public='joe@joe.de',
+    )
+    return actor, actor2
+
 
 class BaseContractTest(TestCase):
     def setUp(self):
@@ -31,27 +56,7 @@ class BaseContractTest(TestCase):
         self.no_of_claims = 10  # only even numbers
         self.claim_length = 5
 
-        address = Address.objects.create(
-            street='test',
-            street_number=12,
-            postal_code='12345',
-            city='test',
-            country='de',
-        )
-        actor = User.objects.create(
-            name='test',
-            slug='test',
-            address=address,
-            email='test@test.de',
-        )
-        address.pk = None
-        address.save()
-        actor2 = Organization.objects.create(
-            name='test2',
-            slug='test2',
-            address=address,
-            email_public='joe@joe.de',
-        )
+        actor, actor2 = create_users()
         payment_method = PaymentMethod.objects.create(
             fee_absolute_value=0,
             fee_relative_value=0,
@@ -171,3 +176,23 @@ class TestContract(BaseContractTest):
             len(Invoice.objects.filter(contract=self.contract)),
             0
         )
+
+
+class TestNotification(TestCase):
+    def setUp(self):
+        actor, actor2 = create_users()
+        Notification.build(
+            type_=Notification.TYPE.INFO,
+            sender=actor,
+            action='',
+            target='test',
+            link='',
+            recipient=actor2,
+            level=Notification.LEVEL.MEDIUM,
+            message='test',
+        )
+
+    def test_send_open_mails(self):
+        Notification.send_open_mails()
+        for notification in Notification.objects.all():
+            self.assertEqual(notification.status, Notification.STATUS.SENT)

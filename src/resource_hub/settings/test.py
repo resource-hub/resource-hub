@@ -10,3 +10,6 @@ EMAIL_HOST_USER = get_env_var('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = get_env_var('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = get_env_var('EMAIL_PORT')
 DEFAULT_FROM_EMAIL = get_env_var('DEFAULT_FROM_EMAIL')
+
+for queueConfig in RQ_QUEUES.values():
+    queueConfig['ASYNC'] = False

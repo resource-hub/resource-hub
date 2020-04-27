@@ -33,6 +33,13 @@ def init_schedule():
         args=[],
         interval=600,
     )
+    # send notification mails
+    scheduler.schedule(
+        scheduled_time=datetime.utcnow(),
+        func=send_notification_mails,
+        args=[],
+        interval=10,
+    )
 
 
 def expire_contracts():
