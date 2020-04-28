@@ -1044,9 +1044,11 @@ class Contract(BaseContract):
 
     def set_running(self, request) -> None:
         self.move_to(self.STATE.RUNNING)
-        if not self.contract_procedure.auto_accept:
+        if self.contract_procedure.auto_accept or self.debitor == self.creditor:
+            pass
+        else:
             self.create_acceptance(request)
-        if self.payment_method.is_prepayment:
+        if self.payment_method.is_prepayment or self.debitor == self.creditor:
             self.settle_claims()
         else:
             self.set_initial_settlement_log()
@@ -1079,9 +1081,9 @@ class Contract(BaseContract):
 
                 payment_method.settle(self, open_claims, invoice)
                 open_claims.update(status=Claim.STATUS.CLOSED)
-                if self.is_fixed_term:
-                    if not self.claim_set.filter(status=Claim.STATUS.OPEN).exists():
-                        self.set_finalized()
+        if self.is_fixed_term:
+            if not self.claim_set.filter(status=Claim.STATUS.OPEN).exists():
+                self.set_finalized()
         self.settlement_logs.create()
 
 

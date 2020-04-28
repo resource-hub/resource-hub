@@ -1,10 +1,9 @@
 from datetime import timedelta
 
 from django.db.models import Min
-from django.test import TestCase
+from django.test import Client, TestCase
 from django.utils import timezone
 
-from django_rq import get_worker
 from resource_hub.core.models import (Actor, Address, Claim, Contract,
                                       ContractProcedure, Invoice, Notification,
                                       Organization, PaymentMethod, User)
@@ -51,32 +50,34 @@ def create_users():
 
 
 class BaseContractTest(TestCase):
+
     def setUp(self):
         self.settlement_interval = 7
         self.no_of_claims = 10  # only even numbers
         self.claim_length = 5
 
-        actor, actor2 = create_users()
+        self.actor, self.actor2 = create_users()
         payment_method = PaymentMethod.objects.create(
             fee_absolute_value=0,
             fee_relative_value=0,
             fee_tax_rate=0,
-            owner=actor,
+            owner=self.actor,
         )
         self.contract_procedure = ContractProcedure.objects.create(
             name='test',
             tax_rate=19,
             settlement_interval=self.settlement_interval,
-            owner=actor,
+            owner=self.actor,
         )
         self.contract = Contract.objects.create(
             contract_procedure=self.contract_procedure,
             payment_method=payment_method,
-            creditor=actor,
-            debitor=actor2,
+            creditor=self.actor,
+            debitor=self.actor2,
             state=Contract.STATE.RUNNING,
         )
 
+    def create_claims(self):
         for i in range(1, self.no_of_claims + 1):
             now = timezone.now()
             length = timedelta(hours=self.claim_length)
@@ -97,8 +98,8 @@ class BaseContractTest(TestCase):
                 net=i*i,
                 discount=0,
                 discounted_net=i*i,
-                tax_rate=self.contract_procedure.tax_rate,
-                gross=self.contract_procedure.apply_tax(i*i),
+                tax_rate=self.contract.contract_procedure.tax_rate,
+                gross=self.contract.contract_procedure.apply_tax(i*i),
                 period_start=period_start,
                 period_end=period_end,
             )
@@ -128,6 +129,7 @@ class TestContract(BaseContractTest):
             )
 
     def test_claim_settlement(self):
+        self.create_claims()
         self.contract.settle_claims()
         closed_claims = self.contract.claim_set.filter(
             status=Claim.STATUS.CLOSED)
@@ -148,6 +150,7 @@ class TestContract(BaseContractTest):
             invoice.file.delete()
 
     def test_inital_settlement_log(self):
+        self.create_claims()
         self.contract.set_initial_settlement_log()
         first_start = self.contract.claim_set.aggregate(Min('period_start'))[
             'period_start__min']
@@ -162,13 +165,30 @@ class TestContract(BaseContractTest):
         self.assertRaises(ValueError, self.contract.set_initial_settlement_log)
 
     def test_invoice_creation(self):
+        self.create_claims()
         self.contract.settle_claims()
         self.assertEqual(
             len(Invoice.objects.filter(contract=self.contract)),
             1
         )
 
+    def test_self_dealing(self):
+        self.contract.debitor = self.actor
+        self.contract.state = Contract.STATE.PENDING
+        self.contract.save()
+        client = Client()
+        response = client.get('')
+        request = response.wsgi_request
+        request.user = User.objects.create_user(
+            username='test',
+            email='test2@test.de',
+            password='12Test12',
+        )
+        self.contract.set_waiting(request)
+        self.assertEqual(self.contract.state, Contract.STATE.FINALIZED)
+
     def test_invoice_settings(self):
+        self.create_claims()
         self.contract_procedure.is_invoicing = False
         self.contract_procedure.save()
         self.contract.settle_claims()
