@@ -119,6 +119,7 @@ class SEPA(PaymentMethod):
                 debitor=contract.debitor, mandate=mandate).exists() else 'FRST'
             SEPADirectDebitPayment.objects.create(
                 payment_method=self,
+                state=SEPADirectDebitPayment.STATE.PENDING,
                 creditor=contract.creditor,
                 debitor=contract.debitor,
                 value=total,

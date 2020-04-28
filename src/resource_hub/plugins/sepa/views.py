@@ -75,7 +75,7 @@ class XMLFilesCreate(View):
     def get(self, request):
         total = SEPADirectDebitPayment.objects.filter(
             creditor=self.request.actor,
-            status=SEPADirectDebitPayment.STATUS.OPEN,
+            state=SEPADirectDebitPayment.STATE.PENDING,
         ).aggregate(total=Sum('amount'))['total']
         total = total / 100 if total else 0
         context = {
@@ -87,7 +87,7 @@ class XMLFilesCreate(View):
     def post(self, request):
         open_payments = SEPADirectDebitPayment.objects.filter(
             creditor=self.request.actor,
-            status=SEPADirectDebitPayment.STATUS.OPEN,
+            state=SEPADirectDebitPayment.STATE.PENDING,
         )
         xml_file_form = SEPADirectDebitXMLForm(request.POST)
 
@@ -135,14 +135,15 @@ class XMLFilesCreate(View):
                                 "endtoend_id": str(payment.endtoend_id).replace('-', ''),
                             })
                         payment.sepa_dd_file = xml_file
-                        payment.status = SEPADirectDebitPayment.STATUS.CLOSED
+                        payment.state = SEPADirectDebitPayment.STATE.FINALIZED
                         payment.save()
 
                     xml_file.file.save('test.xml', ContentFile(
                         sepa_file.export(validate=True)))
                     xml_file.save()
-                message = _('Successfully created %(count)s XML file(s)') % {
-                    'count': count}
+                message = _('Successfully created {count} XML file(s)'.format(
+                    count=count
+                ))
         messages.add_message(request, messages.SUCCESS, message)
         return redirect(reverse('control:finance_sepa_files_manage'))
 
@@ -153,7 +154,7 @@ class OpenPayments(TableView):
     def get_queryset(self, request):
         return SEPADirectDebitPayment.objects.filter(
             creditor=self.request.actor,
-            status=SEPADirectDebitPayment.STATUS.OPEN,
+            state=SEPADirectDebitPayment.STATE.PENDING,
         )
 
     def get_table(self):

@@ -4,9 +4,10 @@ from django.db.models import Min
 from django.test import Client, TestCase
 from django.utils import timezone
 
-from resource_hub.core.models import (Actor, Address, Claim, Contract,
-                                      ContractProcedure, Invoice, Notification,
-                                      Organization, PaymentMethod, User)
+from resource_hub.core.models import (Actor, Address, BankAccount, Claim,
+                                      Contract, ContractProcedure, Invoice,
+                                      Notification, Organization,
+                                      PaymentMethod, User)
 
 # from django.contrib.auth.models import User
 # from django.utils.dateparse import parse_date
@@ -24,7 +25,13 @@ from resource_hub.core.models import (Actor, Address, Claim, Contract,
 #         first_name = user.first_name
 #         self.assertEqual('Test', first_name)
 
+
 def create_users():
+    bank_account = BankAccount.objects.create(
+        account_holder='joe',
+        iban='NL02RABO6664435071',
+        bic='INGDDEFFXXX',
+    )
     address = Address.objects.create(
         street='test',
         street_number=12,
@@ -37,20 +44,23 @@ def create_users():
         slug='test',
         address=address,
         email='test@test.de',
+        bank_account=bank_account,
     )
     address.pk = None
     address.save()
+    bank_account.pk = None
+    bank_account.save()
     actor2 = Organization.objects.create(
         name='test2',
         slug='test2',
         address=address,
         email_public='joe@joe.de',
+        bank_account=bank_account,
     )
     return actor, actor2
 
 
 class BaseContractTest(TestCase):
-
     def setUp(self):
         self.settlement_interval = 7
         self.no_of_claims = 10  # only even numbers
@@ -76,6 +86,36 @@ class BaseContractTest(TestCase):
             debitor=self.actor2,
             state=Contract.STATE.RUNNING,
         )
+
+    def create_users(self):
+        address = Address.objects.create(
+            street='test',
+            street_number=12,
+            postal_code='12345',
+            city='test',
+            country='de',
+        )
+        actor = User.objects.create(
+            name='test',
+            slug='test',
+            address=address,
+            email='test@test.de',
+            bank_account=self.bank_account,
+        )
+        address.pk = None
+        address.save()
+        self.bank_account.pk = None
+        self.bank_account.save()
+        actor2 = Organization.objects.create(
+            name='test2',
+            slug='test2',
+            address=address,
+            email_public='joe@joe.de',
+            bank_account=self.bank_account,
+        )
+        self.bank_account.pk = None
+        self.bank_account.save()
+        return actor, actor2
 
     def create_claims(self):
         for i in range(1, self.no_of_claims + 1):
