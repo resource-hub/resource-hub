@@ -18,7 +18,7 @@ services:
 
   scheduler:
     environment:
-      DJANGO_SETTINGS_MODULE: resource_hub.settings.dev
+      DJANGO_SETTINGS_MODULE: resource_hub.settings.demo
     env_file:
       - .env
     restart: on-failure

@@ -69,7 +69,6 @@
         var feed = '';
         $.each(data, function (i, notification) {
             var read_flag = notification['is_read'] ? 'read' : 'not_read';
-            console.log(notification)
             feed += template
                 .replace(/%pk%/g, notification['pk'])
                 .replace(/%type%/g, notification['typ'])
