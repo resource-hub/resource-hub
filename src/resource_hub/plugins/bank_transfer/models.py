@@ -1,9 +1,11 @@
 from django.contrib import messages
 from django.db import models, transaction
+from django.db.models import Sum
 from django.shortcuts import redirect, reverse
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
-from resource_hub.core.models import BankAccount, PaymentMethod
+from resource_hub.core.models import BankAccount, Payment, PaymentMethod
 
 
 class BankTransfer(PaymentMethod):
@@ -48,7 +50,15 @@ class BankTransfer(PaymentMethod):
         return redirect(reverse('control:finance_contracts_manage_details', kwargs={'pk': contract.pk}))
 
     def settle(self, contract, claims, invoice):
-        pass
+        total = claims.aggregate(total=Sum('gross'))['total']
+        Payment.objects.create(
+            payment_method=self,
+            state=Payment.STATE.FINALIZED,
+            creditor=contract.creditor,
+            debitor=contract.debitor,
+            value=total,
+            payment_date=timezone.now(),
+        )
 
     def get_invoice_text(self) -> str:
         return _(
