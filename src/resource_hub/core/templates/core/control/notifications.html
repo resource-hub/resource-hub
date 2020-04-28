@@ -14,35 +14,17 @@
 {% include '_block_feed.html' with custom_class='ui feed' %}
 
 {% addtoblock 'js' %}
-<script id="action_template" type="text/template">
+<script id="notification-template" type="text/template">
     <div class="event %is_read%" pk="%pk%">
         <div class="label" style="cursor: pointer;" onclick="show_notification('%link%', '%pk%');">
-            <i class="bolt icon"></i>
+            <i class="%type% icon"></i>
         </div>
         <div class="content">
             <div class="summary" style="cursor: pointer;" onclick="show_notification('%link%', '%pk%');">
-                <span>%sender_name%</span> <span>%action%</span> <span>%target%</span>
+                <span>%header%</span>
                 <div class="date">%created_at%</div>
             </div>
-            <div class="meta">
-                <a class="mark_read like %is_read%" pk="%pk%">
-                    <i class="check icon"></i>
-                    {% trans 'mark read' %}
-                </a>
-            </div>
-        </div>
-    </div>
-</script>
-<script id="info_template" type="text/template">
-    <div class="event %is_read%" pk="%pk%">
-        <div class="label" style="cursor: pointer;" onclick="show_notification('%link%', '%pk%');">
-            <i class="lightbulb outline icon"></i>
-        </div>
-        <div class="content">
-            <div class="summary" style="cursor: pointer;" onclick="show_notification('%link%', '%pk%');">
-                <span>%message%</span> 
-                <div class="date">%created_at%</div>
-            </div>
+            <div>%message%</div>
             <div class="meta">
                 <a class="mark_read like %is_read%" pk="%pk%">
                     <i class="check icon"></i>
@@ -83,23 +65,16 @@
         });
     }
     function render_feed(data) {
-        var actionTemplate = document.getElementById("action_template").innerHTML;
-        var infoTemplate = document.getElementById("info_template").innerHTML;
+        var template = document.getElementById("notification-template").innerHTML;
         var feed = '';
         $.each(data, function (i, notification) {
             var read_flag = notification['is_read'] ? 'read' : 'not_read';
             console.log(notification)
-            if (notification['typ'] == 'i') {
-                var template = infoTemplate
-                    .replace(/%message%/g, notification['message']);
-            } else {
-                var template = actionTemplate
-                    .replace(/%sender_name%/g, notification['sender'].name)
-            }
             feed += template
                 .replace(/%pk%/g, notification['pk'])
-                .replace(/%action%/g, notification['action'])
-                .replace(/%target%/g, notification['target'])
+                .replace(/%type%/g, notification['typ'])
+                .replace(/%header%/g, notification['header'])
+                .replace(/%message%/g, notification['message'])
                 .replace(/%link%/g, notification['link'])
                 .replace(/%is_read%/g, read_flag)
                 .replace(/%created_at%/g, notification['created_at'])

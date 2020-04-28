@@ -86,12 +86,8 @@ class LocationSerializer(serializers.ModelSerializer):
 
 class NotificationSerializer(serializers.ModelSerializer):
     sender = ActorSerializer()
-    action = serializers.SerializerMethodField()
-
-    def get_action(self, obj):
-        return obj.get_action_display()
 
     class Meta:
         model = Notification
-        fields = ['pk', 'typ', 'sender', 'action', 'target', 'link',
-                  'recipient', 'level', 'message', 'is_read', 'created_at', ]
+        fields = ['pk', 'typ', 'sender', 'recipient', 'header', 'message', 'link',
+                  'level', 'is_read', 'created_at', ]

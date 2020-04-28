@@ -59,13 +59,14 @@ class Register(View):
             Notification.build(
                 type_=Notification.TYPE.INFO,
                 sender=None,
-                action='',
-                target='',
-                link='',
                 recipient=new_user,
+                header=_('{name} welcome to Resouce Hub!'.format(
+                    name=new_user.first_name
+                )),
+                message='',
+                link='',
                 level=Notification.LEVEL.LOW,
-                message=_('%(name)s, welcome to Resouce Hub!') % {
-                    'name': new_user.first_name}
+                target=new_user,
             )
             send_verification_mail(new_user, request)
             login(request, new_user)

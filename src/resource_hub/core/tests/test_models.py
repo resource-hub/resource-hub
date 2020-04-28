@@ -204,12 +204,12 @@ class TestNotification(TestCase):
         Notification.build(
             type_=Notification.TYPE.INFO,
             sender=actor,
-            action='',
-            target='test',
-            link='',
             recipient=actor2,
-            level=Notification.LEVEL.MEDIUM,
+            header='test',
             message='test',
+            link='',
+            level=Notification.LEVEL.MEDIUM,
+            target=actor,
         )
 
     def test_send_open_mails(self):

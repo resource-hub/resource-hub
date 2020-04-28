@@ -4,6 +4,8 @@ from datetime import timedelta
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.core.files.base import ContentFile
 from django.db import DatabaseError, models, transaction
 from django.db.models import Max, Min
@@ -486,17 +488,6 @@ class OrganizationMember(models.Model):
 
 
 class Notification(BaseModel):
-    class ACTION:
-        CREATE = 'c'
-        BOOK = 'b'
-        CONFIRM = 'co'
-
-    ACTIONS = [
-        (ACTION.CREATE, _('created')),
-        (ACTION.BOOK, _('booked')),
-        (ACTION.CONFIRM, _('confirmed')),
-    ]
-
     class LEVEL:
         '''
         the level of a message is the basis for user notification 
@@ -519,12 +510,16 @@ class Notification(BaseModel):
         the type is based on the content of the message
         and determines the display of the notification
         '''
-        INFO = 'i'
-        ACTION = 'a'
+        INFO = 'info circle'
+        ACTION = 'bolt'
+        CONTRACT = 'handshake'
+        DOCUMENT = 'file'
 
     TYPES = [
         (TYPE.INFO, _('info')),
         (TYPE.ACTION, _('action')),
+        (TYPE.CONTRACT, _('contract')),
+        (TYPE.DOCUMENT, _('document')),
     ]
 
     class STATUS:
@@ -550,7 +545,7 @@ class Notification(BaseModel):
         default=STATUS.PENDING,
     )
     typ = models.CharField(
-        max_length=2,
+        max_length=20,
         choices=TYPES,
     )
     sender = models.ForeignKey(
@@ -559,23 +554,27 @@ class Notification(BaseModel):
         on_delete=models.SET_NULL,
         related_name='notification_sender',
     )
-    action = models.CharField(
-        choices=ACTIONS,
-        max_length=3,
-    )
-    target = models.CharField(
-        max_length=255,
-    )
-    link = models.URLField()
     recipient = models.ForeignKey(
         Actor,
         on_delete=models.PROTECT,
         related_name='notification_recipient',
     )
+    header = models.CharField(
+        max_length=255,
+    )
+    message = models.TextField(
+        null=True,
+    )
+    link = models.URLField()
     level = models.IntegerField(
         choices=LEVELS,
     )
-    message = models.TextField()
+    content_type = models.ForeignKey(
+        ContentType,
+        null=True,
+        on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    target = GenericForeignKey('content_type', 'object_id')
     is_read = models.BooleanField(
         default=False,
     )
@@ -597,9 +596,7 @@ class Notification(BaseModel):
                 'message': self.message,
             })
             send_mail.delay(
-                '{} {} {}'.format(
-                    self.sender, self.get_action_display(), self.target
-                ),
+                self.header,
                 self.message,
                 recipient.notification_recipients,
                 attachments
@@ -608,16 +605,16 @@ class Notification(BaseModel):
         self.save()
 
     @classmethod
-    def build(cls, type_, sender, action, target, link, recipient, level, message, attachments=None):
+    def build(cls, type_, sender, recipient, header, message, link, level, target, attachments=None):
         notification = cls.objects.create(
             typ=type_,
             sender=sender,
-            action=action,
-            target=target,
-            link=link,
             recipient=recipient,
-            level=level,
+            header=header,
             message=message,
+            link=link,
+            level=level,
+            target=target,
         )
 
         if attachments:
@@ -963,7 +960,7 @@ class BaseContract(BaseModel):
 class Contract(BaseContract):
     @property
     def verbose_name(self) -> str:
-        raise NotImplementedError()
+        return _('Contract')
 
     @property
     def is_pending(self) -> bool:
@@ -1053,6 +1050,20 @@ class Contract(BaseContract):
         else:
             self.set_initial_settlement_log()
         self.save()
+        Notification.build(
+            type_=Notification.TYPE.CONTRACT,
+            sender=self.creditor,
+            recipient=self.debitor,
+            header=_('{creditor} accepted {contract}'.format(
+                creditor=self.creditor,
+                contract=self.verbose_name,
+            )),
+            message=self.contract_procedure.notes,
+            link=reverse('control:finance_contracts_manage_details',
+                         kwargs={'pk': self.pk}),
+            level=Notification.LEVEL.MEDIUM,
+            target=self,
+        )
 
     def set_finalized(self) -> None:
         self.move_to(self.STATE.FINALIZED)
@@ -1570,15 +1581,18 @@ class Invoice(BaseModel):
             self.file.save(fname, ContentFile(fcontent))
             self.save()
         Notification.build(
-            type_=Notification.TYPE.INFO,
+            type_=Notification.TYPE.DOCUMENT,
             sender=self.contract.creditor,
-            action=Notification.ACTION.CREATE,
-            target='{} {}'.format(_('invoice'), self.number),
-            link=reverse('control:finance_invoices_incoming'),
             recipient=self.contract.debitor,
+            header=_('{creditor} created invoice {no}'.format(
+                creditor=self.contract.creditor.name,
+                no=self.full_invoice_no,
+            )),
+            message=_('{creditor} has created a new invoice. See the attached file.'.format(
+                creditor=self.contract.creditor.name)),
+            link=reverse('control:finance_invoices_incoming'),
             level=Notification.LEVEL.LOW,
-            message=_('%(sender)s has created a new invoice. See the attached file.') % {
-                'sender': self.contract.creditor.name},
+            target=self,
         )
         return self.file.name
 
