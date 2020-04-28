@@ -513,13 +513,13 @@ class Notification(BaseModel):
         INFO = 'info circle'
         ACTION = 'bolt'
         CONTRACT = 'handshake'
-        DOCUMENT = 'file'
+        MONETARY = 'file alternate outline'
 
     TYPES = [
         (TYPE.INFO, _('info')),
         (TYPE.ACTION, _('action')),
         (TYPE.CONTRACT, _('contract')),
-        (TYPE.DOCUMENT, _('document')),
+        (TYPE.MONETARY, _('monetary')),
     ]
 
     class STATUS:
@@ -545,7 +545,7 @@ class Notification(BaseModel):
         default=STATUS.PENDING,
     )
     typ = models.CharField(
-        max_length=20,
+        max_length=30,
         choices=TYPES,
     )
     sender = models.ForeignKey(
@@ -1583,7 +1583,7 @@ class Invoice(BaseModel):
             self.file.save(fname, ContentFile(fcontent))
             self.save()
         Notification.build(
-            type_=Notification.TYPE.DOCUMENT,
+            type_=Notification.TYPE.MONETARY,
             sender=self.contract.creditor,
             recipient=self.contract.debitor,
             header=_('{creditor} created invoice {no}'.format(
@@ -1593,8 +1593,9 @@ class Invoice(BaseModel):
             message=_('{creditor} has created a new invoice. See the attached file.'.format(
                 creditor=self.contract.creditor.name)),
             link=reverse('control:finance_invoices_incoming'),
-            level=Notification.LEVEL.LOW,
+            level=Notification.LEVEL.MEDIUM,
             target=self,
+            attachments=[self.file.url, ],
         )
         return self.file.name
 

@@ -1,7 +1,6 @@
 from collections import defaultdict
 
 from django.contrib import messages
-from django.core.files.base import ContentFile
 from django.db import transaction
 from django.db.models import Sum
 from django.http import HttpResponseForbidden
@@ -9,11 +8,10 @@ from django.shortcuts import redirect, render, reverse
 from django.utils.translation import gettext_lazy as _
 from django.views import View
 
-from resource_hub.core.models import Contract
+from resource_hub.core.models import Contract, PaymentMethod
 from resource_hub.core.utils import money_filter
 from resource_hub.core.views import TableView
 from resource_hub.core.views.control import get_subobject_or_404
-from sepaxml import SepaDD
 
 from .forms import SEPADirectDebitXMLForm
 from .models import SEPADirectDebitPayment, SEPADirectDebitXML, SEPAMandate
@@ -99,7 +97,8 @@ class XMLFilesCreate(View):
                     payment_map[payment.payment_method.pk].append(payment)
 
                 for method, payments in payment_map.items():
-                    method = payments[0].payment_method
+                    method = PaymentMethod.objects.get_subclass(
+                        pk=payments[0].payment_method.pk)
                     count += 1
                     xml_file = xml_file_form.save(commit=False)
                     xml_file.creditor = self.request.actor
@@ -108,39 +107,7 @@ class XMLFilesCreate(View):
                     xml_file.iban = method.bank_account.iban
                     xml_file.bic = method.bank_account.bic
                     xml_file.save()
-
-                    sepa_file = SepaDD({
-                        "name": xml_file.name,
-                        "IBAN": xml_file.iban,
-                        "BIC": xml_file.bic,
-                        "batch": xml_file.batch,
-                        "creditor_id": xml_file.creditor_identifier,
-                        "currency": xml_file.currency,
-                        "instrument": "COR1",
-                    }, schema="pain.008.003.02", clean=True)
-                    # todo currency
-
-                    for payment in payments:
-                        sepa_file.add_payment(
-                            {
-                                "name": payment.name,
-                                "IBAN": payment.iban,
-                                "BIC": payment.bic,
-                                "amount": payment.amount,
-                                "type": payment.sepa_type,
-                                "collection_date": xml_file.collection_date,
-                                "mandate_id": str(payment.mandate.uuid).replace('-', ''),
-                                "mandate_date": payment.mandate.confirmation.timestamp.date(),
-                                "description": payment.description,
-                                "endtoend_id": str(payment.endtoend_id).replace('-', ''),
-                            })
-                        payment.sepa_dd_file = xml_file
-                        payment.state = SEPADirectDebitPayment.STATE.FINALIZED
-                        payment.save()
-
-                    xml_file.file.save('test.xml', ContentFile(
-                        sepa_file.export(validate=True)))
-                    xml_file.save()
+                    xml_file.create_xml(payments)
                 message = _('Successfully created {count} XML file(s)'.format(
                     count=count
                 ))

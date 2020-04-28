@@ -87,36 +87,6 @@ class BaseContractTest(TestCase):
             state=Contract.STATE.RUNNING,
         )
 
-    def create_users(self):
-        address = Address.objects.create(
-            street='test',
-            street_number=12,
-            postal_code='12345',
-            city='test',
-            country='de',
-        )
-        actor = User.objects.create(
-            name='test',
-            slug='test',
-            address=address,
-            email='test@test.de',
-            bank_account=self.bank_account,
-        )
-        address.pk = None
-        address.save()
-        self.bank_account.pk = None
-        self.bank_account.save()
-        actor2 = Organization.objects.create(
-            name='test2',
-            slug='test2',
-            address=address,
-            email_public='joe@joe.de',
-            bank_account=self.bank_account,
-        )
-        self.bank_account.pk = None
-        self.bank_account.save()
-        return actor, actor2
-
     def create_claims(self):
         for i in range(1, self.no_of_claims + 1):
             now = timezone.now()

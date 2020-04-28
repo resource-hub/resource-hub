@@ -4,17 +4,20 @@ from collections import defaultdict
 from decimal import Decimal
 
 from django.contrib import messages
+from django.core.files.base import ContentFile
 from django.db import DatabaseError, models, transaction
 from django.db.models import Max
 from django.shortcuts import redirect, reverse
 from django.template.loader import render_to_string
+from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.utils.translation import ugettext_lazy as _
 
 from resource_hub.core.fields import CurrencyField
 from resource_hub.core.models import (Actor, BankAccount, BaseModel, Contract,
-                                      Payment, PaymentMethod)
+                                      Notification, Payment, PaymentMethod)
 from resource_hub.core.utils import round_decimal
+from sepaxml import SepaDD
 
 
 class SEPAMandate(Contract):
@@ -196,7 +199,7 @@ class SEPADirectDebitXML(BaseModel):
     def save(self, *args, **kwargs):
         if not self.xml_no:
             for i in range(10):
-                self.xml = self._get_xml_number()
+                self.xml_no = self._get_xml_number()
                 try:
                     with transaction.atomic():
                         return super().save(*args, **kwargs)
@@ -208,12 +211,72 @@ class SEPADirectDebitXML(BaseModel):
         self.full_xml_no = self.number
         return super().save(*args, **kwargs)
 
+    def create_xml(self, payments):
+        xml_file = SepaDD({
+            "name": self.name,
+            "IBAN": self.iban,
+            "BIC": self.bic,
+            "batch": self.batch,
+            "creditor_id": self.creditor_identifier,
+            "currency": self.currency,
+            "instrument": "COR1",
+        }, schema="pain.008.003.02", clean=True)
+
+        for payment in payments:
+            xml_file.add_payment(
+                {
+                    "name": payment.name,
+                    "IBAN": payment.iban,
+                    "BIC": payment.bic,
+                    "amount": payment.amount,
+                    "type": payment.sepa_type,
+                    "collection_date": self.collection_date,
+                    "mandate_id": str(payment.mandate.uuid).replace('-', ''),
+                    "mandate_date": payment.mandate.confirmation.timestamp.date(),
+                    "description": payment.description,
+                    "endtoend_id": str(payment.endtoend_id).replace('-', ''),
+                })
+            payment.sepa_dd_file = self
+            payment.state = SEPADirectDebitPayment.STATE.FINALIZED
+            payment.paymenent_date = self.collection_date
+
+            Notification.build(
+                type_=Notification.TYPE.MONETARY,
+                sender=payment.creditor,
+                recipient=payment.debitor,
+                header=_('SEPA Direct Debit initiated'),
+                message=_(
+                    '''{creditor} with the creditor identifier 
+                    {creditor_id} is going to debit your account {iban} 
+                    with an amount of {amount} {currency} on the  
+                    {collection_date}. This transaction is based 
+                    on the mandate with the reference {mandate_id}.'''.format(
+                        creditor=payment.creditor.name,
+                        creditor_id=self.creditor_identifier,
+                        iban=payment.iban[:-6] + 'XXXXXX',
+                        amount=payment.value,
+                        currency=payment.currency,
+                        collection_date=self.collection_date,
+                        mandate_id=str(payment.mandate.uuid),
+                    )),
+                link='',
+                level=Notification.LEVEL.MEDIUM,
+                target=self,
+            )
+            payment.save()
+
+        self.file.save('test.xml', ContentFile(
+            xml_file.export(validate=True)))
+        self.save()
+        return xml_file
+
 
 class SEPADirectDebitPayment(Payment):
     sepa_dd_file = models.ForeignKey(
         SEPADirectDebitXML,
         on_delete=models.PROTECT,
         null=True,
+        related_name='payments',
     )
     endtoend_id = models.UUIDField(
         default=uuid.uuid1,
