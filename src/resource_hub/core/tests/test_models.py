@@ -156,6 +156,7 @@ class TestContract(BaseContractTest):
         self.assertEqual(len(closed_claims), self.no_of_claims)
         self.assertEqual(self.contract.state, Contract.STATE.FINALIZED)
         self.assertEqual(len(self.contract.settlement_logs.all()), 2)
+        Notification.send_open_mails()
         for invoice in self.contract.invoices.all():
             invoice.file.delete()
 
@@ -220,6 +221,8 @@ class TestNotification(TestCase):
             link='',
             level=Notification.LEVEL.MEDIUM,
             target=actor,
+            attachments=['media/images/default.png',
+                         'media/images/logo.png'],
         )
 
     def test_send_open_mails(self):

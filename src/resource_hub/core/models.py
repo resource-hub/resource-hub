@@ -585,9 +585,13 @@ class Notification(BaseModel):
     # methods
     def send_mail(self):
         from .jobs import send_mail
-        attachments = NotificationAttachment.objects.filter(
+        attachments_qs = NotificationAttachment.objects.filter(
             notification=self
         )
+        attachments = []
+        for attachment in attachments_qs:
+            attachments.append(attachment.path)
+
         if self.level > Notification.LEVEL.LOW:
             recipient = Actor.objects.get_subclass(pk=self.recipient.pk)
             message = render_to_string('core/mail_notification.html', context={
@@ -1595,7 +1599,7 @@ class Invoice(BaseModel):
             link=reverse('control:finance_invoices_incoming'),
             level=Notification.LEVEL.MEDIUM,
             target=self,
-            attachments=[self.file.url, ],
+            attachments=[self.file.path, ],
         )
         return self.file.name
 
