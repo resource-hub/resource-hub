@@ -848,6 +848,9 @@ class BaseContract(BaseModel):
         on_delete=models.PROTECT,
         null=True,
     )
+    terms_and_conditions = models.TextField(
+        null=True,
+    )
     creditor = models.ForeignKey(
         Actor,
         null=True,

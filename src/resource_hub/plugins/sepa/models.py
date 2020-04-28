@@ -90,12 +90,14 @@ class SEPA(PaymentMethod):
                 'name': contract.verbose_name}
             messages.add_message(request, messages.SUCCESS, message)
             return redirect(reverse('control:finance_contracts_manage_details', kwargs={'pk': contract.pk}))
-        mandate = SEPAMandate.objects.create(
-            creditor=contract.creditor,
-            debitor=contract.debitor,
-            state=Contract.STATE.PENDING,
-
-        )
+        with transaction.atomic():
+            mandate = SEPAMandate.objects.create(
+                creditor=contract.creditor,
+                debitor=contract.debitor,
+                state=Contract.STATE.PENDING,
+            )
+            mandate.terms_and_conditions = mandate.overview
+            mandate.save()
         return redirect(
             reverse(
                 'control:sepa_mandate',

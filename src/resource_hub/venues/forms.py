@@ -402,6 +402,7 @@ class VenueContractFormManager():
         new_venue_contract.debitor = actor
         new_venue_contract.created_by = user
         new_venue_contract.contract_procedure = self.venue.contract_procedure
+        new_venue_contract.terms_and_conditions = self.venue.contract_procedure.terms_and_conditions
         new_event = self.event_form.save()
         new_venue_contract.event = new_event
 
