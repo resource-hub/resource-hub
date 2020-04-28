@@ -28,7 +28,7 @@ def index(request):
 class VenuesManage(TableView):
     header = _('Manage venues')
 
-    def get_queryset(self, request):
+    def get_queryset(self, request, sort):
         return get_associated_objects(
             self.request.actor,
             Venue
