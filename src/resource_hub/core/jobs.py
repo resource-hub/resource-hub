@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from django.core.mail import EmailMultiAlternatives
+from django.core import mail
 from django.db.models import Max
 from django.utils import timezone
 
@@ -51,12 +51,21 @@ def expire_contracts():
 
 
 @job('default')
-def send_mail(subject, message, recipient, attachments=None):
-    email = EmailMultiAlternatives(
-        subject,
-        message,
-        to=recipient,
-    )
+def send_mail(subject, message, recipient, attachments=None, connection=None):
+    if connection:
+        email = mail.EmailMultiAlternatives(
+            subject,
+            message,
+            to=recipient,
+            connection=connection,
+        )
+
+    else:
+        email = mail.EmailMultiAlternatives(
+            subject,
+            message,
+            to=recipient,
+        )
     email.attach_alternative(message, 'text/html')
     if attachments:
         for attachment in attachments:

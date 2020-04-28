@@ -6,6 +6,7 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.core import mail
 from django.core.files.base import ContentFile
 from django.db import DatabaseError, models, transaction
 from django.db.models import Max, Min
@@ -583,7 +584,7 @@ class Notification(BaseModel):
         return self.typ
 
     # methods
-    def send_mail(self):
+    def send_mail(self, connection=None):
         from .jobs import send_mail
         attachments_qs = NotificationAttachment.objects.filter(
             notification=self
@@ -600,10 +601,11 @@ class Notification(BaseModel):
                 'message': self.message,
             })
             send_mail.delay(
-                self.header,
-                self.message,
-                recipient.notification_recipients,
-                attachments
+                subject=self.header,
+                message=self.message,
+                recipient=recipient.notification_recipients,
+                attachments=attachments,
+                connection=connection,
             )
         self.status = self.STATUS.SENT
         self.save()
@@ -630,8 +632,11 @@ class Notification(BaseModel):
 
     @classmethod
     def send_open_mails(cls):
+        connection = mail.get_connection()
+        connection.open()
         for notification in cls.objects.filter(status=cls.STATUS.PENDING):
-            notification.send_mail()
+            notification.send_mail(connection)
+        connection.close()
 
 
 class NotificationAttachment(BaseModel):
