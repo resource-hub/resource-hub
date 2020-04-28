@@ -999,7 +999,7 @@ class Contract(BaseContract):
         if self.payment_method.is_prepayment:
             raise ValueError(
                 'initial settlement logs cannot be set for prepayments')
-        if len(self.settlement_logs.all()) > 0:
+        if self.settlement_logs.exists():
             raise ValueError('there already is a settlement log entry')
         smallest_start = self.claim_set.aggregate(Min('period_start'))
         self.settlement_logs.create(
