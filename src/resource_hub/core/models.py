@@ -1311,7 +1311,9 @@ class ContractProcedure(models.Model):
     notes = models.TextField(
         null=True,
         blank=True,
-        verbose_name=_('notes'),
+        verbose_name=_('Notes'),
+        help_text=_(
+            'This text will be added to the notification when a contract starts running')
     )
     payment_methods = models.ManyToManyField(
         PaymentMethod,
