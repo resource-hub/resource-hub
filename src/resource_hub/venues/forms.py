@@ -10,8 +10,8 @@ from django.utils.translation import ugettext_lazy as _
 from resource_hub.core.fields import HTMLField
 from resource_hub.core.forms import (ContractProcedureForm, FormManager,
                                      PriceForm, PriceProfileFormSet)
-from resource_hub.core.models import Location, OrganizationMember, PriceProfile
-from resource_hub.core.utils import get_associated_objects
+from resource_hub.core.models import Location, PriceProfile
+from resource_hub.core.utils import get_authorized_actors
 
 from .models import (Equipment, EquipmentPrice, Event, Venue, VenueContract,
                      VenueContractProcedure, VenuePrice)
@@ -24,19 +24,25 @@ class VenueForm(forms.ModelForm):
         self.fields['location'].queryset = Location.objects.filter(
             Q(owner=self.request.actor) | Q(is_public=True)
         )
-        self.fields['contract_procedure'].queryset = get_associated_objects(
-            self.request.actor,
-            VenueContractProcedure
+        self.fields['contract_procedure'].queryset = VenueContractProcedure.objects.filter(
+            owner=self.request.actor)
+        self.fields['owner'].queryset = get_authorized_actors(
+            self.request.user,
         )
+
+        # inital values
+        self.initial['owner'] = self.request.actor
+
         self._update_attrs({
             'contract_procedure': {'class': 'booking-item required'},
         })
+
     description = HTMLField()
 
     class Meta:
         model = Venue
         fields = ['name', 'description', 'location',
-                  'thumbnail_original', 'bookable', 'contract_procedure', ]
+                  'thumbnail_original', 'bookable', 'contract_procedure', 'owner', ]
         help_texts = {
             'bookable': _('Do you want to use the platform\'s booking logic?'),
             # 'location': _(mark_safe('No location available? <a href="{}">Create one!</a>'.format(reverse_lazy('control:locations_create'))))

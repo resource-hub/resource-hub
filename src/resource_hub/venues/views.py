@@ -7,7 +7,6 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.views import View
 
-from resource_hub.core.utils import get_associated_objects
 from resource_hub.core.views import TableView
 
 from .forms import (VenueContractFormManager,
@@ -29,10 +28,7 @@ class VenuesManage(TableView):
     header = _('Manage venues')
 
     def get_queryset(self, request, sort):
-        return get_associated_objects(
-            self.request.actor,
-            Venue
-        )
+        return Venue.objects.filter(owner=self.request.actor)
 
     def get_table(self):
         return VenuesTable

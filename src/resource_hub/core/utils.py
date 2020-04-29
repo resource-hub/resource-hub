@@ -8,9 +8,14 @@ from django.utils import translation
 from django.utils.text import slugify
 
 
-def get_associated_objects(actor, model):
-    query = Q(owner=actor.pk)
-    return model.objects.select_related('owner').filter(query)
+def get_authorized_actors(user):
+    from .models import Actor, OrganizationMember
+    query = Q(pk=user.pk)
+    sub_condition = Q(organization__members=user)
+    sub_condition.add(
+        Q(organization__organizationmember__role__gte=OrganizationMember.ADMIN), Q.AND)
+    query.add(sub_condition, Q.OR)
+    return Actor.objects.filter(query)
 
 
 def get_valid_slug(obj, string, condition=None):

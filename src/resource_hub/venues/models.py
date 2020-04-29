@@ -87,7 +87,10 @@ class Venue(models.Model):
     )
     owner = models.ForeignKey(
         Actor,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        help_text=_(
+            'All available roles, be cautious when chosing a different role than your current.')
+
     )
 
     # Metadata

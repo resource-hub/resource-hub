@@ -1,7 +1,6 @@
 from django.db.models import Q
 
-from resource_hub.core.models import (Actor, Contract, Location, Notification,
-                                      OrganizationMember, User)
+from resource_hub.core.models import Contract, Location, Notification, User
 from resource_hub.core.serializers import (ActorSerializer, ContractSerializer,
                                            LocationSerializer,
                                            NotificationSerializer,
@@ -13,6 +12,8 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from ..utils import get_authorized_actors
 
 
 class SmallResultsSetPagination(PageNumberPagination):
@@ -40,13 +41,7 @@ class ActorList(generics.ListCreateAPIView):
     serializer_class = ActorSerializer
 
     def get_queryset(self):
-        user = self.request.user
-        query = Q(pk=user.pk)
-        sub_condition = Q(organization__members=user)
-        sub_condition.add(
-            Q(organization__organizationmember__role__gte=OrganizationMember.ADMIN), Q.AND)
-        query.add(sub_condition, Q.OR)
-        return Actor.objects.filter(query)
+        return get_authorized_actors(self.request.user)
 
 
 class ActorChange(APIView):

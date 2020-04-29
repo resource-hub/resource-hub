@@ -19,7 +19,6 @@ from .models import (Actor, Address, BankAccount, ContractProcedure,
                      ContractTrigger, Location, Organization,
                      OrganizationMember, PaymentMethod, Price, PriceProfile,
                      User)
-from .utils import get_associated_objects
 from .widgets import IBANInput, UISearchField
 
 
@@ -368,14 +367,10 @@ class ContractProcedureForm(forms.ModelForm):
     def __init__(self, request, *args, **kwargs):
         self.request = request
         super(ContractProcedureForm, self).__init__(*args, **kwargs)
-        self.fields['payment_methods'].queryset = get_associated_objects(
-            request.actor,
-            PaymentMethod
-        ).select_subclasses()
-        self.fields['triggers'].queryset = get_associated_objects(
-            request.actor,
-            ContractTrigger
-        )
+        self.fields['payment_methods'].queryset = PaymentMethod.objects.filter(
+            owner=request.actor).select_subclasses()
+        self.fields['triggers'].queryset = ContractTrigger.objects.filter(
+            owner=request.actor)
 
     terms_and_conditions = HTMLField()
 

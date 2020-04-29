@@ -19,7 +19,6 @@ from ..models import *
 from ..signals import register_contract_procedures, register_payment_methods
 from ..tables import (ContractProcedureTable, InvoiceTable, LocationsTable,
                       MembersTable, OrganizationsTable, PaymentMethodsTable)
-from ..utils import get_associated_objects
 from . import TableView
 
 
@@ -110,10 +109,8 @@ class FinancePaymentMethodsManage(TableView):
     header = _('Payment methods')
 
     def get_queryset(self, request, sort):
-        methods = get_associated_objects(
-            request.actor,
-            PaymentMethod
-        ).select_subclasses()
+        methods = PaymentMethod.objects.filter(
+            owner=request.actor).select_subclasses()
 
         result = []
         for method in methods:
@@ -309,10 +306,7 @@ class FinanceContractProceduresManage(TableView):
     header = _('Manage contract procedures')
 
     def get_queryset(self, request, sort):
-        return get_associated_objects(
-            request.actor,
-            ContractProcedure
-        ).select_subclasses()
+        return ContractProcedure.objects.filter(owner=request.actor).select_subclasses()
 
     def get_table(self):
         return ContractProcedureTable
@@ -544,10 +538,7 @@ class LocationsManage(TableView):
     header = _('Manage locations')
 
     def get_queryset(self, request, sort):
-        return get_associated_objects(
-            request.actor,
-            Location
-        )
+        return Location.objects.filter(owner=request.actor)
 
     def get_table(self):
         return LocationsTable
