@@ -9,17 +9,25 @@ def get_parent(path):
 
 
 class BaseModule():
+    '''
+    Abstract class for all necessary information about a module within resource hub
+    has to be registered via the register_module signal
+    '''
     @property
     def verbose_name(self) -> str:
         raise NotImplementedError()
 
     def get_sidebar_modules(self, request) -> list:
+        '''
+        Items to be displayed in the top navigaion bar
+        :return return list of dicts with the structure defined by sidebar_module_renderer
+        '''
         raise NotImplementedError()
 
     def get_navbar_items(self, request) -> list:
         '''
         Items to be displayed in the top navigation
-        :return list of dicts with "name", "url"
+        :return return list of dicts with "name", "url"
         '''
         raise NotImplementedError()
 
