@@ -7,9 +7,6 @@
     <a id="main-menu-toggle"><i class="sidebar icon"></i>
         Menu</a>
     <div class="collapsible left">
-        <a class="item" href="{% url 'core:home' %}">
-            {% trans 'Home' %}
-        </a>
         {% hook 'navigation_bar' %}
         <div class="ui pointing dropdown item">
             {% get_current_language as LANGUAGE_CODE %}

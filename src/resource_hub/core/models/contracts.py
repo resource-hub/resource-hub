@@ -246,7 +246,7 @@ class Contract(BaseContract):
 
     @property
     def claim_table(self):
-        from .tables import ClaimTable
+        from ..tables import ClaimTable
         claims = self.claim_set.all()
         if claims:
             return ClaimTable(claims)

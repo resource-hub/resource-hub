@@ -2,7 +2,7 @@ from django.dispatch import receiver
 from django.shortcuts import reverse
 from django.utils.translation import gettext_lazy as _
 
-from resource_hub.core.hook_listeners import get_parent
+from resource_hub.core.modules import get_parent
 from resource_hub.core.signals import (control_sidebar_finance,
                                        register_payment_methods)
 
