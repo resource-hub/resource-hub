@@ -33,7 +33,7 @@ class VenueContractProcedure(ContractProcedure):
         return reverse('control:venues_contract_procedures_edit', kwargs={'pk': self.pk})
 
 
-class Venue(models.Model):
+class Venue(BaseModel):
     """describing locations."""
 
     # Fields
@@ -46,6 +46,7 @@ class Venue(models.Model):
     location = models.ForeignKey(
         Location,
         on_delete=models.CASCADE,
+        help_text=_('All public and current role\'s locations'),
     )
     thumbnail_original = models.ImageField(
         null=True,
@@ -81,9 +82,6 @@ class Venue(models.Model):
         null=True,
         blank=True,
         on_delete=models.PROTECT,
-    )
-    created_at = models.DateField(
-        auto_now=True,
     )
     owner = models.ForeignKey(
         Actor,

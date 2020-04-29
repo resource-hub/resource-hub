@@ -52,6 +52,10 @@ def expire_contracts():
 
 @job('default')
 def send_mail(subject, message, recipient, attachments=None, connection=None):
+    '''
+    :param connection can only be used if job is executed synchonously
+    as connection objects cannot be pickled by RQ
+    '''
     if connection:
         email = mail.EmailMultiAlternatives(
             subject,

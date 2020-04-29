@@ -135,7 +135,7 @@ class Notification(BaseModel):
                 'link': self.link,
                 'message': self.message,
             })
-            send_mail.delay(
+            send_mail(
                 subject=self.header,
                 message=self.message,
                 recipient=recipient.notification_recipients,

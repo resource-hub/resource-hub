@@ -45,7 +45,6 @@ class VenueForm(forms.ModelForm):
                   'thumbnail_original', 'bookable', 'contract_procedure', 'owner', ]
         help_texts = {
             'bookable': _('Do you want to use the platform\'s booking logic?'),
-            # 'location': _(mark_safe('No location available? <a href="{}">Create one!</a>'.format(reverse_lazy('control:locations_create'))))
         }
 
     def _update_attrs(self, fields):
