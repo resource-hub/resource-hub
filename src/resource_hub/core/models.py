@@ -511,10 +511,10 @@ class Notification(BaseModel):
         the type is based on the content of the message
         and determines the display of the notification
         '''
-        INFO = 'info circle'
-        ACTION = 'bolt'
-        CONTRACT = 'handshake'
-        MONETARY = 'file alternate outline'
+        INFO = 'i'
+        ACTION = 'a'
+        CONTRACT = 'c'
+        MONETARY = 'm'
 
     TYPES = [
         (TYPE.INFO, _('info')),
@@ -522,6 +522,15 @@ class Notification(BaseModel):
         (TYPE.CONTRACT, _('contract')),
         (TYPE.MONETARY, _('monetary')),
     ]
+
+    # mappings for semantic ui
+    TYPE_ICON_MAP = {
+        TYPE.INFO: 'info circle',
+        TYPE.ACTION: 'bolt',
+        TYPE.CONTRACT: 'handshake',
+        TYPE.MONETARY: 'file alternate outline',
+        'default': 'info circle',
+    }
 
     class STATUS:
         '''
@@ -584,6 +593,10 @@ class Notification(BaseModel):
         return self.typ
 
     # methods
+    @classmethod
+    def get_type_icon(cls, type_):
+        return cls.TYPE_ICON_MAP.get(type_, cls.TYPE_ICON_MAP['default'])
+
     def send_mail(self, connection=None):
         from .jobs import send_mail
         attachments_qs = NotificationAttachment.objects.filter(

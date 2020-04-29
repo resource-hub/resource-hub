@@ -86,6 +86,10 @@ class LocationSerializer(serializers.ModelSerializer):
 
 class NotificationSerializer(serializers.ModelSerializer):
     sender = ActorSerializer()
+    typ = serializers.SerializerMethodField()
+
+    def get_typ(self, obj):
+        return obj.get_type_icon(obj.typ)
 
     class Meta:
         model = Notification
