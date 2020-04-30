@@ -4,6 +4,8 @@ from resource_hub.core.models import (Actor, Address, Contract, Location,
                                       Notification, User)
 from rest_framework import serializers
 
+from .models import OrganizationMember
+
 
 class UserSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
@@ -95,3 +97,9 @@ class NotificationSerializer(serializers.ModelSerializer):
         model = Notification
         fields = ['pk', 'typ', 'sender', 'recipient', 'header', 'message', 'link',
                   'level', 'is_read', 'created_at', ]
+
+
+class OrganizationMemberSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrganizationMember
+        fields = ['pk', 'role', 'user', 'organization', ]

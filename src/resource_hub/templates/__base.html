@@ -33,7 +33,9 @@
         {% include '_scroll-button.html' %}
         {% block main %}
         {% endblock %}
+        {% render_block 'main' %}
     </main>
+    {% render_block 'after-main' %}
     <footer class="pusher">
         {% block footer %}
         {% endblock %}

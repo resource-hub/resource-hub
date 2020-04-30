@@ -161,8 +161,7 @@ class User(AbstractUser, Actor):
 
     def save(self, *args, **kwargs):
         if not self.pk:
-            self.slug = get_valid_slug(self, self.username)
-
+            self.slug = get_valid_slug(Actor(), self.username)
         super(User, self).save(*args, **kwargs)
 
 
@@ -193,7 +192,7 @@ class Organization(Actor):
 
     def save(self, *args, **kwargs):
         if not self.pk:
-            self.slug = get_valid_slug(self, self.name)
+            self.slug = get_valid_slug(Actor(), self.name)
         super(Organization, self).save(*args, **kwargs)
 
 
@@ -247,8 +246,7 @@ class OrganizationMember(models.Model):
 
     @staticmethod
     def get_role(user, organization) -> str:
-        role = OrganizationMember.objects.get(
+        return OrganizationMember.objects.get(
             organization=organization,
             user=user
-        ).get_role_display()
-        return role
+        )

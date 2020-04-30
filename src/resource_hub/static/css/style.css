@@ -130,24 +130,25 @@ td>a {
   justify-content: space-between;
 }
 
-.navigation-bar>.left {
+.navigation-bar .left {
   float: left;
   padding-left: 0px;
   display: inherit;
 }
 
-.navigation-bar>.right {
+.navigation-bar .right {
   float: right;
   padding-right: 0px;
   display: inherit;
 }
 
-.navigation-bar>.left>.item, .navigation-bar>.right>.item {
+.navigation-bar .left .item, .navigation-bar .right .item {
   position: relative;
   padding: 0 1em 0 0;
   vertical-align: middle;
   line-height: 1;
   text-decoration: none;
+  color: rgba(0, 0, 0, 0.87);
   -webkit-tap-highlight-color: transparent;
   -webkit-box-flex: 0;
   -ms-flex: 0 0 auto;
@@ -158,12 +159,25 @@ td>a {
   user-select: none;
   background: 0 0;
   text-transform: none;
-  color: rgba(0, 0, 0, 0.87);
   font-weight: 400;
   -webkit-transition: background 0.1s ease, color 0.1s ease, -webkit-box-shadow 0.1s ease;
   transition: background 0.1s ease, color 0.1s ease, -webkit-box-shadow 0.1s ease;
   transition: background 0.1s ease, box-shadow 0.1s ease, color 0.1s ease;
   transition: background 0.1s ease, box-shadow 0.1s ease, color 0.1s ease, -webkit-box-shadow 0.1s ease;
+}
+
+.saving {
+  bottom: 0 !important;
+  border: 0 solid transparent;
+  height: 3.8em !important;
+  background: #1b1c1d;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  color: #ffffff !important;
+}
+
+.saving.navigation-bar>.left>.item .saving.navigation-bar>.right>.item {
+  color: #ffffff !important;
 }
 
 .avatar {

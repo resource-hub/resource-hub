@@ -1,0 +1,78 @@
+{% load i18n %}
+{% load sekizai_tags %}
+
+{% addtoblock 'after-main' %}
+<nav id="save-bar" class="hidden saving navigation-bar">
+    <div></div>
+    <div class="right">
+        <button id="cancel" class="ui button">
+            {% trans 'Cancel' %}
+        </button>
+        <button id="save" class="ui green right labeled icon button">
+            {% trans 'Save' %}
+            <i class="save icon"></i>
+        </button>
+    </div>
+</nav>
+{% endaddtoblock %}
+{% addtoblock 'js' %}
+<script>
+    $(document).ready(function () {
+        var updates = {};
+        var submit = false;
+
+        window.addEventListener("beforeunload", function (e) {
+            if (jQuery.isEmptyObject(updates) || submit) {
+                return;
+            }
+            var confirmationMessage = "{% trans 'There are unsaved changes. Do you want to continue?' %}";
+
+            (e || window.event).returnValue = confirmationMessage; //Gecko + IE
+            return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
+        });
+        $('.row').on('input', function (e) {
+            e.preventDefault();
+            //select row and table
+            var row = $(this);
+            console.log(row)
+            var pk = row.attr('pk');
+
+            var values = {};
+            row.find('.input').each(function (i, element) {
+                values[element.name] = element.value;
+            })
+            //save updated values to object
+            updates[pk] = values;
+
+            //display save button
+            if ($('#save-bar').hasClass('hidden')) {
+                $('#save-bar').removeClass('hidden');
+            }
+        });
+
+        $('#save').on('click', function (e) {
+            e.preventDefault();
+            submit = true;
+            var csrftoken = getCookie('csrftoken');
+            $.ajax({
+                url: "{{ url }}",
+                type: "POST",
+                dataType: "json",
+                contentType: "application/json",
+                data: JSON.stringify(updates),
+                headers: { 'X-CSRFToken': csrftoken },
+            }).fail(function (data) {
+                alert(data.responseJSON)
+            }).done(function (data) {
+                window.location.reload(true);
+            });
+        });
+
+        $('#cancel').on('click', function (e) {
+            e.preventDefault();
+            submit = true;
+            window.location.reload(true);
+        });
+    });
+</script>
+{% endaddtoblock %}

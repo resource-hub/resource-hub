@@ -1,4 +1,7 @@
+from django.db import transaction
 from django.db.models import Q
+from django.shortcuts import get_list_or_404
+from django.utils.translation import gettext_lazy as _
 
 from resource_hub.core.models import Contract, Location, Notification, User
 from resource_hub.core.serializers import (ActorSerializer, ContractSerializer,
@@ -13,6 +16,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from ..models import OrganizationMember
 from ..utils import get_authorized_actors
 
 
@@ -103,4 +107,30 @@ class NotificationsMarkRead(APIView):
         actor = request.actor
         query = Q(pk=pk, recipient=actor) if pk else Q(recipient=actor)
         Notification.objects.filter(query).update(is_read=True)
+        return Response({'detail': 'updated notification status as read'})
+
+
+class OrganizationMembersChange(APIView):
+    def post(self, request, organization_pk):
+        owners = len(get_list_or_404(
+            OrganizationMember,
+            role=OrganizationMember.OWNER,
+            organization=organization_pk
+        ))
+        with transaction.atomic():
+            for pk, data in request.data.items():
+                member = OrganizationMember.objects.filter(
+                    pk=pk
+                )
+                if 'role' in data:
+                    role = int(data['role'])
+                    if role != OrganizationMember.OWNER and member[0].role == OrganizationMember.OWNER:
+                        owners -= 1
+                    if role == OrganizationMember.OWNER and member[0].role != OrganizationMember.OWNER:
+                        owners += 1
+                member.update(**data)
+            print(owners)
+            if owners <= 0:
+                raise ValidationError(
+                    detail=_('There has to be at least one owner!'))
         return Response({'detail': 'updated notification status as read'})

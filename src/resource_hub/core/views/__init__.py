@@ -5,7 +5,6 @@ from django.views import View
 class TableView(View):
     template_name = 'core/table_view.html'
     header = 'Header'
-    request = None
 
     def get_queryset(self, request, sort):
         raise NotImplementedError()
@@ -13,7 +12,7 @@ class TableView(View):
     def get_table(self):
         raise NotImplementedError()
 
-    def get(self, request):
+    def get_context(self, request):
         sort = request.GET.get('sort', None)
         queryset = self.get_queryset(request, sort)
 
@@ -26,8 +25,13 @@ class TableView(View):
         else:
             table = None
 
-        context = {
+        return {
             'header': self.header,
             'table': table,
         }
-        return render(request, self.template_name, context)
+
+    def render(self, request):
+        return render(request, self.template_name, self.get_context(request))
+
+    def get(self, request):
+        return self.render(request)

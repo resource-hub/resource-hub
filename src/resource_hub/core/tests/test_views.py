@@ -6,7 +6,7 @@ from django.utils.http import urlsafe_base64_encode
 from resource_hub.core.models import *
 from resource_hub.core.tokens import TokenGenerator
 
-DATA = {
+USER_DATA = {
     'username': 'peterpopper',
     'email': 'test@ture.dev',
     'password': 'we8dlz49opd',
@@ -40,12 +40,13 @@ class TestView():
 
     def register_test_user(self):
         response = self.client.post(
-            reverse('core:register'), DATA)
+            reverse('core:register'), USER_DATA)
 
-        user = User.objects.get(username=DATA['username'])
+        user = User.objects.get(username=USER_DATA['username'])
         user.is_active = True
         user.save()
-        self.client.login(username=DATA['username'], password=DATA['password'])
+        self.client.login(
+            username=USER_DATA['username'], password=USER_DATA['password'])
         return user
 
     def test_status_code(self):
@@ -70,23 +71,23 @@ class TestRegistration(TestView, TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.data = DATA.copy()
+        self.USER_data = USER_DATA.copy()
 
     def test_created_user(self):
         response = self.client.post(
-            reverse('core:register'), self.data)
-        user = User.objects.get(username=self.data['username'])
-        self.assertEqual(user.first_name, self.data['first_name'])
+            reverse('core:register'), self.USER_data)
+        user = User.objects.get(username=self.USER_data['username'])
+        self.assertEqual(user.first_name, self.USER_data['first_name'])
 
     def test_created_info(self):
         response = self.client.post(
-            reverse('core:register'), self.data)
-        user = Actor.objects.get(user__username=self.data['username'])
-        self.assertEqual(user.info_text, self.data['info_text'])
+            reverse('core:register'), self.USER_data)
+        user = Actor.objects.get(user__username=self.USER_data['username'])
+        self.assertEqual(user.info_text, self.USER_data['info_text'])
 
     def test_post_status_code(self):
         response = self.client.post(
-            reverse('core:register'), self.data)
+            reverse('core:register'), self.USER_data)
         self.assertEqual(response.status_code, 302)
 
 

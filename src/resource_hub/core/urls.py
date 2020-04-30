@@ -86,6 +86,8 @@ api_urls.register([
     path('actors/list', api.ActorList.as_view(), name='actor_list'),
     path('actors/change',
          api.ActorChange.as_view(), name='actor_change'),
+    path('organizations/<int:organization_pk>/members/change', api.OrganizationMembersChange.as_view(),
+         name='organizations_members_change'),
     path('locations/search/', api.Locations.as_view(),
          name='locations_search'),
     path('contracts/list', api.ContractsList.as_view(), name='contracts_list'),

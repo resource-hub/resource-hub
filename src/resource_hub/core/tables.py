@@ -1,8 +1,11 @@
+from django.forms import HiddenInput, Select
 from django.utils.html import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
 import django_tables2 as tables
 from django_tables2.utils import Accessor as A
+
+from .forms import OrganizationMember
 
 
 class BoolColumn(tables.Column):
@@ -40,7 +43,6 @@ class OrganizationsTable(tables.Table):
     role = tables.Column(verbose_name=_('Rights'))
 
     def render_role(self, value):
-        from resource_hub.core.models import OrganizationMember
         return OrganizationMember.role_display_reverse(value)
 
     class Meta:
@@ -50,10 +52,19 @@ class OrganizationsTable(tables.Table):
 
 
 class MembersTable(tables.Table):
-    username = tables.Column(verbose_name=_('Username'))
-    first_name = tables.Column(verbose_name=_('First name'))
-    last_name = tables.Column(verbose_name=_('Last name'))
+    username = tables.Column(verbose_name=_(
+        'Username'), accessor=A('user__username'))
+    first_name = tables.Column(verbose_name=_('First name'),
+                               accessor=A('user__first_name'))
+    last_name = tables.Column(verbose_name=_('Last name'),
+                              accessor=A('user__last_name'))
     role = tables.Column(verbose_name=_('Organization Role'))
+
+    def render_role(self, value, record):
+        widget = Select(
+            attrs={'class': 'input select-dropdown'},
+            choices=OrganizationMember.ORGANIZATION_ROLES)
+        return widget.render('role', record.role)
 
     class Meta:
         attrs = {
@@ -61,8 +72,8 @@ class MembersTable(tables.Table):
         }
 
         row_attrs = {
-            "class": "user",
-            "id": lambda record: record['id'],
+            "class": "row",
+            "pk": lambda record: A('pk').resolve(record),
         }
 
 

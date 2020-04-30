@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block content %}
-
+{% url 'api:organizations_members_change' organization_pk=organization.pk as url %}
 <div class="section-container tab-content">
     <h1>
         {{ organization.name }} {% trans 'members' %}
@@ -19,8 +19,9 @@
         </a>
     </h1>
     <div>
-        {% if members_table %}
-        {% render_table members_table %}
+        {% if table %}
+        {% render_table table %}
+        {% include '_editable_table.html' with url=url %}
         {% else %}
         <p>
             {% trans 'no associated members found' %}
@@ -28,34 +29,4 @@
         {% endif %}
     </div>
 </div>
-{% endblock %}
-
-{% block scripts %}
-<script>
-    $('.user').on('input', function (e) {
-        e.preventDefault();
-        //select row and table
-        var row = $(this);
-
-        //get data from hidden input fields
-
-
-        var values = {
-
-        };
-
-        //save updated values to object
-        if (updates.hasOwnProperty(pid)) {
-            updates[pid] = values;
-        } else {
-            updates = Object.assign({ [pid]: values }, updates)
-        }
-
-        //display save button
-        if ($('#save-btn').hasClass('no-display')) {
-            $('#save-btn').removeClass('no-display');
-        }
-
-    });
-</script>
 {% endblock %}

@@ -455,31 +455,27 @@ class OrganizationsProfileEdit(View):
 
 
 @method_decorator([login_required, organization_admin_required], name='dispatch')
-class OrganizationsMembers(View):
+class OrganizationsMembers(TableView):
+    organization = None
+    template_name = 'core/control/organizations_members.html'
+
+    def get_queryset(self, request, sort):
+        print(OrganizationMember.objects.filter(
+            organization=self.organization
+        ).prefetch_related('user', 'organization'))
+        return OrganizationMember.objects.filter(
+            organization=self.organization
+        ).prefetch_related('user', 'organization')
+
+    def get_table(self):
+        return MembersTable
+
     def get(self, request, organization_id):
-        organization = get_object_or_404(Organization, pk=organization_id)
-        members = organization.members.select_related().all()
-
-        if members:
-            data = []
-            for m in members:
-                role = OrganizationMember.get_role(m, organization)
-                data.append({
-                    'id': m.id,
-                    'username': m.username,
-                    'first_name': m.first_name,
-                    'last_name': m.last_name,
-                    'role': role,
-                })
-            members_table = MembersTable(data)
-        else:
-            members_table = None
-
-        context = {
-            'members_table': members_table,
-            'organization': organization,
-        }
-        return render(request, 'core/control/organizations_members.html', context)
+        self.organization = get_object_or_404(Organization, pk=organization_id)
+        self.header = self.organization.name
+        context = self.get_context(request)
+        context['organization'] = self.organization
+        return render(request, self.template_name, context)
 
 
 @method_decorator([login_required, organization_admin_required], name='dispatch')
