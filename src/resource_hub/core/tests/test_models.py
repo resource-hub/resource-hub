@@ -195,7 +195,7 @@ class TestContract(BaseContractTest):
     def test_set_terminated(self):
         self.create_claims()
         self.contract.settle_claims()
-        self.contract.set_terminated()
+        self.contract.set_terminated(self.actor)
         terminated_claims = self.contract.claim_set.filter(
             state=Claim.STATE.TERMINATED
         )
@@ -205,7 +205,7 @@ class TestContract(BaseContractTest):
         self.contract.termination_period = self.settlement_interval + 1
         self.create_claims()
         self.contract.settle_claims()
-        self.contract.set_terminated()
+        self.contract.set_terminated(self.actor)
         terminated_claims = self.contract.claim_set.filter(
             state=Claim.STATE.TERMINATED
         )

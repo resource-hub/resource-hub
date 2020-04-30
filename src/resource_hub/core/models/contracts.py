@@ -331,7 +331,21 @@ class Contract(BaseContract):
     def call_triggers(self, state):
         return
 
+    def send_state_notification(self, sender, recipient, header, message=''):
+        if self.creditor != self.debitor:
+            Notification.build(
+                type_=Notification.TYPE.CONTRACT,
+                sender=sender,
+                recipient=recipient,
+                header=header,
+                message=message,
+                link=reverse('control:finance_contracts_manage_details',
+                             kwargs={'pk': self.pk}),
+                level=Notification.LEVEL.MEDIUM,
+                target=self,
+            )
     # state setters
+
     def move_to(self, state):
         if self.state in self.STATE_GRAPH and state in self.STATE_GRAPH[self.state]:
             self.call_triggers(state)
@@ -349,6 +363,14 @@ class Contract(BaseContract):
         self.move_to(self.STATE.WAITING)
         self.create_confirmation(request)
         self.save()
+        self.send_state_notification(
+            sender=self.debitor,
+            recipient=self.creditor,
+            header=_('{debitor} created {contract}'.format(
+                debitor=self.debitor,
+                contract=self.verbose_name,
+            ))
+        )
         if self.contract_procedure.auto_accept or (self.creditor == self.debitor):
             self.set_running(request)
 
@@ -363,8 +385,7 @@ class Contract(BaseContract):
         else:
             self.set_initial_settlement_log()
         self.save()
-        Notification.build(
-            type_=Notification.TYPE.CONTRACT,
+        self.send_state_notification(
             sender=self.creditor,
             recipient=self.debitor,
             header=_('{creditor} accepted {contract}'.format(
@@ -372,10 +393,6 @@ class Contract(BaseContract):
                 contract=self.verbose_name,
             )),
             message=self.contract_procedure.notes,
-            link=reverse('control:finance_contracts_manage_details',
-                         kwargs={'pk': self.pk}),
-            level=Notification.LEVEL.MEDIUM,
-            target=self,
         )
 
     # final states
@@ -394,8 +411,16 @@ class Contract(BaseContract):
     def set_declined(self) -> None:
         self.move_to(self.STATE.DECLINED)
         self.save()
+        self.send_state_notification(
+            sender=self.creditor,
+            recipient=self.debitor,
+            header=_('{creditor} declined {contract}'.format(
+                creditor=self.creditor,
+                contract=self.verbose_name,
+            ))
+        )
 
-    def set_terminated(self) -> None:
+    def set_terminated(self, initiator) -> None:
         self.move_to(self.STATE.TERMINATED)
         query = Q(state=Claim.STATE.PENDING)
         query.add(Q(contract=self), Q.AND)
@@ -404,6 +429,15 @@ class Contract(BaseContract):
             query.add(Q(period_start__gte=selector), Q.AND)
         Claim.objects.filter(query).update(state=Claim.STATE.TERMINATED)
         self.save()
+        reciever = self.creditor if self.debitor == initiator else self.debitor
+        self.send_state_notification(
+            sender=initiator,
+            recipient=reciever,
+            header=_('{initiator} terminated {contract}'.format(
+                initiator=initiator,
+                contract=self.verbose_name,
+            )),
+        )
 
     def claim_factory(self, **kwargs):
         if self.creditor == self.debitor:

@@ -287,7 +287,7 @@ class FinanceContractsManageDetails(View):
             if choice == 'decline':
                 with transaction.atomic():
                     contract.set_declined(request)
-                message = _('{} has been decline'.format(
+                message = _('{} has been declined'.format(
                     contract.verbose_name))
             elif choice == 'accept':
                 with transaction.atomic():
@@ -299,7 +299,7 @@ class FinanceContractsManageDetails(View):
 
         if choice == 'terminate':
             with transaction.atomic():
-                contract.set_terminated()
+                contract.set_terminated(actor)
             message = _('{} has been terminated'.format(
                 contract.verbose_name))
 
