@@ -105,7 +105,7 @@ class EventsCreate(View):
         if venue_contract_form.is_valid():
             with transaction.atomic():
                 venue_contract = venue_contract_form.save()
-                venue_contract.set_pending(
+                venue_contract.claim_factory(
                     occurrences=venue_contract_form.occurrences
                 )
             message = _(

@@ -2,7 +2,7 @@ import uuid
 from datetime import timedelta
 
 from django.db import models, transaction
-from django.db.models import Min
+from django.db.models import Min, Q
 from django.http import HttpResponse
 from django.shortcuts import reverse
 from django.utils import timezone
@@ -127,7 +127,7 @@ class BaseContract(BaseStateMachine):
     STATE_GRAPH = {
         STATE.PENDING: {STATE.WAITING, STATE.CANCELED, STATE.EXPIRED, },
         STATE.WAITING: {STATE.RUNNING, STATE.DECLINED, },
-        STATE.RUNNING: {STATE.DISPUTING, STATE.FINALIZED, },
+        STATE.RUNNING: {STATE.DISPUTING, STATE.FINALIZED, STATE.TERMINATED, },
         STATE.DISPUTING: {STATE.RUNNING, STATE.FINALIZED, },
     }
 
@@ -341,10 +341,9 @@ class Contract(BaseContract):
                 self.get_state_display(), state))
 
     # active states
+
     def set_pending(self, *args, **kwargs) -> None:
         self.move_to(self.STATE.PENDING)
-        if self.creditor != self.debitor:
-            self.claim_factory(**kwargs)
         self.save()
 
     def set_waiting(self, request) -> None:
@@ -399,11 +398,17 @@ class Contract(BaseContract):
 
     def set_terminated(self) -> None:
         self.move_to(self.STATE.TERMINATED)
-
+        query = Q(state=Claim.STATE.PENDING)
+        query.add(Q(contract=self), Q.AND)
+        if self.termination_period > 0:
+            selector = timezone.now() + timedelta(days=self.termination_period)
+            query.add(Q(period_start__gte=selector), Q.AND)
+        Claim.objects.filter(query).update(state=Claim.STATE.TERMINATED)
         self.save()
 
-    def claim_factory(self):
-        pass
+    def claim_factory(self, **kwargs):
+        if self.creditor == self.debitor:
+            pass
 
     def settle_claims(self):
         now = timezone.now()

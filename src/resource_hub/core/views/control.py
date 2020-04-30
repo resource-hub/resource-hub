@@ -281,11 +281,6 @@ class FinanceContractsManageDetails(View):
                     contract.set_waiting(request)
                 message = _('{} has been confirmed'.format(
                     contract.verbose_name))
-            elif choice == 'terminate':
-                with transaction.atomic():
-                    contract.set_terminated()
-                message = _('{} has been terminated'.format(
-                    contract.verbose.name))
             else:
                 message = _('Invalid Choice')
         else:
@@ -301,6 +296,12 @@ class FinanceContractsManageDetails(View):
                     contract.verbose_name))
             else:
                 message = _('Invalid Choice')
+
+        if choice == 'terminate':
+            with transaction.atomic():
+                contract.set_terminated()
+            message = _('{} has been terminated'.format(
+                contract.verbose_name))
 
         messages.add_message(request, messages.SUCCESS, message)
         return redirect(reverse('control:finance_contracts_manage_details', kwargs={'pk': pk}))

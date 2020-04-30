@@ -299,7 +299,11 @@ class VenueContract(Contract):
         )
 
     # methods
-    def claim_factory(self, occurrences=None):
+    def claim_factory(self, **kwargs):
+        super(VenueContract, self).claim_factory(**kwargs)
+        occurrences = kwargs.get('occurrences', None)
+        if not occurrences:
+            raise ValueError('no occurrences passed')
         net_total = 0
         for venue in self.event.venues.all():
             for occurrence in occurrences:

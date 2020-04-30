@@ -4,26 +4,9 @@ from django.db.models import Min
 from django.test import Client, TestCase
 from django.utils import timezone
 
-from resource_hub.core.models import (Actor, Address, BankAccount, Claim,
-                                      Contract, ContractProcedure, Invoice,
-                                      Notification, Organization,
-                                      PaymentMethod, User)
-
-# from django.contrib.auth.models import User
-# from django.utils.dateparse import parse_date
-
-# from . import create_test_users
-
-
-# class TestUser(TestCase):
-#     @classmethod
-#     def setUpTestData(cls):
-#         create_test_users()
-
-#     def test_person_first_name(self):
-#         user = User.objects.get(username='testmate')
-#         first_name = user.first_name
-#         self.assertEqual('Test', first_name)
+from resource_hub.core.models import (Address, BankAccount, Claim, Contract,
+                                      ContractProcedure, Invoice, Notification,
+                                      Organization, PaymentMethod, User)
 
 
 def create_users():
@@ -208,6 +191,25 @@ class TestContract(BaseContractTest):
             len(Invoice.objects.filter(contract=self.contract)),
             0
         )
+
+    def test_set_terminated(self):
+        self.create_claims()
+        self.contract.settle_claims()
+        self.contract.set_terminated()
+        terminated_claims = self.contract.claim_set.filter(
+            state=Claim.STATE.TERMINATED
+        )
+        self.assertEqual(len(terminated_claims), self.no_of_claims//2)
+
+    def test_set_terminated_with_perioda(self):
+        self.contract.termination_period = self.settlement_interval + 1
+        self.create_claims()
+        self.contract.settle_claims()
+        self.contract.set_terminated()
+        terminated_claims = self.contract.claim_set.filter(
+            state=Claim.STATE.TERMINATED
+        )
+        self.assertEqual(len(terminated_claims), 0)
 
 
 class TestNotification(TestCase):
