@@ -32,16 +32,6 @@
         </div>
         <div class="seven wide column">
             {% include 'venues/_venue_calendar.html' with venue=venue %}
-            <div class="spacer">
-                <div class="ui list">
-                    <div class="item">
-                        <div class="header">
-                            {% trans 'Base price' %}
-                        </div>
-                        {{ venue.price }}
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 </div>
