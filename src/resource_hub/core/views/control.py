@@ -281,6 +281,11 @@ class FinanceContractsManageDetails(View):
                     contract.set_waiting(request)
                 message = _('{} has been confirmed'.format(
                     contract.verbose_name))
+            elif choice == 'terminate':
+                with transaction.atomic():
+                    contract.set_terminated()
+                message = _('{} has been terminated'.format(
+                    contract.verbose.name))
             else:
                 message = _('Invalid Choice')
         else:

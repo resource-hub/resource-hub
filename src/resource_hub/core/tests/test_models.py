@@ -100,6 +100,7 @@ class BaseContractTest(TestCase):
             period_end = period_start + length
 
             Claim.objects.create(
+                state=Claim.STATE.PENDING,
                 contract=self.contract,
                 item='test',
                 quantity=i,
@@ -126,10 +127,10 @@ class TestContract(BaseContractTest):
     def test_illegal_moves(self):
         state = Contract.STATE
         moves = [
-            (state.INIT, state.FINALIZED),
-            (state.INIT, state.RUNNING),
+            (state.PENDING, state.FINALIZED),
+            (state.PENDING, state.TERMINATED),
             (state.RUNNING, state.CANCELED),
-            (state.CANCELED, state.INIT),
+            (state.CANCELED, state.PENDING),
         ]
         for edge in moves:
             self.contract.state = edge[0]
@@ -142,7 +143,7 @@ class TestContract(BaseContractTest):
         self.create_claims()
         self.contract.settle_claims()
         closed_claims = self.contract.claim_set.filter(
-            status=Claim.STATUS.CLOSED)
+            state=Claim.STATE.SETTLED)
         self.assertEqual(len(closed_claims), self.no_of_claims//2)
         self.assertEqual(self.contract.state, Contract.STATE.RUNNING)
 
@@ -151,7 +152,7 @@ class TestContract(BaseContractTest):
         self.contract.save()
         self.contract.settle_claims()
         closed_claims = self.contract.claim_set.filter(
-            status=Claim.STATUS.CLOSED)
+            state=Claim.STATE.SETTLED)
         # test if all claims correctly closed
         self.assertEqual(len(closed_claims), self.no_of_claims)
         self.assertEqual(self.contract.state, Contract.STATE.FINALIZED)
@@ -228,4 +229,4 @@ class TestNotification(TestCase):
     def test_send_open_mails(self):
         Notification.send_open_mails()
         for notification in Notification.objects.all():
-            self.assertEqual(notification.status, Notification.STATUS.SENT)
+            self.assertEqual(notification.state, Notification.STATE.SENT)

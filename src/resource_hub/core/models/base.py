@@ -1,10 +1,12 @@
 
 from django.conf import settings
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 from django_countries.fields import CountryField
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
+from model_utils.fields import MonitorField
 
 from ..utils import get_valid_slug
 
@@ -31,6 +33,34 @@ class BaseModel(models.Model):
 
     def get_subclass(self):
         return self.__class__.objects.get_subclass(pk=self.pk)
+
+
+class BaseStateMachine(BaseModel):
+    class STATE:
+        PENDING = 'p'
+
+    STATES = [
+        (STATE.PENDING, _('PENDING')),
+    ]
+    STATE_GRAPH = None
+
+    state = models.CharField(
+        choices=STATES,
+        max_length=2,
+        default=STATE.PENDING,
+    )
+    state_changed = MonitorField(monitor='state')
+
+    # state setters
+    def move_to(self, state):
+        if self.state in self.STATE_GRAPH and state in self.STATE_GRAPH[self.state]:
+            self.state = state
+        else:
+            raise ValueError('Cannot move from state {} to state {}'.format(
+                self.get_state_display(), state))
+
+    class Meta:
+        abstract = True
 
 
 class Address(models.Model):

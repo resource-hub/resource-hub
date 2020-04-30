@@ -16,8 +16,8 @@ from django.shortcuts import reverse
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.crypto import get_random_string
-from django.utils.translation import pgettext
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import pgettext
 
 import pycountry
 from django_countries.fields import CountryField
@@ -31,15 +31,13 @@ from ..fields import CurrencyField, PercentField
 from ..renderer import InvoiceRenderer
 from ..settings import COUNTRIES_WITH_STATE_IN_ADDRESS
 from ..utils import get_valid_slug, language
-from .base import BaseModel
+from .base import BaseModel, BaseStateMachine
 
 
-class Payment(BaseModel):
+class Payment(BaseStateMachine):
     # constants
-    class STATE:
+    class STATE(BaseStateMachine.STATE):
         # active states
-        INIT = 'i'
-        PENDING = 'p'
         # final states
         FAILED = 'fa'
         CANCELED = 'ca'
@@ -48,8 +46,7 @@ class Payment(BaseModel):
         FINALIZED = 'f'
 
     STATES = [
-        (STATE.INIT, _('initializing')),
-        (STATE.PENDING, _('pending')),
+        *BaseStateMachine.STATES,
         (STATE.FINALIZED, _('finalized')),
         (STATE.FAILED, _('failed')),
         (STATE.CANCELED, _('canceled')),
@@ -57,18 +54,11 @@ class Payment(BaseModel):
     ]
 
     STATE_GRAPH = {
-        STATE.INIT: {STATE.PENDING},
         STATE.PENDING: {STATE.FINALIZED, STATE.CANCELED, STATE.FAILED},
         STATE.FINALIZED: {STATE.REFUNDED},
     }
 
     # fields
-    state = models.CharField(
-        choices=STATES,
-        max_length=2,
-        default=STATE.INIT,
-    )
-    state_changed = MonitorField(monitor='state')
     debitor = models.ForeignKey(
         'Actor',
         on_delete=models.PROTECT,

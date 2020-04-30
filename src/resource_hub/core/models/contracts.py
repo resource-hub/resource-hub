@@ -9,11 +9,10 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from ipware import get_client_ip
-from model_utils.fields import MonitorField
 from model_utils.managers import InheritanceManager
 
 from ..fields import CurrencyField, PercentField
-from .base import BaseModel
+from .base import BaseModel, BaseStateMachine
 from .invoices import Invoice
 from .notifications import Notification
 
@@ -46,7 +45,9 @@ class ContractProcedure(models.Model):
     )
     termination_period = models.IntegerField(
         default=0,
-        help_text=_('')
+        verbose_name=_('Termination period (days)'),
+        help_text=_(
+            'Upon termination all claims within the termination period will be charged regardlessly'),
     )
     notes = models.TextField(
         null=True,
@@ -56,7 +57,7 @@ class ContractProcedure(models.Model):
             'This text will be added to the notification when a contract starts running')
     )
     payment_methods = models.ManyToManyField(
-        PaymentMethod,
+        'PaymentMethod',
         blank=False,
         help_text=_(
             'Choose the payment methods you want to use for this venue'),
@@ -69,7 +70,7 @@ class ContractProcedure(models.Model):
         default=SETTLEMENT_INTERVALS[0][0],
     )
     triggers = models.ManyToManyField(
-        ContractTrigger,
+        'ContractTrigger',
         blank=True,
         related_name='procedure'
     )
@@ -94,12 +95,12 @@ class ContractProcedure(models.Model):
 
     def apply_tax(self, net):
         return float(net) * (1 + (float(self.tax_rate)/100))
-class BaseContract(BaseModel):
+
+
+class BaseContract(BaseStateMachine):
     # constants
-    class STATE:
-        INIT = 'i'
+    class STATE(BaseStateMachine.STATE):
         # active states
-        PENDING = 'p'
         WAITING = 'w'
         RUNNING = 'r'
         DISPUTING = 'd'
@@ -108,10 +109,10 @@ class BaseContract(BaseModel):
         EXPIRED = 'x'
         CANCELED = 'c'
         DECLINED = 'n'
+        TERMINATED = 't'
 
     STATES = [
-        (STATE.INIT, _('initializing')),
-        (STATE.PENDING, _('pending')),
+        *BaseStateMachine.STATES,
         (STATE.WAITING, _('waiting')),
         (STATE.RUNNING, _('running')),
         (STATE.DISPUTING, _('disputing')),
@@ -119,11 +120,11 @@ class BaseContract(BaseModel):
         (STATE.EXPIRED, _('expired')),
         (STATE.CANCELED, _('canceled')),
         (STATE.DECLINED, _('declined')),
+        (STATE.TERMINATED, _('terminated')),
     ]
 
     # availabe edges for node
     STATE_GRAPH = {
-        STATE.INIT: {STATE.PENDING},
         STATE.PENDING: {STATE.WAITING, STATE.CANCELED, STATE.EXPIRED, },
         STATE.WAITING: {STATE.RUNNING, STATE.DECLINED, },
         STATE.RUNNING: {STATE.DISPUTING, STATE.FINALIZED, },
@@ -158,12 +159,6 @@ class BaseContract(BaseModel):
         on_delete=models.SET_NULL,
         related_name='debitor',
     )
-    state = models.CharField(
-        choices=STATES,
-        max_length=2,
-        default=STATE.INIT,
-    )
-    state_changed = MonitorField(monitor='state')
     # fields
     is_fixed_term = models.BooleanField(
         default=True
@@ -233,14 +228,6 @@ class BaseContract(BaseModel):
         )
 
     # state setters
-    def move_to(self, state):
-        if self.state in self.STATE_GRAPH and state in self.STATE_GRAPH[self.state]:
-            self.call_triggers(state)
-            self.state = state
-        else:
-            raise ValueError('Cannot move from state {} to state {}'.format(
-                self.get_state_display(), state))
-
     def set_pending(self, *args, **kwargs) -> None:
         raise NotImplementedError()
 
@@ -353,22 +340,11 @@ class Contract(BaseContract):
             raise ValueError('Cannot move from state {} to state {}'.format(
                 self.get_state_display(), state))
 
+    # active states
     def set_pending(self, *args, **kwargs) -> None:
         self.move_to(self.STATE.PENDING)
         if self.creditor != self.debitor:
             self.claim_factory(**kwargs)
-        self.save()
-
-    def set_expired(self) -> None:
-        self.move_to(self.STATE.EXPIRED)
-        self.save()
-
-    def set_cancelled(self) -> None:
-        self.move_to(self.STATE.CANCELED)
-        self.save()
-
-    def set_declined(self) -> None:
-        self.move_to(self.STATE.DECLINED)
         self.save()
 
     def set_waiting(self, request) -> None:
@@ -404,8 +380,26 @@ class Contract(BaseContract):
             target=self,
         )
 
+    # final states
     def set_finalized(self) -> None:
         self.move_to(self.STATE.FINALIZED)
+        self.save()
+
+    def set_expired(self) -> None:
+        self.move_to(self.STATE.EXPIRED)
+        self.save()
+
+    def set_cancelled(self) -> None:
+        self.move_to(self.STATE.CANCELED)
+        self.save()
+
+    def set_declined(self) -> None:
+        self.move_to(self.STATE.DECLINED)
+        self.save()
+
+    def set_terminated(self) -> None:
+        self.move_to(self.STATE.TERMINATED)
+
         self.save()
 
     def claim_factory(self):
@@ -418,7 +412,7 @@ class Contract(BaseContract):
                 days=self.contract_procedure.settlement_interval
             ) if self.payment_method.is_prepayment else now
         open_claims = self.claim_set.filter(
-            status=Claim.STATUS.OPEN, period_end__lte=selector)
+            state=Claim.STATE.PENDING, period_end__lte=selector)
         if open_claims:
             with transaction.atomic():
                 payment_method = PaymentMethod.objects.get_subclass(
@@ -430,9 +424,9 @@ class Contract(BaseContract):
                     invoice = None
 
                 payment_method.settle(self, open_claims, invoice)
-                open_claims.update(status=Claim.STATUS.CLOSED)
+                open_claims.update(state=Claim.STATE.SETTLED)
         if self.is_fixed_term:
-            if not self.claim_set.filter(status=Claim.STATUS.OPEN).exists():
+            if not self.claim_set.filter(state=Claim.STATE.PENDING).exists():
                 self.set_finalized()
         self.settlement_logs.create()
 
@@ -448,24 +442,24 @@ class SettlementLog(BaseModel):
     )
 
 
-class Claim(BaseModel):
-    class STATUS:
-        OPEN = 'o'
-        CLOSED = 'c'
+class Claim(BaseStateMachine):
+    class STATE(BaseStateMachine.STATE):
+        SETTLED = 's'
+        TERMINATED = 't'
 
-    STATI = [
-        (STATUS.OPEN, _('open')),
-        (STATUS.CLOSED, _('closed')),
+    STATES = [
+        *BaseStateMachine.STATES,
+        (STATE.SETTLED, _('closed')),
+        (STATE.TERMINATED, _('terminated')),
     ]
+
+    STATE_GRAPH = {
+        STATE.PENDING: {STATE.SETTLED, STATE.TERMINATED}
+    }
 
     contract = models.ForeignKey(
         Contract,
         on_delete=models.PROTECT,
-    )
-    status = models.CharField(
-        choices=STATI,
-        max_length=3,
-        default=STATUS.OPEN,
     )
     item = models.CharField(
         max_length=255,

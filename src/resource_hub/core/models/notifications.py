@@ -7,10 +7,10 @@ from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 
 from .actors import Actor
-from .base import BaseModel
+from .base import BaseModel, BaseStateMachine
 
 
-class Notification(BaseModel):
+class Notification(BaseStateMachine):
     class LEVEL:
         '''
         the level of a message is the basis for user
@@ -54,7 +54,7 @@ class Notification(BaseModel):
         'default': 'info circle',
     }
 
-    class STATUS:
+    class STATE(BaseStateMachine.STATE):
         '''
         The status indicates whether the message has been picked
         up and delivered via a secondary messaging service (e.g. mail)
@@ -62,20 +62,13 @@ class Notification(BaseModel):
         The type of service depends on the users preferences
         and settings
         '''
-        PENDING = 'p'
         SENT = 's'
 
-    STATI = [
-        (STATUS.PENDING, _('pending')),
-        (STATUS.SENT, _('send')),
-    ]
+    STATE_GRAPH = {
+        STATE.PENDING: {STATE.SENT}
+    }
 
     # fields
-    status = models.CharField(
-        max_length=1,
-        choices=STATI,
-        default=STATUS.PENDING,
-    )
     typ = models.CharField(
         max_length=30,
         choices=TYPES,
@@ -142,7 +135,7 @@ class Notification(BaseModel):
                 attachments=attachments,
                 connection=connection,
             )
-        self.status = self.STATUS.SENT
+        self.move_to(self.STATE.SENT)
         self.save()
 
     @classmethod
@@ -169,7 +162,7 @@ class Notification(BaseModel):
     def send_open_mails(cls):
         connection = mail.get_connection()
         connection.open()
-        for notification in cls.objects.filter(status=cls.STATUS.PENDING):
+        for notification in cls.objects.filter(state=cls.STATE.PENDING):
             notification.send_mail(connection)
         connection.close()
 
