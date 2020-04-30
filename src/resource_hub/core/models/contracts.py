@@ -341,7 +341,6 @@ class Contract(BaseContract):
                 self.get_state_display(), state))
 
     # active states
-
     def set_pending(self, *args, **kwargs) -> None:
         self.move_to(self.STATE.PENDING)
         self.save()
