@@ -40,16 +40,20 @@ class BaseStateMachine(BaseModel):
         PENDING = 'p'
 
     STATES = [
-        (STATE.PENDING, _('PENDING')),
+        (STATE.PENDING, _('pending')),
     ]
     STATE_GRAPH = None
 
     state = models.CharField(
-        choices=STATES,
         max_length=2,
         default=STATE.PENDING,
     )
     state_changed = MonitorField(monitor='state')
+
+    def get_state_display(self):
+        for state in self.STATES:
+            if state[0] == self.state:
+                return state[1]
 
     # state setters
     def move_to(self, state):
