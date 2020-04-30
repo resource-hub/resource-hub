@@ -5,7 +5,7 @@ from django.db.models import Q
 from django.forms import inlineformset_factory
 from django.forms.models import BaseInlineFormSet
 from django.utils.timezone import get_current_timezone
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from resource_hub.core.fields import HTMLField
 from resource_hub.core.forms import (ContractProcedureForm, FormManager,

@@ -11,7 +11,7 @@ from django.shortcuts import redirect, reverse
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.crypto import get_random_string
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from resource_hub.core.fields import CurrencyField
 from resource_hub.core.models import (Actor, BankAccount, BaseModel, Contract,

@@ -100,6 +100,16 @@
 </form>
 {% endif %}
 
+{% if contract.state == CONTRACT_STATE.RUNNING %}
+{% include 'core/_identity.html' with actor=actor %}
+<form id="choices" class="small-container" method="POST">
+    {% csrf_token %}
+    <button class="ui red right labeled right floated icon button" name="choice" value="terminate" type="submit">
+        {% trans 'Terminate' %}
+        <i class="times icon"></i>
+    </button>
+</form>
+{% endif %}
 {% if contract.state == CONTRACT_STATE.PENDING and is_debitor %}
 {% include 'core/_identity.html' with actor=actor %}
 <form id="choices" class="small-container" method="POST">

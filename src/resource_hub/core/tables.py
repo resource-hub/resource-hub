@@ -1,6 +1,6 @@
 from django.forms import HiddenInput, Select
 from django.utils.html import mark_safe
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 import django_tables2 as tables
 from django_tables2.utils import Accessor as A

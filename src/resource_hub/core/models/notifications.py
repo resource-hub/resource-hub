@@ -4,7 +4,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core import mail
 from django.db import models
 from django.template.loader import render_to_string
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from .actors import Actor
 from .base import BaseModel

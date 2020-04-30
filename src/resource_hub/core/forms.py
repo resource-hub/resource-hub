@@ -10,7 +10,7 @@ from django.contrib.auth.forms import PasswordChangeForm, UserCreationForm
 from django.contrib.auth.hashers import check_password
 from django.forms import inlineformset_factory
 from django.utils.dateparse import parse_date
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from schwifty import BIC, IBAN
 

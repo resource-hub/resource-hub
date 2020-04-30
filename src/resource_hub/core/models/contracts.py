@@ -6,7 +6,7 @@ from django.db.models import Min
 from django.http import HttpResponse
 from django.shortcuts import reverse
 from django.utils import timezone
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from ipware import get_client_ip
 from model_utils.fields import MonitorField
@@ -18,6 +18,82 @@ from .invoices import Invoice
 from .notifications import Notification
 
 
+class ContractProcedure(models.Model):
+    SETTLEMENT_INTERVALS = [
+        (7, _('weekly')),
+        (14, _('biweekly')),
+        (30, _('monthly')),
+    ]
+
+    name = models.CharField(
+        max_length=64,
+        help_text=_('Give the procedure a name so you can identify it easier'),
+    )
+    auto_accept = models.BooleanField(
+        default=False,
+        help_text=_('Automatically accept the booking?'),
+    )
+    is_invoicing = models.BooleanField(
+        blank=True,
+        default=True,
+        verbose_name=_('Create invoices'),
+        help_text=_('Create invoices upon settlement of claims'),
+    )
+    terms_and_conditions = models.TextField(
+        null=True,
+        blank=True,
+        verbose_name=_('terms and conditions'),
+    )
+    termination_period = models.IntegerField(
+        default=0,
+        help_text=_('')
+    )
+    notes = models.TextField(
+        null=True,
+        blank=True,
+        verbose_name=_('Notes'),
+        help_text=_(
+            'This text will be added to the notification when a contract starts running')
+    )
+    payment_methods = models.ManyToManyField(
+        PaymentMethod,
+        blank=False,
+        help_text=_(
+            'Choose the payment methods you want to use for this venue'),
+    )
+    tax_rate = PercentField(
+        verbose_name=_('tax rate applied in percent'),
+    )
+    settlement_interval = models.IntegerField(
+        choices=SETTLEMENT_INTERVALS,
+        default=SETTLEMENT_INTERVALS[0][0],
+    )
+    triggers = models.ManyToManyField(
+        ContractTrigger,
+        blank=True,
+        related_name='procedure'
+    )
+    owner = models.ForeignKey(
+        'Actor',
+        on_delete=models.PROTECT,
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    # attributes
+    objects = InheritanceManager()
+
+    @property
+    def type_name(self):
+        raise NotImplementedError()
+
+    # methods
+    def __str__(self):
+        return '{}: {}'.format(self.type_name, self.name)
+
+    def apply_tax(self, net):
+        return float(net) * (1 + (float(self.tax_rate)/100))
 class BaseContract(BaseModel):
     # constants
     class STATE:
@@ -67,6 +143,9 @@ class BaseContract(BaseModel):
     terms_and_conditions = models.TextField(
         null=True,
     )
+    termination_period = models.IntegerField(
+        default=0,
+    )
     creditor = models.ForeignKey(
         'Actor',
         null=True,
@@ -100,7 +179,6 @@ class BaseContract(BaseModel):
         null=True,
         blank=True,
     )
-
     confirmation = models.OneToOneField(
         'DeclarationOfIntent',
         null=True,
@@ -538,77 +616,3 @@ class PaymentMethod(Trigger):
         text appended to the end of invoices informing about the payment, possibly further instructions
         '''
         return ''
-
-
-class ContractProcedure(models.Model):
-    SETTLEMENT_INTERVALS = [
-        (7, _('weekly')),
-        (14, _('biweekly')),
-        (30, _('monthly')),
-    ]
-
-    name = models.CharField(
-        max_length=64,
-        help_text=_('Give the procedure a name so you can identify it easier'),
-    )
-    auto_accept = models.BooleanField(
-        default=False,
-        help_text=_('Automatically accept the booking?'),
-    )
-    is_invoicing = models.BooleanField(
-        blank=True,
-        default=True,
-        verbose_name=_('Create invoices'),
-        help_text=_('Create invoices upon settlement of claims'),
-    )
-    terms_and_conditions = models.TextField(
-        null=True,
-        blank=True,
-        verbose_name=_('terms and conditions'),
-    )
-    notes = models.TextField(
-        null=True,
-        blank=True,
-        verbose_name=_('Notes'),
-        help_text=_(
-            'This text will be added to the notification when a contract starts running')
-    )
-    payment_methods = models.ManyToManyField(
-        PaymentMethod,
-        blank=False,
-        help_text=_(
-            'Choose the payment methods you want to use for this venue'),
-    )
-    tax_rate = PercentField(
-        verbose_name=_('tax rate applied in percent'),
-    )
-    settlement_interval = models.IntegerField(
-        choices=SETTLEMENT_INTERVALS,
-        default=SETTLEMENT_INTERVALS[0][0],
-    )
-    triggers = models.ManyToManyField(
-        ContractTrigger,
-        blank=True,
-        related_name='procedure'
-    )
-    owner = models.ForeignKey(
-        'Actor',
-        on_delete=models.PROTECT,
-    )
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-    )
-
-    # attributes
-    objects = InheritanceManager()
-
-    @property
-    def type_name(self):
-        raise NotImplementedError()
-
-    # methods
-    def __str__(self):
-        return '{}: {}'.format(self.type_name, self.name)
-
-    def apply_tax(self, net):
-        return float(net) * (1 + (float(self.tax_rate)/100))

@@ -2,7 +2,7 @@ from datetime import datetime
 
 import dateutil.parser
 from django.db.models import Q
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from resource_hub.core.views.api import SmallResultsSetPagination
 from resource_hub.venues.models import Event, Venue
