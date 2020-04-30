@@ -529,7 +529,7 @@ class LocationForm(forms.ModelForm):
     class Meta:
         model = Location
         fields = ['name', 'is_public', 'description', 'image',
-                  'search', 'latitude', 'longitude']
+                  'search', 'latitude', 'longitude', ]
         help_texts = {
             'is_public': _('Allow other users to link information to this location'),
         }

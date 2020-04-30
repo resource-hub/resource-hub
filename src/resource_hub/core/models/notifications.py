@@ -13,8 +13,8 @@ from .base import BaseModel
 class Notification(BaseModel):
     class LEVEL:
         '''
-        the level of a message is the basis for user notification 
-        preferences
+        the level of a message is the basis for user
+        notification preferences
         '''
         LOW = 0  # info
         MEDIUM = 1  # action required, mail

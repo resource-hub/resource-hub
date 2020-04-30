@@ -8,24 +8,43 @@
 {{ event_form.media }}
 {% endblock %}
 
-{% block content %}
-{% url 'venues:venue_details' venue_slug=venue.slug location_slug=venue.location.slug as url %}
-{% include '_back_button.html' with url=url %}
-<h1>
-    {% trans 'create event' %}
-</h1>
+{% block not_in_container %}
+<div class="main container large">
+    <div class="ui stackable two column grid">
+        <div class="nine wide column">
+            {% url 'venues:venue_details' venue_slug=venue.slug location_slug=venue.location.slug as url %}
+            {% include '_back_button.html' with url=url %}
+            <h1>
+                {% trans 'Create event' %}
+            </h1>
 
-<form class="ui form" method="POST" enctype="multipart/form-data">
-    {% include '_form.html' with form=venue_contract_form %}
-    <div id="container">
-        {% include '_form.html' with form=event_form %}
+            <form class="ui form" method="POST" enctype="multipart/form-data">
+                {% include '_form.html' with form=venue_contract_form %}
+                <div id="container">
+                    {% include '_form.html' with form=event_form %}
+                </div>
+                {% include 'core/_identity.html' with actor=actor %}
+                <button class="ui positive right labeled icon button" type="submit">
+                    {% trans 'Check event' %}
+                    <i class="zoom-in icon"></i>
+                </button>
+            </form>
+        </div>
+        <div class="seven wide column">
+            {% include 'venues/_venue_calendar.html' with venue=venue %}
+            <div class="spacer">
+                <div class="ui list">
+                    <div class="item">
+                        <div class="header">
+                            {% trans 'Base price' %}
+                        </div>
+                        {{ venue.price }}
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    {% include 'core/_identity.html' with actor=actor %}
-    <button class="ui positive right labeled icon button" type="submit">
-        {% trans 'Check event' %}
-        <i class="zoom-in icon"></i>
-    </button>
-</form>
+</div>
 {% endblock %}
 
 
