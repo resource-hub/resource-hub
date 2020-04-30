@@ -34,10 +34,10 @@ class BaseAPITest(TestCase):
         USER_DATA['name'] = USER_DATA['name'] + str(self.COUNT)
         return user
 
-    def post(self, data, user):
+    def post(self, data, user, kwargs=None):
         request = self.factory.post(self.url, data, format='json')
         force_authenticate(request, user=user)
-        response = self.view(request)
+        response = self.view(request, **kwargs)
         self.assertEqual(response.status_code, 200)
         return response
 
@@ -45,11 +45,12 @@ class BaseAPITest(TestCase):
 class TestOrganizationMembersChange(BaseAPITest):
     def setUp(self):
         super(TestOrganizationMembersChange, self).setUp()
-        self.url = reverse('api:organizations_members_change')
-        self.view = OrganizationMembersChange.as_view()
         self.organization = Organization.objects.create(
             name='test'
         )
+        self.url = reverse('api:organizations_members_change', kwargs={
+                           'organization_pk': self.organization.pk})
+        self.view = OrganizationMembersChange.as_view()
         self.organization.members.add(self.user1, through_defaults={
             'role': OrganizationMember.OWNER})
         self.organization.members.add(self.user2, through_defaults={
@@ -64,7 +65,7 @@ class TestOrganizationMembersChange(BaseAPITest):
             m.pk: {
                 'role': OrganizationMember.ADMIN
             },
-        }, self.user1)
+        }, self.user1, kwargs={'organization_pk': self.organization.pk})
         self.assertEqual(OrganizationMember.objects.get(
             organization=self.organization,
             user=self.user2,

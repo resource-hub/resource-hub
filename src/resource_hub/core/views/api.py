@@ -129,7 +129,6 @@ class OrganizationMembersChange(APIView):
                     if role == OrganizationMember.OWNER and member[0].role != OrganizationMember.OWNER:
                         owners += 1
                 member.update(**data)
-            print(owners)
             if owners <= 0:
                 raise ValidationError(
                     detail=_('There has to be at least one owner!'))
