@@ -192,6 +192,26 @@ class TestContract(BaseContractTest):
             0
         )
 
+    def test_send_state_notifications(self):
+        sender = self.contract.creditor
+        recipient = self.contract.debitor
+        header = 'test'
+        message = 'test'
+        notification = self.contract._send_state_notification(
+            sender, recipient, header, message
+        )
+        self.assertEqual(notification.sender, sender)
+        self.assertEqual(notification.recipient, recipient)
+        self.assertEqual(notification.header, header)
+        self.assertEqual(notification.message, message)
+
+        self.contract.debitor = self.contract.creditor
+        self.contract.save()
+        notification = self.contract._send_state_notification(
+            sender, recipient, header, message
+        )
+        self.assertIsNone(notification)
+
     def test_set_terminated(self):
         self.create_claims()
         self.contract.settle_claims()

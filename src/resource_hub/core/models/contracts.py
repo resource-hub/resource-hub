@@ -331,9 +331,9 @@ class Contract(BaseContract):
     def call_triggers(self, state):
         return
 
-    def send_state_notification(self, sender, recipient, header, message=''):
+    def _send_state_notification(self, sender, recipient, header, message=''):
         if self.creditor != self.debitor:
-            Notification.build(
+            return Notification.build(
                 type_=Notification.TYPE.CONTRACT,
                 sender=sender,
                 recipient=recipient,
@@ -344,8 +344,8 @@ class Contract(BaseContract):
                 level=Notification.LEVEL.MEDIUM,
                 target=self,
             )
-    # state setters
 
+    # state setters
     def move_to(self, state):
         if self.state in self.STATE_GRAPH and state in self.STATE_GRAPH[self.state]:
             self.call_triggers(state)
@@ -363,7 +363,7 @@ class Contract(BaseContract):
         self.move_to(self.STATE.WAITING)
         self.create_confirmation(request)
         self.save()
-        self.send_state_notification(
+        self._send_state_notification(
             sender=self.debitor,
             recipient=self.creditor,
             header=_('{debitor} created {contract}'.format(
@@ -385,7 +385,7 @@ class Contract(BaseContract):
         else:
             self.set_initial_settlement_log()
         self.save()
-        self.send_state_notification(
+        self._send_state_notification(
             sender=self.creditor,
             recipient=self.debitor,
             header=_('{creditor} accepted {contract}'.format(
@@ -411,7 +411,7 @@ class Contract(BaseContract):
     def set_declined(self) -> None:
         self.move_to(self.STATE.DECLINED)
         self.save()
-        self.send_state_notification(
+        self._send_state_notification(
             sender=self.creditor,
             recipient=self.debitor,
             header=_('{creditor} declined {contract}'.format(
@@ -430,7 +430,7 @@ class Contract(BaseContract):
         Claim.objects.filter(query).update(state=Claim.STATE.TERMINATED)
         self.save()
         reciever = self.creditor if self.debitor == initiator else self.debitor
-        self.send_state_notification(
+        self._send_state_notification(
             sender=initiator,
             recipient=reciever,
             header=_('{initiator} terminated {contract}'.format(
