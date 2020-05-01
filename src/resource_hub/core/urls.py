@@ -77,7 +77,7 @@ control_urls.register([
          name='locations_create'),
     path('locations/manage/', control.LocationsManage.as_view(),
          name='locations_manage'),
-    path('locations/manage/<int:location_id>/profile/edit', control.LocationsProfileEdit.as_view(),
+    path('locations/manage/<int:pk>/', control.LocationsProfileEdit.as_view(),
          name='locations_profile_edit'),
 ])
 

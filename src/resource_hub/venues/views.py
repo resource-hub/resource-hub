@@ -7,6 +7,7 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
 from django.views import View
 
+from resource_hub.core.decorators import owner_required
 from resource_hub.core.views import TableView
 
 from .forms import (VenueContractFormManager,
@@ -55,16 +56,21 @@ class VenuesCreate(View):
 
 
 @method_decorator(login_required, name='dispatch')
+@method_decorator(owner_required, name='dispatch')
 class VenuesProfileEdit(View):
     template_name = 'venues/control/venues_profile_edit.html'
 
-    def get(self, request, venue_id):
-        venue = get_object_or_404(Venue, pk=venue_id)
+    @classmethod
+    def get_resource(cls):
+        return Venue
+
+    def get(self, request, pk):
+        venue = get_object_or_404(Venue, pk=pk)
         venue_form = VenueFormManager(request, instance=venue)
         return render(request, self.template_name, venue_form.get_forms())
 
-    def post(self, request, venue_id):
-        venue = get_object_or_404(Venue, pk=venue_id)
+    def post(self, request, pk):
+        venue = get_object_or_404(Venue, pk=pk)
         venue_form = VenueFormManager(
             request,
             instance=venue,
@@ -74,7 +80,7 @@ class VenuesProfileEdit(View):
             venue_form.save()
             message = _('The venue has been updated')
             messages.add_message(request, messages.SUCCESS, message)
-            return redirect(reverse('control:venues_profile_edit', kwargs={'venue_id': venue_id}))
+            return redirect(reverse('control:venues_profile_edit', kwargs={'pk': pk}))
 
         return render(request, self.template_name, venue_form.get_forms())
 

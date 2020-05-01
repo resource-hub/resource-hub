@@ -82,7 +82,7 @@ class LocationsTable(tables.Table):
         'control:locations_profile_edit',
         verbose_name=_('Name'),
         kwargs={
-            'location_id': A('id'),
+            'pk': A('id'),
         }
     )
     owner = tables.Column()

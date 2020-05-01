@@ -2,6 +2,7 @@ from datetime import timedelta
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models import F, Q
 from django.forms import Form
@@ -124,6 +125,7 @@ def get_subobject_or_404(klass, *args, **kwargs):
 
 
 @method_decorator(login_required, name='dispatch')
+@method_decorator(owner_required, name='dispatch')
 class FinancePaymentMethodsEdit(View):
     template_name = 'core/control/finance_payment_methods_edit.html'
 
@@ -147,6 +149,10 @@ class FinancePaymentMethodsEdit(View):
             'form': form
         }
         return render(request, self.template_name, context)
+
+    @classmethod
+    def get_resource(cls):
+        return PaymentMethod
 
 
 @method_decorator(login_required, name='dispatch')
@@ -210,13 +216,12 @@ class FinanceContractsManageDetails(View):
     def get(self, request, pk):
         contract = get_subobject_or_404(Contract, pk=pk)
         actor = request.actor
-
         if contract.debitor == actor:
             is_debitor = True
         elif contract.creditor == actor:
             is_debitor = False
         else:
-            return HttpResponseForbidden
+            raise PermissionDenied('Actor has to be debitor or creditor!')
 
         timer = None
         if contract.is_pending and is_debitor:
@@ -534,11 +539,16 @@ class LocationsManage(TableView):
 
 
 @method_decorator(login_required, name='dispatch')
+@method_decorator(owner_required, name='dispatch')
 class LocationsProfileEdit(View):
     template_name = 'core/control/locations_profile_edit.html'
 
-    def get(self, request, location_id):
-        location = get_object_or_404(Location, pk=location_id)
+    @classmethod
+    def get_resource(cls):
+        return Location
+
+    def get(self, request, pk):
+        location = get_object_or_404(Location, pk=pk)
         location_form = LocationFormManager(
             instances={
                 'location_form': location,
@@ -547,8 +557,8 @@ class LocationsProfileEdit(View):
         )
         return render(request, self.template_name, location_form.get_forms())
 
-    def post(self, request, location_id):
-        location = get_object_or_404(Location, pk=location_id)
+    def post(self, request, pk):
+        location = get_object_or_404(Location, pk=pk)
         location_form = LocationFormManager(
             request=request,
             instances={
@@ -559,6 +569,6 @@ class LocationsProfileEdit(View):
 
         if location_form.is_valid():
             location_form.save()
-            return redirect(reverse('control:locations_profile_edit', kwargs={'location_id': location_id}))
+            return redirect(reverse('control:locations_profile_edit', kwargs={'pk': pk}))
 
         return render(request, self.template_name, location_form.get_forms())

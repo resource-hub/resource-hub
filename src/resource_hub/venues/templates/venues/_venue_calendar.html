@@ -20,7 +20,7 @@
         var calendarEl = document.getElementById('calendar');
 
         var calendar = new FullCalendar.Calendar(calendarEl, {
-            events: "{% url 'api:venues_event_feed' venue_id=venue.id %}",
+            events: "{% url 'api:venues_event_feed' pk=venue.pk %}",
             plugins: ['list', 'dayGrid'],
             locale: locale,
             defaultView: 'dayGridMonth',
