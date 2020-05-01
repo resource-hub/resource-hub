@@ -6,7 +6,7 @@ from django_tables2.utils import Accessor as A
 
 class VenuesTable(tables.Table):
     name = tables.LinkColumn(
-        'control:venues_profile_edit',
+        'control:venues_edit',
         verbose_name=_('Name'),
         kwargs={
             'pk': A('pk'),

@@ -57,8 +57,8 @@ class VenuesCreate(View):
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(owner_required, name='dispatch')
-class VenuesProfileEdit(View):
-    template_name = 'venues/control/venues_profile_edit.html'
+class VenuesEdit(View):
+    template_name = 'venues/control/venues_edit.html'
 
     @classmethod
     def get_resource(cls):
@@ -80,7 +80,7 @@ class VenuesProfileEdit(View):
             venue_form.save()
             message = _('The venue has been updated')
             messages.add_message(request, messages.SUCCESS, message)
-            return redirect(reverse('control:venues_profile_edit', kwargs={'pk': pk}))
+            return redirect(reverse('control:venues_edit', kwargs={'pk': pk}))
 
         return render(request, self.template_name, venue_form.get_forms())
 

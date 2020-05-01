@@ -5,10 +5,10 @@
 {% url 'control:venues_manage' as url %}
 {% include '_back_button.html' with url=url %}
 <h1>
-    {% trans 'Edit profile' %}
+    {% trans 'Edit venue' %}
 </h1>
 <div class="section-container tab-content">
-    {% trans 'save' as action %}
+    {% trans 'Save' as action %}
     {% include 'venues/control/_venue_form.html' with venue_form=venue_form venue_procedure_form=venue_procedure_form action=action %}
 </div>
 {% endblock %}

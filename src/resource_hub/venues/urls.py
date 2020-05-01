@@ -14,7 +14,7 @@ api_urls.register([
 control_urls.register([
     path('venues/manage/', views.VenuesManage.as_view(), name='venues_manage'),
     path('venues/manage/<int:pk>/',
-         views.VenuesProfileEdit.as_view(), name='venues_profile_edit'),
+         views.VenuesEdit.as_view(), name='venues_edit'),
     path('venues/create/', views.VenuesCreate.as_view(), name='venues_create'),
     path('venues/contract-procedures/create', views.ContractProceduresCreate.as_view(),
          name='venues_contract_procedures_create'),
