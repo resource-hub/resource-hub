@@ -9,8 +9,9 @@ from django.utils.translation import gettext_lazy as _
 
 from resource_hub.core.fields import HTMLField
 from resource_hub.core.forms import (ContractProcedureForm, FormManager,
-                                     PriceForm, PriceProfileFormSet)
-from resource_hub.core.models import Location, PriceProfile
+                                     GalleryImageFormSet, PriceForm,
+                                     PriceProfileFormSet)
+from resource_hub.core.models import Gallery, Location, PriceProfile
 from resource_hub.core.utils import get_authorized_actors
 
 from .models import (Equipment, EquipmentPrice, Event, Venue, VenueContract,
@@ -62,6 +63,7 @@ class VenueForm(forms.ModelForm):
 class VenueFormManager(FormManager):
     def __init__(self, request, instance=None):
         self.request = request
+        gallery_instance = instance.gallery if instance else None
         if self.request.POST:
             self.forms = {
                 'venue_form': VenueForm(
@@ -69,6 +71,11 @@ class VenueFormManager(FormManager):
                     data=self.request.POST,
                     files=self.request.FILES,
                     instance=instance,
+                ),
+                'gallery_formset': GalleryImageFormSet(
+                    data=self.request.POST,
+                    files=self.request.FILES,
+                    instance=gallery_instance,
                 ),
                 'price_formset': VenuePriceFormset(
                     data=self.request.POST,
@@ -86,6 +93,9 @@ class VenueFormManager(FormManager):
                     self.request,
                     instance=instance,
                 ),
+                'gallery_formset': GalleryImageFormSet(
+                    instance=gallery_instance,
+                ),
                 'price_formset': VenuePriceFormset(
                     instance=instance,
                 ),
@@ -95,6 +105,12 @@ class VenueFormManager(FormManager):
     def save(self):
         new_venue = self.forms['venue_form'].save()
         first = True
+        if new_venue.gallery is None:
+            new_venue.gallery = Gallery.objects.create()
+            new_venue.save()
+
+        self.forms['gallery_formset'].instance = new_venue.gallery
+        self.forms['gallery_formset'].save()
 
         for price in self.forms['price_formset'].save(commit=False):
             price.venue_ptr = new_venue

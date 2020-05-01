@@ -36,5 +36,20 @@
             {% endif %}
         </div>
     </div>
+
+    <div class="section-container">
+        {% if venue.gallery.images %}
+        <h2>{% trans 'Gallery' %}</h2>
+        {% include '_gallery.html' with gallery=venue.gallery.images.all %}
+        {% endif %}
+    </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function () {
+        $('.fluid.card .image').dimmer({ on: 'hover' });
+    })
+</script>
 {% endblock %}

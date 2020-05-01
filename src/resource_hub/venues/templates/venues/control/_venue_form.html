@@ -4,6 +4,10 @@
 <form class="ui form" method="POST" enctype="multipart/form-data">
     {% include '_form.html' with form=venue_form %}
     <div class="field">
+        <label>{% trans 'Gallery' %}:</label>
+        {% include '_formset.html' with formset=gallery_formset %}
+    </div>
+    <div class="field">
         <label>{% trans 'Price' %}: *</label>
         {% include '_formset.html' with formset=price_formset %}
     </div>

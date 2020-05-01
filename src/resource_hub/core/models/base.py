@@ -257,33 +257,30 @@ class Location(models.Model):
         super(Location, self).save(*args, **kwargs)
 
 
-class Gallery(models.Model):
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-    )
-    created_by = models.ForeignKey(
-        'User',
-        on_delete=models.CASCADE,
-    )
+class Gallery(BaseModel):
+    pass
 
 
-class GalleryImage(models.Model):
+class GalleryImage(BaseModel):
     gallery = models.ForeignKey(
         Gallery,
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
+        related_name='images'
+    )
+    caption = models.CharField(
+        max_length=255,
     )
     image = models.ImageField(
         null=False,
-        blank=True,
         upload_to='images/',
     )
     thumbnail = ImageSpecField(
         source='image',
         processors=[
-            ResizeToFill(300, 300),
+            ResizeToFill(400, 400),
         ],
         format='JPEG',
         options={
-            'quality': 70,
+            'quality': 90,
         }
     )

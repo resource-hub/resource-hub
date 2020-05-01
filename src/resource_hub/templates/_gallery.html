@@ -1,0 +1,167 @@
+{% load i18n %}
+{% load static %}
+{% load sekizai_tags %}
+
+{% addtoblock 'extra_head' %}
+<link rel="stylesheet" href="{% static 'photoswipe/photoswipe.css' %}">
+<link rel="stylesheet" href="{% static 'photoswipe/default-skin/default-skin.css' %}">
+{% endaddtoblock %}
+
+<div class="ui stackable four column cards grid">
+    {% for image in gallery %}
+    <a class="ui fluid card" href="javascript:pswpInit({{ forloop.counter0 }});" alt="{{ image.caption }}">
+        <div class="blurring dimmable image">
+            <div class="ui dimmer">
+                <div class="content">
+                    <div class="center">
+                        <div class="ui inverted button">{% trans 'Show' %}</div>
+                    </div>
+                </div>
+            </div>
+            <img class="thumbnail" src="{{ image.thumbnail.url }}">
+        </div>
+        <div class="content">
+            <div class="meta">
+                <div class="header">{{ image.caption }}</div>
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+
+<!-- PhotoSwipe -->
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element, as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. PhotoSwipe keeps only 3 slides in DOM to save memory. -->
+        <div class="pswp__container">
+            <!-- don't modify these 3 pswp__item elements, data is added later on -->
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo https://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% addtoblock 'js' %}
+<script>
+    // build the json album images collection 
+    window.djangoAlbumImages = [
+        {% for image in gallery %}
+    {
+        src: '{{ image.image.url }}',
+            w: '{{ image.image.width }}',
+                h: '{{ image.image.height }}'
+    },
+    {% endfor %}
+    ];
+    var pswpInit = function (startsAtIndex) {
+
+        if (!startsAtIndex) {
+            startsAtIndex = 0;
+        }
+
+        var pswpElement = document.querySelectorAll('.pswp')[0];
+
+        // commented the array bellow since the images array will be loaded from the server
+        // in variable called djangoAlbumImages.
+
+        // build items array
+        var items = [
+            {
+                src: 'https://placekitten.com/600/400',
+                title: 'test'
+            },
+            {
+                src: 'https://placekitten.com/1200/900',
+                title: 'test'
+            }
+        ];
+
+        // find is images are loaded from the server.
+        if (window.djangoAlbumImages && window.djangoAlbumImages.length > 0) {
+            // define options (if needed)
+            var options = {
+                // optionName: 'option value'
+                // for example:
+                index: startsAtIndex, // start at first slide
+                focus: false,
+                // Function builds caption markup
+                addCaptionHTMLFn: function (item, captionEl, isFake) {
+                    // item      - slide object
+                    // captionEl - caption DOM element
+                    // isFake    - true when content is added to fake caption container
+                    //             (used to get size of next or previous caption)
+
+                    if (!item.title) {
+                        captionEl.children[0].innerHTML = '';
+                        return false;
+                    }
+                    captionEl.children[0].innerHTML = item.title;
+                    return true;
+                },
+
+            };
+
+            // Initializes and opens PhotoSwipe
+            var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, window.djangoAlbumImages, options);
+            gallery.init();
+        }
+    }
+</script>
+<script src="{% static 'photoswipe/photoswipe.min.js' %}"></script>
+<script src="{% static 'photoswipe/photoswipe-ui-default.min.js' %}"></script>
+{% endaddtoblock %}

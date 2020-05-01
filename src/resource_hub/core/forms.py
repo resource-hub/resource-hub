@@ -16,9 +16,9 @@ from schwifty import BIC, IBAN
 
 from .fields import HTMLField
 from .models import (Actor, Address, BankAccount, ContractProcedure,
-                     ContractTrigger, Location, Organization,
-                     OrganizationMember, PaymentMethod, Price, PriceProfile,
-                     User)
+                     ContractTrigger, Gallery, GalleryImage, Location,
+                     Organization, OrganizationMember, PaymentMethod, Price,
+                     PriceProfile, User)
 from .widgets import IBANInput, UISearchField
 
 
@@ -559,6 +559,16 @@ class LocationFormManager(FormManager):
         if commit:
             new_location.save()
         return new_location
+
+
+class GalleryImageForm(forms.ModelForm):
+    class Meta:
+        model = GalleryImage
+        fields = ['caption', 'image', ]
+
+
+GalleryImageFormSet = inlineformset_factory(
+    Gallery, GalleryImage, form=GalleryImageForm, extra=0, min_num=0, can_order=True,)
 
 
 class ReportBugForm(forms.Form):
