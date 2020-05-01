@@ -540,8 +540,8 @@ class LocationsManage(TableView):
 
 @method_decorator(login_required, name='dispatch')
 @method_decorator(owner_required, name='dispatch')
-class LocationsProfileEdit(View):
-    template_name = 'core/control/locations_profile_edit.html'
+class LocationsEdit(View):
+    template_name = 'core/control/locations_edit.html'
 
     @classmethod
     def get_resource(cls):
@@ -569,6 +569,6 @@ class LocationsProfileEdit(View):
 
         if location_form.is_valid():
             location_form.save()
-            return redirect(reverse('control:locations_profile_edit', kwargs={'pk': pk}))
+            return redirect(reverse('control:locations_edit', kwargs={'pk': pk}))
 
         return render(request, self.template_name, location_form.get_forms())

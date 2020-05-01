@@ -79,7 +79,7 @@ class MembersTable(tables.Table):
 
 class LocationsTable(tables.Table):
     name = tables.LinkColumn(
-        'control:locations_profile_edit',
+        'control:locations_edit',
         verbose_name=_('Name'),
         kwargs={
             'pk': A('id'),
