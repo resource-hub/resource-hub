@@ -148,8 +148,13 @@ class ContractProceduresCreate(View):
 
 
 @method_decorator(login_required, name='dispatch')
+@method_decorator(owner_required, name='dispatch')
 class ContractProceduresEdit(View):
     template_name = 'venues/control/contract_procedures_edit.html'
+
+    @classmethod
+    def get_resource(cls):
+        return VenueContractProcedure
 
     def get(self, request, pk):
         contract_procedure = get_object_or_404(VenueContractProcedure, pk=pk)
