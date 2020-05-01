@@ -18,3 +18,10 @@ def organization_admin_required(function):
             return function(request, *args, **kwargs)
         raise PermissionDenied()
     return wrap
+
+
+def owner_required(function):
+    @wraps(function)
+    def wrap(request, *args, **kwargs):
+        print(args)
+    return wrap

@@ -13,7 +13,7 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
 from django.views import View
 
-from ..decorators import organization_admin_required
+from ..decorators import organization_admin_required, owner_required
 from ..forms import *
 from ..models import *
 from ..signals import register_contract_procedures, register_payment_methods
@@ -109,21 +109,8 @@ class FinancePaymentMethodsManage(TableView):
     header = _('Payment methods')
 
     def get_queryset(self, request, sort):
-        methods = PaymentMethod.objects.filter(
+        return PaymentMethod.objects.filter(
             owner=request.actor).select_subclasses()
-
-        result = []
-        for method in methods:
-            result.append(
-                {
-                    'pk': method.pk,
-                    'name': method.name,
-                    'owner': method.owner,
-                    'is_prepayment': method.is_prepayment,
-                    'method_type': method.verbose_name,
-                }
-            )
-        return result
 
     def get_table(self):
         return PaymentMethodsTable

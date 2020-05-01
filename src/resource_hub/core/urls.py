@@ -16,7 +16,7 @@ finance_urls.register([
          control.FinancePaymentMethodsManage.as_view(), name='finance_payment_methods_manage'),
     path('payment-methods/manage/<int:pk>/', control.FinancePaymentMethodsEdit.as_view(
     ), name='finance_payment_methods_edit'),
-    path('payment-methods/add',
+    path('payment-methods/add/',
          control.FinancePaymentMethodsAdd.as_view(), name='finance_payment_methods_add'),
     path('contracts/credited/', control.FinanceContractsCredited.as_view(),
          name='finance_contracts_credited'),

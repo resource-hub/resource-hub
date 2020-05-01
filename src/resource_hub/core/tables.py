@@ -18,7 +18,7 @@ class BoolColumn(tables.Column):
 class PaymentMethodsTable(tables.Table):
     name = tables.Column(
         linkify=('control:finance_payment_methods_edit', {'pk': A('pk')}))
-    method_type = tables.Column()
+    verbose_name = tables.Column(verbose_name=_('Type'))
     is_prepayment = BoolColumn(
         verbose_name=_('Prepayment'),
     )
