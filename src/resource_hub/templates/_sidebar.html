@@ -15,10 +15,10 @@
             {% get_available_languages as LANGUAGES %}
             {% get_language_info_list for LANGUAGES as languages %}
             {% for language in languages %}
-            <option value="{{ language.code }}"
+            <a value="{{ language.code }}"
                 class="lang item {% if language.code == LANGUAGE_CODE %}active selected{% endif %}">
                 <span class="inverted text">{{ language.name_local }}</span>
-            </option>
+            </a>
             {% endfor %}
         </div>
     </div>

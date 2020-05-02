@@ -61,6 +61,11 @@
   background: rgb(242, 113, 28, 0.3);
 }
 
+.ui.pointing.dropdown>.menu {
+  background-color: #ffffff;
+  padding-right: 0;
+}
+
 /**
   *
   * Photoswipe 
@@ -153,7 +158,7 @@ td>a {
 }
 
 .navigation-bar .left .item, .navigation-bar .right .item {
-  position: relative;
+  /* position: relative; */
   padding: 0 1em 0 0;
   vertical-align: middle;
   line-height: 1;

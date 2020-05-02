@@ -56,7 +56,7 @@ $(document).ready(function () {
 
   // toggle language
   $(".lang").on("click", function () {
-    var val = $(this).val();
+    var val = $(this).attr("value");
     $("#language").val(val);
     $("#language-form").submit();
   });
