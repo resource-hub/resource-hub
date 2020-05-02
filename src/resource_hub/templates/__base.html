@@ -1,8 +1,9 @@
 {% load static %}
 {% load sekizai_tags %}
+{% load i18n %}
 <!DOCTYPE html>
-
-<html>
+{% get_current_language as LANGUAGE_CODE %}
+<html lang="{{ LANGUAGE_CODE }}">
 
 <head>
     {% block meta_tags %}

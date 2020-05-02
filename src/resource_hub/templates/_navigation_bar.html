@@ -93,7 +93,7 @@
             <form id="role-form" class="ui hidden form" action="{% url 'core:actor_set' %}" method="POST">
                 {% csrf_token %}
                 <div class="field">
-                    <label for="actor">{% trans 'role' %}</label>
+                    <label for="role-list">{% trans 'role' %}</label>
                     <select id="role-list" name="actor_id"></select>
                 </div>
                 <button type="submit" class="ui positive right labeled icon button">
