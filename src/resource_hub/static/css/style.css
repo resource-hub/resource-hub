@@ -278,6 +278,13 @@ td>a {
   -webkit-transition: visibility 0s linear 0.5s, opacity 0.3s linear;
 }
 
+#support {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 100;
+}
+
 /* contract states */
 
 .p, .w {
