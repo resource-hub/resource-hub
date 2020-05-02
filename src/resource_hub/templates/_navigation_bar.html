@@ -18,7 +18,7 @@
                 {% get_available_languages as LANGUAGES %}
                 {% get_language_info_list for LANGUAGES as languages %}
                 {% for language in languages %}
-                <a value="{{ language.code }}"
+                <a lang-code="{{ language.code }}"
                     class="lang item {% if language.code == LANGUAGE_CODE %}active selected{% endif %}">
                     <span class="text">{{ language.name_local }}</span>
                 </a>
