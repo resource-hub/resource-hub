@@ -120,8 +120,8 @@ class FinancePaymentMethodsManage(TableView):
         return PaymentMethod.objects.filter(
             filters).select_subclasses()
 
-    def get_filter_form(self, request):
-        return PaymentMethodFilterForm()
+    def get_filter_form(self, request, data):
+        return PaymentMethodFilterForm(data=data)
 
     def get_table(self):
         return PaymentMethodsTable

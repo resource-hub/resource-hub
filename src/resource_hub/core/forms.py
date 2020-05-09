@@ -149,7 +149,41 @@ class AddressForm(forms.ModelForm):
             _('Invalid postal code'), code='invalid-postal-code')
 
 
-class PaymentMethodFilterForm(forms.Form):
+class TableActionForm(forms.Form):
+    ACTIONS = [
+        ('trash', _('Put in trash')),
+    ]
+    action = forms.ChoiceField(
+        choices=ACTIONS,
+    )
+
+
+class BaseFilterForm(forms.Form):
+    per_page = forms.IntegerField(
+        required=False,
+        initial=settings.DEFAULT_PER_PAGE,
+        min_value=1,
+        max_value=settings.MAX_PER_PAGE,
+    )
+    is_deleted = forms.BooleanField(
+        required=False,
+        label=_('In trash'),
+    )
+
+    def clean_per_page(self):
+        per_page = self.cleaned_data.get('per_page', None)
+        if per_page is None:
+            per_page = settings.DEFAULT_PER_PAGE
+        if per_page > settings.MAX_PER_PAGE:
+            raise forms.ValidationError(
+                _('There have to be at most {} entries per page'.format(settings.MAX_PER_PAGE)), code='max-per-page')
+        if per_page < settings.MIN_PER_PAGE:
+            raise forms.ValidationError(
+                _('There has to be at least {} entry per page'.format(settings.MIN_PER_PAGE)), code='min-per-page')
+        return per_page
+
+
+class PaymentMethodFilterForm(BaseFilterForm):
     name = forms.CharField(
         required=False,
     )

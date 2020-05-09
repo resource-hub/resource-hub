@@ -15,10 +15,25 @@ class BoolColumn(tables.Column):
         return ''
 
 
+class SelectColumn(tables.Column):
+    def __init__(self, *args, **kwargs):
+        kwargs['verbose_name'] = mark_safe(
+            '<label><input id="select-all" type="checkbox" name"select-all"> {}</label>'.format(_('Select all')))
+        kwargs['orderable'] = False
+        super(SelectColumn, self).__init__(*args, **kwargs)
+
+    def render(self, record, value):
+        return mark_safe('<input class="select" type="checkbox" value="{}" name="select[]">'.format(value))
+
+
 class PaymentMethodsTable(tables.Table):
+    pk = SelectColumn()
     name = tables.Column(
         linkify=('control:finance_payment_methods_edit', {'pk': A('pk')}))
-    verbose_name = tables.Column(verbose_name=_('Type'))
+    verbose_name = tables.Column(
+        verbose_name=_('Type'),
+        orderable=False,
+    )
     is_prepayment = BoolColumn(
         verbose_name=_('Prepayment'),
     )
@@ -26,7 +41,10 @@ class PaymentMethodsTable(tables.Table):
 
     class Meta:
         attrs = {
-            "class": "ui selectable celled table"
+            "class": "ui selectable celled table",
+        }
+        row_attrs = {
+            "class": "selectable",
         }
 
 

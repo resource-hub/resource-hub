@@ -49,12 +49,50 @@
     </form>
 </div>
 {% endif %}
-{% if table %}
-{% render_table table %}
-{% else %}
-<p>
-    {% trans 'No associated items found' %}
-</p>
-{% endif %}
+<form method="POST">
+    {% if action_form.fields %}
+    <div class="ui segment">
+        <div class="ui form">
+            {% include '_form.html' with form=action_form %}
+            <div class="float-container">
+                <button class="ui green right labeled right floated icon button" type="submit">
+                    {% trans 'Go' %}
+                    <i class="cog icon"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% if table %}
+    {% render_table table %}
+    {% else %}
+    <p>
+        {% trans 'No associated items found' %}
+    </p>
+    {% endif %}
+</form>
 
+{% endblock %}
+{% block scripts %}
+<script>
+    $(document).ready(function () {
+        $('tr.selectable').on('click', function () {
+            var checkbox = $(this).find('.select');
+            if (checkbox.prop('checked')) {
+                checkbox.prop('checked', false);
+                $('#select-all').prop('checked', false);
+            } else {
+                checkbox.prop('checked', true);
+            }
+        });
+        $('#select-all').on('click', function () {
+            var checkbox = $(this);
+            if (checkbox.prop('checked')) {
+                $('.select').prop('checked', true);
+            } else {
+                $('.select').prop('checked', false);
+            }
+        })
+    });
+</script>
 {% endblock %}

@@ -502,6 +502,10 @@ td>a {
   box-shadow: none;
 }
 
+tr.selectable {
+  cursor: pointer;
+}
+
 /**
   *
   * Mobile

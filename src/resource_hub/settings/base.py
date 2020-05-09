@@ -246,6 +246,11 @@ CACHES = {
 }
 CACHE_TTL = 60 * 15
 
+# tables
+
+DEFAULT_PER_PAGE = 25
+MIN_PER_PAGE = 1
+MAX_PER_PAGE = 1000
 
 # redis queue
 

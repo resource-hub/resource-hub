@@ -1,7 +1,10 @@
+from django.conf import settings
 from django.db.models import Q
 from django.forms import Form
-from django.shortcuts import render
+from django.shortcuts import redirect, render, reverse
 from django.views import View
+
+from ..forms import TableActionForm
 
 
 class TableView(View):
@@ -14,7 +17,12 @@ class TableView(View):
     def get_table(self):
         raise NotImplementedError()
 
-    def get_filter_form(self, request):
+    def get_action_form(self, request):
+        return TableActionForm()
+
+    def get_filter_form(self, request, data):
+        if data:
+            return Form(data)
         return Form()
 
     def get_context(self, request):
@@ -26,27 +34,29 @@ class TableView(View):
             table = self.get_table()(queryset)
             table.paginate(
                 page=request.GET.get('page', 1),
-                per_page=request.GET.get('per_page', 25)
+                per_page=request.GET.get('per_page', settings.DEFAULT_PER_PAGE)
             )
         else:
             table = None
         return {
             'header': self.header,
             'table': table,
-            'filter_form': self.get_filter_form(request),
+            'filter_form': self.get_filter_form(request, request.GET),
+            'action_form': self.get_action_form(request),
         }
 
     def get_filters(self, request):
-        form = self.get_filter_form(request)
+        form = self.get_filter_form(request, request.GET)
         query = None
         for field in form.fields:
-            value = request.GET.get(field, None)
-            if value:
-                parameter = {field: value}
-                if query:
-                    query.add(Q(**parameter), Q.AND)
-                else:
-                    query = Q(**parameter)
+            if field != 'per_page':
+                value = request.GET.get(field, None)
+                if value:
+                    parameter = {field: value}
+                    if query:
+                        query.add(Q(**parameter), Q.AND)
+                    else:
+                        query = Q(**parameter)
         return query
 
     def render(self, request):
@@ -54,3 +64,10 @@ class TableView(View):
 
     def get(self, request):
         return self.render(request)
+
+    def post(self, request):
+        print(request.POST)
+        selected_rows = request.POST.getlist('select[]')
+        for item in selected_rows:
+            print(item)
+        return redirect(reverse('{}:{}'.format(request.resolver_match.namespace, request.resolver_match.url_name)), kwargs=request.resolver_match.kwargs)
