@@ -1,9 +1,54 @@
 {% extends "control/__base.html" %}
 {% load i18n %}
 {% load django_tables2 %}
+{% load template_filters %}
 
 {% block content %}
 <h1>{{ header }}</h1>
+{% if filter_form.fields %}
+<div class="ui segment">
+    <h5>Filters <i class="filter icon"></i></h5>
+    <form class="ui form" id="filter-form" method="GET">
+        {% with filter_form.fields|length|intdiv:2 as div %}
+        {% with filter_form.fields|length|mod:2 as mod %}
+        <div class="ui stackable two column grid">
+            <div class="column">
+                {% for field in filter_form %}
+                {% if forloop.counter0 == div and mod == 0 %}
+            </div>
+            <div class="column">
+                {% endif %}
+                <div class="field">
+                    <label>
+                        {{ field.label }}:<span class="required-label-star">{% if field.field.required %}
+                            *{% endif %}</span>
+                    </label>
+                    {{ field }}
+                    {% if field.help_text %}
+                    <small style="color: grey">{{ field.help_text }}</small>
+                    {% endif %}
+                    {% for error in field.errors %}
+                    <div class="ui pointing red basic label">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                {% if forloop.counter0 == div and mod != 0 %}
+            </div>
+            <div class="column">
+                {% endif %}
+                {% endfor %}
+                {% endwith %}
+                {% endwith %}
+            </div>
+        </div>
+        <div class="float-container">
+            <button class="ui right floated positive right labeled icon button" type="submit">
+                {% trans 'filter' %}
+                <i class="filter icon"></i>
+            </button>
+        </div>
+    </form>
+</div>
+{% endif %}
 {% if table %}
 {% render_table table %}
 {% else %}

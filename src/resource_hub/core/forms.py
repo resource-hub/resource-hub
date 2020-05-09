@@ -149,6 +149,17 @@ class AddressForm(forms.ModelForm):
             _('Invalid postal code'), code='invalid-postal-code')
 
 
+class PaymentMethodFilterForm(forms.Form):
+    name = forms.CharField(
+        required=False,
+    )
+    currency = forms.ChoiceField(
+        choices=settings.CURRENCIES,
+        required=False,
+        initial=None,
+    )
+
+
 class BankAccountForm(forms.ModelForm):
     account_holder = forms.CharField(max_length=70, label=_('Account holder'))
     iban = forms.CharField(widget=IBANInput(), label=_('IBAN'))

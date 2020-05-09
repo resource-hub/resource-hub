@@ -16,6 +16,7 @@ from django.views import View
 
 from ..decorators import organization_admin_required, owner_required
 from ..forms import *
+from ..forms import PaymentMethodFilterForm
 from ..models import *
 from ..signals import register_contract_procedures, register_payment_methods
 from ..tables import (ContractProcedureTable, InvoiceTable, LocationsTable,
@@ -109,9 +110,18 @@ class FinanceBankAccounts(View):
 class FinancePaymentMethodsManage(TableView):
     header = _('Payment methods')
 
-    def get_queryset(self, request, sort):
+    def get_queryset(self, request, sort, filters):
+        query = Q(owner=request.actor)
+        filters = filters.add(query, Q.AND) if filters else query
+
+        if sort:
+            return PaymentMethod.objects.filter(
+                filters).select_subclasses().order_by(sort)
         return PaymentMethod.objects.filter(
-            owner=request.actor).select_subclasses()
+            filters).select_subclasses()
+
+    def get_filter_form(self, request):
+        return PaymentMethodFilterForm()
 
     def get_table(self):
         return PaymentMethodsTable
@@ -303,7 +313,7 @@ class FinanceContractsManageDetails(View):
 class FinanceContractProceduresManage(TableView):
     header = _('Manage contract procedures')
 
-    def get_queryset(self, request, sort):
+    def get_queryset(self, request, sort, filters):
         return ContractProcedure.objects.filter(owner=request.actor).select_subclasses()
 
     def get_table(self):
@@ -328,7 +338,7 @@ class FinanceContractProceduresCreate(View):
 class FinanceInvoicesOutgoing(TableView):
     header = _('Outgoing invoices')
 
-    def get_queryset(self, request, sort):
+    def get_queryset(self, request, sort, filters):
         actor = self.request.actor
         if sort:
             queryset = Invoice.objects.filter(
@@ -345,7 +355,7 @@ class FinanceInvoicesOutgoing(TableView):
 class FinanceInvoicesIncoming(TableView):
     header = _('Incoming invoices')
 
-    def get_queryset(self, request, sort):
+    def get_queryset(self, request, sort, filters):
         actor = self.request.actor
         if sort:
             queryset = Invoice.objects.filter(
@@ -373,7 +383,7 @@ class OrganizationsManage(TableView):
     def get_table(self):
         return OrganizationsTable
 
-    def get_queryset(self, request, sort):
+    def get_queryset(self, request, sort, filters):
         user = self.request.user
         query = Q(members=user)
         query.add(
@@ -457,7 +467,7 @@ class OrganizationsMembers(TableView):
     organization = None
     template_name = 'core/control/organizations_members.html'
 
-    def get_queryset(self, request, sort):
+    def get_queryset(self, request, sort, filters):
         print(OrganizationMember.objects.filter(
             organization=self.organization
         ).prefetch_related('user', 'organization'))
@@ -531,7 +541,7 @@ class LocationsCreate(View):
 class LocationsManage(TableView):
     header = _('Manage locations')
 
-    def get_queryset(self, request, sort):
+    def get_queryset(self, request, sort, filters):
         return Location.objects.filter(owner=request.actor)
 
     def get_table(self):

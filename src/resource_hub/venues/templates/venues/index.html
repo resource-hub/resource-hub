@@ -9,10 +9,12 @@
             <input id="search-venue" name="search_query" type="text" placeholder="{% trans 'search...' %}">
             <i class="search icon"></i>
         </div>
-        <button class="ui right floated positive right labeled icon button" type="submit">
-            {% trans 'filter' %}
-            <i class="filter icon"></i>
-        </button>
+        <div class="float-container">
+            <button class="ui right floated positive right labeled icon button" type="submit">
+                {% trans 'filter' %}
+                <i class="filter icon"></i>
+            </button>
+        </div>
     </form>
 </div>
 {% include 'venues/_venue_feed.html' %}

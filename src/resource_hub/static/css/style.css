@@ -402,6 +402,11 @@ td>a {
   margin: 2vh 0 3vh 0;
 }
 
+.float-container {
+  margin: 1em 0 0 0;
+  min-height: 36px;
+}
+
 .padded-section-container {
   padding: 2vh 0 3vh 0 !important;
 }

@@ -1,3 +1,5 @@
+from django.db.models import Q
+from django.forms import Form
 from django.shortcuts import render
 from django.views import View
 
@@ -6,15 +8,19 @@ class TableView(View):
     template_name = 'core/table_view.html'
     header = 'Header'
 
-    def get_queryset(self, request, sort):
+    def get_queryset(self, request, sort, filters):
         raise NotImplementedError()
 
     def get_table(self):
         raise NotImplementedError()
 
+    def get_filter_form(self, request):
+        return Form()
+
     def get_context(self, request):
         sort = request.GET.get('sort', None)
-        queryset = self.get_queryset(request, sort)
+        filters = self.get_filters(request)
+        queryset = self.get_queryset(request, sort, filters=filters)
 
         if queryset:
             table = self.get_table()(queryset)
@@ -24,11 +30,24 @@ class TableView(View):
             )
         else:
             table = None
-
         return {
             'header': self.header,
             'table': table,
+            'filter_form': self.get_filter_form(request),
         }
+
+    def get_filters(self, request):
+        form = self.get_filter_form(request)
+        query = None
+        for field in form.fields:
+            value = request.GET.get(field, None)
+            if value:
+                parameter = {field: value}
+                if query:
+                    query.add(Q(**parameter), Q.AND)
+                else:
+                    query = Q(**parameter)
+        return query
 
     def render(self, request):
         return render(request, self.template_name, self.get_context(request))
