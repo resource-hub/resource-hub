@@ -180,7 +180,6 @@ class FinancePaymentMethodsAdd(View):
                     'name': method.verbose_name,
                     'form': method.form(data=data, prefix=method.prefix),
                     'prefix': method.prefix,
-
                 }
             )
         return payment_methods_list

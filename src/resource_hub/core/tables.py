@@ -26,8 +26,23 @@ class SelectColumn(tables.Column):
         return mark_safe('<input class="select" type="checkbox" value="{}" name="select[]">'.format(value))
 
 
-class PaymentMethodsTable(tables.Table):
+class BaseTable(tables.Table):
+    class Meta:
+        attrs = {
+            "class": "ui selectable celled table",
+        }
+
+
+class SelectableTable(BaseTable):
     pk = SelectColumn()
+
+    class Meta(BaseTable.Meta):
+        row_attrs = {
+            "class": "selectable",
+        }
+
+
+class PaymentMethodsTable(SelectableTable):
     name = tables.Column(
         linkify=('control:finance_payment_methods_edit', {'pk': A('pk')}))
     verbose_name = tables.Column(
@@ -39,13 +54,8 @@ class PaymentMethodsTable(tables.Table):
     )
     owner = tables.Column(verbose_name=_('Owner'))
 
-    class Meta:
-        attrs = {
-            "class": "ui selectable celled table",
-        }
-        row_attrs = {
-            "class": "selectable",
-        }
+    class Meta(SelectableTable.Meta):
+        pass
 
 
 class OrganizationsTable(tables.Table):

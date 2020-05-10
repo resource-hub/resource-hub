@@ -10,6 +10,7 @@ from ..forms import TableActionForm
 class TableView(View):
     template_name = 'core/table_view.html'
     header = 'Header'
+    class_ = None
 
     def get_queryset(self, request, sort, filters):
         raise NotImplementedError()
@@ -66,8 +67,9 @@ class TableView(View):
         return self.render(request)
 
     def post(self, request):
-        print(request.POST)
+        action = request.POST.get('action', None)
         selected_rows = request.POST.getlist('select[]')
         for item in selected_rows:
-            print(item)
+            if action == 'trash' and self.class_:
+                self.class_.objects.get(pk=item).soft_delete()
         return redirect(reverse('{}:{}'.format(request.resolver_match.namespace, request.resolver_match.url_name)), kwargs=request.resolver_match.kwargs)
