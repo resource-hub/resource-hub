@@ -125,7 +125,6 @@ class Actor(BaseModel):
         upload_to='images/',
         default='images/logo.png',
     )
-    objects = InheritanceManager()
 
     @property
     def notification_recipients(self) -> list:

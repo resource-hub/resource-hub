@@ -109,6 +109,7 @@ class FinanceBankAccounts(View):
 @method_decorator(login_required, name='dispatch')
 class FinancePaymentMethodsManage(TableView):
     header = _('Payment methods')
+    class_ = PaymentMethod
 
     def get_queryset(self, request, sort, filters):
         query = Q(owner=request.actor)

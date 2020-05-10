@@ -17,7 +17,7 @@ from .invoices import Invoice
 from .notifications import Notification
 
 
-class ContractProcedure(models.Model):
+class ContractProcedure(BaseModel):
     SETTLEMENT_INTERVALS = [
         (7, _('weekly')),
         (14, _('biweekly')),
@@ -83,8 +83,6 @@ class ContractProcedure(models.Model):
     )
 
     # attributes
-    objects = InheritanceManager()
-
     @property
     def type_name(self):
         raise NotImplementedError()
@@ -194,8 +192,6 @@ class BaseContract(BaseStateMachine):
     )
 
     # attributes
-    objects = InheritanceManager()
-
     class Meta:
         abstract = True
 
@@ -556,8 +552,6 @@ class Trigger(BaseModel):
         abstract = True
 
     # attributes
-    objects = InheritanceManager()
-
     @property
     def fixed_condtion(self) -> bool:
         return False

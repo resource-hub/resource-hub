@@ -8,6 +8,7 @@ from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
 from model_utils.fields import MonitorField
 
+from ..managers import CombinedManager
 from ..utils import get_valid_slug
 
 
@@ -22,6 +23,8 @@ class BaseModel(models.Model):
     updated_at = models.DateTimeField(
         auto_now=True,
     )
+
+    objects = CombinedManager()
 
     class Meta:
         abstract = True
@@ -67,7 +70,7 @@ class BaseStateMachine(BaseModel):
         abstract = True
 
 
-class Address(models.Model):
+class Address(BaseModel):
     """
     describe address
     """
@@ -98,9 +101,6 @@ class Address(models.Model):
         blank=True,
         default=settings.DEFAULT_COUNTRY,
     )
-    updated_at = models.DateTimeField(
-        auto_now=True,
-    )
     updated_by = models.ForeignKey(
         'User',
         null=True,
@@ -122,7 +122,7 @@ class Address(models.Model):
         )
 
 
-class BankAccount(models.Model):
+class BankAccount(BaseModel):
     """
     describes a bank account
     """
@@ -167,7 +167,7 @@ class BankAccount(models.Model):
         )
 
 
-class Location(models.Model):
+class Location(BaseModel):
     """
     describing locations
     """
@@ -223,17 +223,11 @@ class Location(models.Model):
         'Actor',
         on_delete=models.CASCADE,
     )
-    created_at = models.DateField(
-        auto_now_add=True,
-    )
     created_by = models.ForeignKey(
         'User',
         null=True,
         related_name='location_created_by',
         on_delete=models.SET_NULL,
-    )
-    updated_at = models.DateTimeField(
-        auto_now=True,
     )
     updated_by = models.ForeignKey(
         'User',

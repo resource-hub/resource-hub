@@ -90,7 +90,7 @@ class Payment(BaseStateMachine):
     )
 
 
-class Price(models.Model):
+class Price(BaseModel):
     addressee = models.ForeignKey(
         'Actor',
         null=True,
@@ -108,15 +108,12 @@ class Price(models.Model):
         default=True,
         blank=True,
     )
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
 
     def __str__(self):
         return '{} {}'.format(self.value.normalize(), self.currency)
 
 
-class PriceProfile(models.Model):
+class PriceProfile(BaseModel):
     contract_procedure = models.ForeignKey(
         'ContractProcedure',
         on_delete=models.PROTECT,

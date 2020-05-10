@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.db import transaction
 from django.db.models import Q
 from django.forms import Form
 from django.shortcuts import redirect, render, reverse
@@ -69,7 +70,7 @@ class TableView(View):
     def post(self, request):
         action = request.POST.get('action', None)
         selected_rows = request.POST.getlist('select[]')
-        for item in selected_rows:
+        with transaction.atomic():
             if action == 'trash' and self.class_:
-                self.class_.objects.get(pk=item).soft_delete()
+                self.class_.objects.filter(pk__in=selected_rows).soft_delete()
         return redirect(reverse('{}:{}'.format(request.resolver_match.namespace, request.resolver_match.url_name)), kwargs=request.resolver_match.kwargs)
