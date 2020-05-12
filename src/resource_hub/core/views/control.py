@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.db.models import F, Q
+from django.db.models.query import QuerySet
 from django.forms import Form
 from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
@@ -110,16 +111,15 @@ class FinanceBankAccounts(View):
 class FinancePaymentMethodsManage(TableView):
     header = _('Payment methods')
     class_ = PaymentMethod
+    subclasses = True
 
-    def get_queryset(self, request, sort, filters):
-        query = Q(owner=request.actor)
-        filters = filters.add(query, Q.AND) if filters else query
-
-        if sort:
-            return PaymentMethod.objects.filter(
-                filters).select_subclasses().order_by(sort)
-        return PaymentMethod.objects.filter(
-            filters).select_subclasses()
+    def get_filters(self, request):
+        return {
+            'owner': {
+                'value': request.actor,
+                'connector': Q.AND,
+            }
+        }
 
     def get_filter_form(self, request, data):
         return PaymentMethodFilterForm(data=data)
@@ -312,9 +312,16 @@ class FinanceContractsManageDetails(View):
 @method_decorator(login_required, name='dispatch')
 class FinanceContractProceduresManage(TableView):
     header = _('Manage contract procedures')
+    class_ = ContractProcedure
+    subclasses = True
 
-    def get_queryset(self, request, sort, filters):
-        return ContractProcedure.objects.filter(owner=request.actor).select_subclasses()
+    def get_filters(self, request):
+        return {
+            'owner': {
+                'value': request.actor,
+                'connector': Q.AND,
+            }
+        }
 
     def get_table(self):
         return ContractProcedureTable
@@ -337,15 +344,17 @@ class FinanceContractProceduresCreate(View):
 @method_decorator(login_required, name='dispatch')
 class FinanceInvoicesOutgoing(TableView):
     header = _('Outgoing invoices')
+    class_ = Invoice
+    filters = False
+    actions = False
 
-    def get_queryset(self, request, sort, filters):
-        actor = self.request.actor
-        if sort:
-            queryset = Invoice.objects.filter(
-                contract__creditor=actor).order_by(sort)
-        else:
-            queryset = Invoice.objects.filter(contract__creditor=actor)
-        return queryset
+    def get_filters(self, request):
+        return {
+            'contract__creditor': {
+                'value': request.actor,
+                'connector': Q.AND,
+            }
+        }
 
     def get_table(self):
         return InvoiceTable
@@ -354,15 +363,17 @@ class FinanceInvoicesOutgoing(TableView):
 @method_decorator(login_required, name='dispatch')
 class FinanceInvoicesIncoming(TableView):
     header = _('Incoming invoices')
+    class_ = Invoice
+    filters = False
+    actions = False
 
-    def get_queryset(self, request, sort, filters):
-        actor = self.request.actor
-        if sort:
-            queryset = Invoice.objects.filter(
-                contract__debitor=actor).order_by(sort)
-        else:
-            queryset = Invoice.objects.filter(contract__debitor=actor)
-        return queryset
+    def get_filters(self, request):
+        return {
+            'contract__debitor': {
+                'value': request.actor,
+                'connector': Q.AND,
+            }
+        }
 
     def get_table(self):
         return InvoiceTable
@@ -379,17 +390,33 @@ class Notifications(View):
 @method_decorator(login_required, name='dispatch')
 class OrganizationsManage(TableView):
     header = _('Manage your organizations')
+    class_ = Organization
 
     def get_table(self):
         return OrganizationsTable
 
-    def get_queryset(self, request, sort, filters):
-        user = self.request.user
-        query = Q(members=user)
-        query.add(
-            Q(organizationmember__role__gte=OrganizationMember.MEMBER), Q.AND)
-        return Organization.objects.filter(query).annotate(role=F('organizationmember__role')).values(
-            'id', 'name', 'role')
+    def get_functions(self, request):
+        return {
+            'annotate': {
+                'func': QuerySet.annotate,
+                'args': [],
+                'kwargs': {
+                    'role': F('organizationmember__role'),
+                },
+            }
+        }
+
+    def get_filters(self, request):
+        return {
+            'members': {
+                'value': request.user,
+                'connector': Q.AND,
+            },
+            'organizationmember__role__gte': {
+                'value': OrganizationMember.MEMBER,
+                'connector': Q.AND,
+            },
+        }
 
 
 @method_decorator(login_required, name='dispatch')
@@ -466,14 +493,15 @@ class OrganizationsProfileEdit(View):
 class OrganizationsMembers(TableView):
     organization = None
     template_name = 'core/control/organizations_members.html'
+    class_ = OrganizationMember
 
-    def get_queryset(self, request, sort, filters):
-        print(OrganizationMember.objects.filter(
-            organization=self.organization
-        ).prefetch_related('user', 'organization'))
-        return OrganizationMember.objects.filter(
-            organization=self.organization
-        ).prefetch_related('user', 'organization')
+    def get_filters(self, request):
+        return {
+            'organization': {
+                'value': self.organization,
+                'connector': Q.AND,
+            }
+        }
 
     def get_table(self):
         return MembersTable
@@ -540,9 +568,15 @@ class LocationsCreate(View):
 @method_decorator(login_required, name='dispatch')
 class LocationsManage(TableView):
     header = _('Manage locations')
+    class_ = Location
 
-    def get_queryset(self, request, sort, filters):
-        return Location.objects.filter(owner=request.actor)
+    def get_filters(self, request):
+        return {
+            'owner': {
+                'value': request.actor,
+                'connector': Q.AND,
+            }
+        }
 
     def get_table(self):
         return LocationsTable

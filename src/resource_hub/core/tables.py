@@ -58,25 +58,26 @@ class PaymentMethodsTable(SelectableTable):
         pass
 
 
-class OrganizationsTable(tables.Table):
+class OrganizationsTable(SelectableTable):
     name = tables.Column(
         verbose_name=_('Name'),
         linkify=(
             'control:organizations_profile',
             {
-                'organization_id': A('id'),
+                'organization_id': A('pk'),
             }
         ),
     )
-    role = tables.Column(verbose_name=_('Rights'))
+    role = tables.Column(
+        verbose_name=_('Rights'),
+    )
 
-    def render_role(self, value):
-        return OrganizationMember.role_display_reverse(value)
+    # def render_members(self, value, record):
+    #     # return OrganizationMember.role_display_reverse())
+    #     return A('organizationmember__role')
 
-    class Meta:
-        attrs = {
-            "class": "ui selectable celled table"
-        }
+    class Meta(SelectableTable.Meta):
+        pass
 
 
 class MembersTable(tables.Table):
@@ -105,7 +106,7 @@ class MembersTable(tables.Table):
         }
 
 
-class LocationsTable(tables.Table):
+class LocationsTable(SelectableTable):
     name = tables.LinkColumn(
         'control:locations_edit',
         verbose_name=_('Name'),
@@ -115,10 +116,8 @@ class LocationsTable(tables.Table):
     )
     owner = tables.Column()
 
-    class Meta:
-        attrs = {
-            "class": "ui selectable celled table"
-        }
+    class Meta(SelectableTable.Meta):
+        pass
 
 
 def create_footer(table):
@@ -152,18 +151,16 @@ class ClaimTable(tables.Table):
         }
 
 
-class ContractProcedureTable(tables.Table):
+class ContractProcedureTable(SelectableTable):
     # columns
-    pk = tables.Column(verbose_name=_('Type'))
+    type_name = tables.Column(verbose_name=_('Type'))
     owner = tables.Column(verbose_name=_('Owner'))
 
-    def render_pk(self, value, record):
+    def render_type_name(self, value, record):
         return mark_safe('<a href="{}">{}</a>'.format(record.edit_link, record.type_name))
 
-    class Meta:
-        attrs = {
-            "class": "ui selectable table"
-        }
+    class Meta(SelectableTable.Meta):
+        pass
 
 
 class InvoiceTable(tables.Table):

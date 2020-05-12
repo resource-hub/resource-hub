@@ -195,7 +195,7 @@ class Organization(Actor):
         super(Organization, self).save(*args, **kwargs)
 
 
-class OrganizationMember(models.Model):
+class OrganizationMember(BaseModel):
     """member of organization."""
 
     # constants

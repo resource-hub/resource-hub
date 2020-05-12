@@ -7,6 +7,7 @@ from django_countries.fields import CountryField
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
 from model_utils.fields import MonitorField
+from model_utils.managers import InheritanceManager
 
 from ..managers import CombinedManager
 from ..utils import get_valid_slug
@@ -25,6 +26,7 @@ class BaseModel(models.Model):
     )
 
     objects = CombinedManager()
+    all_objects = InheritanceManager()
 
     class Meta:
         abstract = True

@@ -2,7 +2,7 @@ from collections import defaultdict
 
 from django.contrib import messages
 from django.db import transaction
-from django.db.models import Sum
+from django.db.models import Q, Sum
 from django.http import HttpResponseForbidden
 from django.shortcuts import redirect, render, reverse
 from django.utils.translation import gettext_lazy as _
@@ -61,9 +61,17 @@ class SEPAMandateDetails(View):
 
 class XMLFilesManage(TableView):
     header = _('SEPA Direct Debit XML files')
+    class_ = SEPADirectDebitXML
+    filters = False
+    actions = False
 
-    def get_queryset(self, request, sort, filters):
-        return SEPADirectDebitXML.objects.filter(creditor=self.request.actor)
+    def get_filters(self, request):
+        return {
+            'creditor': {
+                'value': request.actor,
+                'connector': Q.AND,
+            }
+        }
 
     def get_table(self):
         return SEPAXMLFileTable
@@ -117,12 +125,21 @@ class XMLFilesCreate(View):
 
 class OpenPayments(TableView):
     header = _('Open SEPA Direct Debit payments')
+    class_ = SEPADirectDebitPayment
+    filters = False
+    actions = False
 
-    def get_queryset(self, request, sort, filters):
-        return SEPADirectDebitPayment.objects.filter(
-            creditor=self.request.actor,
-            state=SEPADirectDebitPayment.STATE.PENDING,
-        )
+    def get_filters(self, request):
+        return {
+            'creditor': {
+                'value': request.actor,
+                'connector': Q.AND
+            },
+            'state': {
+                'value': SEPADirectDebitPayment.STATE.PENDING,
+                'connector': Q.AND,
+            },
+        }
 
     def get_table(self):
         return OpenPaymentsTable

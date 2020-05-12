@@ -152,6 +152,7 @@ class AddressForm(forms.ModelForm):
 class TableActionForm(forms.Form):
     ACTIONS = [
         ('trash', _('Put in trash')),
+        ('untrash', _('Restore from trash')),
     ]
     action = forms.ChoiceField(
         choices=ACTIONS,

@@ -2,9 +2,10 @@ from django.utils.translation import gettext_lazy as _
 
 import django_tables2 as tables
 from django_tables2.utils import Accessor as A
+from resource_hub.core.tables import SelectableTable
 
 
-class VenuesTable(tables.Table):
+class VenuesTable(SelectableTable):
     name = tables.LinkColumn(
         'control:venues_edit',
         verbose_name=_('Name'),
@@ -14,7 +15,5 @@ class VenuesTable(tables.Table):
     )
     owner = tables.Column(verbose_name=_('Owner'))
 
-    class Meta:
-        attrs = {
-            "class": "ui selectable celled table"
-        }
+    class Meta(SelectableTable.Meta):
+        pass

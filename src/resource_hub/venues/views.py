@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.decorators import method_decorator
@@ -22,14 +23,19 @@ TTL = 60 * 5
 # @cache_page(TTL)
 def index(request):
     return render(request, 'venues/index.html')
-
 # Admin section
 @method_decorator(login_required, name='dispatch')
 class VenuesManage(TableView):
     header = _('Manage venues')
+    class_ = Venue
 
-    def get_queryset(self, request, sort, filters):
-        return Venue.objects.filter(owner=self.request.actor)
+    def get_filters(self, request):
+        return {
+            'owner': {
+                'value': request.actor,
+                'connector': Q.AND,
+            }
+        }
 
     def get_table(self):
         return VenuesTable
