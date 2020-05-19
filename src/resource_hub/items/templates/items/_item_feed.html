@@ -1,11 +1,11 @@
 {% load i18n %}
 {% load sekizai_tags %}
 
-{% include '_block_feed.html' with blocks='three' %}
+{% include '_block_feed.html' with blocks='four' %}
 {% addtoblock 'js' %}
-<script id="venue-item-template" type="text/template">
+<script id="item-template" type="text/template">
     <div class="column">
-        <a id='card' class="ui fluid card" href="%venue_link%">
+        <a id='card' class="ui fluid card" href="%href%">
             <div class="content">
                 <img class="ui avatar image" src="%owner_thumbnail%" alt="{% trans 'Logo' %}"> %owner_name%
             </div>
@@ -17,7 +17,7 @@
                         </div>
                     </div>
                 </div>
-                <img class="thumbnail" src="%venue_thumbnail%" alt="{% trans 'Thumbnail' %}">
+                <img class="thumbnail" src="%item_thumbnail%" alt="{% trans 'Thumbnail' %}">
             </div>
             <div class="ui placeholder">
                 <div class="square image"></div>
@@ -34,23 +34,23 @@
 </script>
 <script>
     function render_feed(data) {
-        var template = document.getElementById("venue-item-template");
+        var template = document.getElementById("item-template");
         var templateHtml = template.innerHTML;
         var feed = '';
-        $.each(data, function (i, venue) {
+        $.each(data, function (i, item) {
             feed += templateHtml
-                .replace(/%venue_link%/g, venue['venue_link'])
-                .replace(/%owner_name%/g, venue.owner['name'])
-                .replace(/%owner_thumbnail%/g, venue.owner['thumbnail'])
-                .replace(/%venue_thumbnail%/g, venue['thumbnail'])
-                .replace(/%name%/g, venue['name'])
-                .replace(/%location_name%/g, venue.location.name)
-                .replace(/%address_string%/g, venue.location.address['address_string']);
+                .replace(/%href%/g, item['href'])
+                .replace(/%owner_name%/g, item.owner['name'])
+                .replace(/%owner_thumbnail%/g, item.owner['thumbnail'])
+                .replace(/%item_thumbnail%/g, item['thumbnail'])
+                .replace(/%name%/g, item['name'])
+                .replace(/%location_name%/g, item.location.name)
+                .replace(/%address_string%/g, item.location.address['address_string']);
         });
         return feed;
     }
     $(document).ready(function () {
-        var endpoint = "{% url 'api:venues' %}";
+        var endpoint = "{% url 'api:items' %}";
         create_feed(endpoint);
 
         $('#filter-form').on('submit', function (e) {

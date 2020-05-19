@@ -1,14 +1,12 @@
 from django.urls import path
 from resource_hub.core.urls import api_urls, control_urls
 
-from . import views
+from . import api, views
 
 app_name = 'items'
 
 api_urls.register([
-    #     path('items/', api.Items.as_view(), name='items'),
-    #     path('items/<int:pk>/events/',
-    #          api.ItemEvents.as_view(), name='items_event_feed'),
+    path('items/', api.Items.as_view(), name='items'),
 ])
 
 control_urls.register([
@@ -24,6 +22,8 @@ control_urls.register([
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('<slug:actor_slug>/<slug:item_slug>',
-         views.ItemsDetails.as_view(), name='item_details'),
+    path('<slug:owner_slug>/<slug:item_slug>/',
+         views.ItemsDetails.as_view(), name='details'),
+    path('<slug:owner_slug>/<slug:item_slug>/book',
+         views.ItemsDetails.as_view(), name='book'),
 ]

@@ -23,6 +23,8 @@ TTL = 60 * 5
 def index(request):
     return render(request, 'items/index.html')
 # Admin section
+
+
 @method_decorator(login_required, name='dispatch')
 class ItemsManage(TableView):
     header = _('Manage items')
@@ -47,7 +49,6 @@ class ItemsCreate(View):
         return render(request, 'items/control/items_create.html', item_form.get_forms())
 
     def post(self, request):
-        print(request.POST)
         item_form = ItemFormManager(
             request.user, request.actor, data=request.POST, files=request.FILES)
 
@@ -82,6 +83,8 @@ class ItemsEdit(View):
         item_form = ItemFormManager(
             request.user,
             request.actor,
+            data=request.POST,
+            files=request.FILES,
             instance=item,
         )
 
@@ -95,9 +98,9 @@ class ItemsEdit(View):
 
 
 class ItemsDetails(View):
-    def get(self, request, location_slug, item_slug):
+    def get(self, request, owner_slug, item_slug):
         item = get_object_or_404(
-            Item, slug=item_slug, location__slug=location_slug)
+            Item, slug=item_slug, owner__slug=owner_slug)
         context = {'item': item}
         return render(request, 'items/item_details.html', context)
 

@@ -1,0 +1,43 @@
+{% extends 'core/__base.html' %}
+{% load i18n %}
+
+{% block not_in_container %}
+<div class="container">
+    <div class="location-image" style="background-image: url('{{ item.thumbnail_original.url }}')">
+    </div>
+</div>
+{% get_current_language as LANG %}
+<div class="main container large">
+    <div class="ui stackable two column grid">
+        <div class="eight wide column">
+            <h1>{{ item.name }}</h1>
+            <p>
+                {{ item.description|safe }}
+            </p>
+        </div>
+        <div class="eight wide column">
+            {% include 'items/_item_calendar.html' with item=item %}
+            <a class="ui right labeled positive icon button"
+                href="{% url 'items:book' item_slug=item.slug owner_slug=item.owner.slug %}">
+                {% trans 'book' %}
+                <i class="calendar alternate outline icon"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="section-container">
+        {% if item.gallery.images %}
+        <h2>{% trans 'Gallery' %}</h2>
+        {% include '_gallery.html' with gallery=item.gallery.images.all %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function () {
+        $('.fluid.card .image').dimmer({ on: 'hover' });
+    })
+</script>
+{% endblock %}
