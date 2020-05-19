@@ -31,19 +31,20 @@ class ItemContractProcedureForm(ContractProcedureForm):
 
 
 class ItemForm(forms.ModelForm):
-    def __init__(self, request, *args, **kwargs):
+    def __init__(self, user, actor, *args, **kwargs):
         super(ItemForm, self).__init__(*args, **kwargs)
-        self.request = request
+        self.user = user
+        self.actor = actor
         contract_procedures = ItemContractProcedure.objects.filter(
-            owner=self.request.actor)
+            owner=self.actor)
         self.fields['contract_procedure'].queryset = contract_procedures
 
         self.fields['owner'].queryset = get_authorized_actors(
-            self.request.user,
+            self.user,
         )
 
         # inital values
-        self.initial['owner'] = self.request.actor
+        self.initial['owner'] = self.actor
         if contract_procedures:
             self.initial['contract_procedure'] = contract_procedures[0]
 
@@ -65,9 +66,11 @@ class ItemForm(forms.ModelForm):
         for field, val in fields.items():
             self.fields[field].widget.attrs.update(val)
 
-    def save(self, *args, commit=True, **kwargs):
-        new_item = super(ItemForm, self).save(*args, commit=False, **kwargs)
-        new_item.owner = self.request.actor
+    def save(self, *args, **kwargs):
+        commit = kwargs.get('commit', True)
+        kwargs['commit'] = False
+        new_item = super(ItemForm, self).save(*args, **kwargs)
+        new_item.owner = self.actor
         if commit:
             new_item.save()
         return new_item
@@ -84,31 +87,32 @@ ItemPriceFormset = inlineformset_factory(
 
 
 class ItemFormManager(FormManager):
-    def __init__(self, request, instance=None):
-        self.request = request
+    def __init__(self, user, actor, data=None, files=None, instance=None):
         gallery_instance = instance.gallery if instance else None
-        if self.request.POST:
+        if data:
             self.forms = {
                 'item_form': ItemForm(
-                    self.request,
-                    data=self.request.POST,
-                    files=self.request.FILES,
+                    user,
+                    actor,
+                    data=data,
+                    files=files,
                     instance=instance,
                 ),
                 'gallery_formset': GalleryImageFormSet(
-                    data=self.request.POST,
-                    files=self.request.FILES,
+                    data=data,
+                    files=files,
                     instance=gallery_instance,
                 ),
                 'price_formset': ItemPriceFormset(
-                    data=self.request.POST,
+                    data=data,
                     instance=instance,
                 ),
             }
         else:
             self.forms = {
                 'item_form': ItemForm(
-                    self.request,
+                    user,
+                    actor,
                     instance=instance,
                 ),
                 'gallery_formset': GalleryImageFormSet(
@@ -120,24 +124,20 @@ class ItemFormManager(FormManager):
             }
 
     def save(self):
-        new_item = self.forms['item_form'].save()
+        new_item = self.forms['item_form'].save(commit=False)
         first = True
         if new_item.gallery is None:
             new_item.gallery = Gallery.objects.create()
-            new_item.save()
 
         self.forms['gallery_formset'].instance = new_item.gallery
         self.forms['gallery_formset'].save()
-        print('hes')
-        for price in self.forms['price_formset'].save(commit=False):
-            print('he')
+        new_item.save()
+        self.forms['price_formset'].instance = new_item
+        for price in self.forms['price_formset'].save():
             price.item = new_item
-            price.save()
             if first:
                 new_item.base_price = price
-                new_item.save()
                 first = False
-                print('ye')
         return new_item
 
 

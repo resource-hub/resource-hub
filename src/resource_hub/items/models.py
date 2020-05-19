@@ -151,6 +151,7 @@ class Item(BaseStateMachine):
     )
     base_price = models.ForeignKey(
         Price,
+        null=True,
         on_delete=models.PROTECT,
         related_name='item_base_price',
     )

@@ -7,7 +7,6 @@ from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
 from django.views import View
-
 from resource_hub.core.decorators import owner_required
 from resource_hub.core.views import TableView
 
@@ -44,20 +43,23 @@ class ItemsManage(TableView):
 @method_decorator(login_required, name='dispatch')
 class ItemsCreate(View):
     def get(self, request):
-        item_form = ItemFormManager(request)
+        item_form = ItemFormManager(request.user, request.actor)
         return render(request, 'items/control/items_create.html', item_form.get_forms())
 
     def post(self, request):
-        item_form = ItemFormManager(request)
+        print(request.POST)
+        item_form = ItemFormManager(
+            request.user, request.actor, data=request.POST, files=request.FILES)
 
         if item_form.is_valid():
+            print('valid')
             with transaction.atomic():
                 item_form.save()
 
             message = ('The item has been created')
             messages.add_message(request, messages.SUCCESS, message)
             return redirect(reverse('control:items_manage'))
-
+        print('invalid')
         return render(request, 'items/control/items_create.html', item_form.get_forms())
 
 
@@ -72,13 +74,14 @@ class ItemsEdit(View):
 
     def get(self, request, pk):
         item = get_object_or_404(Item, pk=pk)
-        item_form = ItemFormManager(request, instance=item)
+        item_form = ItemFormManager(request.user, request.actor, instance=item)
         return render(request, self.template_name, item_form.get_forms())
 
     def post(self, request, pk):
         item = get_object_or_404(Item, pk=pk)
         item_form = ItemFormManager(
-            request,
+            request.user,
+            request.actor,
             instance=item,
         )
 
