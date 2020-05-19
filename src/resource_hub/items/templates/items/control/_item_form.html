@@ -1,0 +1,54 @@
+{% load i18n %}
+{% load sekizai_tags %}
+
+<form class="ui form" method="POST" enctype="multipart/form-data">
+    {% include '_form.html' with form=item_form %}
+    <div class="field">
+        <label>{% trans 'Gallery' %}:</label>
+        {% include '_formset.html' with formset=gallery_formset %}
+    </div>
+    <div class="field">
+        <label>{% trans 'Prices' %}: *</label>
+        {% include '_formset.html' with formset=price_formset %}
+    </div>
+    {% include 'core/_identity.html' %}
+    <button class="ui positive right labeled icon button" type="submit">
+        {{ action }}
+        <i class="check icon"></i>
+    </button>
+    {% if action == 'Create' %}
+    <button class="ui positive right labeled icon button" name="another" value="on" type="submit">
+        {% trans 'Create & add another' %}
+        <i class="check icon"></i>
+    </button>
+    {% endif %}
+</form>
+
+{% addtoblock 'js' %}
+<script>
+    function check_form() {
+        var item = $('.booking-item');
+        var item_required = item.filter('.required');
+        if ($('#id_bookable').is(':checked')) {
+            item.closest('div').show();
+            item_required.closest('div').find('span[class="required-label-star"]').html(' *');
+            required = true;
+        } else {
+            item.closest('div').hide()
+            item_required.closest('div').find('span[class="required-label-star"]').html('');
+            required = false;
+        }
+        item_required.prop('required', required);
+    }
+
+    // first time when page loads 
+    // (not in document ready so it doesnt pop up for some seconds)
+    check_form()
+
+    $(document).ready(function () {
+        $('#id_bookable').on('click', function () {
+            check_form()
+        })
+    })
+</script>
+{% endaddtoblock %}

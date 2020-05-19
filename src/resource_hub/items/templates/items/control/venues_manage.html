@@ -1,0 +1,27 @@
+{% extends 'control/__base.html' %}
+{% load i18n %}
+{% load django_tables2 %}
+
+{% block content %}
+<h1>
+    {% trans 'manage' %}
+</h1>
+<div class="section-container tab-content">
+    <h3>
+        {% trans 'your venues' %}
+    </h3>
+    <div>
+        {% if venues_table %}
+        {% render_table venues_table %}
+        {% else %}
+        <p>
+            {% trans 'no associated venues found' %}
+        </p>
+        <a class="ui positive right labeled icon button" href="{% url 'control:venues_create' %}">
+            {% trans 'create one!' %}
+            <i class="child icon"></i>
+        </a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

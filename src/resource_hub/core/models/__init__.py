@@ -1,6 +1,6 @@
 from .actors import Actor, Organization, OrganizationMember, User
-from .base import (Address, BankAccount, BaseModel, Gallery, GalleryImage,
-                   Location)
+from .base import (Address, BankAccount, BaseModel, BaseStateMachine, Gallery,
+                   GalleryImage, Location)
 from .contracts import (Claim, Contract, ContractProcedure, ContractTrigger,
                         DeclarationOfIntent, PaymentMethod, SettlementLog,
                         Trigger)

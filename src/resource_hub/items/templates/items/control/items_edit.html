@@ -1,0 +1,14 @@
+{% extends 'control/__base.html' %}
+{% load i18n %}
+
+{% block content %}
+{% url 'control:venues_manage' as url %}
+{% include '_back_button.html' with url=url %}
+<h1>
+    {% trans 'Edit item' %}
+</h1>
+<div class="section-container tab-content">
+    {% trans 'Save' as action %}
+    {% include 'items/control/_item_form.html' with venue_form=venue_form venue_procedure_form=venue_procedure_form action=action %}
+</div>
+{% endblock %}

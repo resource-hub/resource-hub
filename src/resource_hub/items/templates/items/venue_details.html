@@ -1,0 +1,55 @@
+{% extends 'core/__base.html' %}
+{% load i18n %}
+
+{% block not_in_container %}
+<div class="container">
+    <div class="location-image" style="background-image: url('{{ venue.thumbnail_original.url }}')">
+    </div>
+</div>
+{% get_current_language as LANG %}
+<div class="main container large">
+    <div class="ui stackable two column grid">
+        <div class="eight wide column">
+            <h1>{{ venue.name }}</h1>
+            <p>
+                {{ venue.description|safe }}
+            </p>
+        </div>
+        <div class="eight wide column">
+            {% if venue.bookable %}
+            {% include 'venues/_venue_calendar.html' with venue=venue %}
+            <div class="spacer">
+                <div class="ui list">
+                    <div class="item">
+                        <div class="header">
+                            {% trans 'Base price' %}
+                        </div>
+                        {{ venue.price }}
+                    </div>
+                </div>
+                <a class="ui right labeled positive icon button"
+                    href="{% url 'venues:events_create' venue_slug=venue.slug location_slug=venue.location.slug %}">
+                    {% trans 'book' %}
+                    <i class="calendar alternate outline icon"></i>
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="section-container">
+        {% if venue.gallery.images %}
+        <h2>{% trans 'Gallery' %}</h2>
+        {% include '_gallery.html' with gallery=venue.gallery.images.all %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function () {
+        $('.fluid.card .image').dimmer({ on: 'hover' });
+    })
+</script>
+{% endblock %}

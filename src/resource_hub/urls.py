@@ -20,6 +20,7 @@ urlpatterns = [
     path('api/', include('resource_hub.api.urls')),
     path('control/', include('resource_hub.control.urls')),
     path('venues/', include('resource_hub.venues.urls')),
+    path('items/', include('resource_hub.items.urls')),
 
     # external apps
     path('admin/', admin.site.urls),

@@ -580,12 +580,12 @@ tr.selectable {
     color: var(--text-color) !important;
   }
   /**
-      * semantic 
-      */
+    * semantic 
+    */
   .icon {
     color: var(--text-color) !important;
   }
-  .ui.dropdown>.menu, .ui.icon.message, .ui.segment {
+  .ui.dropdown>.menu, .ui.icon.message {
     background-color: var(--bg-contrast) !important;
   }
   div.item>a {
@@ -594,7 +594,7 @@ tr.selectable {
   .ui.item, .ui.section.divider {
     color: var(--text-color) !important;
   }
-  .ui.card {
+  .ui.card, .ui.segment {
     box-shadow: 0 1px 3px 0 var(--line-color), 0 0 0 1px var(--line-color);
   }
   .ui.table {

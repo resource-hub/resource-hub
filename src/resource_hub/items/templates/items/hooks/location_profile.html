@@ -1,0 +1,12 @@
+{% load i18n %}
+{% load sekizai_tags %}
+
+<div class="ui horizontal section divider">{% trans 'Venues' %}</div>
+
+{% include 'venues/_venue_feed.html' %}
+
+<script>
+    $(document).ready(function () {
+        create_feed(null, '{{ location.id }}');
+    })
+</script>
