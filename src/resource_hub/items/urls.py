@@ -1,5 +1,4 @@
 from django.urls import path
-
 from resource_hub.core.urls import api_urls, control_urls
 
 from . import views
@@ -25,9 +24,6 @@ control_urls.register([
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('<slug:location_slug>/<slug:item_slug>',
+    path('<slug:actor_slug>/<slug:item_slug>',
          views.ItemsDetails.as_view(), name='item_details'),
-    path('<slug:location_slug>/<slug:item_slug>/events/create/',
-         views.EventsCreate.as_view(), name='events_create'),
-
 ]

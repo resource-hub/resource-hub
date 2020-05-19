@@ -3,12 +3,12 @@ import uuid
 from django.db import models
 from django.shortcuts import reverse
 from django.utils.translation import gettext_lazy as _
-
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
 from resource_hub.core.models import (Actor, BaseModel, BaseStateMachine,
                                       Contract, ContractProcedure, Gallery,
                                       Location, Price)
+from resource_hub.core.utils import get_valid_slug
 
 
 class ItemContractProcedure(ContractProcedure):
@@ -102,6 +102,10 @@ class Item(BaseStateMachine):
     uuid = models.UUIDField(
         default=uuid.uuid4,
         editable=False,
+    )
+    slug = models.SlugField(
+        db_index=True,
+        max_length=50,
     )
     custom_id = models.CharField(
         max_length=100,
@@ -240,6 +244,14 @@ class Item(BaseStateMachine):
         on_delete=models.PROTECT,
         related_name='items',
     )
+
+    class Meta:
+        unique_together = ('owner', 'slug')
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.slug = get_valid_slug(Item(), self.name)
+        super(Item, self).save(*args, **kwargs)
 
 
 class ItemPrice(Price):

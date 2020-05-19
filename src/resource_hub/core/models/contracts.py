@@ -7,7 +7,6 @@ from django.http import HttpResponse
 from django.shortcuts import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-
 from ipware import get_client_ip
 from model_utils.managers import InheritanceManager
 
