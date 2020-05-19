@@ -53,14 +53,14 @@ class ItemsCreate(View):
             request.user, request.actor, data=request.POST, files=request.FILES)
 
         if item_form.is_valid():
-            print('valid')
             with transaction.atomic():
                 item_form.save()
 
             message = ('The item has been created')
             messages.add_message(request, messages.SUCCESS, message)
-            return redirect(reverse('control:items_manage'))
-        print('invalid')
+            route = 'control:items_create' if request.POST.get(
+                'another', None) else 'control:items_manage'
+            return redirect(reverse(route))
         return render(request, 'items/control/items_create.html', item_form.get_forms())
 
 
