@@ -7,6 +7,7 @@ from django.utils.timezone import get_current_timezone
 
 from recurrence.models import Recurrence
 from resource_hub.core.models import Actor, Address, Location, PaymentMethod
+from resource_hub.core.tests import LoginTestMixin
 
 from ..forms import ItemForm
 from ..models import ItemContractProcedure
@@ -14,11 +15,9 @@ from ..models import ItemContractProcedure
 TEST_IMAGE = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII='
 
 
-class TestEventForm(TestCase):
+class TestItemForm(LoginTestMixin, TestCase):
     def setUp(self):
-        self.actor = Actor.objects.create(
-            name='Test Joe'
-        )
+        super(TestItemForm, self).setUp()
         self.address = Address.objects.create(
             street='street',
             street_number=12,
@@ -29,31 +28,36 @@ class TestEventForm(TestCase):
         self.location = Location.objects.create(
             name='Location',
             description='nice',
-            address=address,
+            address=self.address,
             latitude=53.00,
             longitude=9.0,
-            owner=actor
+            owner=self.user
         )
         self.payment_method = PaymentMethod.objects.create(
             currency='EUR',
-            owner=self.actor,
+            owner=self.user,
         )
         self.contract_procedure = ItemContractProcedure.objects.create(
             name='test',
-            owner=self.actor,
+            owner=self.user,
         )
+        self.request = self.client.get('')
 
     def get_data(self):
         return {
             'name': 'item',
             'description': 'test',
-
+            'contract_procedure': self.contract_procedure,
             'owner': self.actor.pk,
             'location': self.location.pk,
-
+            'prices-TOTAL_FORMS': 1,
+            'prices-INTIAL_FORMS': 0,
+            'prices-0-value': 10,
+            'prices-0-currency': 'EUR',
+            'prices-0-discounts': 'on',
         }
 
-    def get_media(self):
+    def get_files(self):
         return {
             'thumbnail_original': SimpleUploadedFile(
                 'default.png',
@@ -61,3 +65,11 @@ class TestEventForm(TestCase):
                 content_type='image/png'
             )
         }
+
+    def test_valid_data(self):
+        form = ItemForm(
+            self.request,
+            data=self.get_data(),
+            files=self.get_files(),
+        )
+        self.assertTrue(form.is_valid())

@@ -32,7 +32,7 @@ USER_DATA = {
 }
 
 
-class BaseLoginTest:
+class LoginTestMixin:
     def setUp(self):
         self.client = Client()
         self.user = self.register_test_user()
@@ -49,7 +49,7 @@ class BaseLoginTest:
         return user
 
 
-class BaseTestView(BaseLoginTest, TestCase):
+class BaseTestView(LoginTestMixin, TestCase):
     view_name = 'empty'
     kwargs = None
 
