@@ -1,3 +1,5 @@
+from unittest import SkipTest
+
 from django.test import Client, TestCase
 from django.urls import reverse
 from django.utils.encoding import force_bytes
@@ -30,10 +32,7 @@ USER_DATA = {
 }
 
 
-class TestView():
-    view_name = 'empty'
-    kwargs = None
-
+class BaseLoginTest:
     def setUp(self):
         self.client = Client()
         self.user = self.register_test_user()
@@ -49,24 +48,34 @@ class TestView():
             username=USER_DATA['username'], password=USER_DATA['password'])
         return user
 
+
+class BaseTestView(BaseLoginTest, TestCase):
+    view_name = 'empty'
+    kwargs = None
+
+    def setUp(self):
+        if self.__class__ == BaseTestView:
+            raise SkipTest('Abstract test')
+        super(BaseTestView, self).setUp()
+
     def test_status_code(self):
         response = self.client.get(reverse(self.view_name, kwargs=self.kwargs))
         self.assertEqual(response.status_code, 200)
 
 
-class TestHome(TestView, TestCase):
+class TestHome(BaseTestView):
     view_name = 'core:home'
 
 
-class TestSupport(TestView, TestCase):
+class TestSupport(BaseTestView):
     view_name = 'core:report_bug'
 
 
-class TestLanguage(TestView, TestCase):
+class TestLanguage(BaseTestView):
     view_name = 'core:language'
 
 
-class TestRegistration(TestView, TestCase):
+class TestRegistration(BaseTestView):
     view_name = 'core:register'
 
     def setUp(self):
@@ -91,7 +100,7 @@ class TestRegistration(TestView, TestCase):
         self.assertEqual(response.status_code, 302)
 
 
-class TestActivate(TestView, TestCase):
+class TestActivate(BaseTestView):
     view_name = 'core:verify'
 
     def test_status_code(self):
@@ -102,7 +111,7 @@ class TestActivate(TestView, TestCase):
         self.assertEqual(response.status_code, 302)
 
 
-class TestCustomLogin(TestCase):
+class TestCustomLogin(BaseTestView):
     def setUp(self):
         self.client = Client()
 
@@ -111,7 +120,7 @@ class TestCustomLogin(TestCase):
         self.assertEqual(response.status_code, 200)
 
 
-class TestSetRole(TestView, TestCase):
+class TestSetRole(BaseTestView):
     view_name = 'core:actor_set'
 
     def test_status_code(self):
@@ -119,11 +128,11 @@ class TestSetRole(TestView, TestCase):
         self.assertEqual(response.status_code, 302)
 
 
-class TestAdmin(TestView, TestCase):
+class TestAdmin(BaseTestView):
     view_name = 'control:home'
 
 
-class TestAccountSecurity(TestView, TestCase):
+class TestAccountSecurity(BaseTestView):
     def test_status_code(self):
         scope = ['email', 'password', ]
 
@@ -133,7 +142,7 @@ class TestAccountSecurity(TestView, TestCase):
             self.assertEqual(response.status_code, 200)
 
 
-class TestAccountSettings(TestView, TestCase):
+class TestAccountSettings(BaseTestView):
     def test_status_code(self):
         scope = ['info', 'address', 'bank_account', ]
 
@@ -143,9 +152,9 @@ class TestAccountSettings(TestView, TestCase):
             self.assertEqual(response.status_code, 200)
 
 
-class TestOrganizationsManage(TestView, TestCase):
+class TestOrganizationsManage(BaseTestView):
     view_name = 'control:organizations_manage'
 
 
-class TestOrganizationsCreate(TestView, TestCase):
+class TestOrganizationsCreate(BaseTestView):
     view_name = 'control:organizations_create'

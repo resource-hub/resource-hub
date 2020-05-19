@@ -64,6 +64,7 @@ class ContractProcedure(BaseModel):
     )
     tax_rate = PercentField(
         verbose_name=_('tax rate applied in percent'),
+        default=0,
     )
     settlement_interval = models.IntegerField(
         choices=SETTLEMENT_INTERVALS,
@@ -615,7 +616,8 @@ class PaymentMethod(Trigger):
             'A relative value that is based on the total value of a transaction')
     )
     fee_tax_rate = PercentField(
-        verbose_name=_('tax rate applied to payement fee (%)')
+        verbose_name=_('tax rate applied to payement fee (%)'),
+        default=0,
     )
 
     def __str__(self):
