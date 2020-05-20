@@ -1,8 +1,9 @@
 from datetime import datetime
 
-import dateutil.parser
 from django.db.models import F, Q
 from django.utils.translation import gettext_lazy as _
+
+import dateutil.parser
 from resource_hub.core.models import Contract
 from resource_hub.core.views.api import SmallResultsSetPagination
 from rest_framework import exceptions, generics
@@ -59,6 +60,6 @@ class Bookings(generics.ListCreateAPIView):
 
         return ItemBooking.objects.filter(
             item=item,
-            dtstart__gte=start,
-            dtstart__lte=end,
+            dtend__gt=start,
+            dtstart__lt=end,
         )
