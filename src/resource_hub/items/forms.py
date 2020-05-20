@@ -220,6 +220,9 @@ class ItemBookingForm(forms.ModelForm):
         dtend = cleaned_data.get('dtend')
         quantity = cleaned_data.get('quantity')
         if dtstart and dtend and quantity:
+            if self.item.unit == Item.UNIT.DAYS:
+                dtstart = dtstart.date()
+                dtend = dtend.date()
             query = Q(dtend__gt=dtstart)
             query.add(
                 Q(dtstart__lt=dtend),
@@ -230,10 +233,13 @@ class ItemBookingForm(forms.ModelForm):
             conflicts = []
             for booking in bookings:
                 delta = self.item.quantity - booking.quantity - quantity
-                if timespan_conflict(booking.dtstart, booking.dtend, dtstart, dtend) and delta < 0:
+                booking_start = booking.dtstart.date(
+                ) if self.item.unit == Item.UNIT.DAYS else booking.dtstart
+                booking_end = booking.dtend.date() if self.item.unit == Item.UNIT.DAYS else booking.dtend
+                if timespan_conflict(booking_start, booking_end, dtstart, dtend) and delta < 0:
                     client_tz = get_current_timezone()
-                    booking_start = booking.dtstart.astimezone(client_tz)
-                    booking_end = booking.dtend.astimezone(client_tz)
+                    booking_start = booking_start.astimezone(client_tz)
+                    booking_end = booking_end.astimezone(client_tz)
                     conflicts.append(
                         _('There is a missing quantity of {} with booking on {} to {}'.format(
                             delta, booking_start.strftime('%c'), booking_end.strftime('%c')))

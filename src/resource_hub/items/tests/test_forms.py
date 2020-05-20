@@ -130,7 +130,7 @@ class TestItemBookingForm(LoginTestMixin, TestCase):
         self.contract = ItemContract.objects.create(
 
         )
-        ItemBooking.objects.create(
+        self.item_booking = ItemBooking.objects.create(
             item=self.item,
             contract=self.contract,
             dtstart=datetime(2020, 1, 1, 12, 0, 0, tzinfo=timezone.utc),
@@ -146,7 +146,7 @@ class TestItemBookingForm(LoginTestMixin, TestCase):
             )
             self.assertEqual(form.is_valid(), bool_)
 
-    def test_conflicting_bookings(self):
+    def test_conflicting_bookings_hours(self):
         bookings = [
             # start inside
             {
@@ -175,7 +175,7 @@ class TestItemBookingForm(LoginTestMixin, TestCase):
         ]
         self._test_bookings(bookings, False)
 
-    def test_valid_bookings(self):
+    def test_valid_bookings_hours(self):
         bookings = [
             # booking completely outside
             {
@@ -193,6 +193,55 @@ class TestItemBookingForm(LoginTestMixin, TestCase):
             {
                 'dtstart': datetime(2020, 1, 1, 14, 0, 0, tzinfo=timezone.utc),
                 'dtend': datetime(2020, 1, 1, 15, 0, 0, tzinfo=timezone.utc),
+                'quantity': 1
+            },
+        ]
+        self._test_bookings(bookings, True)
+
+    def test_conflicting_bookings_days(self):
+        self.item_booking.unit = Item.UNIT.DAYS
+        self.item_booking.dtend = datetime(
+            2020, 1, 3, 15, 0, 0, tzinfo=timezone.utc)
+        self.item_booking.save()
+
+        bookings = [
+            # start inside
+            {
+                'dtstart': datetime(2020, 1, 2, 12, 30, 0, tzinfo=timezone.utc),
+                'dtend': datetime(2020, 1, 4, 14, 30, 0, tzinfo=timezone.utc),
+                'quantity': 1
+            },
+            # booking within
+            {
+                'dtstart': datetime(2020, 1, 2, 13, 30, 0, tzinfo=timezone.utc),
+                'dtend': datetime(2020, 1, 2, 14, 0, 0, tzinfo=timezone.utc),
+                'quantity': 1
+            },
+            # booking complete overshadowing
+            {
+                'dtstart': datetime(2019, 12, 31, 11, 0, 0, tzinfo=timezone.utc),
+                'dtend': datetime(2020, 1, 4, 16, 0, 0, tzinfo=timezone.utc),
+                'quantity': 1
+            },
+            # booking equal
+            {
+                'dtstart': datetime(2020, 1, 1, 12, 0, 0, tzinfo=timezone.utc),
+                'dtend': datetime(2020, 1, 3, 14, 0, 0, tzinfo=timezone.utc),
+                'quantity': 1
+            },
+        ]
+        self._test_bookings(bookings, False)
+
+    def test_valid_bookings_days(self):
+        self.item_booking.unit = Item.UNIT.DAYS
+        self.item_booking.dtend = datetime(
+            2020, 1, 3, 15, 0, 0, tzinfo=timezone.utc)
+        self.item_booking.save()
+        bookings = [
+            # booking completely outside
+            {
+                'dtstart': datetime(2020, 1, 4, 11, 0, 0, tzinfo=timezone.utc),
+                'dtend': datetime(2020, 1, 5, 11, 30, 0, tzinfo=timezone.utc),
                 'quantity': 1
             },
         ]
