@@ -223,6 +223,9 @@ class ItemBookingForm(forms.ModelForm):
             if self.item.unit == Item.UNIT.DAYS:
                 dtstart = dtstart.date()
                 dtend = dtend.date()
+            if self.item.maximum_duration > 0 and dtend - dtstart > self.item.maximum_duration:
+                raise forms.ValidationError(
+                    _('Booking exeeds maximum duration'), code='maximum-duration-exceeded')
             query = Q(dtend__gt=dtstart)
             query.add(
                 Q(dtstart__lt=dtend),

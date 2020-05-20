@@ -70,6 +70,14 @@
                     </div>
                     {{ item.get_unit_display }}
                 </div>
+                {% if item.maximum_duration > 0 %}
+                <div class="item">
+                    <div class="header">
+                        {% trans 'Maximum lending duration' %}
+                    </div>
+                    {{ item.maximum_duration }}
+                </div>
+                {% endif %}
             </div>
             <a class="ui right labeled positive icon button"
                 href="{% url 'items:book' item_slug=item.slug owner_slug=item.owner.slug %}">

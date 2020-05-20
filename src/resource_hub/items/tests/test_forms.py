@@ -1,5 +1,5 @@
 import base64
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
@@ -246,3 +246,15 @@ class TestItemBookingForm(LoginTestMixin, TestCase):
             },
         ]
         self._test_bookings(bookings, True)
+
+    def test_maximum_duration_hours(self):
+        dtstart = datetime(2020, 1, 2, 12, 0, 0)
+        dtend = dtstart + timedelta(hours=self.item.maximum_duration + 1)
+        bookings = [
+            {
+                'dtstart': dtstart,
+                'dtend': dtend,
+                'quantity': 1,
+            }
+        ]
+        self._test_bookings(bookings, False)
