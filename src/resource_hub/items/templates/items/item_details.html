@@ -34,7 +34,7 @@
     </div>
 
     <div class="section-container">
-        {% if item.gallery.images %}
+        {% if item.gallery.images.all %}
         <h2>{% trans 'Gallery' %}</h2>
         {% include '_gallery.html' with gallery=item.gallery.images.all %}
         {% endif %}
