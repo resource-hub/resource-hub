@@ -1,5 +1,4 @@
 from django.shortcuts import reverse
-
 from resource_hub.core.models import (Actor, Address, Contract, Location,
                                       Notification, User)
 from rest_framework import serializers

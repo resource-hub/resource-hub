@@ -6,8 +6,8 @@ from django.utils.translation import gettext_lazy as _
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
 from resource_hub.core.models import (Actor, BaseModel, BaseStateMachine,
-                                      Contract, ContractProcedure, Gallery,
-                                      Location, Price)
+                                      Claim, Contract, ContractProcedure,
+                                      Gallery, Location, Price)
 from resource_hub.core.utils import get_valid_slug
 
 
@@ -38,6 +38,60 @@ class ItemContract(Contract):
         related_name='contracts',
         through='ItemBooking',
     )
+    note = models.TextField(
+        blank=True,
+        null=True,
+    )
+
+    @property
+    def verbose_name(self):
+        return _('Item booking')
+
+    @property
+    def overview(self):
+        return ''
+        # return render_to_string(
+        #     'venues/_contract_overview.html',
+        #     context={
+        #         'contract': self,
+        #     }
+        # )
+
+    def purge(self):
+        super(ItemContract, self).purge()
+        self.items.all().soft_delete()
+
+    def claim_factory(self, **kwargs):
+        super(ItemContract, self).claim_factory(**kwargs)
+        net_total = 0
+        for booking in self.itembooking_set.all():
+            start = booking.dtstart if booking.item.unit == Item.UNIT.HOURS else booking.dtstart.date()
+            end = booking.dtend if booking.item.unit == Item.UNIT.HOURS else booking.dtend.date()
+            timedelta = end - start
+            delta = (timedelta.total_seconds()) / \
+                3600 if booking.item.unit == Item.UNIT.HOURS else timedelta.days
+            net = delta * float(booking.item.base_price.value)
+            discounted_net = self.price_profile.apply(
+                net) if self.price_profile else net
+            gross = self.contract_procedure.apply_tax(discounted_net)
+
+            Claim.objects.create(
+                contract=self,
+                item=booking.item.name,
+                quantity=delta,
+                unit=booking.item.unit,
+                price=booking.item.base_price.value,
+                currency=booking.item.base_price.currency,
+                net=net,
+                discount=self.price_profile.discount if self.price_profile else 0,
+                discounted_net=discounted_net,
+                tax_rate=self.contract_procedure.tax_rate,
+                gross=gross,
+                period_start=start,
+                period_end=end,
+            )
+
+            net_total += net
 
 
 class Item(BaseStateMachine):
@@ -273,3 +327,6 @@ class ItemBooking(BaseModel):
     )
     dtstart = models.DateTimeField()
     dtend = models.DateTimeField()
+    quantity = models.IntegerField(
+        default=1,
+    )

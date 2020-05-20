@@ -7,6 +7,7 @@ app_name = 'items'
 
 api_urls.register([
     path('items/', api.Items.as_view(), name='items'),
+    path('items/<int:pk>/bookings/', api.Bookings.as_view(), name='item_bookings'),
 ])
 
 control_urls.register([
@@ -25,5 +26,5 @@ urlpatterns = [
     path('<slug:owner_slug>/<slug:item_slug>/',
          views.ItemsDetails.as_view(), name='details'),
     path('<slug:owner_slug>/<slug:item_slug>/book',
-         views.ItemsDetails.as_view(), name='book'),
+         views.ItemBookingsCreate.as_view(), name='book'),
 ]

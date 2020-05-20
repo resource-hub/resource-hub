@@ -12,26 +12,28 @@
 <div class="main container large">
     <div class="ui stackable two column grid">
         <div class="nine wide column">
-            {% url 'venues:venue_details' venue_slug=venue.slug location_slug=venue.location.slug as url %}
+            {% url 'items:details' item_slug=item.slug owner_slug=item.owner.slug as url %}
             {% include '_back_button.html' with url=url %}
             <h1>
-                {% trans 'Create event' %}
+                {% trans 'Create item booking' %}
             </h1>
 
             <form class="ui form" method="POST" enctype="multipart/form-data">
-                {% include '_form.html' with form=venue_contract_form %}
+                {% include '_form.html' with form=item_contract_form %}
                 <div id="container">
-                    {% include '_form.html' with form=event_form %}
+                    {% include '_form.html' with form=item_form %}
                 </div>
-                {% include 'core/_identity.html' with actor=actor %}
-                <button class="ui positive right labeled icon button" type="submit">
-                    {% trans 'Check event' %}
-                    <i class="zoom-in icon"></i>
-                </button>
+                <div class="section-container">
+                    {% include 'core/_identity.html' with actor=actor %}
+                    <button class="ui positive right labeled icon button" type="submit">
+                        {% trans 'Check booking' %}
+                        <i class="zoom-in icon"></i>
+                    </button>
+                </div>
             </form>
         </div>
         <div class="seven wide column">
-            {% include 'venues/_venue_calendar.html' with venue=venue %}
+            {% include 'items/_item_calendar.html' with item=item %}
         </div>
     </div>
 </div>
@@ -49,20 +51,23 @@
             defaultDate: currentDateTime
         })
     }
-
+    var format = "{% if item.unit == 'd' %}Y-m-d{% else %}Y-m-d H:i{% endif %}";
+    var timepicker = format == 'Y-m-d' ? false : true;
     var locale = "{% get_current_language as LANG %}{{ LANG }}";
     jQuery.datetimepicker.setLocale(locale);
     var start = $('#id_dtstart').datetimepicker({
         onChangeDateTime: setEnd,
         step: 30,
-        format: 'Y-m-d H:i',
-        mask: true
+        format: format,
+        mask: true,
+        timepicker: timepicker,
 
     });
     var end = $('#id_dtend').datetimepicker({
         step: 30,
-        format: 'Y-m-d H:i',
+        format: format,
         mask: true,
+        timepicker: timepicker,
     });
 </script>
 <script>

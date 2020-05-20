@@ -341,6 +341,9 @@ class Contract(BaseContract):
                 target=self,
             )
 
+    def purge(self) -> None:
+        self.claim_set.all().soft_delete()
+
     # state setters
     def move_to(self, state):
         if self.state in self.STATE_GRAPH and state in self.STATE_GRAPH[self.state]:
@@ -390,18 +393,20 @@ class Contract(BaseContract):
             )),
             message=self.contract_procedure.notes,
         )
-
     # final states
+
     def set_finalized(self) -> None:
         self.move_to(self.STATE.FINALIZED)
         self.save()
 
     def set_expired(self) -> None:
         self.move_to(self.STATE.EXPIRED)
+        self.purge()
         self.save()
 
     def set_cancelled(self) -> None:
         self.move_to(self.STATE.CANCELED)
+        self.purge()
         self.save()
 
     def set_declined(self) -> None:
@@ -437,7 +442,32 @@ class Contract(BaseContract):
 
     def claim_factory(self, **kwargs):
         if self.creditor == self.debitor:
-            pass
+            return
+
+    def create_fee_claims(self, net_total, currency, start, end):
+        if self.payment_method.fee_absolute_value > 0 or self.payment_method.fee_relative_value > 0:
+            net_fee = self.payment_method.apply_fee(net_total)
+            discounted_net_fee = self.price_profile.apply(
+                net_fee
+            ) if self.price_profile else net_fee
+            gross_fee = self.payment_method.apply_fee_tax(
+                discounted_net_fee)
+
+            Claim.objects.create(
+                contract=self,
+                item=self.payment_method.verbose_name,
+                quantity=1,
+                unit='u',
+                price=net_fee,
+                currency=currency,
+                net=net_fee,
+                discount=self.price_profile.discount if self.price_profile else 0,
+                discounted_net=discounted_net_fee,
+                tax_rate=self.payment_method.fee_tax_rate,
+                gross=gross_fee,
+                period_start=start,
+                period_end=end,
+            )
 
     def settle_claims(self):
         now = timezone.now()

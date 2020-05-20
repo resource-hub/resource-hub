@@ -25,7 +25,6 @@
             <div class="content">
                 <div class="header">%name%</div>
                 <div class="meta">
-                    <p><i class="location arrow icon"></i> %location_name%</p>
                     <p><i class="map marker alternate icon"></i> %address_string%</p>
                 </div>
             </div>
@@ -44,7 +43,6 @@
                 .replace(/%owner_thumbnail%/g, item.owner['thumbnail'])
                 .replace(/%item_thumbnail%/g, item['thumbnail'])
                 .replace(/%name%/g, item['name'])
-                .replace(/%location_name%/g, item.location.name)
                 .replace(/%address_string%/g, item.location.address['address_string']);
         });
         return feed;

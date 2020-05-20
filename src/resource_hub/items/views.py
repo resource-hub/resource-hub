@@ -106,19 +106,19 @@ class ItemsDetails(View):
 
 
 @method_decorator(login_required, name='dispatch')
-class EventsCreate(View):
-    template_name = 'items/item_events_create.html'
+class ItemBookingsCreate(View):
+    template_name = 'items/item_bookings_create.html'
 
-    def get(self, request, location_slug, item_slug):
+    def get(self, request, owner_slug, item_slug):
         item = get_object_or_404(
-            Item, slug=item_slug, location__slug=location_slug)
+            Item, slug=item_slug, owner__slug=owner_slug)
         context = ItemContractFormManager(item, request).get_forms()
         context['item'] = item
         return render(request, self.template_name, context)
 
-    def post(self, request, location_slug, item_slug):
+    def post(self, request, owner_slug, item_slug):
         item = get_object_or_404(
-            Item, slug=item_slug, location__slug=location_slug)
+            Item, slug=item_slug, owner__slug=owner_slug)
         item_contract_form = ItemContractFormManager(item, request)
         if item_contract_form.is_valid():
             with transaction.atomic():

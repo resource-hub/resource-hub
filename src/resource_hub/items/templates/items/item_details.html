@@ -17,6 +17,14 @@
         </div>
         <div class="eight wide column">
             {% include 'items/_item_calendar.html' with item=item %}
+            <div class="ui list">
+                <div class="item">
+                    <div class="header">
+                        {% trans 'Base price' %}
+                    </div>
+                    {{ venue.base_price }}
+                </div>
+            </div>
             <a class="ui right labeled positive icon button"
                 href="{% url 'items:book' item_slug=item.slug owner_slug=item.owner.slug %}">
                 {% trans 'book' %}

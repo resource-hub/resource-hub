@@ -1,8 +1,9 @@
 from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
 from resource_hub.core.serializers import ActorSerializer, LocationSerializer
 from rest_framework import serializers
 
-from .models import Item
+from .models import Item, ItemBooking
 
 
 class ItemSerializer(serializers.ModelSerializer):
@@ -21,3 +22,22 @@ class ItemSerializer(serializers.ModelSerializer):
         model = Item
         fields = ['id', 'name', 'description', 'href', 'location',
                   'thumbnail', 'owner']
+
+
+class ItemBookingSerializer(serializers.ModelSerializer):
+    title = serializers.SerializerMethodField()
+    start = serializers.SerializerMethodField()
+    end = serializers.SerializerMethodField()
+
+    def get_title(self, obj):
+        return _('Quantity: {}'.format(obj.quantity))
+
+    def get_start(self, obj):
+        return obj.dtstart
+
+    def get_end(self, obj):
+        return obj.dtend
+
+    class Meta:
+        model = ItemBooking
+        fields = ['pk', 'start', 'end', 'title', ]

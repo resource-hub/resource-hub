@@ -2,7 +2,6 @@ from django import forms
 from django.db.models import Q
 from django.forms import inlineformset_factory
 from django.utils.translation import gettext_lazy as _
-
 from resource_hub.core.fields import HTMLField
 from resource_hub.core.forms import (ContractProcedureForm, FormManager,
                                      GalleryImageFormSet, PriceForm,
@@ -131,13 +130,13 @@ class ItemFormManager(FormManager):
 
         self.forms['gallery_formset'].instance = new_item.gallery
         self.forms['gallery_formset'].save()
-        new_item.save()
         self.forms['price_formset'].instance = new_item
         for price in self.forms['price_formset'].save():
             price.item = new_item
             if first:
                 new_item.base_price = price
                 first = False
+        new_item.save()
         return new_item
 
 
@@ -202,7 +201,7 @@ class ItemContractForm(forms.ModelForm):
 
     class Meta:
         model = ItemContract
-        fields = ['price_profile', 'payment_method', ]
+        fields = ['price_profile', 'payment_method', 'note', ]
         help_texts = {
             'price_profile': _('Available discounts granted to certain groups and entities. The discounts will be applied to the base prices below.')
         }
@@ -227,7 +226,7 @@ class ItemContractFormManager():
         self.item_form = ItemBookingForm(
             data=self.request.POST,
             files=self.request.FILES
-        ) if self.request.POST else ItemBookingForm(self.item, self.request)
+        ) if self.request.POST else ItemBookingForm()
 
     def get_forms(self):
         return {
@@ -250,10 +249,12 @@ class ItemContractFormManager():
         new_item_contract.created_by = user
         new_item_contract.contract_procedure = self.item.contract_procedure
         new_item_contract.terms_and_conditions = self.item.contract_procedure.terms_and_conditions
-        new_event = self.item_form.save()
-        new_item_contract.event = new_event
+        item_booking = self.item_form.save(commit=False)
+        item_booking.contract = new_item_contract
+        item_booking.item = self.item
 
         if commit:
             new_item_contract.save()
+            item_booking.save()
             self.item_contract_form.save_m2m()
         return new_item_contract

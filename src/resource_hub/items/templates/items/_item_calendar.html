@@ -14,14 +14,23 @@
 <script src="{% static 'fullcalendar/daygrid/main.min.js' %}"></script>
 <script src="{% static 'fullcalendar/timegrid/main.min.js' %}"></script>
 <script src="{% static 'fullcalendar/list/main.min.js' %}"></script>
-{% if venue %}
+{% if item %}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         var locale = '{{ LANG }}';
         var calendarEl = document.getElementById('calendar');
 
         var calendar = new FullCalendar.Calendar(calendarEl, {
-            events: "{% url 'api:venues_event_feed' pk=venue.pk %}",
+            events: function (info, successCallback, failureCallback) {
+                $.get("{% url 'api:item_bookings' pk=item.pk %}", {
+                    start: info.startStr,
+                    end: info.endStr
+                }).done(function (data) {
+                    successCallback(
+                        data.results
+                    )
+                })
+            },
             plugins: ['list', 'dayGrid'],
             locale: locale,
             defaultView: 'dayGridMonth',

@@ -1,8 +1,9 @@
 from datetime import datetime
 
 import dateutil.parser
-from django.db.models import Q
+from django.db.models import F, Q
 from django.utils.translation import gettext_lazy as _
+from resource_hub.core.models import Contract
 from resource_hub.core.views.api import SmallResultsSetPagination
 from rest_framework import exceptions, generics
 from rest_framework.decorators import (authentication_classes,
@@ -10,8 +11,8 @@ from rest_framework.decorators import (authentication_classes,
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import Item
-from .serializers import ItemSerializer
+from .models import Item, ItemBooking
+from .serializers import ItemBookingSerializer, ItemSerializer
 
 
 @authentication_classes([])
@@ -30,5 +31,34 @@ class Items(generics.ListCreateAPIView):
 
         if pk is not None:
             q.add(Q(location=pk), Q.AND)
-
         return Item.objects.filter(q)
+
+
+@authentication_classes([])
+@permission_classes([])
+class Bookings(generics.ListCreateAPIView):
+    http_method_names = ['get']
+    serializer_class = ItemBookingSerializer
+    lookup_url_kwarg = 'pk'
+
+    def get_queryset(self):
+        start_str = self.request.query_params.get('start', None)
+        end_str = self.request.query_params.get('end', None)
+
+        if start_str is None or end_str is None:
+            raise exceptions.NotFound(
+                detail=_('start or end parameter not set'))
+
+        try:
+            start = dateutil.parser.parse(start_str)
+            end = dateutil.parser.parse(end_str)
+        except ValueError as e:
+            raise exceptions.ParseError(
+                detail=_('start or end parameter not valid iso_8601 string'))
+        item = self.kwargs.get(self.lookup_url_kwarg)
+
+        return ItemBooking.objects.filter(
+            item=item,
+            dtstart__gte=start,
+            dtstart__lte=end,
+        )

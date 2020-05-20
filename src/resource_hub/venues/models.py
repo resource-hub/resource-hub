@@ -5,7 +5,6 @@ from django.db.models import Q
 from django.shortcuts import reverse
 from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
-
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
 from recurrence.fields import RecurrenceField
@@ -290,7 +289,6 @@ class VenueContract(Contract):
 
     @property
     def overview(self):
-
         return render_to_string(
             'venues/_contract_overview.html',
             context={
@@ -335,46 +333,13 @@ class VenueContract(Contract):
                 )
 
                 net_total += net
-
-        if self.payment_method.fee_absolute_value > 0 or self.payment_method.fee_relative_value > 0:
-            net_fee = self.payment_method.apply_fee(net_total)
-            discounted_net_fee = self.price_profile.apply(
-                net_fee
-            ) if self.price_profile else net_fee
-            gross_fee = self.payment_method.apply_fee_tax(
-                discounted_net_fee)
-
-            Claim.objects.create(
-                contract=self,
-                item=self.payment_method.verbose_name,
-                quantity=1,
-                unit='u',
-                price=net_fee,
-                currency=venue.price.currency,
-                net=net_fee,
-                discount=self.price_profile.discount if self.price_profile else 0,
-                discounted_net=discounted_net_fee,
-                tax_rate=self.payment_method.fee_tax_rate,
-                gross=gross_fee,
-                period_start=start,
-                period_end=end,
-            )
+        self.create_fee_claims(net_total, venue.price.currency, start, end)
 
     # state setters
+
     def purge(self):
+        super(VenueContract, self).purge()
         self.event.soft_delete()
-        for claim in self.claim_set.all():
-            claim.soft_delete()
-
-    def set_expired(self):
-        self.purge()
-        super(VenueContract, self).set_expired()
-        self.save()
-
-    def set_cancelled(self):
-        self.purge()
-        super(VenueContract, self).set_cancelled()
-        self.save()
 
     def set_waiting(self, request):
         super(VenueContract, self).set_waiting(request)
