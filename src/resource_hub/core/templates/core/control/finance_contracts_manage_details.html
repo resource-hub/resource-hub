@@ -114,14 +114,24 @@
 {% include 'core/_identity.html' with actor=actor %}
 <form id="choices" class="small-container" method="POST">
     {% csrf_token %}
-    <button class="ui negative right labeled icon button" name="choice" value="cancel" type="submit">
-        {% trans 'Cancel' %}
-        <i class="close icon"></i>
-    </button>
-    <button class="ui positive right labeled right floated icon button" name="choice" value="confirm" type="submit">
-        {% trans 'Confirm' %}
-        <i class="check icon"></i>
-    </button>
+    <div class="ui slider checkbox">
+        <input type="checkbox" name="terms" required>
+        <label for="terms">
+            <b>
+                {% trans 'I fully understand and agree to the given terms and conditions.' %}
+            </b>
+        </label>
+    </div>
+    <div class="section-container">
+        <button class="ui negative right labeled icon button" name="choice" value="cancel" type="submit">
+            {% trans 'Cancel' %}
+            <i class="close icon"></i>
+        </button>
+        <button class="ui positive right labeled right floated icon button" name="choice" value="confirm" type="submit">
+            {% trans 'Confirm' %}
+            <i class="check icon"></i>
+        </button>
+    </div>
 </form>
 {% endif %}
 {% endblock %}
