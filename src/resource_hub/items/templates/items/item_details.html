@@ -11,6 +11,40 @@
     <div class="ui stackable two column grid">
         <div class="eight wide column">
             <h1>{{ item.name }}</h1>
+            <div class="ui list">
+                {% if item.manufacturer %}
+                <div class="item">
+                    <div class="header">
+                        {% trans 'Manufacturer' %}
+                    </div>
+                    {{ item.manufacturer }}
+                </div>
+                {% endif %}
+                {% if item.model %}
+                <div class="item">
+                    <div class="header">
+                        {% trans 'Model' %}
+                    </div>
+                    {{ item.model }}
+                </div>
+                {% endif %}
+                {% if item.serial_no %}
+                <div class="item">
+                    <div class="header">
+                        {% trans 'Serial number' %}
+                    </div>
+                    {{ item.serial_no }}
+                </div>
+                {% endif %}
+                {% if item.serial_no %}
+                <div class="item">
+                    <div class="header">
+                        {% trans 'Serial number' %}
+                    </div>
+                    {{ item.serial_no }}
+                </div>
+                {% endif %}
+            </div>
             <p>
                 {{ item.description|safe }}
             </p>
@@ -23,6 +57,18 @@
                         {% trans 'Base price' %}
                     </div>
                     {{ item.base_price }}
+                </div>
+                <div class="item">
+                    <div class="header">
+                        {% trans 'Self pickup' %}
+                    </div>
+                    {{ item.get_self_pickup_display }}
+                </div>
+                <div class="item">
+                    <div class="header">
+                        {% trans 'Unit' %}
+                    </div>
+                    {{ item.get_unit_display }}
                 </div>
             </div>
             <a class="ui right labeled positive icon button"
