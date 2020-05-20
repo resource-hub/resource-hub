@@ -3,13 +3,15 @@ from datetime import datetime, timezone
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
+from django.utils import timezone
 from django.utils.timezone import get_current_timezone
+
 from recurrence.models import Recurrence
 from resource_hub.core.models import Actor, Address, Location, PaymentMethod
 from resource_hub.core.tests import LoginTestMixin
 
-from ..forms import ItemFormManager
-from ..models import Item, ItemContractProcedure
+from ..forms import ItemBookingForm, ItemFormManager
+from ..models import Item, ItemBooking, ItemContract, ItemContractProcedure
 
 TEST_IMAGE = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII='
 
@@ -86,3 +88,112 @@ class TestItemForm(LoginTestMixin, TestCase):
         )
         self.assertTrue(form.is_valid())
         self.assertIsNotNone(form.save())
+
+
+class TestItemBookingForm(LoginTestMixin, TestCase):
+    def setUp(self):
+        super(TestItemBookingForm, self).setUp()
+        self.address = Address.objects.create(
+            street='street',
+            street_number=12,
+            postal_code='12345',
+            city='test',
+            country='de'
+        )
+        self.location = Location.objects.create(
+            name='Location',
+            description='nice',
+            address=self.address,
+            latitude=53.00,
+            longitude=9.0,
+            owner=self.user
+        )
+        self.payment_method = PaymentMethod.objects.create(
+            currency='EUR',
+            owner=self.user,
+        )
+        self.contract_procedure = ItemContractProcedure.objects.create(
+            name='test',
+            owner=self.user,
+        )
+        self.actor = self.user
+        self.item = Item.objects.create(
+            name='test',
+            description='test',
+            location=self.location,
+            quantity=1,
+            unit=Item.UNIT.HOURS,
+            contract_procedure=self.contract_procedure,
+            maximum_duration=7,
+            owner=self.actor,
+        )
+        self.contract = ItemContract.objects.create(
+
+        )
+        ItemBooking.objects.create(
+            item=self.item,
+            contract=self.contract,
+            dtstart=datetime(2020, 1, 1, 12, 0, 0, tzinfo=timezone.utc),
+            dtend=datetime(2020, 1, 1, 14, 0, 0, tzinfo=timezone.utc),
+            quantity=1,
+        )
+
+    def _test_bookings(self, bookings, bool_):
+        for booking in bookings:
+            form = ItemBookingForm(
+                self.item,
+                data=booking,
+            )
+            self.assertEqual(form.is_valid(), bool_)
+
+    def test_conflicting_bookings(self):
+        bookings = [
+            # start inside
+            {
+                'dtstart': datetime(2020, 1, 1, 12, 30, 0, tzinfo=timezone.utc),
+                'dtend': datetime(2020, 1, 1, 14, 30, 0, tzinfo=timezone.utc),
+                'quantity': 1
+            },
+            # booking within
+            {
+                'dtstart': datetime(2020, 1, 1, 13, 30, 0, tzinfo=timezone.utc),
+                'dtend': datetime(2020, 1, 1, 14, 0, 0, tzinfo=timezone.utc),
+                'quantity': 1
+            },
+            # booking complete overshadowing
+            {
+                'dtstart': datetime(2020, 1, 1, 11, 0, 0, tzinfo=timezone.utc),
+                'dtend': datetime(2020, 1, 1, 16, 0, 0, tzinfo=timezone.utc),
+                'quantity': 1
+            },
+            # booking equal
+            {
+                'dtstart': datetime(2020, 1, 1, 12, 0, 0, tzinfo=timezone.utc),
+                'dtend': datetime(2020, 1, 1, 14, 0, 0, tzinfo=timezone.utc),
+                'quantity': 1
+            },
+        ]
+        self._test_bookings(bookings, False)
+
+    def test_valid_bookings(self):
+        bookings = [
+            # booking completely outside
+            {
+                'dtstart': datetime(2020, 1, 1, 11, 0, 0, tzinfo=timezone.utc),
+                'dtend': datetime(2020, 1, 1, 11, 30, 0, tzinfo=timezone.utc),
+                'quantity': 1
+            },
+            # booking end equal
+            {
+                'dtstart': datetime(2020, 1, 1, 11, 30, 0, tzinfo=timezone.utc),
+                'dtend': datetime(2020, 1, 1, 12, 0, 0, tzinfo=timezone.utc),
+                'quantity': 1
+            },
+            # booking start equal
+            {
+                'dtstart': datetime(2020, 1, 1, 14, 0, 0, tzinfo=timezone.utc),
+                'dtend': datetime(2020, 1, 1, 15, 0, 0, tzinfo=timezone.utc),
+                'quantity': 1
+            },
+        ]
+        self._test_bookings(bookings, True)

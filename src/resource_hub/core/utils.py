@@ -64,3 +64,9 @@ def round_decimal(dec, currency=None, places_dict=settings.CURRENCY_PLACES):
 
 def money_filter(dec, currency='EUR'):
     return '{} {}'.format(round_decimal(dec, currency), currency)
+
+
+def timespan_conflict(span1_start, span1_end, span2_start, span2_end) -> bool:
+    return (
+        span2_start < span1_end and span2_end > span1_start
+    )

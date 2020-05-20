@@ -12,7 +12,7 @@ from resource_hub.core.forms import (ContractProcedureForm, FormManager,
                                      GalleryImageFormSet, PriceForm,
                                      PriceProfileFormSet)
 from resource_hub.core.models import Gallery, Location, PriceProfile
-from resource_hub.core.utils import get_authorized_actors
+from resource_hub.core.utils import get_authorized_actors, timespan_conflict
 
 from .models import (Equipment, EquipmentPrice, Event, Venue, VenueContract,
                      VenueContractProcedure, VenuePrice)
@@ -218,26 +218,12 @@ class EventForm(forms.ModelForm):
 
     def _find_conflicts(self, venue, dtstart, dtlast, occurrences):
         # query existing events in planned timeframe
-        start_inside = Q(
-            dtstart__lte=dtstart,
-        )
-        start_inside.add(
-            Q(dtlast__gte=dtstart),
+        query = Q(dtlast__gt=dtstart)
+        query.add(
+            Q(dtstart__lt=dtlast),
             Q.AND
         )
-        last_inside = Q(
-            dtstart__lte=dtlast,
-        )
-        last_inside.add(
-            Q(dtlast__gte=dtlast),
-            Q.AND
-        )
-        intersect = start_inside
-        intersect.add(last_inside, Q.OR)
-
-        query = Q(venues=venue)
-        query.add(Q(is_deleted=False), Q.AND)
-        query.add(Q(intersect), Q.AND)
+        query.add(Q(venues=venue), Q.AND)
 
         current_events = Event.objects.filter(
             query
@@ -263,14 +249,8 @@ class EventForm(forms.ModelForm):
                     # print("{} - {} | {} - {}".format(new_date_start,
                     #                                  new_date_end, old_date_start, old_date_end))
                     if (
-                        (
-                            old_date_start <= new_date_start and
-                            old_date_end > new_date_start
-                        ) or
-                        (
-                            old_date_start < new_date_end and
-                            old_date_start > new_date_start
-                        )
+                        timespan_conflict(
+                            new_date_start, new_date_end, old_date_start, old_date_end)
                     ):
                         client_tz = get_current_timezone()
                         old_date_start = old_date_start.astimezone(client_tz)
@@ -291,9 +271,8 @@ class EventForm(forms.ModelForm):
         for rrule in recurrences.rrules:
             if rrule.count or rrule.until:
                 continue
-            else:
-                raise forms.ValidationError(
-                    _('The recurrence has to be limited'), code='infinite-recurrence')
+            raise forms.ValidationError(
+                _('The recurrence has to be limited'), code='infinite-recurrence')
 
         dtstart = self.cleaned_data.get('dtstart')
         dtend = self.cleaned_data.get('dtend')
@@ -489,7 +468,6 @@ class BaseEquipmentFormset(BaseInlineFormSet):
             for form in self.forms:
                 if hasattr(form, 'nested'):
                     result = result and form.nested.is_valid()
-
         return result
 
     def save(self, commit=True):
@@ -506,7 +484,6 @@ class BaseEquipmentFormset(BaseInlineFormSet):
                             form.instance.save()
                     if commit:
                         form.nested.save()
-
         return result
 
 

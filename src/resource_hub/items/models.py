@@ -3,6 +3,7 @@ import uuid
 from django.db import models
 from django.shortcuts import reverse
 from django.utils.translation import gettext_lazy as _
+
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
 from resource_hub.core.models import (Actor, BaseModel, BaseStateMachine,
@@ -252,6 +253,7 @@ class Item(BaseStateMachine):
         null=False,
         upload_to='images/',
         verbose_name=_('thumbnail'),
+        default='images/default.png',
     )
     thumbnail = ImageSpecField(
         source='thumbnail_original',

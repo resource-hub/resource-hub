@@ -99,7 +99,19 @@ class TestEventForm(TestCase):
             # single event with start and end within other event,
             (
                 datetime(2020, 1, 1, 13, 30, 0, tzinfo=timezone.utc),
-                datetime(2020, 1, 1, 14, 00, 0, tzinfo=timezone.utc),
+                datetime(2020, 1, 1, 14, 0, 0, tzinfo=timezone.utc),
+                ''
+            ),
+            # single event completely overshadowing
+            (
+                datetime(2020, 1, 1, 11, 30, 0, tzinfo=timezone.utc),
+                datetime(2020, 1, 1, 15, 0, 0, tzinfo=timezone.utc),
+                ''
+            ),
+            # single event completely equal
+            (
+                datetime(2020, 1, 1, 12, 0, 0, tzinfo=timezone.utc),
+                datetime(2020, 1, 1, 13, 0, 0, tzinfo=timezone.utc),
                 ''
             ),
             # recurring event, same starting date

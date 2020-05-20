@@ -1,13 +1,15 @@
 from django import forms
 from django.db.models import Q
 from django.forms import inlineformset_factory
+from django.utils.timezone import get_current_timezone
 from django.utils.translation import gettext_lazy as _
+
 from resource_hub.core.fields import HTMLField
 from resource_hub.core.forms import (ContractProcedureForm, FormManager,
                                      GalleryImageFormSet, PriceForm,
                                      PriceProfileFormSet)
 from resource_hub.core.models import Gallery, Price, PriceProfile
-from resource_hub.core.utils import get_authorized_actors
+from resource_hub.core.utils import get_authorized_actors, timespan_conflict
 
 from .models import (Item, ItemBooking, ItemContract, ItemContractProcedure,
                      ItemPrice)
@@ -208,9 +210,40 @@ class ItemContractForm(forms.ModelForm):
 
 
 class ItemBookingForm(forms.ModelForm):
+    def __init__(self, item, *args, **kwargs):
+        super(ItemBookingForm, self).__init__(*args, **kwargs)
+        self.item = item
+
+    def clean(self):
+        cleaned_data = super().clean()
+        dtstart = cleaned_data.get('dtstart')
+        dtend = cleaned_data.get('dtend')
+        quantity = cleaned_data.get('quantity')
+        if dtstart and dtend and quantity:
+            query = Q(dtend__gt=dtstart)
+            query.add(
+                Q(dtstart__lt=dtend),
+                Q.AND
+            )
+            query.add(Q(item=self.item), Q.AND)
+            bookings = ItemBooking.objects.filter(query)
+            conflicts = []
+            for booking in bookings:
+                delta = self.item.quantity - booking.quantity - quantity
+                if timespan_conflict(booking.dtstart, booking.dtend, dtstart, dtend) and delta < 0:
+                    client_tz = get_current_timezone()
+                    booking_start = booking.dtstart.astimezone(client_tz)
+                    booking_end = booking.dtend.astimezone(client_tz)
+                    conflicts.append(
+                        _('There is a missing quantity of {} with booking on {} to {}'.format(
+                            delta, booking_start.strftime('%c'), booking_end.strftime('%c')))
+                    )
+            if conflicts:
+                raise forms.ValidationError(conflicts)
+
     class Meta:
         model = ItemBooking
-        fields = ['dtstart', 'dtend', ]
+        fields = ['dtstart', 'dtend', 'quantity', ]
 
 
 class ItemContractFormManager():
@@ -224,9 +257,9 @@ class ItemContractFormManager():
             data=self.request.POST
         ) if request.POST else ItemContractForm(self.item, self.request)
         self.item_form = ItemBookingForm(
+            self.item,
             data=self.request.POST,
-            files=self.request.FILES
-        ) if self.request.POST else ItemBookingForm()
+        ) if self.request.POST else ItemBookingForm(self.item)
 
     def get_forms(self):
         return {
