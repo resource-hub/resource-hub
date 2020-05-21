@@ -7,6 +7,7 @@ from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
 from django.views import View
+
 from resource_hub.core.decorators import owner_required
 from resource_hub.core.views import TableView
 
@@ -129,7 +130,9 @@ class ItemBookingsCreate(View):
                 'The event has been created successfully. You can review it and either confirm or cancel.')
             messages.add_message(request, messages.SUCCESS, message)
             return redirect(reverse('control:finance_contracts_manage_details', kwargs={'pk': item_contract.pk}))
-        return render(request, self.template_name, item_contract_form.get_forms())
+        context = item_contract_form.get_forms()
+        context['item'] = item
+        return render(request, self.template_name, context)
 
 
 @method_decorator(login_required, name='dispatch')
