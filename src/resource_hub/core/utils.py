@@ -70,3 +70,12 @@ def timespan_conflict(span1_start, span1_end, span2_start, span2_end) -> bool:
     return (
         span2_start < span1_end and span2_end > span1_start
     )
+
+
+def get_site_info():
+    return {
+        'owner_name': settings.SITE_OWNER_NAME,
+        'owner_address': settings.SITE_OWNER_ADDRESS,
+        'domain': settings.SITE_DOMAIN,
+        'email': settings.SITE_EMAIL,
+    }

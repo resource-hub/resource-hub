@@ -15,8 +15,9 @@
                     {% trans 'General' %}
                 </h4>
                 <div class="ui link list">
-                    <a class="item">{% trans 'Imprint' %}</a>
+                    <a class="item" href="{% url 'core:imprint' %}">{% trans 'Imprint' %}</a>
                     <a class="item" href="{% url 'core:terms' %}">{% trans 'Terms' %}</a>
+                    <a class="item" href="{% url 'core:privacy' %}">{% trans 'Privacy' %}</a>
                 </div>
             </div>
             <div class="three wide column">

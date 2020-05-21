@@ -7,6 +7,8 @@ from django.views import View
 from resource_hub.core.forms import ActorForm, ReportBugForm
 from resource_hub.core.models import Actor, Location
 
+from ..utils import get_site_info
+
 
 def index(request):
     return redirect(reverse('core:home'))
@@ -19,7 +21,17 @@ class Home(View):
 
 class Terms(View):
     def get(self, request):
-        return render(request, 'core/terms_and_conditions.html')
+        return render(request, 'core/terms_and_conditions.html', get_site_info())
+
+
+class DataPrivacyStatement(View):
+    def get(self, request):
+        return render(request, 'core/data_privacy_statement.html', get_site_info())
+
+
+class Imprint(View):
+    def get(self, request):
+        return render(request, 'core/imprint.html', get_site_info())
 
 
 class ReportBug(View):

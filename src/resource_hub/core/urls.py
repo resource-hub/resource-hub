@@ -107,6 +107,8 @@ urlpatterns = [
     path('bug/', site.ReportBug.as_view(), name='report_bug'),
     path('language/', site.Language.as_view(), name='language'),
     path('terms/', site.Terms.as_view(), name='terms'),
+    path('imprint/', site.Imprint.as_view(), name='imprint'),
+    path('privacy/', site.DataPrivacyStatement.as_view(), name='privacy'),
     path('locations/<slug:slug>/',
          site.LocationsProfile.as_view(), name='locations_profile'),
     path('actor/<slug:slug>/',

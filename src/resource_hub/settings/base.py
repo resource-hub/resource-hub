@@ -13,11 +13,13 @@ from django.utils.translation import gettext_lazy as _
 # props go to Shabeer Ayar https://medium.com/@ayarshabeer/django-best-practice-settings-file-for-multiple-environments-6d71c6966ee2
 
 
-def get_env_var(setting):
+def get_env_var(setting, default=None):
     try:
         val = os.environ[setting]
         return val
     except KeyError:
+        if default:
+            return default
         error_msg = "ImproperlyConfigured: Set {0} environment variable".format(
             setting)
         raise ImproperlyConfigured(error_msg)
@@ -50,6 +52,12 @@ ASGI_APPLICATION = 'resource_hub.asgi.application'
 
 MAP_API_TOKEN = get_env_var('MAP_API_TOKEN')
 GITLAB_TOKEN = get_env_var('GITLAB_TOKEN')
+
+# site info
+SITE_OWNER_NAME = get_env_var('SITE_OWNER_NAME', 'not configured')
+SITE_OWNER_ADDRESS = get_env_var('SITE_OWNER_ADDRESS', 'not configured')
+SITE_DOMAIN = get_env_var('SITE_DOMAIN', 'not.configured.com')
+SITE_EMAIL = get_env_var('SITE_EMAIL', 'not@configured.com')
 
 
 # Application definition

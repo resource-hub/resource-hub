@@ -3,36 +3,133 @@
 {% load static %}
 
 {% block content %}
-<h1>{% trans 'terms and conditions' %}</h1>
+<h1>{% trans 'Terms and conditions' %}</h1>
 <div>
     {% blocktrans %}
+    <p><strong>Leistungsbeschreibung und AGB</strong></p>
+
+    <p>von {{ owner_name }}, folgend "der Betreiber", und der Website {{ domain }}</p>
+
+    <p>Stand: 05/2020</p>
+
+    <p><strong>Leistungen</strong></p>
     <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-        magna
-        aliqua. Id porta nibh venenatis cras sed felis eget velit aliquet. Ipsum a arcu cursus vitae congue. In ante
-        metus
-        dictum at tempor. Porta non pulvinar neque laoreet suspendisse interdum consectetur. Potenti nullam ac tortor
-        vitae
-        purus faucibus ornare suspendisse. Sodales ut etiam sit amet nisl. Nulla facilisi morbi tempus iaculis urna. Nec
-        dui
-        nunc mattis enim. Sem fringilla ut morbi tincidunt augue. Egestas erat imperdiet sed euismod nisi porta lorem
-        mollis.
+        Bereitstellung einer Plattform für den Austausch diverser Ressourcen wie Räume und Gegenstände, sowie von
+        Mechanismen zu Automatisierung von Geschäftsprozessen.
+    </p>
+    <p><strong>Allgemeine Geschäftsbedingungen (AGB)</strong></p>
+
+    <p><strong>Registrierung</strong></p>
+
+    <p>
+        Das Anlegen eines Konto kann durch uneingeschränkt geschäftsfähige natürliche Personen erfolgen. Eine Löschung
+        des Kontos kann durch eine Mail an {{ email }} angefragt werden. Die Registration ist kostenlos.
+    </p>
+
+    <p><strong>Vertragsbeziehungen und Vertragsschluss</strong></p>
+
+    <p>Die Plattform vermittelt zwischen rechtlichen Entitäten, die selbst die Bendigungen und Umstände ihrer
+        Vertragsverhältnisse bestimmen. Der Betreiber der Plattform wird dabei nie selbst zu Partei der geschlossenen
+        Verträge. Etwaige Angebote von Ressourcen stellen dabei keine rechtsverbindlichen Angebote dar, sondern sie
+        bezeichnen eine Einladung, ein Angebot abzugeben.
+
+    <p><strong>Inhalt und Gestaltung der Anzeigen</strong></p>
+
+    <p>
+        Bei allen angebotenen Ressourcen trägt der Anbieter die Verantwortung die geltenden rechltichen Anforderungen
+        einzuhalten, insbesondere alle steuerrechtlichen und bürgerrechtlichen Vorschriften. Allen voran die
+        Informationsplichten über die vertragswesentlichen Merkmale.
+    </p>
+
+    <p>
+        Von der Vermittlung sind jegliche Ressourcen ausgeschlossen
     </p>
     <p>
-        Ultrices in iaculis nunc sed augue lacus. Faucibus et molestie ac feugiat sed lectus vestibulum mattis. Non
-        consectetur a erat nam. Tempus urna et pharetra pharetra massa massa ultricies mi. Imperdiet dui accumsan sit
-        amet
-        nulla. Suspendisse potenti nullam ac tortor vitae. Augue neque gravida in fermentum et sollicitudin ac orci.
-        Urna id
-        volutpat lacus laoreet non curabitur gravida arcu. Lacus vel facilisis volutpat est velit egestas dui. Non diam
-        phasellus vestibulum lorem sed risus ultricies tristique. Quis vel eros donec ac odio tempor orci. Lacus
-        suspendisse
-        faucibus interdum posuere lorem ipsum dolor sit.
-        {% endblocktrans %}
+        Jegliche geschützten, besonders urheberrechtlichen, Ressourcen, sowie Ressourcen, die gegen geltendes Recht
+        verstoßen.
     </p>
+
+    <p><strong>Widerrufsbelehrung</strong></p>
+
+    <p>Verbraucher haben das folgende Widerrufsrecht:<br>
+        Bürgerliches Gesetzbuch (BGB) § 13: Verbraucher ist jede natürliche Person, die ein Rechtsgeschäft zu Zwecken
+        abschließt, die überwiegend weder ihrer gewerblichen noch ihrer selbständigen beruflichen Tätigkeit zugerechnet
+        werden können. Sie können Ihre Vertragserklärung innerhalb von 14 Tagen ohne Angabe von Gründen in<br>
+        Textform (z.B. Brief, Fax, E-Mail) widerrufen. Die Frist beginnt nach Erhalt dieser Belehrung in Textform,
+        jedoch nicht vor Vertragsschluss und auch nicht vor Erfüllung<br>
+        unserer Informationspflichten gemäß Artikel 246 § 2 in Verbindung mit § 1 Absatz 1 und 2 EGBGB sowie unserer
+        Pflichten gemäß § 312g Absatz 1 Satz 1 BGB in Verbindung mit Artikel 246 § 3 EGBGB. Zur Wahrung der
+        Widerrufsfrist genügt die rechtzeitige Absendung des Widerrufs.</p>
+
+    <p>Der Widerruf ist zu richten an:</p>
+
+    {{ owner_address }}
+
+    <p>Widerrufsfolgen:<br>
+        Im Falle eines wirksamen Widerrufs sind die beiderseits empfangenen Leistungen&nbsp;zurück zu gewähren und ggf.
+        gezogene Nutzungen (z.B. Zinsen) herauszugeben. Können Sie uns die empfangene Leistung sowie Nutzungen (z.B.
+        Gebrauchsvorteile) nicht oder teilweise nicht oder nur in verschlechtertem Zustand zurückgewähren
+        beziehungsweise herausgeben, müssen Sie uns insoweit Wertersatz leisten. Dies kann dazu führen, dass Sie die
+        vertraglichen Zahlungsverpflichtungen für den Zeitraum bis zum Widerruf gleichwohl erfüllen müssen.
+        Verpflichtungen zur Erstattung von Zahlungen müssen&nbsp;innerhalb von 30 Tagen erfüllt werden. Die Frist
+        beginnt für Sie mit der Absendung Ihrer Widerrufserklärung, für uns mit deren Empfang.</p>
+
+    <p>Besondere Hinweise<br>
+        Ihr Widerrufsrecht erlischt vorzeitig, wenn der Vertrag von beiden Seiten auf Ihren ausdrücklichen Wunsch
+        vollständig erfüllt ist, bevor Sie Ihr Widerrufsrecht ausgeübt<br>
+        haben.</p>
+
+    <p>Ende der Widerrufsbelehrung</p>
+
+    <p><strong>Haftung</strong></p>
+
+    <p>Die Haftung des Betreibers für fehlerhafte oder unvollständige Eintragungen in den Produktangeboten ist
+        ausgeschlossen, soweit sie nicht auf vorsätzlichem oder grob fahrlässigem Verhalten des Betreibers
+        ihrer gesetzlichen Vertreter oder Erfüllungsgehilfen beruhen.<br>
+        Der Betreiber haftet auch ansonsten nur für Schäden, die auf Vorsatz oder&nbsp;grober Fahrlässigkeit
+        ihrerseits oder ihrer gesetzlichen Vertreter oder Erfüllungsgehilfen beruhen und die noch als typische Schäden
+        im Rahmen des Vorhersehbaren liegen. Diese Haftungsbeschränkung gilt nicht für Schäden an Leben, Körper,
+        Gesundheit und Freiheit und auch nicht bei Verletzung wesentlicher Vertragspflichten. Eine Haftung des
+        Betreibers
+        für das Funktionieren der bereitgestellten&nbsp;Plattformdienste auf {{ domain }} ist
+        ebenfalls
+        ausgeschlossen, soweit sie nicht auf&nbsp;vorsätzlichem oder grob fahrlässigem Verhalten des Betreibers
+        , ihrer&nbsp;gesetzlichen Vertreter oder Erfüllungsgehilfen beruht. Der Betreiber weist darauf
+        hin, dass es gelegentlich zu&nbsp;Funktionsbeeinträchtigungen wegen Instandsetzungs- und Wartungsarbeiten auf
+        {{ domain }} kommen kann.&nbsp;Der Betreiber beauftragt externe Unternehmen mit dem Betrieb
+        der&nbsp;Datenverarbeitungsanlagen.</p>
+
+    <p><strong>Haftungsfreistellung</strong></p>
+
+    <p>Der Verleiher&nbsp;stellt den Betreiber von allen Ansprüchen Dritter frei, die&nbsp;wegen unzulässiger
+        Angebote, Anzeigen, Texte, Bilder oder rechtlich geschützter&nbsp;<br>
+        Leihsachen (auch urheberrechtlich geschützter Bilder, Medien oder sonstiger Werke)&nbsp;gegenüber dem Betreiber
+        geltend gemacht werden. Dies gilt auch für&nbsp;Gerichtskosten und die Kosten der
+        Rechtsverteidigung in gesetzlicher Höhe.&nbsp;Im Falle einer Inanspruchnahme durch Dritte hat der Anbieter der
+        dem Betreiber Aufforderung unverzüglich und vollständig sämtliche zur Rechtsverteidigung&nbsp;nötigen
+        Informationen
+        und Dokumente zur Verfügung zu stellen.</p>
+
+    <p><strong>Änderung der Allgemeinen Geschäftsbedingungen</strong></p>
+
+    <p>Der Betreiber behält sich vor, diese Allgemeinen Geschäftsbedingungen&nbsp;gelegentlich zu ändern und
+        an aktuelle rechtliche Erfordernisse anzupassen. Die Benutzer&nbsp;werden über die Änderungen per E-Mail
+        informiert und können den Änderungen innerhalb&nbsp;einer vierwöchigen Frist widersprechen. Im Falle eines
+        Widerspruchs ist der Betreiber berechtigt, das Benutzerkonto mit Inkrafttreten der Änderungen
+        zu&nbsp;löschen.</p>
+
+    <p><strong> Salvatorische Klausel</strong></p>
+
+    <p>Falls einzelne Bestimmungen dieser Bedingungen unwirksam sind oder werden sollten,&nbsp;wird die Wirksamkeit der
+        übrigen Bestimmungen dadurch nicht berührt. Die unwirksame&nbsp;Bestimmung ist durch eine gültige zu ersetzen,
+        die dem angestrebten Ziel am nächsten&nbsp;kommt. Gleiches gilt für Regelungslücken.</p>
+
+    <p><strong> Erfüllungsort und Gerichtsstand</strong></p>
+
+    <p>Erfüllungsort für die Leistungen des Betreibers ist der Ort ihres&nbsp;Geschäftssitzes. Gerichtsstands
+        für sämtliche Streitigkeiten aus diesem Vertragsverhältnis<br>
+        ist der Sitz des Betreibers, falls es sich beim Vertragspartner um einen Kaufmann handelt.</p>
+
+    {% endblocktrans %}
 </div>
-{% endblock %}
-
-{% block scripts %}
-
 {% endblock %}
