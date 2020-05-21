@@ -219,11 +219,17 @@ class ItemBookingForm(forms.ModelForm):
         dtstart = cleaned_data.get('dtstart')
         dtend = cleaned_data.get('dtend')
         quantity = cleaned_data.get('quantity')
+        unit_days = self.item.unit == Item.UNIT.DAYS
+
         if dtstart and dtend and quantity:
-            if self.item.unit == Item.UNIT.DAYS:
-                dtstart = dtstart.date()
-                dtend = dtend.date()
-            if self.item.maximum_duration > 0 and dtend - dtstart > self.item.maximum_duration:
+            if unit_days:
+                dtstart = dtstart.replace(
+                    hour=0, minute=0, second=0, microsecond=0)
+                dtend = dtend.replace(
+                    hour=0, minute=0, second=0, microsecond=0)
+            duration = (dtend - dtstart).total_seconds()
+            duration = duration / 86400 if unit_days else duration / 3600
+            if self.item.maximum_duration > 0 and duration > self.item.maximum_duration:
                 raise forms.ValidationError(
                     _('Booking exeeds maximum duration'), code='maximum-duration-exceeded')
             query = Q(dtend__gt=dtstart)
@@ -237,8 +243,8 @@ class ItemBookingForm(forms.ModelForm):
             for booking in bookings:
                 delta = self.item.quantity - booking.quantity - quantity
                 booking_start = booking.dtstart.date(
-                ) if self.item.unit == Item.UNIT.DAYS else booking.dtstart
-                booking_end = booking.dtend.date() if self.item.unit == Item.UNIT.DAYS else booking.dtend
+                ) if unit_days else booking.dtstart
+                booking_end = booking.dtend.date() if unit_days else booking.dtend
                 if timespan_conflict(booking_start, booking_end, dtstart, dtend) and delta < 0:
                     client_tz = get_current_timezone()
                     booking_start = booking_start.astimezone(client_tz)

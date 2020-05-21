@@ -233,7 +233,7 @@ class TestItemBookingForm(LoginTestMixin, TestCase):
         self._test_bookings(bookings, False)
 
     def test_valid_bookings_days(self):
-        self.item_booking.unit = Item.UNIT.DAYS
+        self.item_booking.item.unit = Item.UNIT.DAYS
         self.item_booking.dtend = datetime(
             2020, 1, 3, 15, 0, 0, tzinfo=timezone.utc)
         self.item_booking.save()
@@ -248,8 +248,24 @@ class TestItemBookingForm(LoginTestMixin, TestCase):
         self._test_bookings(bookings, True)
 
     def test_maximum_duration_hours(self):
-        dtstart = datetime(2020, 1, 2, 12, 0, 0)
+        dtstart = datetime(2020, 1, 2, 12, 0, 0, tzinfo=timezone.utc)
         dtend = dtstart + timedelta(hours=self.item.maximum_duration + 1)
+        bookings = [
+            {
+                'dtstart': dtstart,
+                'dtend': dtend,
+                'quantity': 1,
+            }
+        ]
+        self._test_bookings(bookings, False)
+
+    def test_maximum_duration_days(self):
+        self.item_booking.item.unit = Item.UNIT.DAYS
+        self.item_booking.dtend = datetime(
+            2020, 1, 3, 15, 0, 0, tzinfo=timezone.utc)
+        self.item_booking.save()
+        dtstart = datetime(2020, 1, 2, 12, 0, 0, tzinfo=timezone.utc)
+        dtend = dtstart + timedelta(days=self.item.maximum_duration + 1)
         bookings = [
             {
                 'dtstart': dtstart,
