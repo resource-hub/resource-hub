@@ -66,6 +66,10 @@
   padding-right: 0;
 }
 
+.ui.red.message>p {
+  color: #db2828 !important;
+}
+
 /**
   *
   * Photoswipe 
