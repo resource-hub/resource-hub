@@ -79,3 +79,8 @@ def get_site_info():
         'domain': settings.SITE_DOMAIN,
         'email': settings.SITE_EMAIL,
     }
+
+
+def to_date(datetime):
+    return datetime.replace(
+        hour=0, minute=0, second=0, microsecond=0)

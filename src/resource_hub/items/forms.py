@@ -9,7 +9,8 @@ from resource_hub.core.forms import (ContractProcedureForm, FormManager,
                                      GalleryImageFormSet, PriceForm,
                                      PriceProfileFormSet)
 from resource_hub.core.models import Gallery, Price, PriceProfile
-from resource_hub.core.utils import get_authorized_actors, timespan_conflict
+from resource_hub.core.utils import (get_authorized_actors, timespan_conflict,
+                                     to_date)
 
 from .models import (Item, ItemBooking, ItemContract, ItemContractProcedure,
                      ItemPrice)
@@ -223,10 +224,8 @@ class ItemBookingForm(forms.ModelForm):
 
         if dtstart and dtend and quantity:
             if unit_days:
-                dtstart = dtstart.replace(
-                    hour=0, minute=0, second=0, microsecond=0)
-                dtend = dtend.replace(
-                    hour=0, minute=0, second=0, microsecond=0)
+                dtstart = to_date(dtstart)
+                dtend = to_date(dtend)
             duration = (dtend - dtstart).total_seconds()
             duration = duration / 86400 if unit_days else duration / 3600
             if self.item.maximum_duration > 0 and duration > self.item.maximum_duration:
@@ -242,9 +241,10 @@ class ItemBookingForm(forms.ModelForm):
             conflicts = []
             for booking in bookings:
                 delta = self.item.quantity - booking.quantity - quantity
-                booking_start = booking.dtstart.date(
-                ) if unit_days else booking.dtstart
-                booking_end = booking.dtend.date() if unit_days else booking.dtend
+                booking_start = to_date(
+                    booking.dtstart) if unit_days else booking.dtstart
+                booking_end = to_date(
+                    booking.dtend) if unit_days else booking.dtend
                 if timespan_conflict(booking_start, booking_end, dtstart, dtend) and delta < 0:
                     client_tz = get_current_timezone()
                     booking_start = booking_start.astimezone(client_tz)
