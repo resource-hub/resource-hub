@@ -195,12 +195,6 @@ class Organization(Actor):
         User,
         through='OrganizationMember',
     )
-    created_by = models.ForeignKey(
-        User,
-        related_name='organization_created_by',
-        null=True,
-        on_delete=models.SET_NULL,
-    )
 
     @property
     def notification_recipients(self) -> list:

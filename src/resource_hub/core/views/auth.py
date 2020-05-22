@@ -46,7 +46,7 @@ class Register(View):
             messages.add_message(request, messages.INFO, message)
             return redirect(reverse('control:home'))
 
-        user_form = UserFormManager()
+        user_form = UserFormManager(request)
         return render(request, 'core/register.html', user_form.get_forms())
 
     def post(self, request):

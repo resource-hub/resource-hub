@@ -1,7 +1,6 @@
 import re
 from datetime import datetime
 
-import bleach
 import requests
 from django import forms
 from django.conf import settings
@@ -12,21 +11,56 @@ from django.forms import inlineformset_factory
 from django.utils.dateparse import parse_date
 from django.utils.translation import gettext_lazy as _
 
+import bleach
+from resource_hub.core.utils import get_authorized_actors
 from schwifty import BIC, IBAN
 
 from .fields import HTMLField
-from .models import (Actor, Address, BankAccount, ContractProcedure,
+from .models import (Actor, Address, BankAccount, BaseModel, ContractProcedure,
                      ContractTrigger, Gallery, GalleryImage, Location,
                      Organization, OrganizationMember, PaymentMethod, Price,
                      PriceProfile, User)
 from .widgets import IBANInput, UISearchField
 
 
+class BaseForm(forms.ModelForm):
+    owner_editable = True
+
+    def __init__(self, user, actor, *args, data=None, files=None, instance=None, **kwargs):
+        super(BaseForm, self).__init__(*args, data=data,
+                                       files=files, instance=instance, **kwargs)
+        self.user = user
+        self.actor = actor
+        if self.owner_editable:
+            self.fields['owner'].queryset = get_authorized_actors(
+                self.user,
+            )
+            self.initial['owner'] = self.actor
+
+    def _update_attrs(self, fields):
+        for field, val in fields.items():
+            self.fields[field].widget.attrs.update(val)
+
+    # def save(self, commit=True):
+    #     super(BaseForm, self).save(commit=False)
+    #     if self.instance is None:
+    #         self.instance.created_by = self.user
+    #     self.instance.updated_by = self.user
+    #     if commit:
+    #         self.save()
+    #     return self.instance
+
+    class Meta:
+        model = BaseModel
+        fields = []
+
+
 class FormManager():
     forms = {}
 
-    def __init__(self, request=None, instances=None):
-        self.request = request
+    def __init__(self, user, actor, data=None, files=None, instances=None):
+        self.user = user
+        self.actor = actor
         for k, form in self.forms.items():
             instance = instances[k] if instances else None
 
@@ -35,9 +69,11 @@ class FormManager():
                 form = form.__class__
 
             self.forms[k] = form(
-                data=request.POST,
-                files=request.FILES, instance=instance
-            ) if request else form(instance=instance)
+                self.user,
+                self.actor,
+                data=data,
+                files=files, instance=instance
+            ) if data else form(self.user, self.actor, instance=instance)
 
     def get_forms(self):
         return self.forms
@@ -133,7 +169,9 @@ class InvoicingSettings(forms.ModelForm):
                   'invoice_introductory_text', 'invoice_additional_text', 'invoice_footer_text']
 
 
-class AddressForm(forms.ModelForm):
+class AddressForm(BaseForm):
+    owner_editable = False
+
     class Meta:
         model = Address
         fields = ['street', 'street_number',
@@ -226,14 +264,15 @@ class BankAccountForm(forms.ModelForm):
 
 
 class UserFormManager():
-    def __init__(self, request=None):
-        if request is None:
+    def __init__(self, request):
+        if request.POST is None:
             self.user_form = UserBaseForm()
-            self.address_form = AddressForm()
+            self.address_form = AddressForm(request.user, request.actor)
             self.bank_account_form = BankAccountForm()
         else:
             self.user_form = UserBaseForm(request.POST, request.FILES)
-            self.address_form = AddressForm(request.POST)
+            self.address_form = AddressForm(
+                request.user, request.actor, data=request.POST)
             self.bank_account_form = BankAccountForm(request.POST)
 
     def get_forms(self):
@@ -268,6 +307,8 @@ class ProfileFormManager():
         self.actor = actor
         self.actor_form = ActorForm(instance=self.actor)
         self.address_form = AddressForm(
+            request.user,
+            request.actor,
             instance=self.actor.address)
         self.bank_account_form = BankAccountForm(
             instance=self.actor.bank_account)
@@ -286,6 +327,7 @@ class ProfileFormManager():
 
     def change_address(self):
         self.address_form = AddressForm(
+            self.request.user, self.request.actor,
             self.request.POST, instance=self.actor.address)
 
         if self.address_form.is_valid():
@@ -450,16 +492,17 @@ PriceProfileFormSet = inlineformset_factory(
 
 
 class OrganizationFormManager():
-    def __init__(self, request=None):
-        if request is None:
+    def __init__(self, request):
+        if request.POST is None:
             self.organization_form = OrganizationForm()
-            self.address_form = AddressForm()
+            self.address_form = AddressForm(request.user, request.actor)
             self.bank_account_form = BankAccountForm()
         else:
             self.request = request
             self.organization_form = OrganizationForm(
                 request.POST, request.FILES)
-            self.address_form = AddressForm(request.POST)
+            self.address_form = AddressForm(
+                request.user, request.actor, data=request.POST)
             self.bank_account_form = BankAccountForm(request.POST)
 
     def get_forms(self):
@@ -567,26 +610,15 @@ class RoleChangeForm(forms.Form):
         return request
 
 
-class LocationForm(forms.ModelForm):
+class LocationForm(BaseForm):
     search = forms.CharField(widget=UISearchField, required=False, help_text=_(
         'You can use this search field for the address to autofill the location data!'))
     description = HTMLField()
 
     class Meta:
         model = Location
-        fields = ['name', 'is_public', 'description', 'image',
-                  'search', 'latitude', 'longitude', ]
-        help_texts = {
-            'is_public': _('Allow other users to link information to this location'),
-        }
-
-    def save(self, owner=None, commit=True):
-        new_location = super(LocationForm, self).save(commit=False)
-        if owner is not None:
-            new_location.owner = owner
-        if commit:
-            new_location.save()
-        return new_location
+        fields = ['name', 'is_public', 'is_editable', 'description', 'image',
+                  'search', 'latitude', 'longitude', 'owner', ]
 
 
 class LocationFormManager(FormManager):
@@ -596,11 +628,8 @@ class LocationFormManager(FormManager):
     }
 
     def save(self, commit=True):
-        owner = self.request.actor
-        user = self.request.user
         new_address = self.forms['address_form'].save()
-        new_location = self.forms['location_form'].save(owner, commit=False)
-        new_location.created_by = user
+        new_location = self.forms['location_form'].save(commit=False)
         new_location.address = new_address
         if commit:
             new_location.save()

@@ -54,7 +54,6 @@ class VenueForm(forms.ModelForm):
 
     def save(self, *args, commit=True, **kwargs):
         new_venue = super(VenueForm, self).save(*args, commit=False, **kwargs)
-        new_venue.owner = self.request.actor
         if commit:
             new_venue.save()
         return new_venue

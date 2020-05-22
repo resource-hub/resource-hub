@@ -235,13 +235,6 @@ class Event(BaseModel):
         format='JPEG',
         options={'quality': 70},
     )
-    created_by = models.ForeignKey(
-        Actor,
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name='event_created_by',
-        verbose_name=_('Created by'),
-    )
     updated_by = models.ForeignKey(
         Actor,
         on_delete=models.SET_NULL,

@@ -27,7 +27,6 @@ class BaseModel(models.Model):
         auto_now=True,
         verbose_name=_('Updated at'),
     )
-
     objects = CombinedManager()
     all_objects = InheritanceManager()
 
@@ -239,23 +238,22 @@ class Location(BaseModel):
             'quality': 60,
         }
     )
-    is_public = models.BooleanField(default=True)
+    is_public = models.BooleanField(
+        default=True,
+        verbose_name=_('Public?'),
+        help_text=_(
+            'Display the location in feeds and display full information'),
+    )
+    is_editable = models.BooleanField(
+        default=False,
+        verbose_name=_('Editable?'),
+        help_text=_(
+            'Allow other users to link information to this location'),
+    )
     owner = models.ForeignKey(
         'Actor',
         on_delete=models.CASCADE,
         verbose_name=_('Owner'),
-    )
-    created_by = models.ForeignKey(
-        'User',
-        null=True,
-        related_name='location_created_by',
-        on_delete=models.SET_NULL,
-    )
-    updated_by = models.ForeignKey(
-        'User',
-        null=True,
-        related_name='location_updated_by',
-        on_delete=models.SET_NULL,
     )
 
     # Metadata

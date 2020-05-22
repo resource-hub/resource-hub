@@ -424,7 +424,7 @@ class OrganizationsCreate(View):
     template_name = 'core/control/organizations_create.html'
 
     def get(self, request):
-        organization_form = OrganizationFormManager()
+        organization_form = OrganizationFormManager(request)
         return render(request, self.template_name, organization_form.get_forms())
 
     def post(self, request):
@@ -549,11 +549,12 @@ class OrganizationsMembersAdd(View):
 @method_decorator(login_required, name='dispatch')
 class LocationsCreate(View):
     def get(self, request):
-        location_form = LocationFormManager()
+        location_form = LocationFormManager(request.user, request.actor)
         return render(request, 'core/control/locations_create.html', location_form.get_forms())
 
     def post(self, request):
-        location_form = LocationFormManager(request)
+        location_form = LocationFormManager(
+            request.user, request.actor, data=request.POST, files=request.FILES)
 
         if location_form.is_valid():
             location_form.save()
@@ -594,6 +595,8 @@ class LocationsEdit(View):
     def get(self, request, pk):
         location = get_object_or_404(Location, pk=pk)
         location_form = LocationFormManager(
+            request.user,
+            request.actor,
             instances={
                 'location_form': location,
                 'address_form': location.address,
@@ -604,7 +607,10 @@ class LocationsEdit(View):
     def post(self, request, pk):
         location = get_object_or_404(Location, pk=pk)
         location_form = LocationFormManager(
-            request=request,
+            request.user,
+            request.actor,
+            data=request.POST,
+            files=request.FILES,
             instances={
                 'location_form': location,
                 'address_form': location.address,
