@@ -54,14 +54,12 @@ class VenuesCreate(View):
             request.user, request.actor, data=request.POST, files=request.FILES)
 
         if venue_form.is_valid():
-            print('he')
             with transaction.atomic():
                 venue_form.save()
 
             message = ('The venue has been created')
             messages.add_message(request, messages.SUCCESS, message)
             return redirect(reverse('control:venues_manage'))
-        print('ho')
         return render(request, 'venues/control/venues_create.html', venue_form.get_forms())
 
 
@@ -76,13 +74,17 @@ class VenuesEdit(View):
 
     def get(self, request, pk):
         venue = get_object_or_404(Venue, pk=pk)
-        venue_form = VenueFormManager(request, instance=venue)
+        venue_form = VenueFormManager(
+            request.user, request.user, instance=venue)
         return render(request, self.template_name, venue_form.get_forms())
 
     def post(self, request, pk):
         venue = get_object_or_404(Venue, pk=pk)
         venue_form = VenueFormManager(
-            request,
+            request.user,
+            request.actor,
+            request.POST,
+            request.FILES,
             instance=venue,
         )
 
