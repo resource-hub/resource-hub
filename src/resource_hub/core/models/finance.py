@@ -1,36 +1,7 @@
-import string
-import uuid
-from datetime import timedelta
-
-from django.conf import settings
-from django.contrib.auth.models import AbstractUser
-from django.contrib.contenttypes.fields import GenericForeignKey
-from django.contrib.contenttypes.models import ContentType
-from django.core import mail
-from django.core.files.base import ContentFile
-from django.db import DatabaseError, models, transaction
-from django.db.models import Max, Min
-from django.db.models.functions import Cast
-from django.http import HttpResponse
-from django.shortcuts import reverse
-from django.template.loader import render_to_string
-from django.utils import timezone
-from django.utils.crypto import get_random_string
+from django.db import models
 from django.utils.translation import gettext_lazy as _
-from django.utils.translation import pgettext
-
-import pycountry
-from django_countries.fields import CountryField
-from imagekit.models import ImageSpecField
-from imagekit.processors import ResizeToFill
-from ipware import get_client_ip
-from model_utils.fields import MonitorField
-from model_utils.managers import InheritanceManager
 
 from ..fields import CurrencyField, PercentField
-from ..renderer import InvoiceRenderer
-from ..settings import COUNTRIES_WITH_STATE_IN_ADDRESS
-from ..utils import get_valid_slug, language
 from .base import BaseModel, BaseStateMachine
 
 
@@ -63,30 +34,35 @@ class Payment(BaseStateMachine):
         'Actor',
         on_delete=models.PROTECT,
         related_name='payment_debitor',
+        verbose_name=_('Debitor'),
     )
     creditor = models.ForeignKey(
         'Actor',
         on_delete=models.PROTECT,
         related_name='payment_creditor',
+        verbose_name=_('Creditor'),
     )
     value = models.DecimalField(
         decimal_places=5,
         max_digits=15,
+        verbose_name=_('Value'),
     )
     currency = CurrencyField()
     notes = models.TextField(
         null=True,
         blank=True,
-        verbose_name=_('payment notes'),
+        verbose_name=_('Payment notes'),
     )
     payment_date = models.DateTimeField(
         null=True,
         blank=True,
+        verbose_name=_('Payment date'),
     )
     payment_method = models.ForeignKey(
         'PaymentMethod',
         null=True,
         on_delete=models.SET_NULL,
+        verbose_name=_('Payment method'),
     )
 
 
@@ -97,6 +73,7 @@ class Price(BaseModel):
         blank=True,
         default=None,
         on_delete=models.CASCADE,
+        verbose_name=_('Addressee'),
     )
     value = models.DecimalField(
         decimal_places=5,
@@ -107,6 +84,7 @@ class Price(BaseModel):
     discounts = models.BooleanField(
         default=True,
         blank=True,
+        verbose_name=_('Discounts'),
     )
 
     def __str__(self):
@@ -117,18 +95,23 @@ class PriceProfile(BaseModel):
     contract_procedure = models.ForeignKey(
         'ContractProcedure',
         on_delete=models.PROTECT,
+        verbose_name=_('Contract procedure'),
     )
     addressee = models.ForeignKey(
         'Actor',
         null=True,
         blank=True,
         default=None,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        verbose_name=_('Addressee'),
     )
     description = models.CharField(
         max_length=64,
+        verbose_name=_('Description'),
     )
-    discount = PercentField()
+    discount = PercentField(
+        verbose_name=_('Discount'),
+    )
 
     # methods
     def __str__(self):

@@ -15,27 +15,32 @@ class Actor(BaseModel):
     name = models.CharField(
         max_length=128,
         null=True,
+        verbose_name=_('Name'),
     )
     slug = models.SlugField(
         unique=True,
         db_index=True,
         max_length=50,
+        verbose_name=_('Slug'),
     )
     address = models.OneToOneField(
         'Address',
         null=True,
         on_delete=models.SET_NULL,
+        verbose_name=_('Address'),
     )
     bank_account = models.OneToOneField(
         'BankAccount',
         null=True,
         on_delete=models.SET_NULL,
+        verbose_name=_('Bank account'),
     )
     image = models.ImageField(
         null=True,
         blank=True,
         upload_to='images/',
         default='images/default.png',
+        verbose_name=_('image'),
     )
     thumbnail = ImageSpecField(
         source='image',
@@ -44,6 +49,7 @@ class Actor(BaseModel):
         options={
             'quality': 60,
         },
+        verbose_name=_('Thumbnail'),
     )
     thumbnail_small = ImageSpecField(
         source='image',
@@ -51,7 +57,7 @@ class Actor(BaseModel):
         format='PNG',
         options={
             'quality': 60,
-        }
+        },
     )
     thumbnail_large = ImageSpecField(
         source='image',
@@ -61,69 +67,82 @@ class Actor(BaseModel):
         format='PNG',
         options={
             'quality': 90,
-        }
+        },
     )
     telephone_private = models.CharField(
         max_length=20,
         null=True,
         blank=True,
+        verbose_name=_('Telephone (private)'),
     )
     telephone_public = models.CharField(
         max_length=20,
         null=True,
         blank=True,
+        verbose_name=_('Telephone (public)'),
     )
     email_public = models.EmailField(
         null=True,
         blank=True,
+        verbose_name=_('Email (public)'),
     )
     website = models.URLField(
         null=True,
         blank=True,
+        verbose_name=_('Website'),
     )
     info_text = models.TextField(
         null=True,
         blank=True,
+        verbose_name=_('Info text'),
     )
     # setting fields
     tax_id = models.CharField(
         max_length=30,
         null=True,
         blank=True,
+        verbose_name=_('Tax-ID'),
     )
     vat_id = models.CharField(
         max_length=30,
         null=True,
         blank=True,
+        verbose_name=_('VAT-ID'),
     )
     invoice_numbers_prefix = models.CharField(
         max_length=5,
         default='RH',
+        verbose_name=_('Invoice numbers prefix'),
     )
     invoice_numbers_prefix_cancellations = models.CharField(
         max_length=5,
         default='CAN',
+        verbose_name=_('Invoice numbers prefix (cancellations)'),
     )
     invoice_introductory_text = models.TextField(
         null=True,
         blank=True,
         default='',
+        verbose_name=_('Invoice introductory text'),
     )
     invoice_additional_text = models.TextField(
         null=True,
         blank=True,
         default='',
+        verbose_name=_('Invoice additional text'),
     )
     invoice_footer_text = models.TextField(
         null=True,
         blank=True,
         default='',
+        verbose_name=_('Invoice footer text'),
     )
     invoice_logo_image = models.ImageField(
         null=True,
         blank=True,
         upload_to='images/',
         default='images/logo.png',
+        verbose_name=_('Invoice logo image'),
     )
 
     @property
@@ -145,13 +164,16 @@ class User(AbstractUser, Actor):
     """
     email = models.EmailField(
         unique=True,
+        verbose_name=_('Email'),
     )
     birth_date = models.DateField(
         null=True,
+        verbose_name=_('Birth date'),
     )
     is_verified = models.BooleanField(
         default=False,
         blank=True,
+        verbose_name=_('Verified?'),
     )
 
     @property
@@ -213,28 +235,25 @@ class OrganizationMember(BaseModel):
     organization = models.ForeignKey(
         Organization,
         on_delete=models.CASCADE,
+        verbose_name=_('Organization'),
     )
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
+        verbose_name=_('User'),
     )
     role = models.IntegerField(
         choices=ORGANIZATION_ROLES,
         default=MEMBER,
         null=False,
-    )
-    created_at = models.DateTimeField(
-        auto_now_add=True,
+        verbose_name=_('Role'),
     )
 
     class Meta:
         unique_together = ('organization', 'user',)
 
     def is_admin(self) -> bool:
-        if self.role == OrganizationMember.ADMIN or self.role == OrganizationMember.OWNER:
-            return True
-        else:
-            return False
+        return self.role == OrganizationMember.ADMIN or self.role == OrganizationMember.OWNER
 
     @staticmethod
     def role_display_reverse(val: int) -> str:

@@ -17,12 +17,15 @@ class BaseModel(models.Model):
     # fields
     is_deleted = models.BooleanField(
         default=False,
+        verbose_name=_('Deleted?'),
     )
     created_at = models.DateTimeField(
         auto_now_add=True,
+        verbose_name=_('Created at'),
     )
     updated_at = models.DateTimeField(
         auto_now=True,
+        verbose_name=_('Updated at'),
     )
 
     objects = CombinedManager()
@@ -52,8 +55,12 @@ class BaseStateMachine(BaseModel):
     state = models.CharField(
         max_length=2,
         default=STATE.PENDING,
+        verbose_name=_('State'),
     )
-    state_changed = MonitorField(monitor='state')
+    state_changed = MonitorField(
+        monitor='state',
+        verbose_name=_('State changed at'),
+    )
 
     def get_state_display(self):
         for state in self.STATES:
@@ -82,26 +89,31 @@ class Address(BaseModel):
         max_length=50,
         null=True,
         blank=False,
+        verbose_name=_('Street'),
     )
     street_number = models.CharField(
         max_length=10,
         null=True,
         blank=False,
+        verbose_name=_('Street number'),
     )
     postal_code = models.CharField(
         max_length=5,
         null=True,
         blank=False,
+        verbose_name=_('Postal code'),
     )
     city = models.CharField(
         max_length=128,
         null=True,
         blank=False,
+        verbose_name=_('City'),
     )
     country = CountryField(
         null=True,
         blank=True,
         default=settings.DEFAULT_COUNTRY,
+        verbose_name=_('Country'),
     )
     updated_by = models.ForeignKey(
         'User',
@@ -134,19 +146,19 @@ class BankAccount(BaseModel):
         max_length=128,
         null=True,
         blank=True,
+        verbose_name=_('Account holder'),
     )
     iban = models.CharField(
         max_length=40,
         null=True,
         blank=True,
+        verbose_name=_('IBAN'),
     )
     bic = models.CharField(
         max_length=11,
         null=True,
         blank=True,
-    )
-    updated_at = models.DateTimeField(
-        auto_now=True,
+        verbose_name=_('BIC'),
     )
     updated_by = models.ForeignKey(
         'User',
@@ -179,36 +191,43 @@ class Location(BaseModel):
         max_length=50,
         unique=True,
         db_index=True,
+        verbose_name=_('Slug'),
     )
     address = models.ForeignKey(
         Address,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        verbose_name=_('Address'),
     )
     name = models.CharField(
         unique=True,
         max_length=128,
         null=True,
         blank=True,
+        verbose_name=_('Name'),
     )
     description = models.TextField(
         null=True,
         blank=True,
+        verbose_name=_('Description'),
     )
     latitude = models.DecimalField(
         max_digits=9,
         decimal_places=6,
         default=0,
+        verbose_name=_('Latitude'),
     )
     longitude = models.DecimalField(
         max_digits=9,
         decimal_places=6,
-        default=0
+        default=0,
+        verbose_name=_('Longitude'),
     )
     image = models.ImageField(
         null=True,
         blank=True,
         upload_to='images/',
         default='images/default.png',
+        verbose_name=_('Image'),
     )
     thumbnail = ImageSpecField(
         source='image',
@@ -224,6 +243,7 @@ class Location(BaseModel):
     owner = models.ForeignKey(
         'Actor',
         on_delete=models.CASCADE,
+        verbose_name=_('Owner'),
     )
     created_by = models.ForeignKey(
         'User',
@@ -261,14 +281,17 @@ class GalleryImage(BaseModel):
     gallery = models.ForeignKey(
         Gallery,
         on_delete=models.PROTECT,
-        related_name='images'
+        related_name='images',
+        verbose_name=_('Gallery'),
     )
     caption = models.CharField(
         max_length=255,
+        verbose_name=_('Caption'),
     )
     image = models.ImageField(
         null=False,
         upload_to='images/',
+        verbose_name=_('Image'),
     )
     thumbnail = ImageSpecField(
         source='image',

@@ -7,6 +7,7 @@ from django.http import HttpResponse
 from django.shortcuts import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+
 from ipware import get_client_ip
 from model_utils.managers import InheritanceManager
 
@@ -25,10 +26,12 @@ class ContractProcedure(BaseModel):
 
     name = models.CharField(
         max_length=64,
+        verbose_name=_('Image'),
         help_text=_('Give the procedure a name so you can identify it easier'),
     )
     auto_accept = models.BooleanField(
         default=False,
+        verbose_name=_('Image'),
         help_text=_('Automatically accept the booking?'),
     )
     is_invoicing = models.BooleanField(
@@ -60,26 +63,27 @@ class ContractProcedure(BaseModel):
         blank=False,
         help_text=_(
             'Choose the payment methods you want to use for this venue'),
+        verbose_name=_('Payment methods'),
     )
     tax_rate = PercentField(
-        verbose_name=_('tax rate applied in percent'),
         default=0,
+        verbose_name=_('Tax rate applied in percent'),
     )
     settlement_interval = models.IntegerField(
         choices=SETTLEMENT_INTERVALS,
         default=SETTLEMENT_INTERVALS[0][0],
+        verbose_name=_('Settlement interval'),
     )
     triggers = models.ManyToManyField(
         'ContractTrigger',
         blank=True,
-        related_name='procedure'
+        related_name='procedure',
+        verbose_name=_('Triggers'),
     )
     owner = models.ForeignKey(
         'Actor',
         on_delete=models.PROTECT,
-    )
-    created_at = models.DateTimeField(
-        auto_now_add=True,
+        verbose_name=_('Owner'),
     )
 
     # attributes
@@ -133,62 +137,74 @@ class BaseContract(BaseStateMachine):
     uuid = models.UUIDField(
         default=uuid.uuid4,
         editable=False,
+        verbose_name=_('UUID'),
     )
     contract_procedure = models.ForeignKey(
         'ContractProcedure',
         on_delete=models.PROTECT,
         null=True,
+        verbose_name=_('Contract Procedure'),
     )
     terms_and_conditions = models.TextField(
         null=True,
+        verbose_name=_('Terms and conditions'),
     )
     termination_period = models.IntegerField(
         default=0,
+        verbose_name=_('Termination period'),
     )
     creditor = models.ForeignKey(
         'Actor',
         null=True,
         on_delete=models.SET_NULL,
         related_name='creditor',
+        verbose_name=_('Creditor'),
     )
     debitor = models.ForeignKey(
         'Actor',
         null=True,
         on_delete=models.SET_NULL,
         related_name='debitor',
+        verbose_name=_('Debitor'),
     )
     # fields
     is_fixed_term = models.BooleanField(
-        default=True
+        default=True,
+        verbose_name=_('Is fixed term'),
     )
     payment_method = models.ForeignKey(
         'PaymentMethod',
         null=True,
         on_delete=models.SET_NULL,
+        verbose_name=_('Payment method'),
     )
     price_profile = models.ForeignKey(
         'PriceProfile',
         on_delete=models.PROTECT,
         null=True,
         blank=True,
+        verbose_name=_('Price profile'),
     )
     confirmation = models.OneToOneField(
         'DeclarationOfIntent',
         null=True,
         on_delete=models.SET_NULL,
         related_name='contract_confirmation',
+        verbose_name=_('Confirmation'),
     )
     acceptance = models.OneToOneField(
         'DeclarationOfIntent',
         on_delete=models.SET_NULL,
         null=True,
         related_name='contract_acceptance',
+        verbose_name=_('Acceptance'),
     )
     created_by = models.ForeignKey(
         'User',
         related_name='contract_created_by',
         null=True,
         on_delete=models.SET_NULL,
+        verbose_name=_('Created by'),
     )
 
     # attributes
@@ -252,15 +268,19 @@ class DeclarationOfIntent(models.Model):
         'User',
         null=True,
         on_delete=models.SET_NULL,
+        verbose_name=_('User'),
     )
     ip = models.GenericIPAddressField(
         null=True,
+        verbose_name=_('IP'),
     )
     ip_routable = models.BooleanField(
         default=True,
+        verbose_name=_('IP routable'),
     )
     timestamp = models.DateTimeField(
         auto_now_add=True,
+        verbose_name=_('Timestamp'),
     )
 
     @classmethod
@@ -500,9 +520,11 @@ class SettlementLog(BaseModel):
         Contract,
         on_delete=models.CASCADE,
         related_name='settlement_logs',
+        verbose_name=_('Contract'),
     )
     timestamp = models.DateTimeField(
-        default=timezone.now
+        default=timezone.now,
+        verbose_name=_('Timestamp'),
     )
 
 
@@ -524,58 +546,76 @@ class Claim(BaseStateMachine):
     contract = models.ForeignKey(
         Contract,
         on_delete=models.PROTECT,
+        verbose_name=_('Contract'),
     )
     item = models.CharField(
         max_length=255,
+        verbose_name=_('Item'),
     )
     quantity = models.DecimalField(
         decimal_places=5,
         max_digits=15,
+        verbose_name=_('Quantity'),
     )
     unit = models.CharField(
         max_length=5,
+        verbose_name=_('Unit'),
     )
     price = models.DecimalField(
         decimal_places=5,
         max_digits=15,
+        verbose_name=_('Price'),
     )
     currency = CurrencyField()
     net = models.DecimalField(
         decimal_places=5,
         max_digits=15,
+        verbose_name=_('Net'),
     )
-    discount = PercentField()
+    discount = PercentField(
+        verbose_name=_('Discount'),
+    )
     discounted_net = models.DecimalField(
         decimal_places=5,
         max_digits=15,
+        verbose_name=_('Discounted net'),
     )
     tax_rate = PercentField(
-        verbose_name=_('tax rate applied in percent'),
+        verbose_name=_('Tax rate applied in percent'),
     )
     gross = models.DecimalField(
         decimal_places=5,
         max_digits=15,
+        verbose_name=_('Gross'),
     )
-    period_start = models.DateTimeField()
-    period_end = models.DateTimeField()
+    period_start = models.DateTimeField(
+        verbose_name=_('Performance period start'),
+    )
+    period_end = models.DateTimeField(
+        verbose_name=_('Performance period end'),
+    )
 
 
 class Trigger(BaseModel):
     condition = models.CharField(
         choices=Contract.STATES,
         max_length=2,
+        verbose_name=_('Condition'),
     )
     name = models.CharField(
         max_length=64,
+        verbose_name=_('Name'),
     )
     comment = models.CharField(
         max_length=255,
         null=True,
         blank=True,
+        verbose_name=_('Comment'),
     )
     owner = models.ForeignKey(
         'Actor',
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        verbose_name=_('Owner'),
     )
 
     class Meta:
@@ -630,23 +670,24 @@ class PaymentMethod(Trigger):
     currency = CurrencyField()
     is_prepayment = models.BooleanField(
         default=False,
+        verbose_name=_('Prepayment?'),
         help_text=_(
             'If activated, claims within the following settlement interval are charged in advance')
     )
     fee_absolute_value = models.IntegerField(
-        verbose_name=_('Absolute fee'),
         default=0,
+        verbose_name=_('Absolute fee'),
         help_text=_('A constant value that is added to every transaction')
     )
     fee_relative_value = PercentField(
-        verbose_name=_('Relative fee (%)'),
         default=0,
+        verbose_name=_('Relative fee (%)'),
         help_text=_(
             'A relative value that is based on the total value of a transaction')
     )
     fee_tax_rate = PercentField(
-        verbose_name=_('tax rate applied to payement fee (%)'),
         default=0,
+        verbose_name=_('Tax rate applied to payement fee (%)'),
     )
 
     def __str__(self):

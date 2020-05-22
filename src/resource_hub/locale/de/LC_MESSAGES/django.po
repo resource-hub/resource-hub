@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-21 22:16+0200\n"
+"POT-Creation-Date: 2020-05-22 14:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,8 @@ msgstr ""
 
 #: control/templates/control/__base.html:24
 msgid "Please verify your account with the email that you have recieved."
-msgstr "Bitte verifiziere deinen Account mit Hilfe der Email, die du erhalten hast."
+msgstr ""
+"Bitte verifiziere deinen Account mit Hilfe der Email, die du erhalten hast."
 
 #: control/templates/control/__base.html:26
 msgid "Resend mail"
@@ -91,15 +92,15 @@ msgstr "Es dürfen maximal {} Einträge pro Seite existieren"
 msgid "There has to be at least {} entry per page"
 msgstr "Es müssen mindestens {} Einträge pro Seite existieren"
 
-#: core/forms.py:199
+#: core/forms.py:199 core/models/base.py:149
 msgid "Account holder"
 msgstr "Kontoinhaber"
 
-#: core/forms.py:200
+#: core/forms.py:200 core/models/base.py:155
 msgid "IBAN"
 msgstr "IBAN"
 
-#: core/forms.py:201
+#: core/forms.py:201 core/models/base.py:161
 msgid "BIC"
 msgstr "BIC"
 
@@ -162,11 +163,13 @@ msgstr "Der Akteur ist nicht mit dem User assoziiert"
 #: core/forms.py:572
 msgid ""
 "You can use this search field for the address to autofill the location data!"
-msgstr "Du kannst dieses Feld verwenden, um die Adresse automatisch auszufüllen!"
+msgstr ""
+"Du kannst dieses Feld verwenden, um die Adresse automatisch auszufüllen!"
 
 #: core/forms.py:580
 msgid "Allow other users to link information to this location"
-msgstr "Anderen Nutzern erlauben Informationen mit diesem Standort zu verknüpfen"
+msgstr ""
+"Anderen Nutzern erlauben Informationen mit diesem Standort zu verknüpfen"
 
 #: core/forms.py:624
 msgid "In what part of the software is the issue or your request?"
@@ -189,188 +192,561 @@ msgstr "Das request Objekt muss gesetzt sein"
 msgid "The passed request object is not an instance of HttpRequest"
 msgstr ""
 
-#: core/models/actors.py:207
+#: core/models/actors.py:18 core/models/base.py:206
+#: core/models/contracts.py:607 core/tables.py:63 core/tables.py:112
+#: core/templates/core/control/finance_contracts_manage_details.html:57
+#: items/models.py:179 items/tables.py:11
+#: items/templates/items/_contract_overview.html:9 venues/models.py:48
+#: venues/models.py:136 venues/models.py:152 venues/models.py:179
+#: venues/models.py:272 venues/tables.py:11
+#: venues/templates/venues/_contract_overview.html:9
+msgid "Name"
+msgstr "Name"
+
+#: core/models/actors.py:24 core/models/base.py:194 items/models.py:168
+#: venues/models.py:44 venues/models.py:170
+msgid "Slug"
+msgstr "Slug"
+
+#: core/models/actors.py:30 core/models/base.py:199
+#: core/templates/core/locations_profile.html:23
+msgid "Address"
+msgstr "Adresse"
+
+#: core/models/actors.py:36
+#: core/templates/core/control/account_settings.html:11
+#: core/templates/core/register.html:15
+msgid "Bank account"
+msgstr "Bankkonto"
+
+#: core/models/actors.py:43
+msgid "image"
+msgstr "Bild"
+
+#: core/models/actors.py:52 core/templates/core/home.html:42
+#: items/models.py:278 items/templates/items/_item_feed.html:20
+#: venues/models.py:63 venues/models.py:230 venues/models.py:280
+#: venues/templates/venues/_venue_feed.html:20
+msgid "Thumbnail"
+msgstr "Thumbnail"
+
+#: core/models/actors.py:76
+#, fuzzy
+#| msgid "telephone (public)"
+msgid "Telephone (private)"
+msgstr "Telefonnummer (öffentlich)"
+
+#: core/models/actors.py:82
+#, fuzzy
+#| msgid "telephone (public)"
+msgid "Telephone (public)"
+msgstr "Telefonnummer (öffentlich)"
+
+#: core/models/actors.py:87
+#, fuzzy
+#| msgid "email (public)"
+msgid "Email (public)"
+msgstr "E-Mail (öffentlich)"
+
+#: core/models/actors.py:92
+#, fuzzy
+#| msgid "website"
+msgid "Website"
+msgstr "Website"
+
+#: core/models/actors.py:97
+msgid "Info text"
+msgstr "Infotext"
+
+#: core/models/actors.py:104
+msgid "Tax-ID"
+msgstr "Steuernummer"
+
+#: core/models/actors.py:110
+#, fuzzy
+#| msgctxt "invoice"
+#| msgid "VAT-ID: %s"
+msgid "VAT-ID"
+msgstr "Umsatzsteuer-ID: %s"
+
+#: core/models/actors.py:115
+#, fuzzy
+#| msgctxt "invoice"
+#| msgid "Invoice number"
+msgid "Invoice numbers prefix"
+msgstr "Rechnungsnummer"
+
+#: core/models/actors.py:120
+msgid "Invoice numbers prefix (cancellations)"
+msgstr "Rechnungsnummerpräfix (Stornierung)"
+
+#: core/models/actors.py:126
+msgid "Invoice introductory text"
+msgstr "Rechnungseinleitungstext"
+
+#: core/models/actors.py:132
+#, fuzzy
+#| msgctxt "invoice"
+#| msgid "Invoice date"
+msgid "Invoice additional text"
+msgstr "Rechnungsdatum"
+
+#: core/models/actors.py:138
+#, fuzzy
+#| msgid "Invoice from"
+msgid "Invoice footer text"
+msgstr "Rechnungs von"
+
+#: core/models/actors.py:145
+#, fuzzy
+#| msgid "Invoice from"
+msgid "Invoice logo image"
+msgstr "Rechnungs von"
+
+#: core/models/actors.py:167
+#: core/templates/core/control/account_security.html:8
+msgid "Email"
+msgstr "E-Mail"
+
+#: core/models/actors.py:171
+msgid "Birth date"
+msgstr "Geburtsdatum"
+
+#: core/models/actors.py:176
+msgid "Verified?"
+msgstr "Verifiziert?"
+
+#: core/models/actors.py:229
 msgid "member"
 msgstr "Mitglied"
 
-#: core/models/actors.py:208
+#: core/models/actors.py:230
 msgid "administrator"
 msgstr "Administrator"
 
-#: core/models/actors.py:209
+#: core/models/actors.py:231
 msgid "owner"
 msgstr "Besitzer"
 
-#: core/models/base.py:48
+#: core/models/actors.py:238
+#, fuzzy
+#| msgid "Organizations"
+msgid "Organization"
+msgstr "Organisationen"
+
+#: core/models/actors.py:243 core/models/contracts.py:271
+#, fuzzy
+#| msgid "Username"
+msgid "User"
+msgstr "Nutzername"
+
+#: core/models/actors.py:249
+msgid "Role"
+msgstr "Rolle"
+
+#: core/models/base.py:20
+msgid "Deleted?"
+msgstr "Gelöscht?"
+
+#: core/models/base.py:24
+msgid "Created at"
+msgstr "erstellt am"
+
+#: core/models/base.py:28
+msgid "Updated at"
+msgstr "geändert am"
+
+#: core/models/base.py:51
 msgid "pending"
 msgstr "schwebend"
 
-#: core/models/contracts.py:21
+#: core/models/base.py:58
+msgid "State"
+msgstr "Zustand"
+
+#: core/models/base.py:62
+msgid "State changed at"
+msgstr "Zustand geändert am"
+
+#: core/models/base.py:92
+msgid "Street"
+msgstr "Straße"
+
+#: core/models/base.py:98
+msgid "Street number"
+msgstr "Straßennummer"
+
+#: core/models/base.py:104
+msgid "Postal code"
+msgstr "Postleitzahl"
+
+#: core/models/base.py:110
+msgid "City"
+msgstr "Stadt"
+
+#: core/models/base.py:116
+msgid "Country"
+msgstr "Land"
+
+#: core/models/base.py:211 core/models/finance.py:110 items/models.py:184
+#: items/templates/items/_contract_overview.html:23 venues/models.py:51
+#: venues/models.py:183 venues/templates/venues/_contract_overview.html:23
+msgid "Description"
+msgstr "Beschreibung"
+
+#: core/models/base.py:217
+msgid "Latitude"
+msgstr "Breitengrad"
+
+#: core/models/base.py:223
+msgid "Longitude"
+msgstr "Längengrad"
+
+#: core/models/base.py:230 core/models/base.py:294 core/models/contracts.py:29
+#: core/models/contracts.py:34
+msgid "Image"
+msgstr "Bild"
+
+#: core/models/base.py:246 core/models/contracts.py:86
+#: core/models/contracts.py:618 core/tables.py:55 core/tables.py:157
+#: items/models.py:331 items/tables.py:16 venues/models.py:102
+#: venues/tables.py:16
+msgid "Owner"
+msgstr "Besitzer"
+
+#: core/models/base.py:285 items/models.py:291
+#: items/templates/items/control/_item_form.html:7
+#: items/templates/items/item_details.html:92 venues/models.py:86
+#: venues/templates/venues/control/_venue_form.html:7
+#: venues/templates/venues/venue_details.html:42
+msgid "Gallery"
+msgstr "Gallerie"
+
+#: core/models/base.py:289
+msgid "Caption"
+msgstr "Bildunterschrift"
+
+#: core/models/contracts.py:22
 msgid "weekly"
 msgstr "wöchentlich"
 
-#: core/models/contracts.py:22
+#: core/models/contracts.py:23
 msgid "biweekly"
 msgstr "zweiwöchentlich"
 
-#: core/models/contracts.py:23
+#: core/models/contracts.py:24
 msgid "monthly"
 msgstr "monatlich"
 
-#: core/models/contracts.py:28
+#: core/models/contracts.py:30
 msgid "Give the procedure a name so you can identify it easier"
 msgstr "Gib der Prozedur einen Namen, damit man sie besser identifizieren kann"
 
-#: core/models/contracts.py:32
+#: core/models/contracts.py:35
 msgid "Automatically accept the booking?"
 msgstr "Automatisch die Buchung akzeptieren?"
 
-#: core/models/contracts.py:37
+#: core/models/contracts.py:40
 msgid "Create invoices"
 msgstr "Rechnungen erstellen"
 
-#: core/models/contracts.py:38
+#: core/models/contracts.py:41
 msgid "Create invoices upon settlement of claims"
 msgstr "Rechnungen nach Erfüllung der Forderungen erstellen"
 
-#: core/models/contracts.py:43
+#: core/models/contracts.py:46
 msgid "terms and conditions"
 msgstr "Allgemeine Geschäftsbedingungen"
 
-#: core/models/contracts.py:47
+#: core/models/contracts.py:50
 msgid "Termination period (days)"
 msgstr "Kündigungsfrist (in Tagen)"
 
-#: core/models/contracts.py:49
+#: core/models/contracts.py:52
 msgid ""
 "Upon termination all claims within the termination period will be charged "
 "regardlessly"
-msgstr "Nach Kündigung werden alle Forderungen innerhalb der Kündigungsfrist trotzdem verlangt"
+msgstr ""
+"Nach Kündigung werden alle Forderungen innerhalb der Kündigungsfrist "
+"trotzdem verlangt"
 
-#: core/models/contracts.py:54
+#: core/models/contracts.py:57
 msgid "Notes"
 msgstr "Anmerkungen"
 
-#: core/models/contracts.py:56
+#: core/models/contracts.py:59
 msgid ""
 "This text will be added to the notification when a contract starts running"
-msgstr "Dieser Text wird der Benachrichtigung hinzugefügt wenn ein Vertrag läuft"
+msgstr ""
+"Dieser Text wird der Benachrichtigung hinzugefügt wenn ein Vertrag läuft"
 
-#: core/models/contracts.py:62
+#: core/models/contracts.py:65
 msgid "Choose the payment methods you want to use for this venue"
 msgstr "Wähle ein Zahlungsmittel für diesen Veranstaltungsort"
 
-#: core/models/contracts.py:65 core/models/contracts.py:553
-#: core/models/invoices.py:335
-msgid "tax rate applied in percent"
+#: core/models/contracts.py:66 core/modules.py:107 core/views/control.py:112
+msgid "Payment methods"
+msgstr "Zahlungsmethode"
+
+#: core/models/contracts.py:70 core/models/contracts.py:584
+msgid "Tax rate applied in percent"
 msgstr "Steuersatz in Prozent"
 
-#: core/models/contracts.py:114
+#: core/models/contracts.py:75
+#: core/templates/core/control/finance_contracts_manage_details.html:69
+msgid "Settlement interval"
+msgstr "Abrechnungsintervall"
+
+#: core/models/contracts.py:81
+msgid "Triggers"
+msgstr ""
+
+#: core/models/contracts.py:118
 msgid "waiting"
 msgstr "wartend"
 
-#: core/models/contracts.py:115
+#: core/models/contracts.py:119
 msgid "running"
 msgstr "läuft"
 
-#: core/models/contracts.py:116
+#: core/models/contracts.py:120
 msgid "disputing"
 msgstr "im Streit"
 
-#: core/models/contracts.py:117 core/models/finance.py:50
+#: core/models/contracts.py:121 core/models/finance.py:21
 msgid "finalized"
 msgstr "abgeschlossen"
 
-#: core/models/contracts.py:118
+#: core/models/contracts.py:122
 msgid "expired"
 msgstr "abgelaufen"
 
-#: core/models/contracts.py:119 core/models/finance.py:52
+#: core/models/contracts.py:123 core/models/finance.py:23
 msgid "canceled"
 msgstr "abgebrochen"
 
-#: core/models/contracts.py:120
+#: core/models/contracts.py:124
 msgid "declined"
 msgstr "abgelehnt"
 
-#: core/models/contracts.py:121 core/models/contracts.py:517
+#: core/models/contracts.py:125 core/models/contracts.py:539
 msgid "terminated"
-msgstr "beendet"
+msgstr "gekündigt"
 
-#: core/models/contracts.py:285
+#: core/models/contracts.py:140 items/models.py:163 venues/models.py:175
+msgid "UUID"
+msgstr ""
+
+#: core/models/contracts.py:146
+msgid "Contract Procedure"
+msgstr "Vertragsprozedur"
+
+#: core/models/contracts.py:150 core/templates/core/terms_and_conditions.html:6
+msgid "Terms and conditions"
+msgstr "allgemeine Geschäftsbedingungen"
+
+#: core/models/contracts.py:154
+msgid "Termination period"
+msgstr "Kündigungsfrist (in Tagen)"
+
+#: core/models/contracts.py:161 core/models/finance.py:43
+#: core/templates/core/control/finance_contracts_manage_details.html:36
+#: plugins/sepa/templates/sepa/control/sepa_mandate.html:15
+msgid "Creditor"
+msgstr "Leistender"
+
+#: core/models/contracts.py:168 core/models/finance.py:37
+#: core/templates/core/control/finance_contracts_manage_details.html:40
+#: plugins/sepa/tables.py:26
+#: plugins/sepa/templates/sepa/control/sepa_mandate.html:19
+msgid "Debitor"
+msgstr "Schuldner"
+
+#: core/models/contracts.py:173
+msgid "Is fixed term"
+msgstr "Fester Zeitraum"
+
+#: core/models/contracts.py:179 core/models/finance.py:65
+#: core/templates/core/control/finance_contracts_manage_details.html:53
+msgid "Payment method"
+msgstr "Zahlungsmethode"
+
+#: core/models/contracts.py:186
+msgid "Price profile"
+msgstr "Preisprofil"
+
+#: core/models/contracts.py:193
+msgid "Confirmation"
+msgstr "Bestätigung"
+
+#: core/models/contracts.py:200
+msgid "Acceptance"
+msgstr "Annahme"
+
+#: core/models/contracts.py:207 venues/models.py:243
+msgid "Created by"
+msgstr "Erstellt am"
+
+#: core/models/contracts.py:275
+msgid "IP"
+msgstr "IP"
+
+#: core/models/contracts.py:279
+msgid "IP routable"
+msgstr "IP routable"
+
+#: core/models/contracts.py:283 core/models/contracts.py:527
+msgid "Timestamp"
+msgstr "Timestamp"
+
+#: core/models/contracts.py:305 core/models/contracts.py:523
+#: core/models/contracts.py:549 items/models.py:356
 msgid "Contract"
 msgstr "Vertrag"
 
-#: core/models/contracts.py:368
+#: core/models/contracts.py:388
 #, python-brace-format
 msgid "{debitor} created {contract}"
 msgstr "{debitor} erstellte {contract}"
 
-#: core/models/contracts.py:390
+#: core/models/contracts.py:410
 #, python-brace-format
 msgid "{creditor} accepted {contract}"
 msgstr "{creditor} hat {contract} akzeptiert"
 
-#: core/models/contracts.py:418
+#: core/models/contracts.py:438
 #, python-brace-format
 msgid "{creditor} declined {contract}"
 msgstr "{creditor} hat {contract} abgelehnt"
 
-#: core/models/contracts.py:437
+#: core/models/contracts.py:457
 #, python-brace-format
 msgid "{initiator} terminated {contract}"
 msgstr "{initiator} hat {contract} gekündigt"
 
-#: core/models/contracts.py:516
+#: core/models/contracts.py:538
 msgid "closed"
 msgstr "abgeschlossen"
 
-#: core/models/contracts.py:634
+#: core/models/contracts.py:553 core/tables.py:130 items/models.py:42
+#: items/models.py:348 items/models.py:361
+msgid "Item"
+msgstr "Gegenstand"
+
+#: core/models/contracts.py:558 core/tables.py:133 items/models.py:218
+#: items/models.py:373 venues/models.py:303
+msgid "Quantity"
+msgstr "Menge"
+
+#: core/models/contracts.py:562 core/tables.py:134 items/models.py:224
+#: items/templates/items/item_details.html:69
+msgid "Unit"
+msgstr "Einheit"
+
+#: core/models/contracts.py:567 core/models/finance.py:81 venues/models.py:80
+#: venues/models.py:300 venues/templates/venues/control/_venue_form.html:11
+msgid "Price"
+msgstr "Preis"
+
+#: core/models/contracts.py:573 core/tables.py:136
+msgid "Net"
+msgstr "Netto"
+
+#: core/models/contracts.py:576 core/models/finance.py:113
+msgid "Discount"
+msgstr "Rabatt"
+
+#: core/models/contracts.py:581 core/tables.py:138
+msgid "Discounted net"
+msgstr "Ermässigtes Netto"
+
+#: core/models/contracts.py:589 core/tables.py:141
+msgid "Gross"
+msgstr "Brutto"
+
+#: core/models/contracts.py:592 core/tables.py:131
+msgid "Performance period start"
+msgstr "Leistungszeitraumsbeginn"
+
+#: core/models/contracts.py:595 core/tables.py:132
+msgid "Performance period end"
+msgstr "Leistungszeitraumsende"
+
+#: core/models/contracts.py:603
+msgid "Condition"
+msgstr "Allgemeine Geschäftsbedingungen"
+
+#: core/models/contracts.py:613
+msgid "Comment"
+msgstr "Kommentar"
+
+#: core/models/contracts.py:673
+msgid "Prepayment?"
+msgstr "Vorkasse?"
+
+#: core/models/contracts.py:675
 msgid ""
 "If activated, claims within the following settlement interval are charged in "
 "advance"
-msgstr "Wenn aktiviert, werden die Forderungen innerhalb des nächsten Abrechnungsintervalls im voraus verlangt"
+msgstr ""
+"Wenn aktiviert, werden die Forderungen innerhalb des nächsten "
+"Abrechnungsintervalls im voraus verlangt"
 
-#: core/models/contracts.py:637
+#: core/models/contracts.py:679
 msgid "Absolute fee"
 msgstr "Absolute Gebühr"
 
-#: core/models/contracts.py:639
+#: core/models/contracts.py:680
 msgid "A constant value that is added to every transaction"
 msgstr "Ein konstanter Wert, der jeder Transaktion hinzuaddiert wird"
 
-#: core/models/contracts.py:642
+#: core/models/contracts.py:684
 msgid "Relative fee (%)"
 msgstr "Relative Gebühr"
 
-#: core/models/contracts.py:645
+#: core/models/contracts.py:686
 msgid "A relative value that is based on the total value of a transaction"
 msgstr "Ein relativer Wert, der auf dem Gesamtwert der Transaktion basiert"
 
-#: core/models/contracts.py:648
-msgid "tax rate applied to payement fee (%)"
-msgstr "bei Gebühr angewandter Steuersatz in Prozent"
+#: core/models/contracts.py:690
+msgid "Tax rate applied to payement fee (%)"
+msgstr "Bei der Gebühr angewandter Steuersatz (%)"
 
-#: core/models/contracts.py:653
+#: core/models/contracts.py:694
 msgid "(prepayment)"
 msgstr "(Vorkasse)"
 
-#: core/models/finance.py:51
+#: core/models/finance.py:22
 msgid "failed"
 msgstr "fehlgeschlagen"
 
-#: core/models/finance.py:53
+#: core/models/finance.py:24
 msgid "refunded"
 msgstr "erstattet"
 
-#: core/models/finance.py:80
-msgid "payment notes"
+#: core/models/finance.py:48
+msgid "Value"
+msgstr "Wert"
+
+#: core/models/finance.py:54
+msgid "Payment notes"
 msgstr "Zahlungshinweise"
 
-#: core/models/finance.py:104
-#: venues/templates/venues/control/_venue_form.html:11
-msgid "Price"
-msgstr "Preis"
+#: core/models/finance.py:59
+msgid "Payment date"
+msgstr "Zahlungsdatum"
+
+#: core/models/finance.py:76 core/models/finance.py:106
+msgid "Addressee"
+msgstr "Adresse"
+
+#: core/models/finance.py:87
+msgid "Discounts"
+msgstr "Rabatte"
+
+#: core/models/finance.py:98 items/models.py:237 venues/models.py:97
+msgid "Contract procedure"
+msgstr "Vertragsprozedur"
 
 #: core/models/invoices.py:98
 #, python-format
@@ -408,6 +784,10 @@ msgstr ""
 "{i.street}\n"
 "{i.postal_code} {i.city}"
 
+#: core/models/invoices.py:335
+msgid "tax rate applied in percent"
+msgstr "Steuersatz in Prozent"
+
 #: core/models/notifications.py:25
 msgid "low"
 msgstr "niedrig"
@@ -439,6 +819,48 @@ msgstr "Vertrag"
 #: core/models/notifications.py:45
 msgid "monetary"
 msgstr "monetär"
+
+#: core/models/notifications.py:75 core/tables.py:49 core/tables.py:156
+msgid "Type"
+msgstr "Typ"
+
+#: core/models/notifications.py:82
+msgid "Sender"
+msgstr ""
+
+#: core/models/notifications.py:88
+msgid "Recipient"
+msgstr ""
+
+#: core/models/notifications.py:92
+msgid "Header"
+msgstr ""
+
+#: core/models/notifications.py:96
+msgid "Message"
+msgstr ""
+
+#: core/models/notifications.py:99
+msgid "Link"
+msgstr ""
+
+#: core/models/notifications.py:103
+msgid "Level"
+msgstr ""
+
+#: core/models/notifications.py:114
+msgid "Read?"
+msgstr ""
+
+#: core/models/notifications.py:186
+#, fuzzy
+#| msgid "Notifications"
+msgid "Notification"
+msgstr "Benachrichtigung"
+
+#: core/models/notifications.py:190
+msgid "Path"
+msgstr ""
 
 #: core/modules.py:38
 msgid "Core"
@@ -493,10 +915,6 @@ msgstr "Verwalten"
 #: venues/modules.py:35
 msgid "Create"
 msgstr "Erstellen"
-
-#: core/modules.py:107 core/views/control.py:112
-msgid "Payment methods"
-msgstr "Zahlungsmethode"
 
 #: core/modules.py:115
 #: core/templates/core/control/finance_payment_methods_add.html:12
@@ -709,25 +1127,10 @@ msgstr "Rechnungsgenerator"
 msgid "Select all"
 msgstr "Alle"
 
-#: core/tables.py:49 core/tables.py:156
-msgid "Type"
-msgstr "Typ"
-
 #: core/tables.py:53
 #: core/templates/core/control/finance_contracts_manage_details.html:63
 msgid "Prepayment"
 msgstr "Vorkasse"
-
-#: core/tables.py:55 core/tables.py:157 items/tables.py:16 venues/tables.py:16
-msgid "Owner"
-msgstr "Besitzer"
-
-#: core/tables.py:63 core/tables.py:112
-#: core/templates/core/control/finance_contracts_manage_details.html:57
-#: items/tables.py:11 items/templates/items/_contract_overview.html:9
-#: venues/tables.py:11 venues/templates/venues/_contract_overview.html:9
-msgid "Name"
-msgstr "Name"
 
 #: core/tables.py:72
 msgid "Rights"
@@ -741,49 +1144,17 @@ msgstr "Nutzername"
 msgid "Organization Role"
 msgstr "Organisationsrolle"
 
-#: core/tables.py:130
-msgid "Item"
-msgstr "Gegenstand"
-
-#: core/tables.py:131
-msgid "Performance period start"
-msgstr "Leistungszeitraumsbeginn"
-
-#: core/tables.py:132
-msgid "Performance period end"
-msgstr "Leistungszeitraumsende"
-
-#: core/tables.py:133
-msgid "Quantity"
-msgstr "Menge"
-
-#: core/tables.py:134 items/templates/items/item_details.html:69
-msgid "Unit"
-msgstr "Einheit"
-
 #: core/tables.py:135
 msgid "Price/unit"
 msgstr "Preis/Einheit"
-
-#: core/tables.py:136
-msgid "Net"
-msgstr "Netto"
 
 #: core/tables.py:137
 msgid "Discount (%)"
 msgstr "Rabatt (%)"
 
-#: core/tables.py:138
-msgid "Discounted net"
-msgstr "Ermässigtes Netto"
-
 #: core/tables.py:139
 msgid "Tax (%)"
 msgstr "Steuer (%)"
-
-#: core/tables.py:141
-msgid "Gross"
-msgstr "Brutto"
 
 #: core/tables.py:167
 msgid "Invoice Number"
@@ -845,10 +1216,6 @@ msgstr "Logo"
 msgid "created at"
 msgstr "erstellt am"
 
-#: core/templates/core/control/account_security.html:8
-msgid "Email"
-msgstr "E-Mail"
-
 #: core/templates/core/control/account_security.html:18
 msgid "Change email"
 msgstr "E-Mail ändern"
@@ -856,11 +1223,6 @@ msgstr "E-Mail ändern"
 #: core/templates/core/control/account_security.html:27
 msgid "Change password"
 msgstr "Passwort ändern"
-
-#: core/templates/core/control/account_settings.html:11
-#: core/templates/core/register.html:15
-msgid "Bank account"
-msgstr "Bankkonto"
 
 #: core/templates/core/control/account_settings.html:14
 msgid "Invoicing address"
@@ -902,37 +1264,21 @@ msgstr "Vetragsdetails"
 msgid ""
 "The contract is still pending. Until confirmation, cancellation or "
 "expiration the items will appear as booked."
-msgstr "Der Vertrag ist noch schwebend. Bis zur Bestätigung, Abbruch oder Ablauf werden die Gegenstände als gebucht erscheinen."
+msgstr ""
+"Der Vertrag ist noch schwebend. Bis zur Bestätigung, Abbruch oder Ablauf "
+"werden die Gegenstände als gebucht erscheinen."
 
 #: core/templates/core/control/finance_contracts_manage_details.html:29
 msgid "The contract is waiting. You can either accept or decline the offer."
-msgstr "Der Vertrag ist noch wartend. Du kannst ihn entweder annehmen oder ablehnen."
-
-#: core/templates/core/control/finance_contracts_manage_details.html:36
-#: plugins/sepa/templates/sepa/control/sepa_mandate.html:15
-msgid "Creditor"
-msgstr "Leistender"
-
-#: core/templates/core/control/finance_contracts_manage_details.html:40
-#: plugins/sepa/tables.py:26
-#: plugins/sepa/templates/sepa/control/sepa_mandate.html:19
-msgid "Debitor"
-msgstr "Schuldner"
+msgstr ""
+"Der Vertrag ist noch wartend. Du kannst ihn entweder annehmen oder ablehnen."
 
 #: core/templates/core/control/finance_contracts_manage_details.html:49
 msgid "Claims"
 msgstr "Forderungen"
 
-#: core/templates/core/control/finance_contracts_manage_details.html:53
-msgid "Payment method"
-msgstr "Zahlungsmethode"
-
-#: core/templates/core/control/finance_contracts_manage_details.html:69
-msgid "Settlement interval"
-msgstr "Abrechnungsintervall"
-
 #: core/templates/core/control/finance_contracts_manage_details.html:71
-#: items/models.py:143
+#: items/models.py:146
 msgid "days"
 msgstr "Tage"
 
@@ -998,7 +1344,9 @@ msgstr "Was möchtest du tun?"
 msgid ""
 "This is the the control section. Under the various navigation points on the "
 "left you can customize settings and create items."
-msgstr "Dies ist die Kontrollsektion. Unter den verschiedenen Navigationspunkten auf der rechten Seite kannst du viele Einstellungsmöglichkeiten vornehmen"
+msgstr ""
+"Dies ist die Kontrollsektion. Unter den verschiedenen Navigationspunkten auf "
+"der rechten Seite kannst du viele Einstellungsmöglichkeiten vornehmen"
 
 #: core/templates/core/control/locations_create.html:6
 msgid "Create location"
@@ -1078,158 +1426,11 @@ msgstr "Kontoinformationen bearbeiten"
 msgid "Data privacy statement"
 msgstr "Datenschutzerklärung"
 
-#: core/templates/core/data_privacy_statement.html:8
-#, python-format
-msgid ""
-"\n"
-"\n"
-"    <p><strong><big>Datenschutzerklärung</big></strong></p>\n"
-"    <p><strong>Allgemeiner Hinweis und Pflichtinformationen</strong></p>\n"
-"    <p><strong>Benennung der verantwortlichen Stelle</strong></p>\n"
-"    <p>Die verantwortliche Stelle für die Datenverarbeitung auf dieser "
-"Website ist:</p>\n"
-"    <p>\n"
-"        %(info.owner_address)s\n"
-"    </p>\n"
-"    <p>Die verantwortliche Stelle entscheidet allein oder gemeinsam mit "
-"anderen über die Zwecke und Mittel der\n"
-"        Verarbeitung von personenbezogenen Daten (z.B. Namen, Kontaktdaten "
-"o. Ä.).</p>\n"
-"\n"
-"    <p><strong>Widerruf Ihrer Einwilligung zur Datenverarbeitung</strong></"
-"p>\n"
-"    <p>Nur mit Ihrer ausdrücklichen Einwilligung sind einige Vorgänge der "
-"Datenverarbeitung möglich. Ein Widerruf Ihrer\n"
-"        bereits erteilten Einwilligung ist jederzeit möglich. Für den "
-"Widerruf genügt eine formlose Mitteilung per\n"
-"        E-Mail. Die Rechtmäßigkeit der bis zum Widerruf erfolgten "
-"Datenverarbeitung bleibt vom Widerruf unberührt.</p>\n"
-"\n"
-"    <p><strong>Recht auf Beschwerde bei der zuständigen Aufsichtsbehörde</"
-"strong></p>\n"
-"    <p>Als Betroffener steht Ihnen im Falle eines datenschutzrechtlichen "
-"Verstoßes ein Beschwerderecht bei der\n"
-"        zuständigen Aufsichtsbehörde zu. Zuständige Aufsichtsbehörde "
-"bezüglich datenschutzrechtlicher Fragen ist der\n"
-"        Landesdatenschutzbeauftragte des Bundeslandes, in dem sich der Sitz "
-"unseres Unternehmens befindet. Der folgende\n"
-"        Link stellt eine Liste der Datenschutzbeauftragten sowie deren "
-"Kontaktdaten bereit: <a\n"
-"            href=\"https://www.bfdi.bund.de/DE/Infothek/Anschriften_Links/"
-"anschriften_links-node.html\"\n"
-"            target=\"_blank\">https://www.bfdi.bund.de/DE/Infothek/"
-"Anschriften_Links/anschriften_links-node.html</a>.</p>\n"
-"\n"
-"    <p><strong>Recht auf Datenübertragbarkeit</strong></p>\n"
-"    <p>Ihnen steht das Recht zu, Daten, die wir auf Grundlage Ihrer "
-"Einwilligung oder in Erfüllung eines Vertrags\n"
-"        automatisiert verarbeiten, an sich oder an Dritte aushändigen zu "
-"lassen. Die Bereitstellung erfolgt in einem\n"
-"        maschinenlesbaren Format. Sofern Sie die direkte Übertragung der "
-"Daten an einen anderen Verantwortlichen\n"
-"        verlangen, erfolgt dies nur, soweit es technisch machbar ist.</p>\n"
-"\n"
-"    <p><strong>Recht auf Auskunft, Berichtigung, Sperrung, Löschung</"
-"strong></p>\n"
-"    <p>Sie haben jederzeit im Rahmen der geltenden gesetzlichen Bestimmungen "
-"das Recht auf unentgeltliche Auskunft über\n"
-"        Ihre gespeicherten personenbezogenen Daten, Herkunft der Daten, "
-"deren Empfänger und den Zweck der\n"
-"        Datenverarbeitung und ggf. ein Recht auf Berichtigung, Sperrung oder "
-"Löschung dieser Daten. Diesbezüglich und\n"
-"        auch zu weiteren Fragen zum Thema personenbezogene Daten können Sie "
-"sich jederzeit über die im Impressum\n"
-"        aufgeführten Kontaktmöglichkeiten an uns wenden.</p>\n"
-"\n"
-"    <p><strong>SSL- bzw. TLS-Verschlüsselung</strong></p>\n"
-"    <p>Aus Sicherheitsgründen und zum Schutz der Übertragung vertraulicher "
-"Inhalte, die Sie an uns als Seitenbetreiber\n"
-"        senden, nutzt unsere Website eine SSL-bzw. TLS-Verschlüsselung. "
-"Damit sind Daten, die Sie über diese Website\n"
-"        übermitteln, für Dritte nicht mitlesbar. Sie erkennen eine "
-"verschlüsselte Verbindung an der „https://“\n"
-"        Adresszeile Ihres Browsers und am Schloss-Symbol in der Browserzeile."
-"</p>\n"
-"\n"
-"    <p><strong>Server-Log-Dateien</strong></p>\n"
-"    <p>In Server-Log-Dateien erhebt und speichert der Provider der Website "
-"automatisch Informationen, die Ihr Browser\n"
-"        automatisch an uns übermittelt. Dies sind:</p>\n"
-"    <ul>\n"
-"        <li>Besuchte Seite auf unserer Domain</li>\n"
-"        <li>Datum und Uhrzeit der Serveranfrage</li>\n"
-"        <li>Browsertyp und Browserversion</li>\n"
-"        <li>Verwendetes Betriebssystem</li>\n"
-"        <li>Referrer URL</li>\n"
-"        <li>Hostname des zugreifenden Rechners</li>\n"
-"        <li>IP-Adresse</li>\n"
-"    </ul>\n"
-"    <p>Es findet keine Zusammenführung dieser Daten mit anderen Datenquellen "
-"statt. Grundlage der Datenverarbeitung\n"
-"        bildet Art. 6 Abs. 1 lit. b DSGVO, der die Verarbeitung von Daten "
-"zur Erfüllung eines Vertrags oder\n"
-"        vorvertraglicher Maßnahmen gestattet.</p>\n"
-"\n"
-"    <p><strong>Datenübermittlung bei Vertragsschluss für Warenkauf und "
-"Warenversand</strong></p>\n"
-"    <p>Personenbezogene Daten werden an Dritte nur übermittelt, sofern eine "
-"Notwendigkeit im Rahmen der\n"
-"        Vertragsabwicklung besteht. Dritte können beispielsweise "
-"Bezahldienstleister oder Logistikunternehmen sein. Eine\n"
-"        weitergehende Übermittlung der Daten findet nicht statt bzw. nur "
-"dann, wenn Sie dieser ausdrücklich zugestimmt\n"
-"        haben.</p>\n"
-"    <p>Grundlage für die Datenverarbeitung ist Art. 6 Abs. 1 lit. b DSGVO, "
-"der die Verarbeitung von Daten zur Erfüllung\n"
-"        eines Vertrags oder vorvertraglicher Maßnahmen gestattet.</p>\n"
-"\n"
-"    <p><strong>Kontaktformular</strong></p>\n"
-"    <p>Per Kontaktformular übermittelte Daten werden einschließlich Ihrer "
-"Kontaktdaten gespeichert, um Ihre Anfrage\n"
-"        bearbeiten zu können oder um für Anschlussfragen bereitzustehen. "
-"Eine Weitergabe dieser Daten findet ohne Ihre\n"
-"        Einwilligung nicht statt.</p>\n"
-"    <p>Die Verarbeitung der in das Kontaktformular eingegebenen Daten "
-"erfolgt ausschließlich auf Grundlage Ihrer\n"
-"        Einwilligung (Art. 6 Abs. 1 lit. a DSGVO). Ein Widerruf Ihrer "
-"bereits erteilten Einwilligung ist jederzeit\n"
-"        möglich. Für den Widerruf genügt eine formlose Mitteilung per E-"
-"Mail. Die Rechtmäßigkeit der bis zum Widerruf\n"
-"        erfolgten Datenverarbeitungsvorgänge bleibt vom Widerruf unberührt.</"
-"p>\n"
-"    <p>Über das Kontaktformular übermittelte Daten verbleiben bei uns, bis "
-"Sie uns zur Löschung auffordern, Ihre\n"
-"        Einwilligung zur Speicherung widerrufen oder keine Notwendigkeit der "
-"Datenspeicherung mehr besteht. Zwingende\n"
-"        gesetzliche Bestimmungen - insbesondere Aufbewahrungsfristen - "
-"bleiben unberührt.</p>\n"
-"\n"
-"    <p><strong>Speicherdauer von Beiträgen und Kommentaren</strong></p>\n"
-"    <p>Beiträge und Kommentare sowie damit in Verbindung stehende Daten, wie "
-"beispielsweise IP-Adressen, werden\n"
-"        gespeichert. Der Inhalt verbleibt auf unserer Website, bis er "
-"vollständig gelöscht wurde oder aus rechtlichen\n"
-"        Gründen gelöscht werden musste.</p>\n"
-"    <p>Die Speicherung der Beiträge und Kommentare erfolgt auf Grundlage "
-"Ihrer Einwilligung (Art. 6 Abs. 1 lit. a\n"
-"        DSGVO). Ein Widerruf Ihrer bereits erteilten Einwilligung ist "
-"jederzeit möglich. Für den Widerruf genügt eine\n"
-"        formlose Mitteilung per E-Mail. Die\n"
-"        Rechtmäßigkeit bereits erfolgter Datenverarbeitungsvorgänge bleibt "
-"vom Widerruf unberührt.</p>\n"
-"    "
-msgstr ""
-
 #: core/templates/core/home.html:25 core/templates/core/home.html:38
 #: items/templates/items/_item_feed.html:16
 #: venues/templates/venues/_venue_feed.html:16
 msgid "Details"
 msgstr "Details"
-
-#: core/templates/core/home.html:42 items/templates/items/_item_feed.html:20
-#: venues/templates/venues/_venue_feed.html:20
-msgid "Thumbnail"
-msgstr "Thumbnail"
 
 #: core/templates/core/imprint.html:6 templates/_footer.html:18
 msgid "Imprint"
@@ -1238,10 +1439,6 @@ msgstr "Impressum"
 #: core/templates/core/language.html:21
 msgid "set language"
 msgstr "Sprache einstellen"
-
-#: core/templates/core/locations_profile.html:23
-msgid "Address"
-msgstr "Adresse"
 
 #: core/templates/core/login.html:12 templates/_navigation_bar.html:69
 msgid "Login"
@@ -1272,7 +1469,9 @@ msgstr "Dieser Link bietet mehr Informationen"
 msgid ""
 "Thank you for signing up. Before you can get startetd you need to verify "
 "your email. Just click the link below."
-msgstr "Danke für deine Registration. Bevor du loslegen kannst, musst du deine E-Mail verifizieren. Clicke einfach auf den Link unten:"
+msgstr ""
+"Danke für deine Registration. Bevor du loslegen kannst, musst du deine E-"
+"Mail verifizieren. Clicke einfach auf den Link unten:"
 
 #: core/templates/core/mail_verification.html:13
 msgid "activate account"
@@ -1309,7 +1508,12 @@ msgid ""
 "they haven't arrived in a few minutes, check\n"
 "            your spam folder.\n"
 "            "
-msgstr "\nWir haben dir Anweisungen zugeschickt, für das Zurücksetzen deines Passwortes. Wenn die E-Mail nach einigen Minuten nicht angekommen ist, überprüfe dein Spam Ordner\n "
+msgstr ""
+"\n"
+"Wir haben dir Anweisungen zugeschickt, für das Zurücksetzen deines "
+"Passwortes. Wenn die E-Mail nach einigen Minuten nicht angekommen ist, "
+"überprüfe dein Spam Ordner\n"
+" "
 
 #: core/templates/core/register.html:12
 msgid "Billing address"
@@ -1339,7 +1543,9 @@ msgstr ""
 msgid ""
 "use this form to report a bug or any other technical inquiry. Or write to "
 "this email: "
-msgstr "Benutze dieses Formular um einen Bug zu melden oder eine technische Anfrage zu stellen. Oder schreibe an diesse Adresse:"
+msgstr ""
+"Benutze dieses Formular um einen Bug zu melden oder eine technische Anfrage "
+"zu stellen. Oder schreibe an diesse Adresse:"
 
 #: core/templates/core/report_bug.html:20 templates/_support-button.html:4
 msgid "report"
@@ -1357,191 +1563,6 @@ msgstr "Ausführen"
 #: core/templates/core/table_view.html:70
 msgid "No associated items found"
 msgstr "Keine assoziierten Elemente gefunden"
-
-#: core/templates/core/terms_and_conditions.html:6
-msgid "Terms and conditions"
-msgstr "allgemeine Geschäftsbedingungen"
-
-#: core/templates/core/terms_and_conditions.html:8
-#, python-format
-msgid ""
-"\n"
-"    <p><strong>Leistungsbeschreibung und AGB</strong></p>\n"
-"\n"
-"    <p>von %(owner_name)s, folgend \"der Betreiber\", und der Website "
-"%(domain)s</p>\n"
-"\n"
-"    <p>Stand: 05/2020</p>\n"
-"\n"
-"    <p><strong>Leistungen</strong></p>\n"
-"    <p>\n"
-"        Bereitstellung einer Plattform für den Austausch diverser Ressourcen "
-"wie Räume und Gegenstände, sowie von\n"
-"        Mechanismen zu Automatisierung von Geschäftsprozessen.\n"
-"    </p>\n"
-"    <p><strong>Allgemeine Geschäftsbedingungen (AGB)</strong></p>\n"
-"\n"
-"    <p><strong>Registrierung</strong></p>\n"
-"\n"
-"    <p>\n"
-"        Das Anlegen eines Konto kann durch uneingeschränkt geschäftsfähige "
-"natürliche Personen erfolgen. Eine Löschung\n"
-"        des Kontos kann durch eine Mail an %(email)s angefragt werden. Die "
-"Registration ist kostenlos.\n"
-"    </p>\n"
-"\n"
-"    <p><strong>Vertragsbeziehungen und Vertragsschluss</strong></p>\n"
-"\n"
-"    <p>Die Plattform vermittelt zwischen rechtlichen Entitäten, die selbst "
-"die Bendigungen und Umstände ihrer\n"
-"        Vertragsverhältnisse bestimmen. Der Betreiber der Plattform wird "
-"dabei nie selbst zu Partei der geschlossenen\n"
-"        Verträge. Etwaige Angebote von Ressourcen stellen dabei keine "
-"rechtsverbindlichen Angebote dar, sondern sie\n"
-"        bezeichnen eine Einladung, ein Angebot abzugeben.\n"
-"\n"
-"    <p><strong>Inhalt und Gestaltung der Anzeigen</strong></p>\n"
-"\n"
-"    <p>\n"
-"        Bei allen angebotenen Ressourcen trägt der Anbieter die "
-"Verantwortung die geltenden rechltichen Anforderungen\n"
-"        einzuhalten, insbesondere alle steuerrechtlichen und "
-"bürgerrechtlichen Vorschriften. Allen voran die\n"
-"        Informationsplichten über die vertragswesentlichen Merkmale.\n"
-"    </p>\n"
-"\n"
-"    <p>\n"
-"        Von der Vermittlung sind jegliche Ressourcen ausgeschlossen\n"
-"    </p>\n"
-"    <p>\n"
-"        Jegliche geschützten, besonders urheberrechtlichen, Ressourcen, "
-"sowie Ressourcen, die gegen geltendes Recht\n"
-"        verstoßen.\n"
-"    </p>\n"
-"\n"
-"    <p><strong>Widerrufsbelehrung</strong></p>\n"
-"\n"
-"    <p>Verbraucher haben das folgende Widerrufsrecht:<br>\n"
-"        Bürgerliches Gesetzbuch (BGB) § 13: Verbraucher ist jede natürliche "
-"Person, die ein Rechtsgeschäft zu Zwecken\n"
-"        abschließt, die überwiegend weder ihrer gewerblichen noch ihrer "
-"selbständigen beruflichen Tätigkeit zugerechnet\n"
-"        werden können. Sie können Ihre Vertragserklärung innerhalb von 14 "
-"Tagen ohne Angabe von Gründen in<br>\n"
-"        Textform (z.B. Brief, Fax, E-Mail) widerrufen. Die Frist beginnt "
-"nach Erhalt dieser Belehrung in Textform,\n"
-"        jedoch nicht vor Vertragsschluss und auch nicht vor Erfüllung<br>\n"
-"        unserer Informationspflichten gemäß Artikel 246 § 2 in Verbindung "
-"mit § 1 Absatz 1 und 2 EGBGB sowie unserer\n"
-"        Pflichten gemäß § 312g Absatz 1 Satz 1 BGB in Verbindung mit Artikel "
-"246 § 3 EGBGB. Zur Wahrung der\n"
-"        Widerrufsfrist genügt die rechtzeitige Absendung des Widerrufs.</p>\n"
-"\n"
-"    <p>Der Widerruf ist zu richten an:</p>\n"
-"\n"
-"    %(owner_address)s\n"
-"\n"
-"    <p>Widerrufsfolgen:<br>\n"
-"        Im Falle eines wirksamen Widerrufs sind die beiderseits empfangenen "
-"Leistungen&nbsp;zurück zu gewähren und ggf.\n"
-"        gezogene Nutzungen (z.B. Zinsen) herauszugeben. Können Sie uns die "
-"empfangene Leistung sowie Nutzungen (z.B.\n"
-"        Gebrauchsvorteile) nicht oder teilweise nicht oder nur in "
-"verschlechtertem Zustand zurückgewähren\n"
-"        beziehungsweise herausgeben, müssen Sie uns insoweit Wertersatz "
-"leisten. Dies kann dazu führen, dass Sie die\n"
-"        vertraglichen Zahlungsverpflichtungen für den Zeitraum bis zum "
-"Widerruf gleichwohl erfüllen müssen.\n"
-"        Verpflichtungen zur Erstattung von Zahlungen müssen&nbsp;innerhalb "
-"von 30 Tagen erfüllt werden. Die Frist\n"
-"        beginnt für Sie mit der Absendung Ihrer Widerrufserklärung, für uns "
-"mit deren Empfang.</p>\n"
-"\n"
-"    <p>Besondere Hinweise<br>\n"
-"        Ihr Widerrufsrecht erlischt vorzeitig, wenn der Vertrag von beiden "
-"Seiten auf Ihren ausdrücklichen Wunsch\n"
-"        vollständig erfüllt ist, bevor Sie Ihr Widerrufsrecht ausgeübt<br>\n"
-"        haben.</p>\n"
-"\n"
-"    <p>Ende der Widerrufsbelehrung</p>\n"
-"\n"
-"    <p><strong>Haftung</strong></p>\n"
-"\n"
-"    <p>Die Haftung des Betreibers für fehlerhafte oder unvollständige "
-"Eintragungen in den Produktangeboten ist\n"
-"        ausgeschlossen, soweit sie nicht auf vorsätzlichem oder grob "
-"fahrlässigem Verhalten des Betreibers\n"
-"        ihrer gesetzlichen Vertreter oder Erfüllungsgehilfen beruhen.<br>\n"
-"        Der Betreiber haftet auch ansonsten nur für Schäden, die auf Vorsatz "
-"oder&nbsp;grober Fahrlässigkeit\n"
-"        ihrerseits oder ihrer gesetzlichen Vertreter oder Erfüllungsgehilfen "
-"beruhen und die noch als typische Schäden\n"
-"        im Rahmen des Vorhersehbaren liegen. Diese Haftungsbeschränkung gilt "
-"nicht für Schäden an Leben, Körper,\n"
-"        Gesundheit und Freiheit und auch nicht bei Verletzung wesentlicher "
-"Vertragspflichten. Eine Haftung des\n"
-"        Betreibers\n"
-"        für das Funktionieren der bereitgestellten&nbsp;Plattformdienste auf "
-"%(domain)s ist\n"
-"        ebenfalls\n"
-"        ausgeschlossen, soweit sie nicht auf&nbsp;vorsätzlichem oder grob "
-"fahrlässigem Verhalten des Betreibers\n"
-"        , ihrer&nbsp;gesetzlichen Vertreter oder Erfüllungsgehilfen beruht. "
-"Der Betreiber weist darauf\n"
-"        hin, dass es gelegentlich zu&nbsp;Funktionsbeeinträchtigungen wegen "
-"Instandsetzungs- und Wartungsarbeiten auf\n"
-"        %(domain)s kommen kann.&nbsp;Der Betreiber beauftragt externe "
-"Unternehmen mit dem Betrieb\n"
-"        der&nbsp;Datenverarbeitungsanlagen.</p>\n"
-"\n"
-"    <p><strong>Haftungsfreistellung</strong></p>\n"
-"\n"
-"    <p>Der Verleiher&nbsp;stellt den Betreiber von allen Ansprüchen Dritter "
-"frei, die&nbsp;wegen unzulässiger\n"
-"        Angebote, Anzeigen, Texte, Bilder oder rechtlich geschützter&nbsp;"
-"<br>\n"
-"        Leihsachen (auch urheberrechtlich geschützter Bilder, Medien oder "
-"sonstiger Werke)&nbsp;gegenüber dem Betreiber\n"
-"        geltend gemacht werden. Dies gilt auch für&nbsp;Gerichtskosten und "
-"die Kosten der\n"
-"        Rechtsverteidigung in gesetzlicher Höhe.&nbsp;Im Falle einer "
-"Inanspruchnahme durch Dritte hat der Anbieter der\n"
-"        dem Betreiber Aufforderung unverzüglich und vollständig sämtliche "
-"zur Rechtsverteidigung&nbsp;nötigen\n"
-"        Informationen\n"
-"        und Dokumente zur Verfügung zu stellen.</p>\n"
-"\n"
-"    <p><strong>Änderung der Allgemeinen Geschäftsbedingungen</strong></p>\n"
-"\n"
-"    <p>Der Betreiber behält sich vor, diese Allgemeinen "
-"Geschäftsbedingungen&nbsp;gelegentlich zu ändern und\n"
-"        an aktuelle rechtliche Erfordernisse anzupassen. Die Benutzer&nbsp;"
-"werden über die Änderungen per E-Mail\n"
-"        informiert und können den Änderungen innerhalb&nbsp;einer "
-"vierwöchigen Frist widersprechen. Im Falle eines\n"
-"        Widerspruchs ist der Betreiber berechtigt, das Benutzerkonto mit "
-"Inkrafttreten der Änderungen\n"
-"        zu&nbsp;löschen.</p>\n"
-"\n"
-"    <p><strong> Salvatorische Klausel</strong></p>\n"
-"\n"
-"    <p>Falls einzelne Bestimmungen dieser Bedingungen unwirksam sind oder "
-"werden sollten,&nbsp;wird die Wirksamkeit der\n"
-"        übrigen Bestimmungen dadurch nicht berührt. Die unwirksame&nbsp;"
-"Bestimmung ist durch eine gültige zu ersetzen,\n"
-"        die dem angestrebten Ziel am nächsten&nbsp;kommt. Gleiches gilt für "
-"Regelungslücken.</p>\n"
-"\n"
-"    <p><strong> Erfüllungsort und Gerichtsstand</strong></p>\n"
-"\n"
-"    <p>Erfüllungsort für die Leistungen des Betreibers ist der Ort "
-"ihres&nbsp;Geschäftssitzes. Gerichtsstands\n"
-"        für sämtliche Streitigkeiten aus diesem Vertragsverhältnis<br>\n"
-"        ist der Sitz des Betreibers, falls es sich beim Vertragspartner um "
-"einen Kaufmann handelt.</p>\n"
-"\n"
-"    "
-msgstr ""
 
 #: core/views/api.py:134
 msgid "There has to be at least one owner!"
@@ -1684,7 +1705,9 @@ msgstr "Um Buchungen zu erstellen muss deine Rechnungsadresse gesetzt sein"
 msgid ""
 "Available discounts granted to certain groups and entities. The discounts "
 "will be applied to the base prices below."
-msgstr "Verfügbare Rabatte für bestimmte Gruppen und Entitäten. Die Rabatte werden auf den Basispreis angewandt."
+msgstr ""
+"Verfügbare Rabatte für bestimmte Gruppen und Entitäten. Die Rabatte werden "
+"auf den Basispreis angewandt."
 
 #: items/forms.py:233
 msgid "Booking exeeds maximum duration"
@@ -1698,93 +1721,180 @@ msgstr "Es fehlt eine Menge von {} wegen einer Buchung vom {} zum {}"
 msgid "The group granted self pickup if item's self pickup is limited"
 msgstr ""
 
-#: items/models.py:25
+#: items/models.py:21
+msgid "Self pickup group"
+msgstr "Selbstabholung"
+
+#: items/models.py:26
 msgid "Item contract procedure"
 msgstr "Gegenstandsvertragsprozedur"
 
-#: items/models.py:49
+#: items/models.py:47
+msgid "Note"
+msgstr "Anmerkungen"
+
+#: items/models.py:52
 msgid "Item booking"
 msgstr "Leihe"
 
-#: items/models.py:106
+#: items/models.py:109
 msgid "available"
 msgstr "verfügbar"
 
-#: items/models.py:107
+#: items/models.py:110
 msgid "lent"
 msgstr "ausgeliehen"
 
-#: items/models.py:108
+#: items/models.py:111
 msgid "defect"
 msgstr "defekt"
 
-#: items/models.py:109
+#: items/models.py:112
 msgid "hidden"
 msgstr "nicht sichtbar"
 
-#: items/models.py:129
+#: items/models.py:132
 msgid "vehicles"
 msgstr "Fahrzeuge"
 
-#: items/models.py:130
+#: items/models.py:133
 msgid "tools"
 msgstr "Werkzeuge"
 
-#: items/models.py:131
+#: items/models.py:134
 msgid "electronics"
 msgstr "Elektronische Geräte"
 
-#: items/models.py:132
+#: items/models.py:135
 msgid "photography"
 msgstr "Photographie"
 
-#: items/models.py:133
+#: items/models.py:136
 msgid "video"
 msgstr "Video"
 
-#: items/models.py:134
+#: items/models.py:137
 msgid "other"
 msgstr "andere"
 
-#: items/models.py:142
+#: items/models.py:145
 msgid "hours"
 msgstr "Stunden"
 
-#: items/models.py:152
+#: items/models.py:155
 msgid "not allowed"
 msgstr "nicht erlaubt"
 
-#: items/models.py:153
+#: items/models.py:156
 msgid "limited"
 msgstr "limitiert"
 
-#: items/models.py:154
+#: items/models.py:157
 msgid "allowed"
 msgstr "erlaubt"
 
-#: items/models.py:167
+#: items/models.py:172
 msgid "ID field for bardcodes etc."
 msgstr "ID Feld für Barcodes etc."
 
-#: items/models.py:225
+#: items/models.py:175
+msgid "Custom ID"
+msgstr "Individuelle ID"
+
+#: items/models.py:190 items/templates/items/item_details.html:18
+msgid "Manufacturer"
+msgstr "Hersteller"
+
+#: items/models.py:196 items/templates/items/item_details.html:26
+msgid "Model"
+msgstr "Modell"
+
+#: items/models.py:202 items/templates/items/item_details.html:34
+#: items/templates/items/item_details.html:42
+msgid "Serial number"
+msgstr "Seriennummer"
+
+#: items/models.py:208 venues/models.py:56
+msgid "Location"
+msgstr "Standort"
+
+#: items/models.py:214
+msgid "Location code"
+msgstr "Standorthinweis"
+
+#: items/models.py:231 items/templates/items/item_details.html:57
+#: venues/templates/venues/venue_details.html:25
+msgid "Base price"
+msgstr "Basispreis"
+
+#: items/models.py:241
+msgid "Maximum duration"
+msgstr "Maximale Leihdauer"
+
+#: items/models.py:243
 msgid "Maximimum duration the item can be lent. Value of 0 means unlimited."
 msgstr "Maximale Leihdauer. Ein Wert von 0 bedeutet unbegrenzt"
 
-#: items/models.py:245
+#: items/models.py:249 items/templates/items/item_details.html:63
+msgid "Self pickup"
+msgstr "Selbstabholung"
+
+#: items/models.py:254
+msgid "Damages"
+msgstr "Schäden"
+
+#: items/models.py:260 items/templates/items/_contract_overview.html:13
+#: venues/models.py:210 venues/templates/venues/_contract_overview.html:13
+msgid "Category"
+msgstr "Kategorie"
+
+#: items/models.py:265
+msgid "Instructions"
+msgstr "Hinweise und Anleitung"
+
+#: items/models.py:267
 msgid "These instructions will be included in the confirmation mail text"
 msgstr "Diese Anweisungen werden in der Bestätigungsmail inkludiert"
 
-#: items/models.py:250
+#: items/models.py:272
+msgid "Attachment"
+msgstr "Anhang"
+
+#: items/models.py:273
 msgid "This file will be attached to the confirmation mail"
 msgstr "Diese Datei wird der Bestätigungsmail angehängt"
 
-#: items/models.py:255
-msgid "thumbnail"
-msgstr "Thumbnail"
-
 #: items/models.py:296
+msgid "Purchase date"
+msgstr "Kaufdatum"
+
+#: items/models.py:304
+msgid "Purchase price"
+msgstr "Kaufpreis"
+
+#: items/models.py:312
+msgid "Replacement price"
+msgstr "Erstattungskosten"
+
+#: items/models.py:318
+msgid "Donation"
+msgstr "Spende"
+
+#: items/models.py:324
+msgid "Original owner"
+msgstr "Ursprünglicher Besitzer"
+
+#: items/models.py:325
 msgid "Which entity bought or donated the item?"
 msgstr "Welche Entität hat den Gegenstand gekauft oder gespendet?"
+
+#: items/models.py:364 venues/models.py:186
+msgid "Start"
+msgstr "Start"
+
+#: items/models.py:368 venues/models.py:190
+msgid "End"
+msgstr "Ende"
 
 #: items/modules.py:12 items/modules.py:17 items/modules.py:27
 msgid "Items"
@@ -1799,20 +1909,10 @@ msgstr "Menge: {}"
 msgid "Event details"
 msgstr "Veranstaltungsdetails"
 
-#: items/templates/items/_contract_overview.html:13
-#: venues/templates/venues/_contract_overview.html:13
-msgid "Category"
-msgstr "Kategorie"
-
-#: items/templates/items/_contract_overview.html:17
+#: items/templates/items/_contract_overview.html:17 venues/models.py:203
 #: venues/templates/venues/_contract_overview.html:17
 msgid "Tags"
 msgstr "Tags"
-
-#: items/templates/items/_contract_overview.html:23
-#: venues/templates/venues/_contract_overview.html:23
-msgid "Description"
-msgstr "Beschreibung"
 
 #: items/templates/items/_contract_overview.html:29
 #: venues/templates/venues/_contract_overview.html:29
@@ -1833,13 +1933,6 @@ msgstr "Woche"
 #: venues/templates/venues/control/_contract_procedure_form.html:6
 msgid "Price profiles:"
 msgstr "Preisprofil"
-
-#: items/templates/items/control/_item_form.html:7
-#: items/templates/items/item_details.html:92
-#: venues/templates/venues/control/_venue_form.html:7
-#: venues/templates/venues/venue_details.html:42
-msgid "Gallery"
-msgstr "Gallerie"
 
 #: items/templates/items/control/_item_form.html:11
 msgid "Prices"
@@ -1886,9 +1979,9 @@ msgstr "Keine assoziierten Veranstaltungsort gefunden"
 msgid "create one!"
 msgstr "Erstellen!"
 
-#: items/templates/items/hooks/location_profile.html:4 venues/modules.py:12
-#: venues/modules.py:17 venues/modules.py:27
-#: venues/templates/venues/hooks/location_profile.html:4
+#: items/templates/items/hooks/location_profile.html:4 venues/models.py:21
+#: venues/models.py:214 venues/modules.py:12 venues/modules.py:17
+#: venues/modules.py:27 venues/templates/venues/hooks/location_profile.html:4
 msgid "Venues"
 msgstr "Veranstaltungsorte"
 
@@ -1903,28 +1996,6 @@ msgstr "Gegenstand leihen"
 #: items/templates/items/item_bookings_create.html:29
 msgid "Check booking"
 msgstr "Leihe prüfen"
-
-#: items/templates/items/item_details.html:18
-msgid "Manufacturer"
-msgstr "Hersteller"
-
-#: items/templates/items/item_details.html:26
-msgid "Model"
-msgstr "Modell"
-
-#: items/templates/items/item_details.html:34
-#: items/templates/items/item_details.html:42
-msgid "Serial number"
-msgstr "Seriennummer"
-
-#: items/templates/items/item_details.html:57
-#: venues/templates/venues/venue_details.html:25
-msgid "Base price"
-msgstr "Basispreis"
-
-#: items/templates/items/item_details.html:63
-msgid "Self pickup"
-msgstr "Selbstabholung"
 
 #: items/templates/items/item_details.html:76
 msgid "Maximum lending duration"
@@ -1947,7 +2018,9 @@ msgstr "Der Gegenstand wurde geupdated"
 msgid ""
 "The event has been created successfully. You can review it and either "
 "confirm or cancel."
-msgstr "Die Veranstaltung wurde erfolgreich erstellt. Du kannst sie prüfen und dann entweder bestätigen oder ablehnen."
+msgstr ""
+"Die Veranstaltung wurde erfolgreich erstellt. Du kannst sie prüfen und dann "
+"entweder bestätigen oder ablehnen."
 
 #: items/views.py:152 venues/views.py:150
 msgid "The event contract procedure has been saved successfully"
@@ -1965,7 +2038,9 @@ msgstr "Banküberweisung"
 msgid ""
 "The other party gets the necessary information to pay via direct bank "
 "transfer"
-msgstr "Die andere Partei erhält die notwendigen Informationen um über Banküberweisung zu zahlen"
+msgstr ""
+"Die andere Partei erhält die notwendigen Informationen um über "
+"Banküberweisung zu zahlen"
 
 #: plugins/bank_transfer/models.py:47 plugins/sepa/models.py:89
 #, python-format
@@ -1981,8 +2056,8 @@ msgid ""
 " {iban} \n"
 " {bic}"
 msgstr ""
-"Bitte überweise per SEPA Überweisung den oben genannten Bruttobetrag an folgendes Konto:"
-"the following account: \n"
+"Bitte überweise per SEPA Überweisung den oben genannten Bruttobetrag an "
+"folgendes Konto:the following account: \n"
 " {account_holder} \n"
 " {iban} \n"
 " {bic}"
@@ -2001,7 +2076,8 @@ msgstr "SEPA Überweisung"
 
 #: plugins/sepa/models.py:65
 msgid "Creates the necessary mandate and XML files for SEPA DD payments"
-msgstr "Erstellt das notwendige Mandat und die XML Dateien für SEPA Lastschriften"
+msgstr ""
+"Erstellt das notwendige Mandat und die XML Dateien für SEPA Lastschriften"
 
 #: plugins/sepa/models.py:142
 msgid "This invoice has been settled with SEPA Direct Debit"
@@ -2079,19 +2155,19 @@ msgstr ""
 "\n"
 "<p>\n"
 "    Durch Unterschrift dieses Mandates autorisieren Sie (A) den Gläubiger\n"
-"    wiederkehrende Belastungen Ihres Kontos anzuweisen und (B) "
-"Ihre\n"
+"    wiederkehrende Belastungen Ihres Kontos anzuweisen und (B) Ihre\n"
 "    Bank Ihr Konto entspechend der Anweisungen des Gläubigers zu belasten\n"
 "</p>\n"
 "<p>\n"
 "    Sie sind berechtigt eine Rückabwicklung von Ihrer Bank zu fordern\n"
 "    entsprechend der vereinbarten allgemeinen Vertragsbedingungen.\n"
-"    Eine Rückerstattung muss binnen 8 Wochen eingefordert werden, beginnend mit dem Tag an dem das Konto belastet wurde.\n"
+"    Eine Rückerstattung muss binnen 8 Wochen eingefordert werden, beginnend "
+"mit dem Tag an dem das Konto belastet wurde.\n"
 "    Die genauen Konditionen können bei ihrer Bank erfragt werden.\n"
 "</p>\n"
 "<p>\n"
-"    Zahlungen sind genrell fällig, sodass (C) die Benachrichtungsfrist "
-"auf einen Tag verkürzt wird.\n"
+"    Zahlungen sind genrell fällig, sodass (C) die Benachrichtungsfrist auf "
+"einen Tag verkürzt wird.\n"
 "</p>\n"
 
 #: plugins/sepa/templates/sepa/control/files_create.html:11
@@ -2106,7 +2182,9 @@ msgstr "Abbuchbarer Gesamtbetrag"
 msgid ""
 "Before you can continue to use SEPA direct debit as payment method, you need "
 "to agree to this mandate"
-msgstr "Bevor es du SEPA Lastschrift mit dieser Partei nutzen kannst, musst du dem Lastschriftmandat zustimmen."
+msgstr ""
+"Bevor es du SEPA Lastschrift mit dieser Partei nutzen kannst, musst du dem "
+"Lastschriftmandat zustimmen."
 
 #: plugins/sepa/templates/sepa/control/sepa_mandate.html:24
 msgid "Terms and conditions "
@@ -2142,7 +2220,10 @@ msgid ""
 "\n"
 "    With regards,\n"
 "    "
-msgstr "\nMit freundlichen Grüßen,\n "
+msgstr ""
+"\n"
+"Mit freundlichen Grüßen,\n"
+" "
 
 #: templates/_back_button.html:4
 msgid "back"
@@ -2271,7 +2352,9 @@ msgstr "Wenn möglich, kannst du mehrere Veranstaltungen gleichzeitig buchen"
 
 #: venues/forms.py:200
 msgid "List the event in public feeds and show its content to third parties?"
-msgstr "Die Veranstaltung in öffentlichen Feeds anzeigen und den Inahlt Dritten anzeigen?"
+msgstr ""
+"Die Veranstaltung in öffentlichen Feeds anzeigen und den Inahlt Dritten "
+"anzeigen?"
 
 #: venues/forms.py:212
 msgid "Start of event is after end of event"
@@ -2289,27 +2372,55 @@ msgstr "Es gibt einen Konflikt mit {}@{} am {} bis {}"
 msgid "The recurrence has to be limited"
 msgstr "Die Wiederholung muss zeitlich begrenzt sein"
 
-#: venues/models.py:24
+#: venues/models.py:26
 msgid "Venue contract procedure"
 msgstr "Veranstaltumgsvertragsprozedur"
 
-#: venues/models.py:48
+#: venues/models.py:57
 msgid "All public and current role's locations"
 msgstr "Alle öffentlichen Veranstaltungen und die der aktuellen Rolle"
 
-#: venues/models.py:89
+#: venues/models.py:90
+msgid "Bookable?"
+msgstr "Buchbar?"
+
+#: venues/models.py:104
 msgid ""
 "All available roles, be cautious when chosing a different role than your "
 "current."
 msgstr "Verfügbare Rollen, vorsicht falls die Rolle von der eigenen abweicht"
 
-#: venues/models.py:288
-msgid "Venue booking"
-msgstr "Veranstaltungsortbuchung"
+#: venues/models.py:198
+msgid "Organizer"
+msgstr "Organisator"
 
-#: venues/templates/venues/control/_venue_form.html:15
+#: venues/models.py:219
+msgid "Public?"
+msgstr "Öffentlich?"
+
+#: venues/models.py:225
+msgid "Recurrences"
+msgstr "Wiederholungen"
+
+#: venues/models.py:250
+msgid "Updated by"
+msgstr "Geändert von"
+
+#: venues/models.py:277
+msgid "Venue"
+msgstr "Veranstaltungsort"
+
+#: venues/models.py:323
+msgid "Event"
+msgstr "Veranstaltung"
+
+#: venues/models.py:328 venues/templates/venues/control/_venue_form.html:15
 msgid "Equipment"
 msgstr "Ausstattung"
+
+#: venues/models.py:334
+msgid "Venue booking"
+msgstr "Veranstaltungsortbuchung"
 
 #: venues/templates/venues/control/contract_procedures_create.html:5
 msgid "Create venue contract procedure"
@@ -2338,3 +2449,9 @@ msgstr "Veranstaltungsorte verwalten"
 #: venues/views.py:87
 msgid "The venue has been updated"
 msgstr "Dieser Veranstaltungsort wurde geupdated"
+
+#~ msgid "Wiederholungen"
+#~ msgstr "Wiederholgungen"
+
+#~ msgid "thumbnail"
+#~ msgstr "Thumbnail"

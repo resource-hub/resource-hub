@@ -72,37 +72,48 @@ class Notification(BaseStateMachine):
     typ = models.CharField(
         max_length=30,
         choices=TYPES,
+        verbose_name=_('Type'),
     )
     sender = models.ForeignKey(
         'Actor',
         null=True,
         on_delete=models.SET_NULL,
         related_name='notification_sender',
+        verbose_name=_('Sender'),
     )
     recipient = models.ForeignKey(
         Actor,
         on_delete=models.PROTECT,
         related_name='notification_recipient',
+        verbose_name=_('Recipient'),
     )
     header = models.CharField(
         max_length=255,
+        verbose_name=_('Header'),
     )
     message = models.TextField(
         null=True,
+        verbose_name=_('Message'),
     )
-    link = models.URLField()
+    link = models.URLField(
+        verbose_name=_('Link'),
+    )
     level = models.IntegerField(
         choices=LEVELS,
+        verbose_name=_('Level'),
     )
     content_type = models.ForeignKey(
         ContentType,
         null=True,
-        on_delete=models.CASCADE)
+        on_delete=models.CASCADE,
+    )
     object_id = models.PositiveIntegerField()
     target = GenericForeignKey('content_type', 'object_id')
     is_read = models.BooleanField(
         default=False,
+        verbose_name=_('Read?'),
     )
+
     @property
     def type_(self):
         return self.typ
@@ -172,7 +183,9 @@ class NotificationAttachment(BaseModel):
         Notification,
         on_delete=models.PROTECT,
         related_name='attachments',
+        verbose_name=_('Notification'),
     )
     path = models.CharField(
         max_length=255,
+        verbose_name=_('Path'),
     )

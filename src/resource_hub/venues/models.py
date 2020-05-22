@@ -5,6 +5,7 @@ from django.db.models import Q
 from django.shortcuts import reverse
 from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
+
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
 from recurrence.fields import RecurrenceField
@@ -17,6 +18,7 @@ from resource_hub.core.utils import get_valid_slug
 class VenueContractProcedure(ContractProcedure):
     venues = models.ManyToManyField(
         'Venue',
+        verbose_name=_('Venues'),
     )
 
     @property
@@ -39,18 +41,26 @@ class Venue(BaseModel):
     slug = models.SlugField(
         db_index=True,
         max_length=50,
+        verbose_name=_('Slug'),
     )
-    name = models.CharField(max_length=128)
-    description = models.TextField()
+    name = models.CharField(
+        max_length=128,
+        verbose_name=_('Name'),
+    )
+    description = models.TextField(
+        verbose_name=_('Description'),
+    )
     location = models.ForeignKey(
         Location,
         on_delete=models.CASCADE,
+        verbose_name=_('Location'),
         help_text=_('All public and current role\'s locations'),
     )
     thumbnail_original = models.ImageField(
         null=True,
         upload_to='images/',
         default='images/default.png',
+        verbose_name=_('Thumbnail'),
     )
     thumbnail = ImageSpecField(
         source='thumbnail_original',
@@ -67,24 +77,29 @@ class Venue(BaseModel):
         on_delete=models.PROTECT,
         null=True,
         blank=True,
+        verbose_name=_('Price'),
     )
     gallery = models.ForeignKey(
         Gallery,
         on_delete=models.SET_NULL,
-        null=True
+        null=True,
+        verbose_name=_('Gallery'),
     )
     bookable = models.BooleanField(
         default=True,
+        verbose_name=_('Bookable?'),
     )
     contract_procedure = models.ForeignKey(
         ContractProcedure,
         null=True,
         blank=True,
         on_delete=models.PROTECT,
+        verbose_name=_('Contract procedure'),
     )
     owner = models.ForeignKey(
         Actor,
         on_delete=models.CASCADE,
+        verbose_name=_('Owner'),
         help_text=_(
             'All available roles, be cautious when chosing a different role than your current.')
 
@@ -118,6 +133,7 @@ class EventTag(models.Model):
     name = models.CharField(
         max_length=64,
         unique=True,
+        verbose_name=_('Name'),
     )
 
     # Metadata
@@ -133,6 +149,7 @@ class EventCategory(models.Model):
     name = models.CharField(
         max_length=64,
         unique=True,
+        verbose_name=_('Name'),
     )
 
     # Metadata
@@ -150,50 +167,67 @@ class Event(BaseModel):
         unique=True,
         db_index=True,
         max_length=50,
+        verbose_name=_('Slug'),
     )
     uuid = models.UUIDField(
         default=uuid.uuid4,
         editable=False,
+        verbose_name=_('UUID'),
     )
     name = models.CharField(
         max_length=128,
+        verbose_name=_('Name'),
     )
     description = models.CharField(
         max_length=128,
+        verbose_name=_('Description'),
     )
-    dtstart = models.DateTimeField()
-    dtend = models.DateTimeField()
+    dtstart = models.DateTimeField(
+        verbose_name=_('Start'),
+
+    )
+    dtend = models.DateTimeField(
+        verbose_name=_('End'),
+
+    )
     dtlast = models.DateTimeField()
     organizer = models.ForeignKey(
         Actor,
         on_delete=models.CASCADE,
-        related_name='event_actor'
+        related_name='event_actor',
+        verbose_name=_('Organizer'),
     )
     tags = models.ManyToManyField(
         EventTag,
         blank=True,
+        verbose_name=_('Tags'),
     )
     category = models.ForeignKey(
         EventCategory,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
+        verbose_name=_('Category'),
     )
     venues = models.ManyToManyField(
         Venue,
+        verbose_name=_('Venues'),
     )
     is_public = models.BooleanField(
         default=True,
         blank=True,
+        verbose_name=_('Public?'),
     )
     recurrences = RecurrenceField(
         null=False,
         blank=True,
         include_dtstart=True,
+        verbose_name=_('Recurrences'),
     )
     thumbnail_original = models.ImageField(
         null=False,
-        upload_to='images/'
+        upload_to='images/',
+        verbose_name=_('Thumbnail'),
     )
     thumbnail = ImageSpecField(
         source='thumbnail_original',
@@ -206,12 +240,14 @@ class Event(BaseModel):
         on_delete=models.SET_NULL,
         null=True,
         related_name='event_created_by',
+        verbose_name=_('Created by'),
     )
     updated_by = models.ForeignKey(
         Actor,
         on_delete=models.SET_NULL,
         null=True,
         related_name='event_updated_by',
+        verbose_name=_('Updated by'),
     )
 
     # Metadata
@@ -233,12 +269,17 @@ class Equipment(models.Model):
     name = models.CharField(
         max_length=128,
         unique=True,
+        verbose_name=_('Name'),
     )
     venue = models.ForeignKey(
         Venue,
         on_delete=models.PROTECT,
+        verbose_name=_('Venue'),
     )
-    thumbnail_original = models.ImageField()
+    thumbnail_original = models.ImageField(
+        verbose_name=_('Thumbnail'),
+
+    )
     thumbnail = ImageSpecField(
         source='thumbnail_original',
         processors=[ResizeToFill(200, 200)],
@@ -256,8 +297,11 @@ class Equipment(models.Model):
         on_delete=models.PROTECT,
         null=True,
         blank=True,
+        verbose_name=_('Price'),
     )
-    quantity = models.IntegerField()
+    quantity = models.IntegerField(
+        verbose_name=_('Quantity'),
+    )
 
     # methods
     def __str__(self):
@@ -276,10 +320,12 @@ class VenueContract(Contract):
     event = models.OneToOneField(
         Event,
         on_delete=models.PROTECT,
+        verbose_name=_('Event'),
     )
     equipment = models.ManyToManyField(
         Equipment,
         blank=True,
+        verbose_name=_('Equipment'),
     )
 
     # attributes

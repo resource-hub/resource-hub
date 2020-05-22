@@ -17,7 +17,8 @@ class ItemContractProcedure(ContractProcedure):
         Actor,
         blank=True,
         help_text=_(
-            'The group granted self pickup if item\'s self pickup is limited')
+            'The group granted self pickup if item\'s self pickup is limited'),
+        verbose_name=_('Self pickup group'),
     )
 
     @property
@@ -38,10 +39,12 @@ class ItemContract(Contract):
         'Item',
         related_name='contracts',
         through='ItemBooking',
+        verbose_name=_('Item'),
     )
     note = models.TextField(
         blank=True,
         null=True,
+        verbose_name=_('Note'),
     )
 
     @property
@@ -157,70 +160,85 @@ class Item(BaseStateMachine):
     uuid = models.UUIDField(
         default=uuid.uuid4,
         editable=False,
+        verbose_name=_('UUID'),
     )
     slug = models.SlugField(
         db_index=True,
         max_length=50,
+        verbose_name=_('Slug'),
     )
     custom_id = models.CharField(
         max_length=100,
         help_text=_('ID field for bardcodes etc.'),
         null=True,
         blank=True,
+        verbose_name=_('Custom ID'),
     )
     name = models.CharField(
         max_length=64,
+        verbose_name=_('Name'),
     )
     description = models.TextField(
         null=True,
         blank=True,
+        verbose_name=_('Description'),
     )
     manufacturer = models.CharField(
         max_length=64,
         null=True,
         blank=True,
+        verbose_name=_('Manufacturer'),
     )
     model = models.CharField(
         max_length=64,
         null=True,
         blank=True,
+        verbose_name=_('Model'),
     )
     serial_no = models.CharField(
         max_length=128,
         null=True,
         blank=True,
+        verbose_name=_('Serial number'),
     )
     location = models.ForeignKey(
         Location,
         on_delete=models.PROTECT,
         related_name='items',
+        verbose_name=_('Location'),
     )
     location_code = models.CharField(
         max_length=255,
         null=True,
         blank=True,
+        verbose_name=_('Location code'),
     )
     quantity = models.IntegerField(
         default=1,
+        verbose_name=_('Quantity'),
     )
     unit = models.CharField(
         max_length=3,
         choices=UNITS,
         default=UNIT.DAYS,
+        verbose_name=_('Unit'),
     )
     base_price = models.ForeignKey(
         Price,
         null=True,
         on_delete=models.PROTECT,
         related_name='item_base_price',
+        verbose_name=_('Base price'),
     )
     contract_procedure = models.ForeignKey(
         ItemContractProcedure,
         on_delete=models.PROTECT,
         related_name='items',
+        verbose_name=_('Contract procedure'),
     )
     maximum_duration = models.IntegerField(
         default=0,
+        verbose_name=_('Maximum duration'),
         help_text=_(
             'Maximimum duration the item can be lent. Value of 0 means unlimited.'),
     )
@@ -228,31 +246,36 @@ class Item(BaseStateMachine):
         max_length=2,
         default=SELF_PICKUP.NOT_ALLOWED,
         choices=SELF_PICKUPS,
+        verbose_name=_('Self pickup'),
     )
     damages = models.TextField(
         null=True,
         blank=True,
+        verbose_name=_('Damages'),
     )
     category = models.CharField(
         choices=CATEGORIES,
         default=CATEGORY.OTHER,
         max_length=3,
+        verbose_name=_('Category'),
     )
     instructions = models.TextField(
         null=True,
         blank=True,
+        verbose_name=_('Instructions'),
         help_text=_(
             'These instructions will be included in the confirmation mail text'),
     )
     attachment = models.FileField(
         null=True,
         blank=True,
+        verbose_name=_('Attachment'),
         help_text=_('This file will be attached to the confirmation mail'),
     )
     thumbnail_original = models.ImageField(
         null=False,
         upload_to='images/',
-        verbose_name=_('thumbnail'),
+        verbose_name=_('Thumbnail'),
         default='images/default.png',
     )
     thumbnail = ImageSpecField(
@@ -264,11 +287,13 @@ class Item(BaseStateMachine):
     gallery = models.ForeignKey(
         Gallery,
         on_delete=models.SET_NULL,
-        null=True
+        null=True,
+        verbose_name=_('Gallery'),
     )
     purchase_date = models.DateField(
         null=True,
         blank=True,
+        verbose_name=_('Purchase date'),
     )
     purchase_price = models.ForeignKey(
         Price,
@@ -276,6 +301,7 @@ class Item(BaseStateMachine):
         null=True,
         blank=True,
         related_name='item_purchase_price',
+        verbose_name=_('Purchase price'),
     )
     replacement_price = models.ForeignKey(
         Price,
@@ -283,22 +309,26 @@ class Item(BaseStateMachine):
         null=True,
         blank=True,
         related_name='item_replacement_price',
+        verbose_name=_('Replacement price'),
     )
     donation = models.BooleanField(
         default=False,
         null=True,
         blank=True,
+        verbose_name=_('Donation'),
     )
     original_owner = models.CharField(
         max_length=255,
         null=True,
         blank=True,
+        verbose_name=_('Original owner'),
         help_text=_('Which entity bought or donated the item?'),
     )
     owner = models.ForeignKey(
         Actor,
         on_delete=models.PROTECT,
         related_name='items',
+        verbose_name=_('Owner'),
     )
 
     class Meta:
@@ -315,6 +345,7 @@ class ItemPrice(Price):
         Item,
         on_delete=models.PROTECT,
         related_name='prices',
+        verbose_name=_('Item'),
     )
 
 
@@ -322,13 +353,22 @@ class ItemBooking(BaseModel):
     contract = models.ForeignKey(
         ItemContract,
         on_delete=models.PROTECT,
+        verbose_name=_('Contract'),
     )
     item = models.ForeignKey(
         Item,
         on_delete=models.PROTECT,
+        verbose_name=_('Item'),
     )
-    dtstart = models.DateTimeField()
-    dtend = models.DateTimeField()
+    dtstart = models.DateTimeField(
+        verbose_name=_('Start'),
+
+    )
+    dtend = models.DateTimeField(
+        verbose_name=_('End'),
+
+    )
     quantity = models.IntegerField(
         default=1,
+        verbose_name=_('Quantity'),
     )
