@@ -82,8 +82,6 @@ class FormManager():
         is_valid = True
         for form in self.forms.values():
             if not form.is_valid():
-                print(dir(form))
-                print(form.data)
                 is_valid = False
         return is_valid
 
