@@ -58,7 +58,7 @@ class ActorChange(APIView):
 @permission_classes([])
 class Locations(generics.ListCreateAPIView):
     http_method_names = ['get']
-    queryset = Location.objects.all()
+    queryset = Location.objects.filter(is_public=True)
     serializer_class = LocationSerializer
 
 

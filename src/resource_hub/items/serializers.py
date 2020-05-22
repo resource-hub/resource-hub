@@ -1,5 +1,6 @@
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+
 from resource_hub.core.serializers import ActorSerializer, LocationSerializer
 from rest_framework import serializers
 
@@ -8,15 +9,20 @@ from .models import Item, ItemBooking
 
 class ItemSerializer(serializers.ModelSerializer):
     owner = ActorSerializer(read_only=True)
-    location = LocationSerializer(read_only=True)
+    location = serializers.SerializerMethodField()
     thumbnail = serializers.SerializerMethodField()
     href = serializers.SerializerMethodField()
 
-    def get_href(self, obj):
-        return reverse('items:details', kwargs={'item_slug': obj.slug, 'owner_slug': obj.owner.slug})
+    def get_location(self, obj):
+        if obj.location.is_public:
+            return LocationSerializer(obj.location).data
+        return {'address': {'address_string': obj.location.address.postal_code}}
 
     def get_thumbnail(self, obj):
         return obj.thumbnail.url
+
+    def get_href(self, obj):
+        return reverse('items:details', kwargs={'item_slug': obj.slug, 'owner_slug': obj.owner.slug})
 
     class Meta:
         model = Item

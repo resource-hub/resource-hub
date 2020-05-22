@@ -23,7 +23,7 @@ class VenueForm(forms.ModelForm):
         super(VenueForm, self).__init__(*args, **kwargs)
         self.request = request
         self.fields['location'].queryset = Location.objects.filter(
-            Q(owner=self.request.actor) | Q(is_public=True)
+            Q(owner=self.request.actor) | Q(is_editable=True)
         )
         self.fields['contract_procedure'].queryset = VenueContractProcedure.objects.filter(
             owner=self.request.actor)
