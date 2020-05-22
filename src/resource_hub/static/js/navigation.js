@@ -66,9 +66,7 @@ $(".admin-sidebar-header").on("click", function (e) {
   e.preventDefault();
   if ($(this).parent(".item").hasClass("collapsed")) {
     $(this).parent(".item").removeClass("collapsed");
-    $(this).siblings(".menu").addClass("active");
   } else {
     $(this).parent(".item").addClass("collapsed");
-    $(this).siblings(".menu").removeClass("active");
   }
 });
