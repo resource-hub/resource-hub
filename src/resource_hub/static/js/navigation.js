@@ -61,3 +61,9 @@ $(document).ready(function () {
     $("#language-form").submit();
   });
 });
+
+$(".admin-sidebar-header").on("click", function (e) {
+  e.preventDefault();
+  $(this).parent(".item").removeClass("collapsed");
+  $(this).siblings(".menu").addClass("active");
+});

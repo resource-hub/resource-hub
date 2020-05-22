@@ -6,7 +6,7 @@
                     collapsed
                     {% endif %}
     ">
-    <a class="header"
+    <a class="header admin-sidebar-header"
         href="{% if item.sub_items %}{% if item.sub_items.0.subsub_items %}{{ item.sub_items.0.subsub_items.0.url }}{% else %}{{ item.sub_items.0.url }}{% endif %}{% endif %}">
         {{ item.header }}
     </a>
