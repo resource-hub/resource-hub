@@ -24,6 +24,8 @@ TTL = 60 * 5
 def index(request):
     return render(request, 'venues/index.html')
 # Admin section
+
+
 @method_decorator(login_required, name='dispatch')
 class VenuesManage(TableView):
     header = _('Manage venues')
@@ -44,20 +46,22 @@ class VenuesManage(TableView):
 @method_decorator(login_required, name='dispatch')
 class VenuesCreate(View):
     def get(self, request):
-        venue_form = VenueFormManager(request)
+        venue_form = VenueFormManager(request.user, request.actor)
         return render(request, 'venues/control/venues_create.html', venue_form.get_forms())
 
     def post(self, request):
-        venue_form = VenueFormManager(request)
+        venue_form = VenueFormManager(
+            request.user, request.actor, data=request.POST, files=request.FILES)
 
         if venue_form.is_valid():
+            print('he')
             with transaction.atomic():
                 venue_form.save()
 
             message = ('The venue has been created')
             messages.add_message(request, messages.SUCCESS, message)
             return redirect(reverse('control:venues_manage'))
-
+        print('ho')
         return render(request, 'venues/control/venues_create.html', venue_form.get_forms())
 
 

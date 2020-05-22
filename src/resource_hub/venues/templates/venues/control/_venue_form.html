@@ -3,17 +3,17 @@
 
 <form class="ui form" method="POST" enctype="multipart/form-data">
     {% include '_form.html' with form=venue_form %}
-    <div class="field">
-        <label>{% trans 'Gallery' %}:</label>
-        {% include '_formset.html' with formset=gallery_formset %}
-    </div>
-    <div class="field">
+    <div class="field booking-item">
         <label>{% trans 'Price' %}: *</label>
         {% include '_formset.html' with formset=price_formset %}
     </div>
-    <div class="field">
+    <div class="field booking-item">
         <label>{% trans 'Equipment' %}:</label>
         {% include '_formset.html' with formset=equipment_formset %}
+    </div>
+    <div class="field">
+        <label>{% trans 'Gallery' %}:</label>
+        {% include '_formset.html' with formset=gallery_formset %}
     </div>
     {% include 'core/_identity.html' %}
     <button class="ui positive right labeled icon button" type="submit">

@@ -8,9 +8,9 @@ from django.utils.timezone import get_current_timezone
 from django.utils.translation import gettext_lazy as _
 
 from resource_hub.core.fields import HTMLField
-from resource_hub.core.forms import (ContractProcedureForm, FormManager,
-                                     GalleryImageFormSet, PriceForm,
-                                     PriceProfileFormSet)
+from resource_hub.core.forms import (BaseForm, ContractProcedureForm,
+                                     FormManager, GalleryImageFormSet,
+                                     PriceForm, PriceProfileFormSet)
 from resource_hub.core.models import Gallery, Location, PriceProfile
 from resource_hub.core.utils import get_authorized_actors, timespan_conflict
 
@@ -18,21 +18,15 @@ from .models import (Equipment, EquipmentPrice, Event, Venue, VenueContract,
                      VenueContractProcedure, VenuePrice)
 
 
-class VenueForm(forms.ModelForm):
-    def __init__(self, request, *args, **kwargs):
-        super(VenueForm, self).__init__(*args, **kwargs)
-        self.request = request
+class VenueForm(BaseForm):
+    def __init__(self, user, actor, data=None, files=None, instance=None, **kwargs):
+        super(VenueForm, self).__init__(
+            user, actor, data=data, files=files, instance=instance, **kwargs)
         self.fields['location'].queryset = Location.objects.filter(
-            Q(owner=self.request.actor) | Q(is_editable=True)
+            Q(owner=self.actor) | Q(is_editable=True)
         )
         self.fields['contract_procedure'].queryset = VenueContractProcedure.objects.filter(
-            owner=self.request.actor)
-        self.fields['owner'].queryset = get_authorized_actors(
-            self.request.user,
-        )
-
-        # inital values
-        self.initial['owner'] = self.request.actor
+            owner=self.actor)
 
         self._update_attrs({
             'contract_procedure': {'class': 'booking-item required'},
@@ -43,7 +37,7 @@ class VenueForm(forms.ModelForm):
     class Meta:
         model = Venue
         fields = ['name', 'description', 'location',
-                  'thumbnail_original', 'bookable', 'contract_procedure', 'owner', ]
+                  'thumbnail_original', 'owner', 'bookable', 'contract_procedure', ]
         help_texts = {
             'bookable': _('Do you want to use the platform\'s booking logic?'),
         }
@@ -52,44 +46,43 @@ class VenueForm(forms.ModelForm):
         for field, val in fields.items():
             self.fields[field].widget.attrs.update(val)
 
-    def save(self, *args, commit=True, **kwargs):
-        new_venue = super(VenueForm, self).save(*args, commit=False, **kwargs)
-        if commit:
-            new_venue.save()
-        return new_venue
-
 
 class VenueFormManager(FormManager):
-    def __init__(self, request, instance=None):
-        self.request = request
+    def __init__(self, user, actor, *args, data=None, files=None, instance=None, **kwargs):
         gallery_instance = instance.gallery if instance else None
-        if self.request.POST:
+        if data:
+            bookable = data.get('bookable', False)
+            price_formset = VenuePriceFormset(
+                data=data,
+                instance=instance,
+            ) if bookable else forms.Form()
+            if not bookable:
+                price_formset.is_bound = True
             self.forms = {
                 'venue_form': VenueForm(
-                    self.request,
-                    data=self.request.POST,
-                    files=self.request.FILES,
+                    user,
+                    actor,
+                    data=data,
+                    files=files,
                     instance=instance,
                 ),
                 'gallery_formset': GalleryImageFormSet(
-                    data=self.request.POST,
-                    files=self.request.FILES,
+                    data=data,
+                    files=files,
                     instance=gallery_instance,
                 ),
-                'price_formset': VenuePriceFormset(
-                    data=self.request.POST,
-                    instance=instance,
-                ),
+                'price_formset': price_formset,
                 'equipment_formset': EquipmentFormset(
-                    data=self.request.POST,
-                    files=self.request.FILES,
+                    data=data,
+                    files=files,
                     instance=instance
                 ),
             }
         else:
             self.forms = {
                 'venue_form': VenueForm(
-                    self.request,
+                    user,
+                    actor,
                     instance=instance,
                 ),
                 'gallery_formset': GalleryImageFormSet(
@@ -106,20 +99,19 @@ class VenueFormManager(FormManager):
         first = True
         if new_venue.gallery is None:
             new_venue.gallery = Gallery.objects.create()
-            new_venue.save()
 
         self.forms['gallery_formset'].instance = new_venue.gallery
         self.forms['gallery_formset'].save()
-
-        for price in self.forms['price_formset'].save(commit=False):
-            price.venue_ptr = new_venue
-            price.save()
-            if first:
-                new_venue.price = price
-                new_venue.save()
-                first = False
-        self.forms['equipment_formset'].instance = new_venue
-        self.forms['equipment_formset'].save()
+        if new_venue.bookable:
+            self.forms['price_formset'].instance = new_venue
+            for price in self.forms['price_formset'].save(commit=False):
+                if first:
+                    new_venue.price = price
+                    first = False
+            self.forms['price_formset'].save()
+            self.forms['equipment_formset'].instance = new_venue
+            self.forms['equipment_formset'].save()
+        new_venue.save()
         return new_venue
 
 

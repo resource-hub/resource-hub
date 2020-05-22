@@ -26,8 +26,8 @@ from .widgets import IBANInput, UISearchField
 class BaseForm(forms.ModelForm):
     owner_editable = True
 
-    def __init__(self, user, actor, *args, data=None, files=None, instance=None, **kwargs):
-        super(BaseForm, self).__init__(*args, data=data,
+    def __init__(self, user, actor, data=None, files=None, instance=None, **kwargs):
+        super(BaseForm, self).__init__(data=data,
                                        files=files, instance=instance, **kwargs)
         self.user = user
         self.actor = actor
@@ -82,6 +82,8 @@ class FormManager():
         is_valid = True
         for form in self.forms.values():
             if not form.is_valid():
+                print(dir(form))
+                print(form.data)
                 is_valid = False
         return is_valid
 

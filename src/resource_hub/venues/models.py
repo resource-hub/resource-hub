@@ -58,6 +58,7 @@ class Venue(BaseModel):
     )
     thumbnail_original = models.ImageField(
         null=True,
+        blank=False,
         upload_to='images/',
         default='images/default.png',
         verbose_name=_('Thumbnail'),
