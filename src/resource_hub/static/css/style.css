@@ -592,7 +592,7 @@ tr.selectable {
   .ui.dropdown>.menu, .ui.icon.message {
     background-color: var(--bg-contrast) !important;
   }
-  div.item>a {
+  .ui.vertical.sidebar.menu>div.item>a {
     color: var(--orange) !important;
   }
   .ui.item, .ui.section.divider {
