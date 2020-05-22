@@ -126,7 +126,7 @@ class ItemFormManager(FormManager):
             }
 
     def save(self):
-        new_item = self.forms['item_form'].save(commit=False)
+        new_item = self.forms['item_form'].save()
         first = True
         if new_item.gallery is None:
             new_item.gallery = Gallery.objects.create()
