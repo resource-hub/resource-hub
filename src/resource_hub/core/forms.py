@@ -263,35 +263,28 @@ class BankAccountForm(forms.ModelForm):
         return bic
 
 
-class UserFormManager():
-    def __init__(self, request):
-        if request.POST is None:
-            self.user_form = UserBaseForm()
-            self.address_form = AddressForm(request.user, request.actor)
-            self.bank_account_form = BankAccountForm()
+class UserFormManager(FormManager):
+    def __init__(self, user, actor, data=None, files=None, instances=None):
+        if data:
+            self.forms = {
+                'user_form': UserBaseForm(data=data,  files=files),
+                'address_form': AddressForm(
+                    user, actor, data=data),
+                'bank_account_form': BankAccountForm(data),
+
+            }
         else:
-            self.user_form = UserBaseForm(request.POST, request.FILES)
-            self.address_form = AddressForm(
-                request.user, request.actor, data=request.POST)
-            self.bank_account_form = BankAccountForm(request.POST)
-
-    def get_forms(self):
-        return {
-            'user_form': self.user_form,
-            'address_form': self.address_form,
-            'bank_account_form': self.bank_account_form,
-        }
-
-    def is_valid(self):
-        return (self.user_form.is_valid() and
-                self.address_form.is_valid() and
-                self.bank_account_form.is_valid())
+            self.forms = {
+                'user_form': UserBaseForm(),
+                'address_form': AddressForm(user, actor),
+                'bank_account_form': BankAccountForm(),
+            }
 
     def save(self):
-        new_bank_account = self.bank_account_form.save()
-        new_address = self.address_form.save()
+        new_bank_account = self.forms['bank_account_form'].save()
+        new_address = self.forms['address_form'].save()
 
-        new_user = self.user_form.save(commit=False)
+        new_user = self.forms['user_form'].save(commit=False)
         new_user.name = new_user.first_name + ' ' + new_user.last_name
         new_user.address = new_address
         new_user.bank_account = new_bank_account
@@ -491,39 +484,30 @@ PriceProfileFormSet = inlineformset_factory(
     ContractProcedure, PriceProfile, form=PriceProfileForm, extra=1)
 
 
-class OrganizationFormManager():
-    def __init__(self, request):
-        if request.POST is None:
-            self.organization_form = OrganizationForm()
-            self.address_form = AddressForm(request.user, request.actor)
-            self.bank_account_form = BankAccountForm()
+class OrganizationFormManager(FormManager):
+    def __init__(self, user, actor, data=None, files=None, instances=None):
+        self.user = user
+        if data:
+            self.forms = {
+                'organization_form': OrganizationForm(
+                    data=data, files=files),
+                'address_form': AddressForm(
+                    user, actor, data=data),
+                'bank_account_form': BankAccountForm(data),
+            }
         else:
-            self.request = request
-            self.organization_form = OrganizationForm(
-                request.POST, request.FILES)
-            self.address_form = AddressForm(
-                request.user, request.actor, data=request.POST)
-            self.bank_account_form = BankAccountForm(request.POST)
-
-    def get_forms(self):
-        return {
-            'organization_form': self.organization_form,
-            'address_form': self.address_form,
-            'bank_account_form': self.bank_account_form,
-        }
-
-    def is_valid(self):
-        return (self.organization_form.is_valid() and
-                self.address_form.is_valid() and
-                self.bank_account_form.is_valid())
+            self.forms = {
+                'organization_form': OrganizationForm(),
+                'address_form': AddressForm(user, actor),
+                'bank_account_form': BankAccountForm(),
+            }
 
     def save(self):
-        user = self.request.user
-        new_bank_account = self.bank_account_form.save()
-        new_address = self.address_form.save()
+        new_bank_account = self.forms['bank_account_form'].save()
+        new_address = self.forms['address_form'].save()
 
-        new_organization = self.organization_form.save(commit=False)
-        new_organization.name = self.organization_form.cleaned_data['name']
+        new_organization = self.forms['organization_form'].save(commit=False)
+        new_organization.name = self.forms['organization_form'].cleaned_data['name']
         new_organization.bank_account = new_bank_account
         new_organization.address = new_address
         new_organization.save()
@@ -531,7 +515,7 @@ class OrganizationFormManager():
         membership = OrganizationMemberAddForm(
             new_organization,
             {
-                'username': user.username,
+                'username': self.user.username,
                 'role': OrganizationMember.OWNER
             }
         )

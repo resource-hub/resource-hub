@@ -424,11 +424,13 @@ class OrganizationsCreate(View):
     template_name = 'core/control/organizations_create.html'
 
     def get(self, request):
-        organization_form = OrganizationFormManager(request)
+        organization_form = OrganizationFormManager(
+            request.user, request.actor)
         return render(request, self.template_name, organization_form.get_forms())
 
     def post(self, request):
-        organization_form = OrganizationFormManager(request)
+        organization_form = OrganizationFormManager(
+            request.user, request.actor, data=request.POST, files=request.FILES)
 
         if organization_form.is_valid():
             with transaction.atomic():

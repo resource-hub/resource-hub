@@ -46,11 +46,12 @@ class Register(View):
             messages.add_message(request, messages.INFO, message)
             return redirect(reverse('control:home'))
 
-        user_form = UserFormManager(request)
+        user_form = UserFormManager(request.user, request.actor)
         return render(request, 'core/register.html', user_form.get_forms())
 
     def post(self, request):
-        user_form = UserFormManager(request)
+        user_form = UserFormManager(
+            request.user, request.actor, data=request.POST, files=request.FILES)
 
         if (user_form.is_valid()):
             with transaction.atomic():
