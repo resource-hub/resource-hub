@@ -124,8 +124,7 @@ class ItemBookingsCreate(View):
         if item_contract_form.is_valid():
             with transaction.atomic():
                 item_contract = item_contract_form.save()
-                item_contract.claim_factory(
-                )
+                item_contract.claim_factory()
             message = _(
                 'The event has been created successfully. You can review it and either confirm or cancel.')
             messages.add_message(request, messages.SUCCESS, message)

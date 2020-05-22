@@ -5,9 +5,9 @@ from django.utils.timezone import get_current_timezone
 from django.utils.translation import gettext_lazy as _
 
 from resource_hub.core.fields import HTMLField
-from resource_hub.core.forms import (ContractProcedureForm, FormManager,
-                                     GalleryImageFormSet, PriceForm,
-                                     PriceProfileFormSet)
+from resource_hub.core.forms import (BaseForm, ContractProcedureForm,
+                                     FormManager, GalleryImageFormSet,
+                                     PriceForm, PriceProfileFormSet)
 from resource_hub.core.models import Gallery, Price, PriceProfile
 from resource_hub.core.utils import (get_authorized_actors, timespan_conflict,
                                      to_date)
@@ -54,12 +54,17 @@ class ItemForm(forms.ModelForm):
         #     'contract_procedure': {'class': 'booking-item required'},
         # })
 
+    state = forms.ChoiceField(
+        choices=Item.STATES,
+        initial=Item.STATE.AVAILABLE,
+    )
     description = HTMLField()
 
     class Meta:
         model = Item
-        fields = ['custom_id', 'name', 'description', 'contract_procedure', 'manufacturer', 'model', 'serial_no', 'location', 'location_code', 'unit', 'maximum_duration', 'self_pickup', 'damages', 'category', 'instructions', 'attachment',
-                  'thumbnail_original', 'owner', 'donation', 'original_owner', 'purchase_price', 'replacement_price', ]
+        fields = ['custom_id', 'state', 'name', 'description', 'thumbnail_original', 'contract_procedure',  'location', 'location_code', 'unit', 'maximum_duration', 'self_pickup', 'category', 'owner',
+                  'manufacturer', 'model', 'serial_no', 'instructions', 'attachment', 'damages',
+                  'donation', 'original_owner', 'purchase_price', 'replacement_price', ]
         help_texts = {
             'bookable': _('Do you want to use the platform\'s booking logic?'),
         }
@@ -169,9 +174,12 @@ class ItemContractProcedureFormManager(FormManager):
         return new_item_contract_procedure
 
 
-class ItemContractForm(forms.ModelForm):
+class ItemContractForm(BaseForm):
+    owner_editable = False
+
     def __init__(self, item, request, *args, **kwargs):
-        super(ItemContractForm, self).__init__(*args, **kwargs)
+        super(ItemContractForm, self).__init__(
+            request.user, request.actor, *args, **kwargs)
         self.request = request
         self.fields['payment_method'].queryset = item.contract_procedure.payment_methods.select_subclasses(
         ).order_by('fee_absolute_value')
@@ -194,6 +202,11 @@ class ItemContractForm(forms.ModelForm):
         if self.fields['price_profile'].queryset:
             self.initial['price_profile'] = self.fields['price_profile'].queryset[0]
             self.initial['payment_method'] = self.fields['payment_method'].queryset[0]
+        if item.owner == self.request.actor or item.self_pickup == Item.SELF_PICKUP.ALLOWED or (item.self_pickup == Item.SELF_PICKUP.LIMITED and item.contract_procedure.self_pickup_group.filter(pk=self.request.actor.pk).exists()):
+            self.fields['note'].disabled = True
+        else:
+            self.initial['note'] = _(
+                'Hey, I\'d like to lend your {item}. I would like to pick it up at: TIME'.format(item=item.name))
 
     def clean(self):
         data = super(ItemContractForm, self).clean()

@@ -26,7 +26,7 @@ class Items(generics.ListCreateAPIView):
     def get_queryset(self):
         name = self.request.query_params.get('name', None)
         pk = self.request.query_params.get('id', None)
-        q = Q()
+        q = Q(state=Item.STATE.AVAILABLE)
         if name is not None:
             q.add(Q(name__icontains=name), Q.AND)
 

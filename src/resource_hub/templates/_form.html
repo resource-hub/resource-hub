@@ -15,6 +15,7 @@
 {% endif %}
 
 {% for field in form %}
+{% if not field.field.disabled %}
 <div class="field">
     <label>
         {{ field.label }}:<span class="required-label-star">{% if field.field.required %} *{% endif %}</span>
@@ -27,4 +28,5 @@
     <div class="ui pointing red basic label">{{ error }}</div>
     {% endfor %}
 </div>
+{% endif %}
 {% endfor %}

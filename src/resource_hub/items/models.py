@@ -45,6 +45,8 @@ class ItemContract(Contract):
         blank=True,
         null=True,
         verbose_name=_('Note'),
+        help_text=_(
+            'This message will be sent to the owner. This allows to negiotate pickup times etc.'),
     )
 
     @property
@@ -66,7 +68,8 @@ class ItemContract(Contract):
         self.items.all().soft_delete()
 
     def claim_factory(self, **kwargs):
-        super(ItemContract, self).claim_factory(**kwargs)
+        if self.is_self_dealing:
+            return
         net_total = 0
         for booking in self.itembooking_set.all():
             start = booking.dtstart if booking.item.unit == Item.UNIT.HOURS else booking.dtstart.date()
@@ -96,6 +99,11 @@ class ItemContract(Contract):
             )
 
             net_total += net
+
+    def set_waiting(self, request):
+        super(ItemContract, self).set_waiting(request)
+        if self.state == self.STATE.WAITING and self.items.filter(contract_procedure__self_pickup_group=self.debitor).exists():
+            self.set_running(request)
 
 
 class Item(BaseStateMachine):
@@ -169,10 +177,11 @@ class Item(BaseStateMachine):
     )
     custom_id = models.CharField(
         max_length=100,
-        help_text=_('ID field for bardcodes etc.'),
+        db_index=True,
         null=True,
         blank=True,
         verbose_name=_('Custom ID'),
+        help_text=_('ID field for bardcodes etc.'),
     )
     name = models.CharField(
         max_length=64,

@@ -46,6 +46,7 @@ class TestItemForm(LoginTestMixin, TestCase):
 
     def get_data(self):
         return {
+            'state': Item.STATE.AVAILABLE,
             'name': 'item',
             'description': 'test',
             'contract_procedure': self.contract_procedure,
@@ -119,6 +120,7 @@ class TestItemBookingForm(LoginTestMixin, TestCase):
         self.actor = self.user
         self.item = Item.objects.create(
             name='test',
+            state=Item.STATE.AVAILABLE,
             description='test',
             location=self.location,
             quantity=1,

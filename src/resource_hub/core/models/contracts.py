@@ -226,6 +226,10 @@ class BaseContract(BaseStateMachine):
         '''
         raise NotImplementedError()
 
+    @property
+    def is_self_dealing(self):
+        return self.creditor == self.debitor
+
     def call_triggers(self, state):
         pass
 
@@ -238,8 +242,8 @@ class BaseContract(BaseStateMachine):
         self.acceptance = DeclarationOfIntent.create(
             request=request,
         )
-
     # state setters
+
     def set_pending(self, *args, **kwargs) -> None:
         raise NotImplementedError()
 
@@ -461,7 +465,7 @@ class Contract(BaseContract):
         )
 
     def claim_factory(self, **kwargs):
-        if self.creditor == self.debitor:
+        if self.is_self_dealing:
             return
 
     def create_fee_claims(self, net_total, currency, start, end):
