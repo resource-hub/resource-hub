@@ -40,7 +40,7 @@ class Actor(BaseModel):
         blank=True,
         upload_to='images/',
         default='images/default.png',
-        verbose_name=_('image'),
+        verbose_name=_('Thumbnail'),
     )
     thumbnail = ImageSpecField(
         source='image',
@@ -49,7 +49,6 @@ class Actor(BaseModel):
         options={
             'quality': 60,
         },
-        verbose_name=_('Thumbnail'),
     )
     thumbnail_small = ImageSpecField(
         source='image',

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-22 14:02+0200\n"
+"POT-Creation-Date: 2020-05-22 14:10+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -219,128 +219,101 @@ msgstr "Adresse"
 msgid "Bank account"
 msgstr "Bankkonto"
 
-#: core/models/actors.py:43
-msgid "image"
-msgstr "Bild"
-
-#: core/models/actors.py:52 core/templates/core/home.html:42
+#: core/models/actors.py:43 core/templates/core/home.html:42
 #: items/models.py:278 items/templates/items/_item_feed.html:20
 #: venues/models.py:63 venues/models.py:230 venues/models.py:280
 #: venues/templates/venues/_venue_feed.html:20
 msgid "Thumbnail"
 msgstr "Thumbnail"
 
-#: core/models/actors.py:76
-#, fuzzy
-#| msgid "telephone (public)"
+#: core/models/actors.py:75
 msgid "Telephone (private)"
 msgstr "Telefonnummer (öffentlich)"
 
-#: core/models/actors.py:82
-#, fuzzy
-#| msgid "telephone (public)"
+#: core/models/actors.py:81
 msgid "Telephone (public)"
 msgstr "Telefonnummer (öffentlich)"
 
-#: core/models/actors.py:87
-#, fuzzy
-#| msgid "email (public)"
+#: core/models/actors.py:86
 msgid "Email (public)"
 msgstr "E-Mail (öffentlich)"
 
-#: core/models/actors.py:92
+#: core/models/actors.py:91
 #, fuzzy
 #| msgid "website"
 msgid "Website"
 msgstr "Website"
 
-#: core/models/actors.py:97
+#: core/models/actors.py:96
 msgid "Info text"
 msgstr "Infotext"
 
-#: core/models/actors.py:104
+#: core/models/actors.py:103
 msgid "Tax-ID"
 msgstr "Steuernummer"
 
-#: core/models/actors.py:110
-#, fuzzy
-#| msgctxt "invoice"
-#| msgid "VAT-ID: %s"
+#: core/models/actors.py:109
 msgid "VAT-ID"
 msgstr "Umsatzsteuer-ID: %s"
 
-#: core/models/actors.py:115
-#, fuzzy
-#| msgctxt "invoice"
-#| msgid "Invoice number"
+#: core/models/actors.py:114
 msgid "Invoice numbers prefix"
-msgstr "Rechnungsnummer"
+msgstr "Rechnungsnummerpräfix"
 
-#: core/models/actors.py:120
+#: core/models/actors.py:119
 msgid "Invoice numbers prefix (cancellations)"
 msgstr "Rechnungsnummerpräfix (Stornierung)"
 
-#: core/models/actors.py:126
+#: core/models/actors.py:125
 msgid "Invoice introductory text"
 msgstr "Rechnungseinleitungstext"
 
-#: core/models/actors.py:132
-#, fuzzy
-#| msgctxt "invoice"
-#| msgid "Invoice date"
+#: core/models/actors.py:131
 msgid "Invoice additional text"
-msgstr "Rechnungsdatum"
+msgstr "zusätzlicher Rechnungstext"
 
-#: core/models/actors.py:138
-#, fuzzy
-#| msgid "Invoice from"
+#: core/models/actors.py:137
 msgid "Invoice footer text"
-msgstr "Rechnungs von"
+msgstr "Text Rechnungsseitenboden"
 
-#: core/models/actors.py:145
-#, fuzzy
-#| msgid "Invoice from"
+#: core/models/actors.py:144
 msgid "Invoice logo image"
-msgstr "Rechnungs von"
+msgstr "Rechnungslogo"
 
-#: core/models/actors.py:167
+#: core/models/actors.py:166
 #: core/templates/core/control/account_security.html:8
 msgid "Email"
 msgstr "E-Mail"
 
-#: core/models/actors.py:171
+#: core/models/actors.py:170
 msgid "Birth date"
 msgstr "Geburtsdatum"
 
-#: core/models/actors.py:176
+#: core/models/actors.py:175
 msgid "Verified?"
 msgstr "Verifiziert?"
 
-#: core/models/actors.py:229
+#: core/models/actors.py:228
 msgid "member"
 msgstr "Mitglied"
 
-#: core/models/actors.py:230
+#: core/models/actors.py:229
 msgid "administrator"
 msgstr "Administrator"
 
-#: core/models/actors.py:231
+#: core/models/actors.py:230
 msgid "owner"
 msgstr "Besitzer"
 
-#: core/models/actors.py:238
-#, fuzzy
-#| msgid "Organizations"
+#: core/models/actors.py:237
 msgid "Organization"
-msgstr "Organisationen"
+msgstr "Organisation"
 
-#: core/models/actors.py:243 core/models/contracts.py:271
-#, fuzzy
-#| msgid "Username"
+#: core/models/actors.py:242 core/models/contracts.py:271
 msgid "User"
-msgstr "Nutzername"
+msgstr "Nutzer"
 
-#: core/models/actors.py:249
+#: core/models/actors.py:248
 msgid "Role"
 msgstr "Rolle"
 
@@ -2449,6 +2422,9 @@ msgstr "Veranstaltungsorte verwalten"
 #: venues/views.py:87
 msgid "The venue has been updated"
 msgstr "Dieser Veranstaltungsort wurde geupdated"
+
+#~ msgid "image"
+#~ msgstr "Bild"
 
 #~ msgid "Wiederholungen"
 #~ msgstr "Wiederholgungen"
