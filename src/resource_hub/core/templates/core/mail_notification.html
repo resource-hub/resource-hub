@@ -6,7 +6,7 @@
     Hi, {{ recipient.name }}!
 </p>
 <p>
-    {{ message }}
+    {{ message|safe }}
 </p>
 {% if link %}
 <p>

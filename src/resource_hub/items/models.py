@@ -65,6 +65,27 @@ class ItemContract(Contract):
         #     }
         # )
 
+    def _send_running_notification(self, request):
+        item_instructions = ''
+        item_attachments = []
+        for item in self.items.all():
+            item_instructions += item.instructions
+            item_attachments.append(item.attachment.path)
+        message = '{} \n {} \n'.format(
+            self.contract_procedure.notes,
+            item_instructions).replace("\n", "<br />\n")
+        self._send_state_notification(
+            sender=self.creditor,
+            recipient=self.debitor,
+            header=_('{creditor} accepted {contract}'.format(
+                creditor=self.creditor,
+                contract=self.verbose_name,
+            )),
+            message=message,
+            request=request,
+            attachments=item_attachments,
+        )
+
     def purge(self):
         super(ItemContract, self).purge()
         self.items.all().soft_delete()

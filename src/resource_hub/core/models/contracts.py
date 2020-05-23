@@ -353,7 +353,7 @@ class Contract(BaseContract):
         return
     # notifications
 
-    def _send_state_notification(self, sender, recipient, header, message='', request=None):
+    def _send_state_notification(self, sender, recipient, header, message='', attachments=None, request=None):
         if self.creditor != self.debitor:
             return Notification.build(
                 type_=Notification.TYPE.CONTRACT,
@@ -365,6 +365,7 @@ class Contract(BaseContract):
                                             kwargs={'pk': self.pk}), request=request),
                 level=Notification.LEVEL.MEDIUM,
                 target=self,
+                attachments=attachments,
             )
 
     def _send_waiting_notification(self, request):
