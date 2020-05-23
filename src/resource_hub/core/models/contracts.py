@@ -10,6 +10,7 @@ from django.utils.translation import gettext_lazy as _
 
 from ipware import get_client_ip
 from model_utils.managers import InheritanceManager
+from resource_hub.core.utils import build_full_url
 
 from ..fields import CurrencyField, PercentField
 from .base import BaseModel, BaseStateMachine
@@ -352,7 +353,7 @@ class Contract(BaseContract):
         return
     # notifications
 
-    def _send_state_notification(self, sender, recipient, header, message=''):
+    def _send_state_notification(self, sender, recipient, header, message='', request=None):
         if self.creditor != self.debitor:
             return Notification.build(
                 type_=Notification.TYPE.CONTRACT,
@@ -360,23 +361,24 @@ class Contract(BaseContract):
                 recipient=recipient,
                 header=header,
                 message=message,
-                link=reverse('control:finance_contracts_manage_details',
-                             kwargs={'pk': self.pk}),
+                link=build_full_url(reverse('control:finance_contracts_manage_details',
+                                            kwargs={'pk': self.pk}), request=request),
                 level=Notification.LEVEL.MEDIUM,
                 target=self,
             )
 
-    def _send_waiting_notification(self):
+    def _send_waiting_notification(self, request):
         self._send_state_notification(
             sender=self.debitor,
             recipient=self.creditor,
             header=_('{debitor} created {contract}'.format(
                 debitor=self.debitor,
                 contract=self.verbose_name,
-            ))
+            )),
+            request=request,
         )
 
-    def _send_running_notification(self):
+    def _send_running_notification(self, request):
         self._send_state_notification(
             sender=self.creditor,
             recipient=self.debitor,
@@ -385,6 +387,7 @@ class Contract(BaseContract):
                 contract=self.verbose_name,
             )),
             message=self.contract_procedure.notes,
+            request=request,
         )
 
     def purge(self) -> None:
@@ -408,7 +411,7 @@ class Contract(BaseContract):
         self.move_to(self.STATE.WAITING)
         self.create_confirmation(request)
         self.save()
-        self._send_waiting_notification()
+        self._send_waiting_notification(request)
         if self.contract_procedure.auto_accept or (self.creditor == self.debitor):
             self.set_running(request)
 
@@ -423,7 +426,7 @@ class Contract(BaseContract):
         else:
             self.set_initial_settlement_log()
         self.save()
-        self._send_running_notification()
+        self._send_running_notification(request)
     # final states
 
     def set_finalized(self) -> None:

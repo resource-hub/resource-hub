@@ -84,3 +84,9 @@ def get_site_info():
 def to_date(datetime):
     return datetime.replace(
         hour=0, minute=0, second=0, microsecond=0)
+
+
+def build_full_url(resource, request=None):
+    if request:
+        return request.build_absolute_uri(resource)
+    return 'https://{domain}{resource}'.format(domain=settings.SITE_DOMAIN, resource=resource)

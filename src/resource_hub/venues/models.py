@@ -397,3 +397,7 @@ class VenueContract(Contract):
             message='',
             target=self,
         )
+
+    def set_terminated(self, initiator):
+        super(VenueContract, self).set_terminated(initiator)
+        self.event.soft_delete()

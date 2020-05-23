@@ -3,6 +3,7 @@ import uuid
 from django.db import models
 from django.db.models import Q
 from django.shortcuts import reverse
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from imagekit.models import ImageSpecField
@@ -72,7 +73,7 @@ class ItemContract(Contract):
         if self.is_self_dealing:
             return
         net_total = 0
-        for booking in self.itembooking_set.all():
+        for booking in self.bookings.all():
             start = booking.dtstart if booking.item.unit == Item.UNIT.HOURS else booking.dtstart.date()
             end = booking.dtend if booking.item.unit == Item.UNIT.HOURS else booking.dtend.date()
             timedelta = end - start
@@ -108,6 +109,10 @@ class ItemContract(Contract):
             Q(contract_procedure__self_pickup_group__organization__members=self.debitor), Q.OR)
         if self.state == self.STATE.WAITING and self.items.filter(query).exists():
             self.set_running(request)
+
+    def set_terminated(self, initiator):
+        super(ItemContract, self).set_terminated(initiator)
+        self.bookings.filter(dtend__gte=timezone.now()).soft_delete()
 
 
 class Item(BaseStateMachine):
@@ -367,6 +372,7 @@ class ItemBooking(BaseModel):
         ItemContract,
         on_delete=models.PROTECT,
         verbose_name=_('Contract'),
+        related_name='bookings'
     )
     item = models.ForeignKey(
         Item,
