@@ -141,7 +141,7 @@ class Notification(BaseStateMachine):
             })
             send_mail(
                 subject=self.header,
-                message=self.message,
+                message=message,
                 recipient=recipient.notification_recipients,
                 attachments=attachments,
                 connection=connection,

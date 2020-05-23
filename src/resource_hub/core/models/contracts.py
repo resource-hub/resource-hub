@@ -350,6 +350,7 @@ class Contract(BaseContract):
 
     def call_triggers(self, state):
         return
+    # notifications
 
     def _send_state_notification(self, sender, recipient, header, message=''):
         if self.creditor != self.debitor:
@@ -364,6 +365,27 @@ class Contract(BaseContract):
                 level=Notification.LEVEL.MEDIUM,
                 target=self,
             )
+
+    def _send_waiting_notification(self):
+        self._send_state_notification(
+            sender=self.debitor,
+            recipient=self.creditor,
+            header=_('{debitor} created {contract}'.format(
+                debitor=self.debitor,
+                contract=self.verbose_name,
+            ))
+        )
+
+    def _send_running_notification(self):
+        self._send_state_notification(
+            sender=self.creditor,
+            recipient=self.debitor,
+            header=_('{creditor} accepted {contract}'.format(
+                creditor=self.creditor,
+                contract=self.verbose_name,
+            )),
+            message=self.contract_procedure.notes,
+        )
 
     def purge(self) -> None:
         self.claim_set.all().soft_delete()
@@ -386,14 +408,7 @@ class Contract(BaseContract):
         self.move_to(self.STATE.WAITING)
         self.create_confirmation(request)
         self.save()
-        self._send_state_notification(
-            sender=self.debitor,
-            recipient=self.creditor,
-            header=_('{debitor} created {contract}'.format(
-                debitor=self.debitor,
-                contract=self.verbose_name,
-            ))
-        )
+        self._send_waiting_notification()
         if self.contract_procedure.auto_accept or (self.creditor == self.debitor):
             self.set_running(request)
 
@@ -408,15 +423,7 @@ class Contract(BaseContract):
         else:
             self.set_initial_settlement_log()
         self.save()
-        self._send_state_notification(
-            sender=self.creditor,
-            recipient=self.debitor,
-            header=_('{creditor} accepted {contract}'.format(
-                creditor=self.creditor,
-                contract=self.verbose_name,
-            )),
-            message=self.contract_procedure.notes,
-        )
+        self._send_running_notification()
     # final states
 
     def set_finalized(self) -> None:
