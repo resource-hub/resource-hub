@@ -199,10 +199,17 @@ class ItemContractForm(BaseForm):
         ).distinct()
         self.fields['price_profile'].queryset = price_profiles.order_by(
             '-discount')
+
+        # set initial values
         if self.fields['price_profile'].queryset:
             self.initial['price_profile'] = self.fields['price_profile'].queryset[0]
             self.initial['payment_method'] = self.fields['payment_method'].queryset[0]
-        if item.owner == self.request.actor or item.self_pickup == Item.SELF_PICKUP.ALLOWED or (item.self_pickup == Item.SELF_PICKUP.LIMITED and item.contract_procedure.self_pickup_group.filter(pk=self.request.actor.pk).exists()):
+
+        # check for self pickup
+        query = Q(pk=self.request.actor.pk)
+        query.add(
+            Q(organization__members=self.request.actor), Q.OR)
+        if item.owner == self.request.actor or item.self_pickup == Item.SELF_PICKUP.ALLOWED or (item.self_pickup == Item.SELF_PICKUP.LIMITED and item.contract_procedure.self_pickup_group.filter(query).exists()):
             self.fields['note'].disabled = True
         else:
             self.initial['note'] = _(

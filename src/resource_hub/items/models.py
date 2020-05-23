@@ -1,6 +1,7 @@
 import uuid
 
 from django.db import models
+from django.db.models import Q
 from django.shortcuts import reverse
 from django.utils.translation import gettext_lazy as _
 
@@ -102,7 +103,10 @@ class ItemContract(Contract):
 
     def set_waiting(self, request):
         super(ItemContract, self).set_waiting(request)
-        if self.state == self.STATE.WAITING and self.items.filter(contract_procedure__self_pickup_group=self.debitor).exists():
+        query = Q(contract_procedure__self_pickup_group=self.debitor)
+        query.add(
+            Q(contract_procedure__self_pickup_group__organization__members=self.debitor), Q.OR)
+        if self.state == self.STATE.WAITING and self.items.filter(query).exists():
             self.set_running(request)
 
 
