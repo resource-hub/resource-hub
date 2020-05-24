@@ -13,8 +13,9 @@ from resource_hub.core.views import TableView
 
 from .forms import (ItemContractFormManager, ItemContractProcedureFormManager,
                     ItemForm, ItemFormManager)
-from .models import Item, ItemContractProcedure
-from .tables import ItemsTable
+from .models import Item, ItemBooking, ItemContractProcedure
+from .tables import (ItemBookingsCreditedTable, ItemBookingsDebitedTable,
+                     ItemsTable)
 
 TTL = 60 * 5
 
@@ -41,6 +42,42 @@ class ItemsManage(TableView):
 
     def get_table(self):
         return ItemsTable
+
+
+@method_decorator(login_required, name='dispatch')
+class ItemBookingsCredited(TableView):
+    header = _('Credited item bookings')
+    class_ = ItemBooking
+    actions = False
+
+    def get_filters(self, request):
+        return {
+            'contract__creditor': {
+                'value': request.actor,
+                'connector': Q.AND,
+            },
+        }
+
+    def get_table(self):
+        return ItemBookingsCreditedTable
+
+
+@method_decorator(login_required, name='dispatch')
+class ItemBookingsDebited(TableView):
+    header = _('Debited item bookings')
+    class_ = ItemBooking
+    actions = False
+
+    def get_filters(self, request):
+        return {
+            'contract__debitor': {
+                'value': request.actor,
+                'connector': Q.AND,
+            },
+        }
+
+    def get_table(self):
+        return ItemBookingsDebitedTable
 
 
 @method_decorator(login_required, name='dispatch')

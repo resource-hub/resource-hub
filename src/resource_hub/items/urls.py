@@ -1,4 +1,5 @@
 from django.urls import path
+
 from resource_hub.core.urls import api_urls, control_urls
 
 from . import api, views
@@ -19,6 +20,10 @@ control_urls.register([
          name='items_contract_procedures_create'),
     path('items/contract-procedures/edit/<int:pk>/', views.ContractProceduresEdit.as_view(),
          name='items_contract_procedures_edit'),
+    path('items/bookings/credited', views.ItemBookingsCredited.as_view(),
+         name='item_bookings_credited'),
+    path('items/bookings/debited', views.ItemBookingsDebited.as_view(),
+         name='item_bookings_debited'),
 ])
 
 urlpatterns = [

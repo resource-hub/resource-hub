@@ -35,6 +35,14 @@ class ItemsModule(BaseModule):
                         'header': _('Create'),
                         'url': reverse('control:items_create'),
                     },
+                    {
+                        'header': _('Bookings credited'),
+                        'url': reverse('control:item_bookings_credited'),
+                    },
+                    {
+                        'header': _('Bookings debited'),
+                        'url': reverse('control:item_bookings_debited'),
+                    },
                 ]
             },
         ]
