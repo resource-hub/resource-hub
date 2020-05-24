@@ -11,21 +11,11 @@
 {% endblock %}
 {% block content %}
 <p>
-    <h1>{{ location.name }}</h1>
+<h1>{{ location.name }}</h1>
 </p>
 <div>
     {{ location.description | safe}}
 </div>
-<div class="ui horizontal section divider">Location</div>
-
-<div class="ui stackable two column grid">
-    <div class="six wide column">
-        <p class="ui header">{% trans 'Address' %}</p>
-        <p>{{ location.address }}</p>
-    </div>
-    <div class="ten wide column">
-        {% include '_map.html' with location=location %}
-    </div>
-</div>
+{% include 'core/_location_info.html' %}
 {% hook 'location_profile' %}
 {% endblock %}

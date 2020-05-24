@@ -1,6 +1,7 @@
 {% load sekizai_tags %}
 {% load static %}
 {% load l10n %}
+{% load i18n %}
 
 <div id="map" class="map">
 
@@ -46,12 +47,14 @@
 <script id="pop-up-template" type="text/tempate">
     <h5>%name%</h5>
     <p><i class="map marker alternate icon"></i>%address_string%</p>
+    <a class="ui positive button" href="%location_link%">{% trans 'Details' %}</a>
 </script>
 <script>
     var popup_template = document.getElementById("pop-up-template").innerHTML;
     var popup = popup_template
         .replace(/%name%/g, '{{ location.name }}')
-        .replace(/%address_string%/g, '{{ location.address }}');
+        .replace(/%address_string%/g, '{{ location.address }}')
+        .replace(/%location_link%/g, '{% url "core:locations_profile" slug=location.slug %}');
     L.marker(position, {
         bounceOnAdd: true,
         bounceOnAddOptions: { duration: 500, height: 70 },

@@ -1,0 +1,12 @@
+{% load i18n %}
+
+<div class="ui horizontal section divider">{% trans 'Location' %}</div>
+<div class="ui stackable two column grid">
+    <div class="six wide column">
+        <p class="ui header">{% trans 'Address' %}</p>
+        <p>{{ location.address }}</p>
+    </div>
+    <div class="ten wide column">
+        {% include '_map.html' with location=location %}
+    </div>
+</div>
