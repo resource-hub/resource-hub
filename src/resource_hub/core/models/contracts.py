@@ -480,7 +480,7 @@ class Contract(BaseContract):
             return
 
     def create_fee_claims(self, net_total, currency, start, end):
-        if self.payment_method.fee_absolute_value > 0 or self.payment_method.fee_relative_value > 0:
+        if net_total > 0 and (self.payment_method.fee_absolute_value > 0 or self.payment_method.fee_relative_value > 0):
             net_fee = self.payment_method.apply_fee(net_total)
             discounted_net_fee = self.price_profile.apply(
                 net_fee

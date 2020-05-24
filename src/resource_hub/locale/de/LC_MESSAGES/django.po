@@ -2045,7 +2045,7 @@ msgstr "SEPA Gläubiger ID"
 
 #: plugins/sepa/models.py:58
 msgid "SEPA Direct Debit"
-msgstr "SEPA Überweisung"
+msgstr "SEPA Lastschrift"
 
 #: plugins/sepa/models.py:65
 msgid "Creates the necessary mandate and XML files for SEPA DD payments"

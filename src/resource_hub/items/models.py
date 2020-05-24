@@ -1,3 +1,4 @@
+import datetime
 import uuid
 
 from django.db import models
@@ -96,7 +97,16 @@ class ItemContract(Contract):
         if self.is_self_dealing:
             return
         net_total = 0
+        currency = ''
+        start = datetime.datetime(
+            year=datetime.MAXYEAR, month=12, day=31, tzinfo=datetime.timezone.utc)
+        end = datetime.datetime(year=datetime.MINYEAR,
+                                month=1, day=1, tzinfo=datetime.timezone.utc)
         for booking in self.bookings.all():
+            if booking.dtstart < start:
+                start = booking.dtstart
+            if booking.dtend > end:
+                end = booking.dtend
             timedelta = (booking.dtend - booking.dtstart).total_seconds()
             delta = timedelta / \
                 3600 if booking.item.unit_hours else timedelta / 86400
@@ -122,6 +132,8 @@ class ItemContract(Contract):
             )
 
             net_total += net
+        self.create_fee_claims(
+            net_total, booking.item.base_price.currency, start, end)
 
     def set_waiting(self, request):
         super(ItemContract, self).set_waiting(request)
