@@ -209,7 +209,7 @@ class ItemContractForm(BaseForm):
         query = Q(pk=self.request.actor.pk)
         query.add(
             Q(organization__members=self.request.actor), Q.OR)
-        if item.owner == self.request.actor or item.self_pickup == Item.SELF_PICKUP.ALLOWED or (item.self_pickup == Item.SELF_PICKUP.LIMITED and item.contract_procedure.self_pickup_group.filter(query).exists()):
+        if item.owner == self.request.actor or item.self_pickup == Item.SELF_PICKUP.ALLOWED or (item.SELF_PICKUP.LIMITED and (item.self_pickup == Item.SELF_PICKUP.LIMITED and item.contract_procedure.self_pickup_group.filter(query).exists())):
             self.fields['note'].disabled = True
         else:
             self.initial['note'] = _(
