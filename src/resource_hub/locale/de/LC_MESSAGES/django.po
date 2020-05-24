@@ -2347,7 +2347,7 @@ msgstr "Die Wiederholung muss zeitlich begrenzt sein"
 
 #: venues/models.py:26
 msgid "Venue contract procedure"
-msgstr "Veranstaltumgsvertragsprozedur"
+msgstr "Veranstaltungsvertragsprozedur"
 
 #: venues/models.py:57
 msgid "All public and current role's locations"

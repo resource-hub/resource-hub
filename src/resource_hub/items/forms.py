@@ -72,15 +72,6 @@ class ItemForm(forms.ModelForm):
         for field, val in fields.items():
             self.fields[field].widget.attrs.update(val)
 
-    def save(self, *args, **kwargs):
-        commit = kwargs.get('commit', True)
-        kwargs['commit'] = False
-        new_item = super(ItemForm, self).save(*args, **kwargs)
-        new_item.owner = self.actor
-        if commit:
-            new_item.save()
-        return new_item
-
 
 ItemPriceFormset = inlineformset_factory(
     Item,

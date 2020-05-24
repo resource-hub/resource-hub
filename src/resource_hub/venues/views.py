@@ -75,7 +75,7 @@ class VenuesEdit(View):
     def get(self, request, pk):
         venue = get_object_or_404(Venue, pk=pk)
         venue_form = VenueFormManager(
-            request.user, request.user, instance=venue)
+            request.user, request.actor, instance=venue)
         return render(request, self.template_name, venue_form.get_forms())
 
     def post(self, request, pk):
@@ -83,16 +83,16 @@ class VenuesEdit(View):
         venue_form = VenueFormManager(
             request.user,
             request.actor,
-            request.POST,
-            request.FILES,
+            data=request.POST,
+            files=request.FILES,
             instance=venue,
         )
-
         if venue_form.is_valid():
             venue_form.save()
             message = _('The venue has been updated')
             messages.add_message(request, messages.SUCCESS, message)
             return redirect(reverse('control:venues_edit', kwargs={'pk': pk}))
+        print('ho')
 
         return render(request, self.template_name, venue_form.get_forms())
 

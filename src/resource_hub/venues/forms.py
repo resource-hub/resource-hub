@@ -112,6 +112,8 @@ class VenueFormManager(FormManager):
             self.forms['equipment_formset'].instance = new_venue
             self.forms['equipment_formset'].save()
         new_venue.save()
+        print(new_venue)
+        print(new_venue.owner)
         return new_venue
 
 
