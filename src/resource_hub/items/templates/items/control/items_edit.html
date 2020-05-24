@@ -1,9 +1,17 @@
 {% extends 'control/__base.html' %}
 {% load i18n %}
 
-{% block content %}
+{% block admin_navigation %}
 {% url 'control:items_manage' as url %}
 {% include '_back_button.html' with url=url %}
+<a class="ui right floated left labeled icon button"
+    href="{% url 'items:details' owner_slug=item.owner.slug item_slug=item.slug %}">
+    <i class="world icon"></i>
+    {% trans 'Show on website' %}
+</a>
+{% endblock %}
+
+{% block content %}
 <h1>
     {% trans 'Edit item' %}
 </h1>

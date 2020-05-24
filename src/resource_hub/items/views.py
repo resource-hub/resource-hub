@@ -77,7 +77,9 @@ class ItemsEdit(View):
     def get(self, request, pk):
         item = get_object_or_404(Item, pk=pk)
         item_form = ItemFormManager(request.user, request.actor, instance=item)
-        return render(request, self.template_name, item_form.get_forms())
+        context = item_form.get_forms()
+        context['item'] = item
+        return render(request, self.template_name, context)
 
     def post(self, request, pk):
         item = get_object_or_404(Item, pk=pk)
@@ -95,7 +97,9 @@ class ItemsEdit(View):
             messages.add_message(request, messages.SUCCESS, message)
             return redirect(reverse('control:items_edit', kwargs={'pk': pk}))
 
-        return render(request, self.template_name, item_form.get_forms())
+        context = item_form.get_forms()
+        context['item'] = item
+        return render(request, self.template_name, context)
 
 
 class ItemsDetails(View):
