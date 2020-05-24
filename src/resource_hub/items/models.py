@@ -97,11 +97,9 @@ class ItemContract(Contract):
             return
         net_total = 0
         for booking in self.bookings.all():
-            start = booking.dtstart if booking.item.unit == Item.UNIT.HOURS else booking.dtstart.date()
-            end = booking.dtend if booking.item.unit == Item.UNIT.HOURS else booking.dtend.date()
-            timedelta = end - start
-            delta = (timedelta.total_seconds()) / \
-                3600 if booking.item.unit == Item.UNIT.HOURS else timedelta.days
+            timedelta = (booking.dtend - booking.dtstart).total_seconds()
+            delta = timedelta / \
+                3600 if booking.item.unit_hours else timedelta / 86400
             net = delta * float(booking.item.base_price.value)
             discounted_net = self.price_profile.apply(
                 net) if self.price_profile else net
@@ -119,8 +117,8 @@ class ItemContract(Contract):
                 discounted_net=discounted_net,
                 tax_rate=self.contract_procedure.tax_rate,
                 gross=gross,
-                period_start=start,
-                period_end=end,
+                period_start=booking.dtstart,
+                period_end=booking.dtend,
             )
 
             net_total += net
@@ -381,6 +379,14 @@ class Item(BaseStateMachine):
 
     class Meta:
         unique_together = ('owner', 'slug')
+
+    @property
+    def unit_hours(self):
+        return self.unit == Item.UNIT.HOURS
+
+    @property
+    def unit_days(self):
+        return self.unit == Item.UNIT.DAYS
 
     def save(self, *args, **kwargs):
         if not self.pk:

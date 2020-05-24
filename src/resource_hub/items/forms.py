@@ -9,8 +9,7 @@ from resource_hub.core.forms import (BaseForm, ContractProcedureForm,
                                      FormManager, GalleryImageFormSet,
                                      PriceForm, PriceProfileFormSet)
 from resource_hub.core.models import Gallery, Price, PriceProfile
-from resource_hub.core.utils import (get_authorized_actors, timespan_conflict,
-                                     to_date)
+from resource_hub.core.utils import get_authorized_actors, timespan_conflict
 
 from .models import (Item, ItemBooking, ItemContract, ItemContractProcedure,
                      ItemPrice)
@@ -235,19 +234,45 @@ class ItemBookingForm(forms.ModelForm):
         super(ItemBookingForm, self).__init__(*args, **kwargs)
         self.item = item
 
+    def _get_dtstart(self):
+        dtstart = self.cleaned_data.get('dtstart', None)
+        if dtstart:
+            return dtstart
+        raise forms.ValidationError(
+            _('Start date has to be set'), code='start-not-set')
+
+    def clean_dtstart(self):
+        dtstart = self._get_dtstart()
+        if dtstart:
+            if self.item.unit_days:
+                dtstart = dtstart.replace(
+                    hour=0, minute=0, second=0, microsecond=0)
+            return dtstart
+
+    def clean_dtend(self):
+        dtend = self.cleaned_data.get('dtend', None)
+        dtstart = self._get_dtstart()
+
+        if dtend:
+            if self.item.unit_days:
+                dtend = dtend.replace(
+                    hour=23, minute=59, second=59, microsecond=999999)
+            if dtstart > dtend:
+                raise forms.ValidationError(
+                    _('End date has to be after start date'), code='start-after-end')
+            return dtend
+        raise forms.ValidationError(
+            _('End date has to be set'), code='end-not-set')
+
     def clean(self):
         cleaned_data = super().clean()
         dtstart = cleaned_data.get('dtstart')
         dtend = cleaned_data.get('dtend')
         quantity = cleaned_data.get('quantity')
-        unit_days = self.item.unit == Item.UNIT.DAYS
 
         if dtstart and dtend and quantity:
-            if unit_days:
-                dtstart = to_date(dtstart)
-                dtend = to_date(dtend)
             duration = (dtend - dtstart).total_seconds()
-            duration = duration / 86400 if unit_days else duration / 3600
+            duration = duration / 86400 if self.item.unit_days else duration / 3600
             if self.item.maximum_duration > 0 and duration > self.item.maximum_duration:
                 raise forms.ValidationError(
                     _('Booking exeeds maximum duration'), code='maximum-duration-exceeded')
@@ -261,17 +286,13 @@ class ItemBookingForm(forms.ModelForm):
             conflicts = []
             for booking in bookings:
                 delta = self.item.quantity - booking.quantity - quantity
-                booking_start = to_date(
-                    booking.dtstart) if unit_days else booking.dtstart
-                booking_end = to_date(
-                    booking.dtend) if unit_days else booking.dtend
-                if timespan_conflict(booking_start, booking_end, dtstart, dtend) and delta < 0:
+                if timespan_conflict(booking.dtstart, booking.dtend, dtstart, dtend) and delta < 0:
                     client_tz = get_current_timezone()
-                    booking_start = booking_start.astimezone(client_tz)
-                    booking_end = booking_end.astimezone(client_tz)
+                    booking.dtstart = booking.dtstart.astimezone(client_tz)
+                    booking.dtend = booking.dtend.astimezone(client_tz)
                     conflicts.append(
                         _('There is a missing quantity of {} with booking on {} to {}'.format(
-                            delta, booking_start.strftime('%c'), booking_end.strftime('%c')))
+                            delta, booking.dtstart.strftime('%c'), booking.dtend.strftime('%c')))
                     )
             if conflicts:
                 raise forms.ValidationError(conflicts)
