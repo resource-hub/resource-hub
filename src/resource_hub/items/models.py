@@ -127,11 +127,18 @@ class ItemContract(Contract):
 
     def set_waiting(self, request):
         super(ItemContract, self).set_waiting(request)
-        query = Q(contract_procedure__self_pickup_group=self.debitor)
-        query.add(
-            Q(contract_procedure__self_pickup_group__organization__members=self.debitor), Q.OR)
-        if self.state == self.STATE.WAITING and self.items.filter(query).exists():
-            self.set_running(request)
+        # make sure contract hasn't already been auto accepted
+        if self.state == self.STATE.WAITING:
+            query = Q(self_pickup=Item.SELF_PICKUP.ALLOWED)
+            sub_query = Q(self_pickup=Item.SELF_PICKUP.LIMITED)
+            subsub_query = Q(
+                contract_procedure__self_pickup_group=self.debitor)
+            subsub_query.add(
+                Q(contract_procedure__self_pickup_group__organization__members=self.debitor), Q.OR)
+            sub_query.add(subsub_query, Q.AND)
+            query.add(sub_query, Q.OR)
+            if self.items.filter(query).exists():
+                self.set_running(request)
 
     def set_terminated(self, initiator):
         super(ItemContract, self).set_terminated(initiator)
