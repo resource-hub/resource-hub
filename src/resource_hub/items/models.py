@@ -90,7 +90,7 @@ class ItemContract(Contract):
 
     def purge(self):
         super(ItemContract, self).purge()
-        self.items.all().soft_delete()
+        self.bookings.all().soft_delete()
 
     def claim_factory(self, **kwargs):
         if self.is_self_dealing:
