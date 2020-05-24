@@ -608,7 +608,7 @@ tr.selectable {
     border-top-color: var(--bg-contrast) !important;
     border-bottom-color: var(--bg-contrast) !important;
   }
-  .back.button {
+  .back.button, .pagination>li>a {
     background-color: var(--orange) !important;
   }
   .navigation-bar, .ui.footer, .ui.dropdown {
