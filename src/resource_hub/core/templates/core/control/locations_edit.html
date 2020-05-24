@@ -1,7 +1,7 @@
 {% extends 'control/__base.html' %}
 {% load i18n %}
 
-{% block admin-navigation %}
+{% block admin_navigation %}
 {% url 'control:locations_manage' as url %}
 {% include '_back_button.html' with url=url %}
 {% endblock %}

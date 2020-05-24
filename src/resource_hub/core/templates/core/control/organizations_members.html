@@ -2,7 +2,7 @@
 {% load i18n %}
 {% load django_tables2 %}
 
-{% block admin-navigation %}
+{% block admin_navigation %}
 {% url 'control:organizations_profile' organization_id=organization.id as url %}
 {% include '_back_button.html' with url=url %}
 {% endblock %}

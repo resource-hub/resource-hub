@@ -10,16 +10,22 @@
 <div class="main container large">
     <div class="ui stackable two column grid">
         <div class="eight wide column">
+            <nav class="button-navigation">
+                <a class="ui labeled icon back button" href="{% url 'items:index' %}">
+                    <i class="left arrow icon"></i>
+                    {% trans 'Back' %}
+                </a>
+                <a class="ui right labeled right floated positive icon button"
+                    href="{% url 'items:book' item_slug=item.slug owner_slug=item.owner.slug %}">
+                    {% trans 'Lend' %}
+                    <i class="calendar alternate outline icon"></i>
+                </a>
+            </nav>
             <h1>{{ item.name }}</h1>
             {% include 'items/_item_info.html' %}
         </div>
         <div class="eight wide column">
             {% include 'items/_item_calendar.html' with item=item %}
-            <a class="ui right labeled positive icon button"
-                href="{% url 'items:book' item_slug=item.slug owner_slug=item.owner.slug %}">
-                {% trans 'book' %}
-                <i class="calendar alternate outline icon"></i>
-            </a>
         </div>
     </div>
 

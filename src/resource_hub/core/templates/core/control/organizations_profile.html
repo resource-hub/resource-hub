@@ -2,7 +2,7 @@
 {% load i18n %}
 {% load static %}
 
-{% block admin-navigation %}
+{% block admin_navigation %}
 {% url 'control:organizations_manage' as url%}
 {% include '_back_button.html' with url=url %}
 {% endblock %}

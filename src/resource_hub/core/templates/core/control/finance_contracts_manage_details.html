@@ -2,7 +2,7 @@
 {% load i18n %}
 {% load django_tables2 %}
 
-{% block admin-navigation %}
+{% block admin_navigation %}
 {% url 'control:finance_contracts_credited' as url %}
 {% include '_back_button.html' with url=url %}
 {% endblock %}
