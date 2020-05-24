@@ -3,6 +3,7 @@ import uuid
 from django.db import models
 from django.db.models import Q
 from django.shortcuts import reverse
+from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
@@ -57,13 +58,12 @@ class ItemContract(Contract):
 
     @property
     def overview(self):
-        return ''
-        # return render_to_string(
-        #     'venues/_contract_overview.html',
-        #     context={
-        #         'contract': self,
-        #     }
-        # )
+        return render_to_string(
+            'items/_contract_overview.html',
+            context={
+                'contract': self,
+            }
+        )
 
     def _send_running_notification(self, request):
         item_instructions = ''

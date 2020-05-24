@@ -1,0 +1,78 @@
+{% load i18n %}
+
+<div class="ui stackable two column grid">
+    <div class="column">
+        <div class="ui list">
+            <div class="item">
+                <div class="header">{% trans 'Category' %}</div>
+                {{ item.category.name }}
+            </div>
+            {% if item.manufacturer %}
+            <div class="item">
+                <div class="header">
+                    {% trans 'Manufacturer' %}
+                </div>
+                {{ item.manufacturer }}
+            </div>
+            {% endif %}
+            {% if item.model %}
+            <div class="item">
+                <div class="header">
+                    {% trans 'Model' %}
+                </div>
+                {{ item.model }}
+            </div>
+            {% endif %}
+            {% if item.serial_no %}
+            <div class="item">
+                <div class="header">
+                    {% trans 'Serial number' %}
+                </div>
+                {{ item.serial_no }}
+            </div>
+            {% endif %}
+            {% if item.serial_no %}
+            <div class="item">
+                <div class="header">
+                    {% trans 'Serial number' %}
+                </div>
+                {{ item.serial_no }}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="column">
+        <div class="ui list">
+            <div class="item">
+                <div class="header">
+                    {% trans 'Base price' %}
+                </div>
+                {{ item.base_price }}
+            </div>
+            <div class="item">
+                <div class="header">
+                    {% trans 'Self pickup' %}
+                </div>
+                {{ item.get_self_pickup_display }}
+            </div>
+            <div class="item">
+                <div class="header">
+                    {% trans 'Unit' %}
+                </div>
+                {{ item.get_unit_display }}
+            </div>
+            {% if item.maximum_duration > 0 %}
+            <div class="item">
+                <div class="header">
+                    {% trans 'Maximum lending duration' %}
+                </div>
+                {{ item.maximum_duration }}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <!-- <div class="header">{% trans 'Description' %}</div> -->
+    <div>
+        {{ item.description|safe }}
+    </div>
+</div>
