@@ -461,7 +461,7 @@ class ContractProcedureForm(forms.ModelForm):
 
     class Meta:
         model = ContractProcedure
-        fields = ['name', 'auto_accept', 'is_invoicing', 'terms_and_conditions', 'notes',
+        fields = ['name', 'auto_accept', 'is_invoicing', 'terms_and_conditions', 'termination_period', 'notes',
                   'triggers', 'tax_rate', 'payment_methods', 'settlement_interval', ]
 
 
