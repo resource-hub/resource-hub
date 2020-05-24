@@ -391,6 +391,8 @@ class Contract(BaseContract):
             request=request,
         )
 
+    # def _send_terminated_notification(self, request):
+
     def purge(self) -> None:
         self.claim_set.all().soft_delete()
 
