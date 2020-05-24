@@ -70,8 +70,10 @@ class ItemContract(Contract):
         item_attachments = []
         for item in self.items.all():
             item_instructions += item.instructions
-            item_attachments.append(item.attachment.path)
-        message = '{} \n {} \n'.format(
+            if item.attachment:
+                item_attachments.append(item.attachment.path)
+        message = '{} \n {} \n {} \n'.format(
+            self.note,
             self.contract_procedure.notes,
             item_instructions).replace("\n", "<br />\n")
         self._send_state_notification(

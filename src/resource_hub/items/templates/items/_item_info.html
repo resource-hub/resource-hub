@@ -5,7 +5,7 @@
         <div class="ui list">
             <div class="item">
                 <div class="header">{% trans 'Category' %}</div>
-                {{ item.category.name }}
+                {{ item.get_category_display }}
             </div>
             {% if item.manufacturer %}
             <div class="item">
