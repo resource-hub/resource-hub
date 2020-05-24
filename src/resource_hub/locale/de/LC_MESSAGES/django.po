@@ -2405,7 +2405,7 @@ msgstr "Veranstaltungsort erstellen"
 
 #: venues/templates/venues/control/venues_edit.html:8
 msgid "Edit venue"
-msgstr "Veranstaltung bearbeiten"
+msgstr "Veranstaltungsort bearbeiten"
 
 #: venues/templates/venues/venue_events_create.html:18
 msgid "Create event"
