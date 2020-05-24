@@ -13,7 +13,11 @@ class ItemsTable(SelectableTable):
             'pk': A('pk'),
         }
     )
-    owner = tables.Column(verbose_name=_('Owner'))
+    state = tables.Column(verbose_name=_('State'))
+    location = tables.Column(verbose_name=_('Location'))
+
+    def render_state(self, value, record):
+        return record.get_state_display()
 
     class Meta(SelectableTable.Meta):
         pass
