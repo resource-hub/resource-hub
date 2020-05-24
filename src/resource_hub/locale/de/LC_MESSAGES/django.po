@@ -861,7 +861,7 @@ msgstr "Finanzen"
 
 #: core/modules.py:79
 msgid "Contracts"
-msgstr "Vertrag"
+msgstr "Verträge"
 
 #: core/modules.py:83
 msgid "Credited"
@@ -873,7 +873,7 @@ msgstr "Geschuldet"
 
 #: core/modules.py:93
 msgid "Contract procedures"
-msgstr "Vertragsprozedur"
+msgstr "Vertragsprozeduren"
 
 #: core/modules.py:97 core/modules.py:111 core/modules.py:142
 #: core/modules.py:156 items/modules.py:31 venues/modules.py:31
