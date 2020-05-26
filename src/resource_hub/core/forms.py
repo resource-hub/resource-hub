@@ -41,6 +41,14 @@ class BaseForm(forms.ModelForm):
         for field, val in fields.items():
             self.fields[field].widget.attrs.update(val)
 
+    def _set_all_unrequired(self):
+        for field in self.fields:
+            self.fields[field].required = False
+
+    def _set_required(self, fields):
+        for field, value in fields.values():
+            self.fields[field].required = value
+
     # def save(self, commit=True):
     #     super(BaseForm, self).save(commit=False)
     #     if self.instance is None:
@@ -82,10 +90,6 @@ class FormManager():
         is_valid = True
         for form in self.forms.values():
             if not form.is_valid():
-                print(form)
-                print(form.errors)
-                print(form._errors)
-                print(form.is_bound)
                 is_valid = False
         return is_valid
 
@@ -191,6 +195,13 @@ class AddressForm(BaseForm):
             _('Invalid postal code'), code='invalid-postal-code')
 
 
+class AddressFormNonRequired(AddressForm):
+    def __init__(self, user, actor, data=None, files=None, instance=None, **kwargs):
+        super(AddressFormNonRequired, self).__init__(user, actor, data=data,
+                                                     files=files, instance=instance, **kwargs)
+        self._set_all_unrequired()
+
+
 class TableActionForm(forms.Form):
     ACTIONS = [
         ('trash', _('Put in trash')),
@@ -237,6 +248,12 @@ class PaymentMethodFilterForm(BaseFilterForm):
     )
 
 
+class BankAccountFormNonRequired(forms.ModelForm):
+    class Meta:
+        model = BankAccount
+        fields = ['account_holder', 'iban', 'bic', ]
+
+
 class BankAccountForm(forms.ModelForm):
     account_holder = forms.CharField(max_length=70, label=_('Account holder'))
     iban = forms.CharField(widget=IBANInput(), label=_('IBAN'))
@@ -272,16 +289,16 @@ class UserFormManager(FormManager):
         if data:
             self.forms = {
                 'user_form': UserBaseForm(data=data,  files=files),
-                'address_form': AddressForm(
+                'address_form': AddressFormNonRequired(
                     user, actor, data=data),
-                'bank_account_form': BankAccountForm(data),
+                'bank_account_form': BankAccountFormNonRequired(data),
 
             }
         else:
             self.forms = {
                 'user_form': UserBaseForm(),
-                'address_form': AddressForm(user, actor),
-                'bank_account_form': BankAccountForm(),
+                'address_form': AddressFormNonRequired(user, actor),
+                'bank_account_form': BankAccountFormNonRequired(),
             }
 
     def save(self):
