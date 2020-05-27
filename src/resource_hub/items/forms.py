@@ -79,7 +79,8 @@ ItemPriceFormset = inlineformset_factory(
     form=PriceForm,
     extra=0,
     min_num=1,
-    can_order=True,
+    max_num=1,
+    can_order=False,
 )
 
 

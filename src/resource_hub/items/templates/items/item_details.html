@@ -26,14 +26,12 @@
 
         </div>
         <div class="eight wide column">
-            <div class="ui horizontal section divider">{% trans 'Availability' %}</div>
-            {% include 'items/_item_calendar.html' with item=item %}
+            {% if item.location.is_public %}
+            {% include 'core/_location_info.html' with location=item.location %}
+            {% endif %}
         </div>
     </div>
     <div class="main container">
-        {% if not item.location.is_public %}
-        {% include 'core/_location_info.html' with location=item.location %}
-        {% endif %}
         <div class="section-container">
             {% if item.gallery.images.all %}
             <div class="ui horizontal section divider">{% trans 'Gallery' %}</div>

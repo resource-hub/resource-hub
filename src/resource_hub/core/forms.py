@@ -486,7 +486,7 @@ class PriceForm(forms.ModelForm):
 
     class Meta:
         model = Price
-        fields = ['addressee', 'value', 'currency', 'discounts', ]
+        fields = ['value', 'currency', 'discounts', ]
         help_text = {
             'discounts': _('Apply discounts from prices profiles?'),
         }

@@ -14,13 +14,15 @@
 <script src="{% static 'fullcalendar/daygrid/main.min.js' %}"></script>
 <script src="{% static 'fullcalendar/timegrid/main.min.js' %}"></script>
 <script src="{% static 'fullcalendar/list/main.min.js' %}"></script>
+<script src="{% static 'fullcalendar/interaction/main.min.js' %}"></script>
 {% if item %}
 <script>
+    var calendar = null;
     document.addEventListener('DOMContentLoaded', function () {
         var locale = '{{ LANG }}';
         var calendarEl = document.getElementById('calendar');
 
-        var calendar = new FullCalendar.Calendar(calendarEl, {
+        calendar = new FullCalendar.Calendar(calendarEl, {
             events: function (info, successCallback, failureCallback) {
                 $.get("{% url 'api:item_bookings' pk=item.pk %}", {
                     start: info.startStr,
@@ -31,8 +33,15 @@
                     )
                 })
             },
-            plugins: ['list', 'dayGrid'],
+            plugins: ['list', 'dayGrid', 'interaction'],
             locale: locale,
+            selectable: true,
+            unselectAuto: false,
+            unselectCancel: 'fc-button ',
+            select: function (selectionInfo) {
+                dtPickerStart.datetimepicker({ value: selectionInfo.start })
+                dtPickerEnd.datetimepicker({ value: selectionInfo.end })
+            },
             defaultView: 'dayGridMonth',
             contentHeight: 'auto',
             header: { left: 'title', center: '', right: 'dayGridMonth,listWeek prev,next' },

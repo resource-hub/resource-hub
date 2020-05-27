@@ -33,6 +33,7 @@
             </form>
         </div>
         <div class="seven wide column">
+            <div class="ui horizontal section divider">{% trans 'Availability' %}</div>
             {% include 'items/_item_calendar.html' with item=item %}
         </div>
     </div>
@@ -45,7 +46,7 @@
 <script src="{% static 'datetimepicker/build/jquery.datetimepicker.full.min.js' %}"></script>
 <script>
     function setEnd(currentDateTime) {
-        end.datetimepicker({
+        dtPickerEnd.datetimepicker({
             minDate: currentDateTime,
             defaultTime: currentDateTime,
             defaultDate: currentDateTime
@@ -54,54 +55,30 @@
     var format = "{% if item.unit == 'd' %}Y-m-d{% else %}Y-m-d H:i{% endif %}";
     var timepicker = format == 'Y-m-d' ? false : true;
     var locale = "{% get_current_language as LANG %}{{ LANG }}";
+    var selectedStart = null;
+    var selectedEnd = null;
     jQuery.datetimepicker.setLocale(locale);
-    var start = $('#id_dtstart').datetimepicker({
+    var dtPickerStart = $('#id_dtstart').datetimepicker({
         onChangeDateTime: setEnd,
         step: 30,
         format: format,
         mask: true,
         timepicker: timepicker,
+        onSelectDate: function (currentDateTime) {
+            selectedStart = currentDateTime;
+            calendar.select(selectedStart);
+        }
 
     });
-    var end = $('#id_dtend').datetimepicker({
+    var dtPickerEnd = $('#id_dtend').datetimepicker({
         step: 30,
         format: format,
         mask: true,
         timepicker: timepicker,
-    });
-</script>
-<script>
-    $(document).ready(function () {
-        const targetNode = document.getElementById('container');
-
-        const config = { attributes: false, childList: true, subtree: true };
-
-        const callback = function (mutationsList, observer) {
-            for (let mutation of mutationsList) {
-                if (mutation.type === 'childList') {
-                    for (let node of mutation.addedNodes) {
-                        $(node).find('input[name="limit"]').prop('checked', true);
-                        $(node).find('.until-count').removeClass('disabled');
-                        $(node).find('input[name="until_count"]').prop('disabled', false);
-                        $(node).find('.date-field').prop('disabled', false);
-
-                        var date_limit = $(node).find('input[class="date-field"]');
-                        var count_limmit = $(node).find('input[name="count"]');
-                        $(node).find('li[class="until"]').find('input[name="until_count"]').on('click', function () {
-                            date_limit.prop('required', true).removeClass('disabled');
-                            count_limmit.prop('required', false).addClass('disabled');
-                        });
-                        $(node).find('li[class="count"]').find('input[name="until_count"]').on('click', function () {
-                            date_limit.prop('required', false).addClass('disabled');
-                            count_limmit.prop('required', true).removeClass('disabled');
-                        });
-                    }
-                }
-            }
-        };
-
-        const observer = new MutationObserver(callback);
-        observer.observe(targetNode, config);
+        onSelectDate: function (currentDateTime) {
+            selectedEnd = currentDateTime;
+            calendar.select(selectedStart, selectedEnd);
+        }
     });
 </script>
 {% endblock %}
