@@ -49,9 +49,8 @@ class ItemForm(forms.ModelForm):
         if contract_procedures:
             self.initial['contract_procedure'] = contract_procedures[0]
 
-        # self._update_attrs({
-        #     'contract_procedure': {'class': 'booking-item required'},
-        # })
+        if self.fields['location'].queryset:
+            self.initial['location'] = self.fields['location'].queryset[0]
 
     state = forms.ChoiceField(
         choices=Item.STATES,
