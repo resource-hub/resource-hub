@@ -176,10 +176,12 @@
                                 </td>
                                 {% endfor %}
                         </table>
+                        {% if formset.max_num > 1 %}
                         <a class="ui right labeled icon button nested-data-formset-add">
                             {% trans 'Add another' %}
                             <i class="plus icon"></i>
                         </a>
+                        {% endif %}
                         <script type="form-template" class="nested-data-formset-empty-form">
                             {% escapescript %}
                                 <tr class="nested-data-formset-form">
@@ -208,11 +210,13 @@
 {% endescapescript %}
 </script>
 </table>
+{% if formset.max_num > 1 %}
 <!-- This button will add a new form when clicked -->
 <a class="ui right labeled icon button data-formset-add" id="">
     {% trans 'Add another' %}
     <i class="plus icon"></i>
 </a>
+{% endif %}
 </div>
 {% addtoblock 'js' %}
 <script src="{% static 'js/jquery.formset.js' %}"></script>

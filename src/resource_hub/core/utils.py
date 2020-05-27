@@ -24,8 +24,8 @@ def get_valid_slug(obj, string, condition=None):
         if condition:
             query.add(condition, Q.AND)
         return query
-
     slug = slugify(string)
+    print(create_query(slug, condition))
     invalid_slug = True
     klass = obj.__class__
     count = 0
@@ -38,6 +38,7 @@ def get_valid_slug(obj, string, condition=None):
                 slug = re.sub(r'-[^-]*$', '-{}'.format(str(count)), slug)
 
         except klass.DoesNotExist:
+            print(slug)
             invalid_slug = False
         count += 1
     return slug

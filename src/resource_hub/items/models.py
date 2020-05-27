@@ -402,7 +402,8 @@ class Item(BaseStateMachine):
 
     def save(self, *args, **kwargs):
         if not self.pk:
-            self.slug = get_valid_slug(Item(), self.name)
+            self.slug = get_valid_slug(
+                Item(), self.name, Q(owner=self.owner))
         super(Item, self).save(*args, **kwargs)
 
 
