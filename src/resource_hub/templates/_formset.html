@@ -84,7 +84,7 @@
                                 {% endfor %}
                         </table>
                         {{ formset.max_num }}
-                        {% if formset.max_num > 1 %}
+                        {% if formset.max_num != formset.total_form_count %}
                         <a class="ui right labeled icon button nested-data-formset-add">
                             {% trans 'Add another' %}
                             <i class="plus icon"></i>
@@ -176,7 +176,7 @@
                                 </td>
                                 {% endfor %}
                         </table>
-                        {% if formset.max_num > 1 %}
+                        {% if formset.max_num != formset.total_form_count %}
                         <a class="ui right labeled icon button nested-data-formset-add">
                             {% trans 'Add another' %}
                             <i class="plus icon"></i>
@@ -210,7 +210,7 @@
 {% endescapescript %}
 </script>
 </table>
-{% if formset.max_num > 1 %}
+{% if formset.max_num != formset.total_form_count %}
 <!-- This button will add a new form when clicked -->
 <a class="ui right labeled icon button data-formset-add" id="">
     {% trans 'Add another' %}
