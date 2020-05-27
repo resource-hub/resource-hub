@@ -353,20 +353,16 @@ class Item(BaseStateMachine):
         blank=True,
         verbose_name=_('Purchase date'),
     )
-    purchase_price = models.ForeignKey(
-        Price,
-        on_delete=models.PROTECT,
+    purchase_price = models.CharField(
+        max_length=255,
         null=True,
         blank=True,
-        related_name='item_purchase_price',
         verbose_name=_('Purchase price'),
     )
-    replacement_price = models.ForeignKey(
-        Price,
-        on_delete=models.PROTECT,
+    replacement_price = models.CharField(
+        max_length=255,
         null=True,
         blank=True,
-        related_name='item_replacement_price',
         verbose_name=_('Replacement price'),
     )
     donation = models.BooleanField(
