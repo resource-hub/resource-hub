@@ -5,8 +5,40 @@ from django.test import Client, TestCase
 from django.utils import timezone
 
 from resource_hub.core.models import (Address, BankAccount, Claim, Contract,
-                                      ContractProcedure, Invoice, Notification,
-                                      Organization, PaymentMethod, User)
+                                      ContractProcedure, Invoice, Location,
+                                      Notification, Organization,
+                                      PaymentMethod, User)
+
+
+class TestLocations(TestCase):
+    def setUp(self):
+        self.actor1, self.actor2 = create_users()
+        self.address = Address.objects.create(
+            street='test',
+            street_number=12,
+            postal_code='12345',
+            city='test',
+            country='de',
+        )
+        Location.objects.create(
+            name='Egons-villa',
+            address=self.address,
+            owner=self.actor1,
+            is_deleted=True,
+        )
+        Location.objects.create(
+            name='Egons-Villa',
+            address=self.address,
+            owner=self.actor1,
+            is_deleted=True,
+        )
+
+    def test_slug(self):
+        Location.objects.create(
+            name='egons-villa',
+            address=self.address,
+            owner=self.actor1,
+        )
 
 
 def create_users():

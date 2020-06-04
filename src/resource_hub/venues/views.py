@@ -92,7 +92,6 @@ class VenuesEdit(View):
             message = _('The venue has been updated')
             messages.add_message(request, messages.SUCCESS, message)
             return redirect(reverse('control:venues_edit', kwargs={'pk': pk}))
-        print('ho')
 
         return render(request, self.template_name, venue_form.get_forms())
 
