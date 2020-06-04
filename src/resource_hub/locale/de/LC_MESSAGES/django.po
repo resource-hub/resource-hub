@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-24 23:23+0200\n"
+"POT-Creation-Date: 2020-06-04 14:29+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -32,145 +32,145 @@ msgstr "Mail erneut versenden"
 msgid "Currency"
 msgstr "Währung"
 
-#: core/forms.py:106 core/tables.py:86
+#: core/forms.py:110 core/tables.py:86
 msgid "First name"
 msgstr "Vorname"
 
-#: core/forms.py:107 core/tables.py:88
+#: core/forms.py:111 core/tables.py:88
 msgid "Last name"
 msgstr "Nachname"
 
-#: core/forms.py:131
+#: core/forms.py:135
 msgid "Are you older than the oldest person ever alive?"
 msgstr "Bist du älter als der älteste Mensch, der jemals gelebt hat?"
 
-#: core/forms.py:136
+#: core/forms.py:140
 msgid "You have to be older than 16 to sign up"
 msgstr "Du musst älter als 16 Jahre alt sein, um dich anmelden zu können"
 
-#: core/forms.py:142
+#: core/forms.py:146
 msgid "Organization name"
 msgstr "Organisationsname"
 
-#: core/forms.py:142
+#: core/forms.py:146
 msgid "Please include your legal form"
 msgstr "Bitte die Rechtsform angeben"
 
-#: core/forms.py:144
+#: core/forms.py:148
 msgid "This is the mail will be displayed on bills and on the profile"
 msgstr "Diese Email wird auf Rechnungen und dem Profil angezeigt"
 
-#: core/forms.py:155
+#: core/forms.py:159
 msgid "This organization name already exists"
 msgstr "Dieser Organisationsname existiert bereits"
 
-#: core/forms.py:160
+#: core/forms.py:164
 msgid "For organizations, a public email is required"
 msgstr "Bei Organisationen ist eine öffentliche Email notwendig"
 
-#: core/forms.py:191
+#: core/forms.py:195
 msgid "Invalid postal code"
 msgstr "Ungültige Postleitzahl"
 
-#: core/forms.py:196
+#: core/forms.py:207
 msgid "Put in trash"
 msgstr "In den Papierkorb"
 
-#: core/forms.py:197
+#: core/forms.py:208
 msgid "Restore from trash"
 msgstr "Aus dem Papierkorb wiederherstellen"
 
-#: core/forms.py:213
+#: core/forms.py:224
 msgid "In trash"
 msgstr "Im Papierkorb"
 
-#: core/forms.py:222
+#: core/forms.py:233
 msgid "There have to be at most {} entries per page"
 msgstr "Es dürfen maximal {} Einträge pro Seite existieren"
 
-#: core/forms.py:225
+#: core/forms.py:236
 msgid "There has to be at least {} entry per page"
 msgstr "Es müssen mindestens {} Einträge pro Seite existieren"
 
-#: core/forms.py:241 core/models/base.py:148
+#: core/forms.py:258 core/models/base.py:148
 msgid "Account holder"
 msgstr "Kontoinhaber"
 
-#: core/forms.py:242 core/models/base.py:154
+#: core/forms.py:259 core/models/base.py:154
 msgid "IBAN"
 msgstr "IBAN"
 
-#: core/forms.py:243 core/models/base.py:160
+#: core/forms.py:260 core/models/base.py:160
 msgid "BIC"
 msgstr "BIC"
 
-#: core/forms.py:256
+#: core/forms.py:273
 msgid "Invalid IBAN: "
 msgstr "Ungültige IBAN: "
 
-#: core/forms.py:266
+#: core/forms.py:283
 msgid "Invalid BIC: "
 msgstr "Ungültige BIC: "
 
-#: core/forms.py:372
+#: core/forms.py:389
 msgid "New email-address"
 msgstr "Neue E-Mailadresse"
 
-#: core/forms.py:375
+#: core/forms.py:392
 msgid "New email-address confirmation"
 msgstr "Bestätigung neuer E-Mailadresse"
 
-#: core/forms.py:378 core/templates/core/control/account_security.html:11
+#: core/forms.py:395 core/templates/core/control/account_security.html:11
 msgid "Password"
 msgstr "Passwort"
 
-#: core/forms.py:389
+#: core/forms.py:406
 msgid "The email-addresses do not match"
 msgstr "Die E-Mailadressen stimmen nicht überein"
 
-#: core/forms.py:395
+#: core/forms.py:412
 msgid "The new email is identical to the old one"
 msgstr "Die neue E-Mailadresse ist identisch zu der Neuen"
 
-#: core/forms.py:409
+#: core/forms.py:426
 msgid "The password is incorrect"
 msgstr "Das Passwort ist inkorrekt"
 
-#: core/forms.py:474
+#: core/forms.py:491
 msgid "Apply discounts from prices profiles?"
 msgstr "Rabatte der Preisprofile anwenden?"
 
-#: core/forms.py:483
+#: core/forms.py:500
 msgid "When left empty, the discount is visible for everyone"
 msgstr "Wenn leer, ist der Rabatt für alle sichtbar"
 
-#: core/forms.py:552
+#: core/forms.py:569
 msgid "The user does not exist."
 msgstr "Der Nutzer existiert nicht"
 
-#: core/forms.py:558
+#: core/forms.py:575
 msgid "User is already a member"
 msgstr "Der Nutzer ist bereits ein Mitglied"
 
-#: core/forms.py:584
+#: core/forms.py:601
 msgid "Actor does not exist"
 msgstr "Der Akteur existiert nicht"
 
-#: core/forms.py:592
+#: core/forms.py:609
 msgid "Actor not associated with user"
 msgstr "Der Akteur ist nicht mit dem User assoziiert"
 
-#: core/forms.py:603
+#: core/forms.py:620
 msgid ""
 "You can use this search field for the address to autofill the location data!"
 msgstr ""
 "Du kannst dieses Feld verwenden, um die Adresse automatisch auszufüllen!"
 
-#: core/forms.py:641
+#: core/forms.py:658
 msgid "In what part of the software is the issue or your request?"
 msgstr "Auf welchen Teil der Software bezieht sich das Anliegen?"
 
-#: core/forms.py:646
+#: core/forms.py:663
 msgid ""
 "Short description of the problem or the feature you want to see implemented"
 msgstr "Kurze Beschreibung des Problems oder des Features"
@@ -187,7 +187,7 @@ msgstr "Das request Objekt muss gesetzt sein"
 msgid "The passed request object is not an instance of HttpRequest"
 msgstr "Das übergebene objekt ist keine Instanz von HttpRequest"
 
-#: core/models/actors.py:18 core/models/base.py:205
+#: core/models/actors.py:18 core/models/base.py:205 core/models/contracts.py:30
 #: core/models/contracts.py:624 core/tables.py:63 core/tables.py:112
 #: core/templates/core/control/finance_contracts_manage_details.html:61
 #: items/models.py:237 items/tables.py:11 venues/models.py:48
@@ -209,7 +209,7 @@ msgstr "Adresse"
 
 #: core/models/actors.py:36
 #: core/templates/core/control/account_settings.html:11
-#: core/templates/core/register.html:15
+#: core/templates/core/register.html:23
 msgid "Bank account"
 msgstr "Bankkonto"
 
@@ -370,8 +370,7 @@ msgstr "Breitengrad"
 msgid "Longitude"
 msgstr "Längengrad"
 
-#: core/models/base.py:229 core/models/base.py:292 core/models/contracts.py:30
-#: core/models/contracts.py:35
+#: core/models/base.py:229 core/models/base.py:292
 msgid "Image"
 msgstr "Bild"
 
@@ -394,13 +393,13 @@ msgstr ""
 
 #: core/models/base.py:256 core/models/contracts.py:87
 #: core/models/contracts.py:635 core/tables.py:55 core/tables.py:157
-#: items/models.py:389 venues/models.py:103 venues/tables.py:16
+#: items/models.py:385 venues/models.py:103 venues/tables.py:16
 msgid "Owner"
 msgstr "Besitzer"
 
 #: core/models/base.py:283 items/models.py:349
 #: items/templates/items/control/_item_form.html:7
-#: items/templates/items/item_details.html:39 venues/models.py:87
+#: items/templates/items/item_details.html:37 venues/models.py:87
 #: venues/templates/venues/control/_venue_form.html:15
 #: venues/templates/venues/venue_details.html:42
 msgid "Gallery"
@@ -425,6 +424,10 @@ msgstr "monatlich"
 #: core/models/contracts.py:31
 msgid "Give the procedure a name so you can identify it easier"
 msgstr "Gib der Prozedur einen Namen, damit man sie besser identifizieren kann"
+
+#: core/models/contracts.py:35
+msgid "Auto accept"
+msgstr "Automatisch annehmen"
 
 #: core/models/contracts.py:36
 msgid "Automatically accept the booking?"
@@ -584,7 +587,7 @@ msgid "Timestamp"
 msgstr "Timestamp"
 
 #: core/models/contracts.py:310 core/models/contracts.py:540
-#: core/models/contracts.py:566 items/models.py:422 items/tables.py:28
+#: core/models/contracts.py:566 items/models.py:419 items/tables.py:28
 msgid "Contract"
 msgstr "Vertrag"
 
@@ -613,12 +616,12 @@ msgid "closed"
 msgstr "abgeschlossen"
 
 #: core/models/contracts.py:570 core/tables.py:130 items/models.py:46
-#: items/models.py:414 items/models.py:428 items/tables.py:29
+#: items/models.py:411 items/models.py:425 items/tables.py:29
 msgid "Item"
 msgstr "Gegenstand"
 
 #: core/models/contracts.py:575 core/tables.py:133 items/models.py:276
-#: items/models.py:440 venues/models.py:297
+#: items/models.py:437 venues/models.py:297
 msgid "Quantity"
 msgstr "Menge"
 
@@ -1290,7 +1293,7 @@ msgid "Terminate"
 msgstr "Kündigen"
 
 #: core/templates/core/control/finance_contracts_manage_details.html:125
-#: core/templates/core/register.html:27
+#: core/templates/core/register.html:38
 msgid "I fully understand and agree to the given terms and conditions."
 msgstr "Ich verstehe die allgemeinen Vertragsbedingungen und stimme zu."
 
@@ -1454,11 +1457,11 @@ msgstr "Dieser Link bietet mehr Informationen"
 
 #: core/templates/core/mail_verification.html:9
 msgid ""
-"Thank you for signing up. Before you can get startetd you need to verify "
-"your email. Just click the link below."
+"Thank you for signing up. Before you can get started you need to verify your "
+"email. Just click the link below."
 msgstr ""
 "Danke für deine Registration. Bevor du loslegen kannst, musst du deine E-"
-"Mail verifizieren. Clicke einfach auf den Link unten:"
+"Mail verifizieren. Clicke einfach auf folgenden Link:"
 
 #: core/templates/core/mail_verification.html:13
 msgid "activate account"
@@ -1503,22 +1506,34 @@ msgstr ""
 " "
 
 #: core/templates/core/register.html:12
+msgid "Optional information"
+msgstr "Optionale informationen"
+
+#: core/templates/core/register.html:13
+msgid "This information may become required later"
+msgstr "Diese Informationen sind später ggf. notwendig"
+
+#: core/templates/core/register.html:17 templates/_gallery.html:17
+msgid "Show"
+msgstr "Zeigen"
+
+#: core/templates/core/register.html:20
 msgid "Billing address"
 msgstr "Rechnungsadresse"
 
-#: core/templates/core/register.html:20
+#: core/templates/core/register.html:31
 msgid "Show the terms and conditions"
 msgstr "Allgemeine Geschäftsbedingungen anzeigen."
 
-#: core/templates/core/register.html:34
+#: core/templates/core/register.html:45
 msgid "Show the data privacy statement"
 msgstr "Datenschutzerklärung zeigen"
 
-#: core/templates/core/register.html:41
+#: core/templates/core/register.html:52
 msgid "I fully understand and agree to the given data privacy statement"
 msgstr "Ich stimme der Datenschutzerklärung voll zu."
 
-#: core/templates/core/register.html:47
+#: core/templates/core/register.html:58
 msgid "Sign up"
 msgstr "Registrieren"
 
@@ -1680,20 +1695,22 @@ msgstr "Anfangs- oder Endparameter nicht gesetzt"
 msgid "start or end parameter not valid iso_8601 string"
 msgstr "Start- oder Endparameter kein gültiger iso_8601 string"
 
-#: items/forms.py:68 venues/forms.py:42
+#: items/forms.py:67 venues/forms.py:42
 msgid "Do you want to use the platform's booking logic?"
 msgstr "Willst du die Buchungslogik der Plattform verwenden?"
 
 #: items/forms.py:206
 #, python-brace-format
 msgid "Hey, I'd like to lend your {item}. I would like to pick it up at: TIME"
-msgstr "Hey, ich würde gerne dein/e {item} ausleihen. Ich würde es um ZEIT abholen wollen."
+msgstr ""
+"Hey, ich würde gerne dein/e {item} ausleihen. Ich würde es um ZEIT abholen "
+"wollen."
 
-#: items/forms.py:213 venues/forms.py:347
+#: items/forms.py:213 venues/forms.py:345
 msgid "to create bookings you need to set your billing address"
 msgstr "Um Buchungen zu erstellen muss deine Rechnungsadresse gesetzt sein"
 
-#: items/forms.py:219 venues/forms.py:353
+#: items/forms.py:219 venues/forms.py:351
 msgid ""
 "Available discounts granted to certain groups and entities. The discounts "
 "will be applied to the base prices below."
@@ -1723,7 +1740,9 @@ msgstr "Es fehlt eine Menge von {} wegen einer Buchung vom {} zum {}"
 
 #: items/models.py:24
 msgid "The group granted self pickup if item's self pickup is limited"
-msgstr "Gruppe der Selbstabholung gewährt wird, wenn der Gegenstand limitierte Selbstabholung hat"
+msgstr ""
+"Gruppe der Selbstabholung gewährt wird, wenn der Gegenstand limitierte "
+"Selbstabholung hat"
 
 #: items/models.py:25
 msgid "Self pickup group"
@@ -1874,31 +1893,31 @@ msgstr "Diese Datei wird der Bestätigungsmail angehängt"
 msgid "Purchase date"
 msgstr "Kaufdatum"
 
-#: items/models.py:362
+#: items/models.py:360
 msgid "Purchase price"
 msgstr "Kaufpreis"
 
-#: items/models.py:370
+#: items/models.py:366
 msgid "Replacement price"
 msgstr "Erstattungskosten"
 
-#: items/models.py:376
+#: items/models.py:372
 msgid "Donation"
 msgstr "Spende"
 
-#: items/models.py:382
+#: items/models.py:378
 msgid "Original owner"
 msgstr "Ursprünglicher Besitzer"
 
-#: items/models.py:383
+#: items/models.py:379
 msgid "Which entity bought or donated the item?"
 msgstr "Welche Entität hat den Gegenstand gekauft oder gespendet?"
 
-#: items/models.py:431 items/tables.py:32 venues/models.py:187
+#: items/models.py:428 items/tables.py:32 venues/models.py:187
 msgid "Start"
 msgstr "Start"
 
-#: items/models.py:435 items/tables.py:33 venues/models.py:191
+#: items/models.py:432 items/tables.py:33 venues/models.py:191
 msgid "End"
 msgstr "Ende"
 
@@ -1930,12 +1949,12 @@ msgstr "Veranstaltungsdetails"
 msgid "Item thumbnail"
 msgstr "Thumbnail"
 
-#: items/templates/items/_item_calendar.html:40
+#: items/templates/items/_item_calendar.html:49
 #: venues/templates/venues/_venue_calendar.html:30
 msgid "month"
 msgstr "Monat"
 
-#: items/templates/items/_item_calendar.html:41
+#: items/templates/items/_item_calendar.html:50
 #: venues/templates/venues/_venue_calendar.html:31
 msgid "week"
 msgstr "Woche"
@@ -2016,6 +2035,10 @@ msgstr "Gegenstand leihen"
 msgid "Check booking"
 msgstr "Leihe prüfen"
 
+#: items/templates/items/item_bookings_create.html:36
+msgid "Availability"
+msgstr "Verfügbarkeit"
+
 #: items/templates/items/item_details.html:16 templates/_back_button.html:4
 msgid "Back"
 msgstr ""
@@ -2024,31 +2047,23 @@ msgstr ""
 msgid "Lend"
 msgstr "Leihen"
 
-#: items/templates/items/item_details.html:29
-msgid "Availability"
-msgstr "Verfügbarkeit"
-
 #: items/views.py:32
 msgid "Manage items"
 msgstr "Gegenstände verwalten"
 
 #: items/views.py:49
-#, fuzzy
-#| msgid "Create item booking"
 msgid "Credited item bookings"
-msgstr "Gegenstand leihen"
+msgstr "Geleistete Leihen"
 
 #: items/views.py:67
-#, fuzzy
-#| msgid "Create item booking"
 msgid "Debited item bookings"
-msgstr "Gegenstand leihen"
+msgstr "Geschuldete Leihen"
 
 #: items/views.py:133
 msgid "The item has been updated"
 msgstr "Der Gegenstand wurde geupdated"
 
-#: items/views.py:170 venues/views.py:130
+#: items/views.py:170 venues/views.py:129
 msgid ""
 "The event has been created successfully. You can review it and either "
 "confirm or cancel."
@@ -2056,11 +2071,11 @@ msgstr ""
 "Die Veranstaltung wurde erfolgreich erstellt. Du kannst sie prüfen und dann "
 "entweder bestätigen oder ablehnen."
 
-#: items/views.py:192 venues/views.py:156
+#: items/views.py:192 venues/views.py:155
 msgid "The event contract procedure has been saved successfully"
 msgstr "Die Vertragsprozedur wurde erfolgreich gespeichert"
 
-#: items/views.py:221 venues/views.py:185
+#: items/views.py:221 venues/views.py:184
 msgid "The changes have been saved"
 msgstr "Die Änderungen wurden gespeichert"
 
@@ -2303,14 +2318,10 @@ msgstr "In Zusammenarbeit mit &lt;3"
 msgid "Form contains errors!"
 msgstr "Das Formular enthält Fehler!"
 
-#: templates/_formset.html:87 templates/_formset.html:177
-#: templates/_formset.html:210
+#: templates/_formset.html:89 templates/_formset.html:181
+#: templates/_formset.html:216
 msgid "Add another"
 msgstr "Weiteren hinzufügen"
-
-#: templates/_gallery.html:17
-msgid "Show"
-msgstr "Zeigen"
 
 #: templates/_gallery.html:21
 msgid "Gallery image thumbnail"
@@ -2364,45 +2375,45 @@ msgstr "nach oben gehen"
 msgid "No venue corresponds to the given id"
 msgstr "Kein Veranstaltungsort korrespondiert mit der gegebenen ID"
 
-#: venues/forms.py:166
+#: venues/forms.py:164
 msgid "Start of the event"
 msgstr "Anfang der Veranstaltung"
 
-#: venues/forms.py:169
+#: venues/forms.py:167
 msgid "End of the event"
 msgstr "Ende der Veranstaltung"
 
-#: venues/forms.py:188
+#: venues/forms.py:186
 msgid "Recurs on"
 msgstr "Wiederholt sich am"
 
-#: venues/forms.py:189
+#: venues/forms.py:187
 msgid "Event name"
 msgstr "Veranstaltungsname"
 
-#: venues/forms.py:192
+#: venues/forms.py:190
 msgid "If available you can book several venues at once"
 msgstr "Wenn möglich, kannst du mehrere Veranstaltungen gleichzeitig buchen"
 
-#: venues/forms.py:193
+#: venues/forms.py:191
 msgid "List the event in public feeds and show its content to third parties?"
 msgstr ""
 "Die Veranstaltung in öffentlichen Feeds anzeigen und den Inahlt Dritten "
 "anzeigen?"
 
-#: venues/forms.py:205
+#: venues/forms.py:203
 msgid "Start of event is after end of event"
 msgstr "Anfang ist nach dem Ende der Veranstaltung"
 
-#: venues/forms.py:209
+#: venues/forms.py:207
 msgid "Start of event is equal to end"
 msgstr "Anfang ist gleich dem Ende"
 
-#: venues/forms.py:252
+#: venues/forms.py:250
 msgid "There is a conflict with {}@{} at {} to {}"
 msgstr "Es gibt einen Konflikt mit {}@{} am {} bis {}"
 
-#: venues/forms.py:268
+#: venues/forms.py:266
 msgid "The recurrence has to be limited"
 msgstr "Die Wiederholung muss zeitlich begrenzt sein"
 

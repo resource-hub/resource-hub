@@ -27,12 +27,12 @@ class ContractProcedure(BaseModel):
 
     name = models.CharField(
         max_length=64,
-        verbose_name=_('Image'),
+        verbose_name=_('Name'),
         help_text=_('Give the procedure a name so you can identify it easier'),
     )
     auto_accept = models.BooleanField(
         default=False,
-        verbose_name=_('Image'),
+        verbose_name=_('Auto accept'),
         help_text=_('Automatically accept the booking?'),
     )
     is_invoicing = models.BooleanField(
