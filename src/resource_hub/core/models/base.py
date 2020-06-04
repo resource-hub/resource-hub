@@ -198,7 +198,6 @@ class Location(BaseModel):
         verbose_name=_('Address'),
     )
     name = models.CharField(
-        unique=True,
         max_length=128,
         null=True,
         blank=True,
