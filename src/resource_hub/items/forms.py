@@ -60,7 +60,7 @@ class ItemForm(forms.ModelForm):
 
     class Meta:
         model = Item
-        fields = ['custom_id', 'state', 'name', 'quantity', 'description', 'thumbnail_original', 'contract_procedure',  'location', 'location_code', 'unit', 'maximum_duration', 'self_pickup', 'category', 'owner',
+        fields = ['custom_id', 'state', 'name', 'quantity', 'description', 'thumbnail_original', 'contract_procedure', 'location', 'location_code', 'unit', 'maximum_duration', 'self_pickup', 'category', 'owner',
                   'manufacturer', 'model', 'serial_no', 'instructions', 'attachment', 'damages',
                   'donation', 'original_owner', 'purchase_price', 'replacement_price', ]
         help_texts = {

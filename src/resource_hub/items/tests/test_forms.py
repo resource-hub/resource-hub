@@ -48,6 +48,7 @@ class TestItemForm(LoginTestMixin, TestCase):
         return {
             'state': Item.STATE.AVAILABLE,
             'name': 'item',
+            'quantity': 1,
             'description': 'test',
             'contract_procedure': self.contract_procedure,
             'unit': Item.UNIT.DAYS,
