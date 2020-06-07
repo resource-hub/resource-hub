@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-04 14:29+0200\n"
+"POT-Creation-Date: 2020-06-07 08:47+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -187,7 +187,7 @@ msgstr "Das request Objekt muss gesetzt sein"
 msgid "The passed request object is not an instance of HttpRequest"
 msgstr "Das übergebene objekt ist keine Instanz von HttpRequest"
 
-#: core/models/actors.py:18 core/models/base.py:205 core/models/contracts.py:30
+#: core/models/actors.py:18 core/models/base.py:204 core/models/contracts.py:30
 #: core/models/contracts.py:624 core/tables.py:63 core/tables.py:112
 #: core/templates/core/control/finance_contracts_manage_details.html:61
 #: items/models.py:237 items/tables.py:11 venues/models.py:48
@@ -233,8 +233,6 @@ msgid "Email (public)"
 msgstr "E-Mail (öffentlich)"
 
 #: core/models/actors.py:91
-#, fuzzy
-#| msgid "website"
 msgid "Website"
 msgstr "Website"
 
@@ -355,49 +353,49 @@ msgstr "Stadt"
 msgid "Country"
 msgstr "Land"
 
-#: core/models/base.py:210 core/models/finance.py:110 items/models.py:242
-#: items/templates/items/_item_info.html:74
-#: items/templates/items/_item_info.html:77 venues/models.py:51
+#: core/models/base.py:209 core/models/finance.py:110 items/models.py:242
+#: items/templates/items/_item_info.html:78
+#: items/templates/items/_item_info.html:81 venues/models.py:51
 #: venues/models.py:184 venues/templates/venues/_contract_overview.html:23
 msgid "Description"
 msgstr "Beschreibung"
 
-#: core/models/base.py:216
+#: core/models/base.py:215
 msgid "Latitude"
 msgstr "Breitengrad"
 
-#: core/models/base.py:222
+#: core/models/base.py:221
 msgid "Longitude"
 msgstr "Längengrad"
 
-#: core/models/base.py:229 core/models/base.py:292
+#: core/models/base.py:228 core/models/base.py:291
 msgid "Image"
 msgstr "Bild"
 
-#: core/models/base.py:243 venues/models.py:220
+#: core/models/base.py:242 venues/models.py:220
 msgid "Public?"
 msgstr "Öffentlich?"
 
-#: core/models/base.py:245
+#: core/models/base.py:244
 msgid "Display the location in feeds and display full information"
 msgstr "Den Standort in Feeds anzeigen und allen Informationen anzeigen"
 
-#: core/models/base.py:249
+#: core/models/base.py:248
 msgid "Editable?"
 msgstr "Bearbeitbar?"
 
-#: core/models/base.py:251
+#: core/models/base.py:250
 msgid "Allow other users to link information to this location"
 msgstr ""
 "Anderen Nutzern erlauben Informationen mit diesem Standort zu verknüpfen"
 
-#: core/models/base.py:256 core/models/contracts.py:87
+#: core/models/base.py:255 core/models/contracts.py:87
 #: core/models/contracts.py:635 core/tables.py:55 core/tables.py:157
 #: items/models.py:385 venues/models.py:103 venues/tables.py:16
 msgid "Owner"
 msgstr "Besitzer"
 
-#: core/models/base.py:283 items/models.py:349
+#: core/models/base.py:282 items/models.py:349
 #: items/templates/items/control/_item_form.html:7
 #: items/templates/items/item_details.html:37 venues/models.py:87
 #: venues/templates/venues/control/_venue_form.html:15
@@ -405,7 +403,7 @@ msgstr "Besitzer"
 msgid "Gallery"
 msgstr "Gallerie"
 
-#: core/models/base.py:287
+#: core/models/base.py:286
 msgid "Caption"
 msgstr "Bildunterschrift"
 
@@ -626,7 +624,7 @@ msgid "Quantity"
 msgstr "Menge"
 
 #: core/models/contracts.py:579 core/tables.py:134 items/models.py:282
-#: items/templates/items/_item_info.html:60
+#: items/templates/items/_item_info.html:64
 msgid "Unit"
 msgstr "Einheit"
 
@@ -1830,16 +1828,16 @@ msgstr "Individuelle ID"
 msgid "ID field for bardcodes etc."
 msgstr "ID Feld für Barcodes etc."
 
-#: items/models.py:248 items/templates/items/_item_info.html:13
+#: items/models.py:248 items/templates/items/_item_info.html:17
 msgid "Manufacturer"
 msgstr "Hersteller"
 
-#: items/models.py:254 items/templates/items/_item_info.html:21
+#: items/models.py:254 items/templates/items/_item_info.html:25
 msgid "Model"
 msgstr "Modell"
 
-#: items/models.py:260 items/templates/items/_item_info.html:29
-#: items/templates/items/_item_info.html:37
+#: items/models.py:260 items/templates/items/_item_info.html:33
+#: items/templates/items/_item_info.html:41
 msgid "Serial number"
 msgstr "Seriennummer"
 
@@ -1847,7 +1845,7 @@ msgstr "Seriennummer"
 msgid "Location code"
 msgstr "Standorthinweis"
 
-#: items/models.py:289 items/templates/items/_item_info.html:48
+#: items/models.py:289 items/templates/items/_item_info.html:52
 #: venues/templates/venues/venue_details.html:25
 msgid "Base price"
 msgstr "Basispreis"
@@ -1860,7 +1858,7 @@ msgstr "Maximale Leihdauer"
 msgid "Maximimum duration the item can be lent. Value of 0 means unlimited."
 msgstr "Maximale Leihdauer. Ein Wert von 0 bedeutet unbegrenzt"
 
-#: items/models.py:307 items/templates/items/_item_info.html:54
+#: items/models.py:307 items/templates/items/_item_info.html:58
 msgid "Self pickup"
 msgstr "Selbstabholung"
 
@@ -1938,14 +1936,10 @@ msgid "Quantity: {}"
 msgstr "Menge: {}"
 
 #: items/templates/items/_contract_overview.html:4
-#, fuzzy
-#| msgid "Event details"
 msgid "Item details"
-msgstr "Veranstaltungsdetails"
+msgstr "Gegenstandsdetails"
 
 #: items/templates/items/_contract_overview.html:11
-#, fuzzy
-#| msgid "thumbnail"
 msgid "Item thumbnail"
 msgstr "Thumbnail"
 
@@ -1959,7 +1953,11 @@ msgstr "Monat"
 msgid "week"
 msgstr "Woche"
 
-#: items/templates/items/_item_info.html:67
+#: items/templates/items/_item_info.html:11
+msgid "Available quantity"
+msgstr "Verfügbare Anzahl"
+
+#: items/templates/items/_item_info.html:71
 msgid "Maximum lending duration"
 msgstr "Maximale Leihdauer"
 

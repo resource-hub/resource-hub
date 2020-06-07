@@ -7,6 +7,10 @@
                 <div class="header">{% trans 'Category' %}</div>
                 {{ item.get_category_display }}
             </div>
+            <div class="item">
+                <div class="header">{% trans 'Available quantity' %}</div>
+                {{ item.quantity }}
+            </div>
             {% if item.manufacturer %}
             <div class="item">
                 <div class="header">
