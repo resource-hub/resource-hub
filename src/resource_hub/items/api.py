@@ -32,7 +32,7 @@ class Items(generics.ListCreateAPIView):
 
         if pk is not None:
             q.add(Q(location=pk), Q.AND)
-        return Item.objects.filter(q)
+        return Item.objects.filter(q).order_by('-updated_at')
 
 
 @authentication_classes([])
