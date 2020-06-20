@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from ..fields import CurrencyField, PercentField
+from ..utils import normalize_fraction
 from .base import BaseModel, BaseStateMachine
 
 
@@ -88,7 +89,7 @@ class Price(BaseModel):
     )
 
     def __str__(self):
-        return '{} {}'.format(self.value.normalize(), self.currency)
+        return '{} {}'.format(normalize_fraction(self.value), self.currency)
 
 
 class PriceProfile(BaseModel):

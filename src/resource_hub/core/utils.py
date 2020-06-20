@@ -65,6 +65,13 @@ def money_filter(dec, currency='EUR'):
     return '{} {}'.format(round_decimal(dec, currency), currency)
 
 
+def normalize_fraction(d):
+    ''' thanks to senderle @ https://stackoverflow.com/a/11227743/12653439 '''
+    normalized = d.normalize()
+    sign, digit, exponent = normalized.as_tuple()
+    return normalized if exponent <= 0 else normalized.quantize(1)
+
+
 def timespan_conflict(span1_start, span1_end, span2_start, span2_end) -> bool:
     return (
         span2_start < span1_end and span2_end > span1_start
