@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-07 08:47+0200\n"
+"POT-Creation-Date: 2020-06-23 13:45+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -317,9 +317,9 @@ msgstr "Gelöscht?"
 msgid "Created at"
 msgstr "erstellt am"
 
-#: core/models/base.py:28
+#: core/models/base.py:28 items/tables.py:18
 msgid "Updated at"
-msgstr "geändert am"
+msgstr "Geändert am"
 
 #: core/models/base.py:50
 msgid "pending"
@@ -353,7 +353,7 @@ msgstr "Stadt"
 msgid "Country"
 msgstr "Land"
 
-#: core/models/base.py:209 core/models/finance.py:110 items/models.py:242
+#: core/models/base.py:209 core/models/finance.py:111 items/models.py:242
 #: items/templates/items/_item_info.html:78
 #: items/templates/items/_item_info.html:81 venues/models.py:51
 #: venues/models.py:184 venues/templates/venues/_contract_overview.html:23
@@ -498,7 +498,7 @@ msgstr "läuft"
 msgid "disputing"
 msgstr "im Streit"
 
-#: core/models/contracts.py:122 core/models/finance.py:21
+#: core/models/contracts.py:122 core/models/finance.py:22
 msgid "finalized"
 msgstr "abgeschlossen"
 
@@ -506,7 +506,7 @@ msgstr "abgeschlossen"
 msgid "expired"
 msgstr "abgelaufen"
 
-#: core/models/contracts.py:124 core/models/finance.py:23
+#: core/models/contracts.py:124 core/models/finance.py:24
 msgid "canceled"
 msgstr "abgebrochen"
 
@@ -534,15 +534,15 @@ msgstr "allgemeine Geschäftsbedingungen"
 msgid "Termination period"
 msgstr "Kündigungsfrist (in Tagen)"
 
-#: core/models/contracts.py:162 core/models/finance.py:43
+#: core/models/contracts.py:162 core/models/finance.py:44
 #: core/templates/core/control/finance_contracts_manage_details.html:40
 #: plugins/sepa/templates/sepa/control/sepa_mandate.html:15
 msgid "Creditor"
 msgstr "Leistender"
 
-#: core/models/contracts.py:169 core/models/finance.py:37
+#: core/models/contracts.py:169 core/models/finance.py:38
 #: core/templates/core/control/finance_contracts_manage_details.html:44
-#: items/tables.py:31 items/tables.py:41 plugins/sepa/tables.py:26
+#: items/tables.py:32 items/tables.py:42 plugins/sepa/tables.py:26
 #: plugins/sepa/templates/sepa/control/sepa_mandate.html:19
 msgid "Debitor"
 msgstr "Schuldner"
@@ -551,7 +551,7 @@ msgstr "Schuldner"
 msgid "Is fixed term"
 msgstr "Fester Zeitraum"
 
-#: core/models/contracts.py:180 core/models/finance.py:65
+#: core/models/contracts.py:180 core/models/finance.py:66
 #: core/templates/core/control/finance_contracts_manage_details.html:57
 msgid "Payment method"
 msgstr "Zahlungsmethode"
@@ -585,7 +585,7 @@ msgid "Timestamp"
 msgstr "Timestamp"
 
 #: core/models/contracts.py:310 core/models/contracts.py:540
-#: core/models/contracts.py:566 items/models.py:419 items/tables.py:28
+#: core/models/contracts.py:566 items/models.py:419 items/tables.py:29
 msgid "Contract"
 msgstr "Vertrag"
 
@@ -614,7 +614,7 @@ msgid "closed"
 msgstr "abgeschlossen"
 
 #: core/models/contracts.py:570 core/tables.py:130 items/models.py:46
-#: items/models.py:411 items/models.py:425 items/tables.py:29
+#: items/models.py:411 items/models.py:425 items/tables.py:30
 msgid "Item"
 msgstr "Gegenstand"
 
@@ -628,7 +628,7 @@ msgstr "Menge"
 msgid "Unit"
 msgstr "Einheit"
 
-#: core/models/contracts.py:584 core/models/finance.py:81 venues/models.py:81
+#: core/models/contracts.py:584 core/models/finance.py:82 venues/models.py:81
 #: venues/models.py:294 venues/templates/venues/control/_venue_form.html:7
 msgid "Price"
 msgstr "Preis"
@@ -637,7 +637,7 @@ msgstr "Preis"
 msgid "Net"
 msgstr "Netto"
 
-#: core/models/contracts.py:593 core/models/finance.py:113
+#: core/models/contracts.py:593 core/models/finance.py:114
 msgid "Discount"
 msgstr "Rabatt"
 
@@ -701,35 +701,35 @@ msgstr "Bei der Gebühr angewandter Steuersatz (%)"
 msgid "(prepayment)"
 msgstr "(Vorkasse)"
 
-#: core/models/finance.py:22
+#: core/models/finance.py:23
 msgid "failed"
 msgstr "fehlgeschlagen"
 
-#: core/models/finance.py:24
+#: core/models/finance.py:25
 msgid "refunded"
 msgstr "erstattet"
 
-#: core/models/finance.py:48
+#: core/models/finance.py:49
 msgid "Value"
 msgstr "Wert"
 
-#: core/models/finance.py:54
+#: core/models/finance.py:55
 msgid "Payment notes"
 msgstr "Zahlungshinweise"
 
-#: core/models/finance.py:59
+#: core/models/finance.py:60
 msgid "Payment date"
 msgstr "Zahlungsdatum"
 
-#: core/models/finance.py:76 core/models/finance.py:106
+#: core/models/finance.py:77 core/models/finance.py:107
 msgid "Addressee"
 msgstr "Adresse"
 
-#: core/models/finance.py:87
+#: core/models/finance.py:88
 msgid "Discounts"
 msgstr "Rabatte"
 
-#: core/models/finance.py:98 items/models.py:295 venues/models.py:98
+#: core/models/finance.py:99 items/models.py:295 venues/models.py:98
 msgid "Contract procedure"
 msgstr "Vertragsprozedur"
 
@@ -1564,7 +1564,7 @@ msgstr "Ausführen"
 msgid "No associated items found"
 msgstr "Keine assoziierten Elemente gefunden"
 
-#: core/views/api.py:134
+#: core/views/api.py:140
 msgid "There has to be at least one owner!"
 msgstr "Es muss mindestens einen Besitzer geben!"
 
@@ -1685,11 +1685,11 @@ msgstr "Standorte verwalten"
 msgid "Your issue has been posted!"
 msgstr "Dein Anliegen wurde abgeschickt"
 
-#: items/api.py:51 venues/api.py:48
+#: items/api.py:52 venues/api.py:48
 msgid "start or end parameter not set"
 msgstr "Anfangs- oder Endparameter nicht gesetzt"
 
-#: items/api.py:58 venues/api.py:55
+#: items/api.py:59 venues/api.py:55
 msgid "start or end parameter not valid iso_8601 string"
 msgstr "Start- oder Endparameter kein gültiger iso_8601 string"
 
@@ -1911,11 +1911,11 @@ msgstr "Ursprünglicher Besitzer"
 msgid "Which entity bought or donated the item?"
 msgstr "Welche Entität hat den Gegenstand gekauft oder gespendet?"
 
-#: items/models.py:428 items/tables.py:32 venues/models.py:187
+#: items/models.py:428 items/tables.py:33 venues/models.py:187
 msgid "Start"
 msgstr "Start"
 
-#: items/models.py:432 items/tables.py:33 venues/models.py:191
+#: items/models.py:432 items/tables.py:34 venues/models.py:191
 msgid "End"
 msgstr "Ende"
 

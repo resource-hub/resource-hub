@@ -15,6 +15,7 @@ class ItemsTable(SelectableTable):
     )
     state = tables.Column(verbose_name=_('State'))
     location = tables.Column(verbose_name=_('Location'))
+    updated_at = tables.Column(verbose_name=_('Updated at'))
 
     def render_state(self, value, record):
         return record.get_state_display()
