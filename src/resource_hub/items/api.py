@@ -5,7 +5,8 @@ from django.utils.translation import gettext_lazy as _
 
 import dateutil.parser
 from resource_hub.core.models import Contract
-from resource_hub.core.views.api import SmallResultsSetPagination
+from resource_hub.core.views.api import (LargeResultsSetPagination,
+                                         SmallResultsSetPagination)
 from rest_framework import exceptions, generics
 from rest_framework.decorators import (authentication_classes,
                                        permission_classes)
@@ -21,7 +22,7 @@ from .serializers import ItemBookingSerializer, ItemSerializer
 class Items(generics.ListCreateAPIView):
     http_method_names = ['get']
     serializer_class = ItemSerializer
-    pagination_class = SmallResultsSetPagination
+    pagination_class = LargeResultsSetPagination
 
     def get_queryset(self):
         name = self.request.query_params.get('name', None)

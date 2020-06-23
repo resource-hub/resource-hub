@@ -10,6 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {% endblock %}
     <title>{% if request.META.HTTP_HOST == 'egons-verleihde' %}Egons Verleih{% else %}Resource Hub{% endif %}</title>
+    <meta>{{ request.META.HTTP_HOST }}</meta>
     <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}" />
 
     {% block stylesheets %}
