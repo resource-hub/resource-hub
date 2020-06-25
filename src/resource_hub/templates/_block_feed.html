@@ -22,7 +22,7 @@
     function load_feed(url, _feed_renderer, append = false) {
         $('#load-more').addClass('invisible');
         add_loader('#feed-loader');
-        console.log(url);
+
         $.ajax({
             'url': url,
             'type': 'GET',

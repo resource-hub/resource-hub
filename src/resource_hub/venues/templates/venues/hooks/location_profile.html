@@ -3,10 +3,11 @@
 
 <div class="ui horizontal section divider">{% trans 'Venues' %}</div>
 
-{% include 'venues/_venue_feed.html' %}
-
+{% include 'venues/_venue_feed_renderer.html' %}
+{% addtoblock 'js' %}
 <script>
     $(document).ready(function () {
-        create_feed(null, '{{ location.id }}');
+        create_feed('{% url "api:venues" %}', { id: '{{ location.id }}' });
     })
 </script>
+{% endaddtoblock %}
