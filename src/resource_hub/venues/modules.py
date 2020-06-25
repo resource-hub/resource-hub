@@ -45,4 +45,4 @@ class VenuesModule(BaseModule):
         location_slug = context.request.resolver_match.kwargs['slug']
         if not Venue.objects.filter(location__slug=location_slug):
             return ""
-        return render_to_string(template_name='venues/hooks/location_profile.html', context=context.flatten(), request=context.request)
+        return render_to_string(template_name='venues/location_profile.html', context=context.flatten(), request=context.request)
