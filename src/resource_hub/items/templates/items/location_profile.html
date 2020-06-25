@@ -1,0 +1,11 @@
+{% load i18n %}
+{% load sekizai_tags %}
+
+<div class="ui horizontal section divider">{% trans 'Items' %}</div>
+
+{% include 'items/_item_feed_renderer.html' %}
+<script>
+    $(document).ready(function () {
+        create_feed('{% url "api:items" %}', { id: '{{ location.id }}' }, '#item-feed');
+    })
+</script>

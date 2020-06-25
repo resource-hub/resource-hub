@@ -6,12 +6,12 @@
 <script>
     $(document).ready(function () {
         var endpoint = "{% url 'api:venues' %}";
-        create_feed(endpoint);
+        create_feed(endpoint, null, '#venue-feed');
 
         $('#filter-form').on('submit', function (e) {
             e.preventDefault();
             var name = $(this).find("input[name='search_query']").val();
-            create_feed(endpoint, { name: name });
+            create_feed(endpoint, { name: name }, '#venue-feed');
         });
     });
 </script>

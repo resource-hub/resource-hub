@@ -2,49 +2,49 @@
 {% load sekizai_tags %}
 
 
-
-<div id="feed"
-    class="{% if custom_class %}{{ custom_class }}{% else %}ui stackable {{ blocks }} column cards grid{% endif %}">
-</div>
-<div class="ui one column stackable center aligned page grid padded-section-container">
-    <span id="none-found" class="hidden">{% trans 'No objects found' %}</span>
-    <span id="feed-loader" class="ui active inline loader"></span>
-    <button id="load-more" class="ui invisible green icon button">
-        {% trans 'Load more' %}
-        <i class="sync icon"></i>
-    </button>
+<div id="{% if feed_id %}{{ feed_id }}{% else %}feed{% endif %}">
+    <div
+        class="{% if custom_class %}{{ custom_class }}{% else %}ui stackable {{ blocks }} column cards grid{% endif %} feed-container">
+    </div>
+    <div class="ui one column stackable center aligned page grid padded-section-container controls">
+        <span class="hidden none-found">{% trans 'No objects found' %}</span>
+        <span class="ui active inline feed-loader loader"></span>
+        <button class="ui invisible green load-more icon button">
+            {% trans 'Load more' %}
+            <i class="sync icon"></i>
+        </button>
+    </div>
 </div>
 
 {% addtoblock 'js' %}
 <script>
     var next = '';
 
-    function load_feed(url, _feed_renderer, append = false) {
-        $('#load-more').addClass('invisible');
-        add_loader('#feed-loader');
-
+    function load_feed(url, _feed_renderer, feed_id, append = false) {
+        $(feed_id + ' .controls .load-more').addClass('invisible');
+        add_loader(feed_id + ' .controls .feed-loader');
         $.ajax({
             'url': url,
             'type': 'GET',
             'dataType': 'JSON'
         }).done(function (data) {
-            remove_loader('#feed-loader');
+            remove_loader(feed_id + ' .controls .feed-loader');
             var feed = _feed_renderer(data.results);
 
             if (data.next) {
-                $('#load-more').removeClass('invisible');
+                $(feed_id + ' .controls .load-more').removeClass('invisible');
                 next = data.next;
             }
-            if (append) {
-                $('#feed').append(feed);
-            } else {
+            if (!append) {
+                $(feed_id + ' .feed-container').html("");
+
                 if (feed) {
-                    $('#none-found').addClass('hidden');
-                    $('#feed').html(feed);
+                    $(feed_id + ' .controls .none-found').addClass('hidden');
                 } else {
-                    $('#none-found').removeClass('hidden');
+                    $(feed_id + ' .controls .none-found').removeClass('hidden');
                 }
             }
+            $(feed_id + ' .feed-container').append(feed);
             if (typeof feed_listeners !== 'undefined') {
                 feed_listeners();
             }
@@ -54,7 +54,7 @@
             $('.fluid.card .image').dimmer({ on: 'hover' });
         });
     }
-    function create_feed(endpoint, params = null) {
+    function create_feed(endpoint, params = null, feed_id = '#feed') {
         var query = "";
         if (params) {
             for (const [key, value] of Object.entries(params)) {
@@ -62,13 +62,13 @@
             }
         }
         var url = endpoint + "?" + query;
-        load_feed(url, render_feed);
+        load_feed(url, render_feed, feed_id);
     }
 
     $(document).ready(function () {
-        $('#load-more').on('click', function () {
+        $('{% if feed_id %}#{{ feed_id }}{% else %}#feed{% endif %}' + ' .controls .load-more').on('click', function () {
             if (next) {
-                load_feed(next, render_feed, true);
+                load_feed(next, render_feed, '{% if feed_id %}#{{ feed_id }}{% else %}#feed{% endif %}', true);
             }
         });
     });

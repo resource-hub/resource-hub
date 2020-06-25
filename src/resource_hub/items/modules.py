@@ -1,6 +1,7 @@
 import os
 
 from django.shortcuts import reverse
+from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 
 from resource_hub.core.modules import BaseModule
@@ -46,3 +47,6 @@ class ItemsModule(BaseModule):
                 ]
             },
         ]
+
+    def get_location_profile_item(self, context):
+        return render_to_string(template_name='items/location_profile.html', context=context.flatten(), request=context.request)
