@@ -31,6 +31,12 @@ class BaseModule():
         '''
         raise NotImplementedError()
 
+    def get_location_profile_item(self, context) -> str:
+        '''
+        :return HTML string to be included in the location profile
+        '''
+        return ""
+
 
 class CoreModule(BaseModule):
     @property

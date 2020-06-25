@@ -2,6 +2,7 @@
 
 from django.http import HttpRequest
 from django.template.loader import render_to_string
+from django.utils.html import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from .signals import register_modules
@@ -85,3 +86,9 @@ def control_sidebar(context, *args, **kwargs):
     modules = get_modules(
         lambda tuple: tuple[1]().get_sidebar_modules(request))
     return sidebar_module_renderer(modules, request)
+
+
+def location_profile(context, *args, **kwargs):
+    modules = map(lambda tuple: tuple[1]().get_location_profile_item(
+        context), register_modules.send(None))
+    return mark_safe("".join(modules))
