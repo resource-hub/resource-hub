@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-23 13:45+0200\n"
+"POT-Creation-Date: 2020-07-01 16:25+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -32,158 +32,166 @@ msgstr "Mail erneut versenden"
 msgid "Currency"
 msgstr "Währung"
 
-#: core/forms.py:110 core/tables.py:86
+#: core/forms.py:118 core/tables.py:86
 msgid "First name"
 msgstr "Vorname"
 
-#: core/forms.py:111 core/tables.py:88
+#: core/forms.py:119 core/tables.py:88
 msgid "Last name"
 msgstr "Nachname"
 
-#: core/forms.py:135
+#: core/forms.py:143
 msgid "Are you older than the oldest person ever alive?"
 msgstr "Bist du älter als der älteste Mensch, der jemals gelebt hat?"
 
-#: core/forms.py:140
+#: core/forms.py:148
 msgid "You have to be older than 16 to sign up"
 msgstr "Du musst älter als 16 Jahre alt sein, um dich anmelden zu können"
 
-#: core/forms.py:146
+#: core/forms.py:164
 msgid "Organization name"
 msgstr "Organisationsname"
 
-#: core/forms.py:146
+#: core/forms.py:164
 msgid "Please include your legal form"
 msgstr "Bitte die Rechtsform angeben"
 
-#: core/forms.py:148
+#: core/forms.py:166
 msgid "This is the mail will be displayed on bills and on the profile"
 msgstr "Diese Email wird auf Rechnungen und dem Profil angezeigt"
 
-#: core/forms.py:159
+#: core/forms.py:177
 msgid "This organization name already exists"
 msgstr "Dieser Organisationsname existiert bereits"
 
-#: core/forms.py:164
+#: core/forms.py:182
 msgid "For organizations, a public email is required"
 msgstr "Bei Organisationen ist eine öffentliche Email notwendig"
 
-#: core/forms.py:195
+#: core/forms.py:213
 msgid "Invalid postal code"
 msgstr "Ungültige Postleitzahl"
 
-#: core/forms.py:207
+#: core/forms.py:225
 msgid "Put in trash"
 msgstr "In den Papierkorb"
 
-#: core/forms.py:208
+#: core/forms.py:226
 msgid "Restore from trash"
 msgstr "Aus dem Papierkorb wiederherstellen"
 
-#: core/forms.py:224
+#: core/forms.py:242
 msgid "In trash"
 msgstr "Im Papierkorb"
 
-#: core/forms.py:233
+#: core/forms.py:251
 msgid "There have to be at most {} entries per page"
 msgstr "Es dürfen maximal {} Einträge pro Seite existieren"
 
-#: core/forms.py:236
+#: core/forms.py:254
 msgid "There has to be at least {} entry per page"
 msgstr "Es müssen mindestens {} Einträge pro Seite existieren"
 
-#: core/forms.py:258 core/models/base.py:148
+#: core/forms.py:276 core/models/base.py:148
 msgid "Account holder"
 msgstr "Kontoinhaber"
 
-#: core/forms.py:259 core/models/base.py:154
+#: core/forms.py:277 core/models/base.py:154
 msgid "IBAN"
 msgstr "IBAN"
 
-#: core/forms.py:260 core/models/base.py:160
+#: core/forms.py:278 core/models/base.py:160
 msgid "BIC"
 msgstr "BIC"
 
-#: core/forms.py:273
+#: core/forms.py:291
 msgid "Invalid IBAN: "
 msgstr "Ungültige IBAN: "
 
-#: core/forms.py:283
+#: core/forms.py:301
 msgid "Invalid BIC: "
 msgstr "Ungültige BIC: "
 
-#: core/forms.py:389
+#: core/forms.py:407
 msgid "New email-address"
 msgstr "Neue E-Mailadresse"
 
-#: core/forms.py:392
+#: core/forms.py:410
 msgid "New email-address confirmation"
 msgstr "Bestätigung neuer E-Mailadresse"
 
-#: core/forms.py:395 core/templates/core/control/account_security.html:11
+#: core/forms.py:413 core/templates/core/control/account_security.html:11
 msgid "Password"
 msgstr "Passwort"
 
-#: core/forms.py:406
+#: core/forms.py:424
 msgid "The email-addresses do not match"
 msgstr "Die E-Mailadressen stimmen nicht überein"
 
-#: core/forms.py:412
+#: core/forms.py:430
 msgid "The new email is identical to the old one"
 msgstr "Die neue E-Mailadresse ist identisch zu der Neuen"
 
-#: core/forms.py:426
+#: core/forms.py:444
 msgid "The password is incorrect"
 msgstr "Das Passwort ist inkorrekt"
 
-#: core/forms.py:491
+#: core/forms.py:509
 msgid "Apply discounts from prices profiles?"
 msgstr "Rabatte der Preisprofile anwenden?"
 
-#: core/forms.py:500
+#: core/forms.py:518
 msgid "When left empty, the discount is visible for everyone"
 msgstr "Wenn leer, ist der Rabatt für alle sichtbar"
 
-#: core/forms.py:569
+#: core/forms.py:587
 msgid "The user does not exist."
 msgstr "Der Nutzer existiert nicht"
 
-#: core/forms.py:575
+#: core/forms.py:593
 msgid "User is already a member"
 msgstr "Der Nutzer ist bereits ein Mitglied"
 
-#: core/forms.py:601
+#: core/forms.py:613
+msgid "This text will be included in the invitation mail"
+msgstr "Dieser Text wird in der Bestätigungsmail inkludiert"
+
+#: core/forms.py:649
+msgid "Invitation to {organization}"
+msgstr "Einladung {organization}"
+
+#: core/forms.py:700
 msgid "Actor does not exist"
 msgstr "Der Akteur existiert nicht"
 
-#: core/forms.py:609
+#: core/forms.py:708
 msgid "Actor not associated with user"
 msgstr "Der Akteur ist nicht mit dem User assoziiert"
 
-#: core/forms.py:620
+#: core/forms.py:719
 msgid ""
 "You can use this search field for the address to autofill the location data!"
 msgstr ""
 "Du kannst dieses Feld verwenden, um die Adresse automatisch auszufüllen!"
 
-#: core/forms.py:658
+#: core/forms.py:757
 msgid "In what part of the software is the issue or your request?"
 msgstr "Auf welchen Teil der Software bezieht sich das Anliegen?"
 
-#: core/forms.py:663
+#: core/forms.py:762
 msgid ""
 "Short description of the problem or the feature you want to see implemented"
 msgstr "Kurze Beschreibung des Problems oder des Features"
 
-#: core/hook_listeners.py:40
+#: core/hook_listeners.py:41
 msgid "The structure has to be of the type list"
 msgstr "Die Struktur muss vom Typ List sein"
 
-#: core/hook_listeners.py:43
+#: core/hook_listeners.py:44
 msgid "The request object needs to be set"
 msgstr "Das request Objekt muss gesetzt sein"
 
-#: core/hook_listeners.py:47
+#: core/hook_listeners.py:48
 msgid "The passed request object is not an instance of HttpRequest"
 msgstr "Das übergebene objekt ist keine Instanz von HttpRequest"
 
@@ -214,9 +222,9 @@ msgid "Bank account"
 msgstr "Bankkonto"
 
 #: core/models/actors.py:43 core/templates/core/home.html:42
-#: items/models.py:336 items/templates/items/_item_feed.html:20
+#: items/models.py:336 items/templates/items/_item_feed_renderer.html:20
 #: venues/models.py:64 venues/models.py:231 venues/models.py:274
-#: venues/templates/venues/_venue_feed.html:20
+#: venues/templates/venues/_venue_feed_renderer.html:20
 msgid "Thumbnail"
 msgstr "Thumbnail"
 
@@ -469,7 +477,7 @@ msgstr ""
 msgid "Choose the payment methods you want to use for this venue"
 msgstr "Wähle ein Zahlungsmittel für diesen Veranstaltungsort"
 
-#: core/models/contracts.py:67 core/modules.py:107 core/views/control.py:112
+#: core/models/contracts.py:67 core/modules.py:113 core/views/control.py:112
 msgid "Payment methods"
 msgstr "Zahlungsmethode"
 
@@ -845,82 +853,82 @@ msgstr "Benachrichtigung"
 msgid "Path"
 msgstr "Pfad"
 
-#: core/modules.py:38
+#: core/modules.py:44
 msgid "Core"
 msgstr "Kern"
 
-#: core/modules.py:43 templates/_sidebar.html:6
+#: core/modules.py:49 templates/_sidebar.html:6
 msgid "Home"
 msgstr "Start"
 
-#: core/modules.py:54 core/templates/core/control/account_security.html:5
+#: core/modules.py:60 core/templates/core/control/account_security.html:5
 msgid "Security"
 msgstr "Sicherheit"
 
-#: core/modules.py:64
+#: core/modules.py:70
 msgid "Account"
 msgstr "Konto"
 
-#: core/modules.py:68 core/templates/core/control/account_settings.html:5
+#: core/modules.py:74 core/templates/core/control/account_settings.html:5
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: core/modules.py:75
+#: core/modules.py:81
 msgid "Finanace"
 msgstr "Finanzen"
 
-#: core/modules.py:79
+#: core/modules.py:85
 msgid "Contracts"
 msgstr "Verträge"
 
-#: core/modules.py:83
+#: core/modules.py:89
 msgid "Credited"
 msgstr "Geleistet"
 
-#: core/modules.py:87
+#: core/modules.py:93
 msgid "Debited"
 msgstr "Geschuldet"
 
-#: core/modules.py:93
+#: core/modules.py:99
 msgid "Contract procedures"
 msgstr "Vertragsprozeduren"
 
-#: core/modules.py:97 core/modules.py:111 core/modules.py:142
-#: core/modules.py:156 items/modules.py:31 venues/modules.py:31
+#: core/modules.py:103 core/modules.py:117 core/modules.py:148
+#: core/modules.py:162 items/modules.py:32 venues/modules.py:32
 msgid "Manage"
 msgstr "Verwalten"
 
-#: core/modules.py:101 core/modules.py:146 core/modules.py:160
+#: core/modules.py:107 core/modules.py:152 core/modules.py:166
 #: core/templates/core/control/finance_contract_procedures_create.html:9
-#: core/templates/core/control/locations_create.html:8 items/modules.py:35
+#: core/templates/core/control/locations_create.html:8 items/modules.py:36
 #: items/templates/items/control/items_create.html:9
 #: plugins/sepa/templates/sepa/control/files_create.html:18
-#: venues/modules.py:35
+#: venues/modules.py:36
 msgid "Create"
 msgstr "Erstellen"
 
-#: core/modules.py:115
+#: core/modules.py:121
 #: core/templates/core/control/finance_payment_methods_add.html:12
 msgid "Add"
 msgstr "Hinzufügen"
 
-#: core/modules.py:121
+#: core/modules.py:127
 msgid "Invoices"
 msgstr "Rechnungen"
 
-#: core/modules.py:125
+#: core/modules.py:131
 msgid "Outgoing"
 msgstr "Ausgehend"
 
-#: core/modules.py:129
+#: core/modules.py:135
 msgid "Incoming"
 msgstr "Eingehend"
 
-#: core/modules.py:138
+#: core/modules.py:144
 msgid "Organizations"
 msgstr "Organisationen"
 
-#: core/modules.py:152 core/templates/core/home.html:17
+#: core/modules.py:158 core/templates/core/home.html:17
 msgid "Locations"
 msgstr "Standorte"
 
@@ -1195,8 +1203,9 @@ msgstr "Website"
 
 #: core/templates/core/actor_profile.html:36
 #: core/templates/core/control/organizations_profile.html:23
-#: core/templates/core/home.html:32 items/templates/items/_item_feed.html:10
-#: venues/templates/venues/_venue_feed.html:10
+#: core/templates/core/home.html:32
+#: items/templates/items/_item_feed_renderer.html:10
+#: venues/templates/venues/_venue_feed_renderer.html:10
 msgid "Logo"
 msgstr "Logo"
 
@@ -1380,9 +1389,25 @@ msgstr "Hinzufügen"
 msgid "no associated members found"
 msgstr "Keine assoziierten Mitglieder gefunden"
 
+#: core/templates/core/control/organizations_members_add.html:12
+#, python-format
+msgid ""
+"\n"
+"    Invite person to %(organization)s\n"
+"    "
+msgstr ""
+"\n"
+"    Person zu %(organization)s einladen\n"
+"    "
+
+
 #: core/templates/core/control/organizations_members_add.html:20
-msgid "add user"
-msgstr "Nutzer hinzufügen"
+msgid "Invitations"
+msgstr "Einladungen"
+
+#: core/templates/core/control/organizations_members_add.html:25
+msgid "Invite"
+msgstr "Einladen"
 
 #: core/templates/core/control/organizations_profile.html:11
 #: core/templates/core/control/organizations_profile.html:34
@@ -1415,8 +1440,8 @@ msgid "Data privacy statement"
 msgstr "Datenschutzerklärung"
 
 #: core/templates/core/home.html:25 core/templates/core/home.html:38
-#: items/templates/items/_item_feed.html:16 templates/_map.html:50
-#: venues/templates/venues/_venue_feed.html:16
+#: items/templates/items/_item_feed_renderer.html:16 templates/_map.html:50
+#: venues/templates/venues/_venue_feed_renderer.html:16
 msgid "Details"
 msgstr "Details"
 
@@ -1448,6 +1473,25 @@ msgstr "Ausgeloggt!"
 #: core/templates/core/logout.html:13
 msgid "click here to log in again"
 msgstr "Hier clicken, um dich wieder einzuloggen"
+
+#: core/templates/core/mail_invitation.html:9
+#, python-format
+msgid ""
+"\n"
+"    You have been invited by %(invitee)s to join %(organization)s. Click\n"
+"    this link to sign up\n"
+"    and follow the invitation:\n"
+"    <br />\n"
+"    <a href=\"%(link)s\">%(link)s</a>\n"
+"    "
+msgstr ""
+"\n"
+"    Du wurdest von %(invitee)s eingeladen, %(organization)s beizutreten. Clicke\n"
+"    auf diesen Link\n"
+"    und folge der Einladung:\n"
+"    <br />\n"
+"    <a href=\"%(link)s\">%(link)s</a>\n"
+"    "
 
 #: core/templates/core/mail_notification.html:13
 msgid "See this link for further information: "
@@ -1669,15 +1713,15 @@ msgstr "Deine Organisationen verwalten"
 msgid "The organization has been registered"
 msgstr "Die Organisation wurde registriert"
 
-#: core/views/control.py:540
+#: core/views/control.py:545
 msgid "User has been added to "
 msgstr "Der Nutzer wurde hinzugefügt zu "
 
-#: core/views/control.py:564
+#: core/views/control.py:568
 msgid "The location has been created"
 msgstr "Der Standort wurde erstellt"
 
-#: core/views/control.py:573
+#: core/views/control.py:577
 msgid "Manage locations"
 msgstr "Standorte verwalten"
 
@@ -1919,15 +1963,16 @@ msgstr "Start"
 msgid "End"
 msgstr "Ende"
 
-#: items/modules.py:12 items/modules.py:17 items/modules.py:27
+#: items/modules.py:13 items/modules.py:18 items/modules.py:28
+#: items/templates/items/location_profile.html:4
 msgid "Items"
 msgstr "Gegenstände"
 
-#: items/modules.py:39
+#: items/modules.py:40
 msgid "Bookings credited"
 msgstr "Leihen geleisted"
 
-#: items/modules.py:43
+#: items/modules.py:44
 msgid "Bookings debited"
 msgstr "Leihen geschuldet"
 
@@ -2014,12 +2059,6 @@ msgstr "Keine assoziierten Veranstaltungsort gefunden"
 #: venues/templates/venues/control/venues_manage.html:21
 msgid "create one!"
 msgstr "Erstellen!"
-
-#: items/templates/items/hooks/location_profile.html:4 venues/models.py:21
-#: venues/models.py:215 venues/modules.py:12 venues/modules.py:17
-#: venues/modules.py:27 venues/templates/venues/hooks/location_profile.html:4
-msgid "Venues"
-msgstr "Veranstaltungsorte"
 
 #: items/templates/items/index.html:9 venues/templates/venues/index.html:9
 msgid "search..."
@@ -2415,6 +2454,12 @@ msgstr "Es gibt einen Konflikt mit {}@{} am {} bis {}"
 msgid "The recurrence has to be limited"
 msgstr "Die Wiederholung muss zeitlich begrenzt sein"
 
+#: venues/models.py:21 venues/models.py:215 venues/modules.py:13
+#: venues/modules.py:18 venues/modules.py:28
+#: venues/templates/venues/location_profile.html:4
+msgid "Venues"
+msgstr "Veranstaltungsorte"
+
 #: venues/models.py:26
 msgid "Venue contract procedure"
 msgstr "Veranstaltungsvertragsprozedur"
@@ -2504,6 +2549,9 @@ msgstr "Veranstaltungsorte verwalten"
 #: venues/views.py:92
 msgid "The venue has been updated"
 msgstr "Dieser Veranstaltungsort wurde geupdated"
+
+#~ msgid "add user"
+#~ msgstr "Nutzer hinzufügen"
 
 #~ msgid "back"
 #~ msgstr "zurück"
