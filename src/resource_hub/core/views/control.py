@@ -17,7 +17,7 @@ from django.views import View
 
 from ..decorators import organization_admin_required, owner_required
 from ..forms import *
-from ..forms import PaymentMethodFilterForm
+from ..forms import OrganizationInvitationFormManager, PaymentMethodFilterForm
 from ..models import *
 from ..signals import register_contract_procedures, register_payment_methods
 from ..tables import (ContractProcedureTable, InvoiceTable, LocationsTable,
@@ -522,30 +522,34 @@ class OrganizationsMembersAdd(View):
 
     def get(self, request, organization_id):
         organization = get_object_or_404(Organization, pk=organization_id)
-        member_add_form = OrganizationMemberAddForm(organization=organization)
+        invitation_form = OrganizationInvitationFormManager(
+            request.user,
+            request.actor,
+            organization=organization)
 
         context = {
-            'member_add_form': member_add_form,
+            **invitation_form.get_forms(),
             'organization': organization,
         }
         return render(request, self.template_name, context)
 
     def post(self, request, organization_id):
         organization = get_object_or_404(Organization, pk=organization_id)
-        member_add_form = OrganizationMemberAddForm(organization,
-                                                    request.POST)
-        if member_add_form.is_valid():
-            member_add_form.save()
+        invitation_form = OrganizationInvitationFormManager(request.user, request.actor,
+                                                            organization=organization,
+                                                            data=request.POST)
+        if invitation_form.is_valid():
+            with transaction.atomic():
+                invitation_form.save()
 
             message = _('User has been added to ' + organization.name)
             messages.add_message(request, messages.SUCCESS, message)
             return redirect(reverse('control:organizations_members', kwargs={'organization_id': organization_id}))
-        else:
-            context = {
-                'member_add_form': member_add_form,
-                'organization': organization,
-            }
-            return render(request, self.template_name, context)
+        context = {
+            **invitation_form.get_forms(),
+            'organization': organization,
+        }
+        return render(request, self.template_name, context)
 
 
 @method_decorator(login_required, name='dispatch')

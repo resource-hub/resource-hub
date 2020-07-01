@@ -1,0 +1,20 @@
+{% extends '__mail.html' %}
+{% load i18n %}
+
+{% block content %}
+<p>
+    Hi!
+</p>
+<p>
+    {% blocktrans with organization=invitation.organization invitee=invitation.invitee %}
+    You have been invited by {{ invitee }} to join {{ organization }}. Click
+    this link to sign up
+    and follow the invitation:
+    <br />
+    <a href="{{ link }}">{{ link }}</a>
+    {% endblocktrans %}
+</p>
+<p>
+    {{ invitation.text|safe }}
+</p>
+{% endblock %}

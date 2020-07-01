@@ -7,6 +7,7 @@ from django.utils.timezone import get_current_timezone
 
 from recurrence.models import Recurrence
 from resource_hub.core.models import Actor, Address, Location
+from resource_hub.core.tests import BaseFormTest
 
 from ..forms import EventForm
 from ..models import Event, Venue
@@ -14,31 +15,14 @@ from ..models import Event, Venue
 TEST_IMAGE = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII='
 
 
-class TestEventForm(TestCase):
+class TestEventForm(BaseFormTest):
     def setUp(self):
-        actor = Actor.objects.create(
-            name='Test Joe'
-        )
-        address = Address.objects.create(
-            street='street',
-            street_number=12,
-            postal_code='12345',
-            city='test',
-            country='de'
-        )
-        location = Location.objects.create(
-            name='Location',
-            description='nice',
-            address=address,
-            latitude=53.00,
-            longitude=9.0,
-            owner=actor
-        )
+        super(TestEventForm, self).setUp()
         self.venue = Venue.objects.create(
             name='Venue',
             description='nice',
-            location=location,
-            owner=actor,
+            location=self.location,
+            owner=self.user,
         )
 
         Event.objects.create(
@@ -50,7 +34,7 @@ class TestEventForm(TestCase):
                            tzinfo=timezone.utc),
             dtlast=datetime(2020, 1, 1, 13, 0, 0,
                             tzinfo=timezone.utc),
-            organizer=actor,
+            organizer=self.user,
             recurrences="DTSTART:20200101T120000Z\nRRULE:FREQ=WEEKLY;COUNT=5;"
         ).venues.add(self.venue)
 
@@ -63,7 +47,7 @@ class TestEventForm(TestCase):
                            tzinfo=timezone.utc),
             dtlast=datetime(2020, 1, 1, 14, 30, 0,
                             tzinfo=timezone.utc),
-            organizer=actor,
+            organizer=self.user,
             recurrences="DTSTART:20200101T123000Z"
         ).venues.add(self.venue)
 

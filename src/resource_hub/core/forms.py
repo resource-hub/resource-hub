@@ -8,6 +8,8 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm, UserCreationForm
 from django.contrib.auth.hashers import check_password
 from django.forms import inlineformset_factory
+from django.shortcuts import reverse
+from django.template.loader import render_to_string
 from django.utils.dateparse import parse_date
 from django.utils.translation import gettext_lazy as _
 
@@ -16,10 +18,13 @@ from resource_hub.core.utils import get_authorized_actors
 from schwifty import BIC, IBAN
 
 from .fields import HTMLField
+from .jobs import send_mail
 from .models import (Actor, Address, BankAccount, BaseModel, ContractProcedure,
                      ContractTrigger, Gallery, GalleryImage, Location,
-                     Organization, OrganizationMember, PaymentMethod, Price,
-                     PriceProfile, User)
+                     Notification, Organization, OrganizationInvitation,
+                     OrganizationMember, PaymentMethod, Price, PriceProfile,
+                     User)
+from .utils import build_full_url
 from .widgets import IBANInput, UISearchField
 
 
@@ -86,8 +91,11 @@ class FormManager():
     def get_forms(self):
         return self.forms
 
+    def clean(self) -> bool:
+        return True
+
     def is_valid(self):
-        is_valid = True
+        is_valid = self.clean()
         for form in self.forms.values():
             if not form.is_valid():
                 is_valid = False
@@ -139,6 +147,16 @@ class UserBaseForm(UserCreationForm):
             raise forms.ValidationError(
                 _('You have to be older than 16 to sign up'), code='too-young')
         return self.cleaned_data['birth_date']
+
+    def save(self, commit=True):
+        user = super(UserBaseForm, self).save(commit)
+        if commit:
+            for invitation in OrganizationInvitation.objects.filter(email=user.email):
+                invitation.organization.members.add(user, through_defaults={
+                    'role': invitation.role})
+                invitation.is_member = True
+                invitation.save()
+        return user
 
 
 class OrganizationForm(forms.ModelForm):
@@ -582,6 +600,87 @@ class OrganizationMemberAddForm(forms.Form):
 
         user = User.objects.get(username=username)
         self.organization.members.add(user, through_defaults={'role': role})
+
+
+class OrganizationInvitationForm(forms.ModelForm):
+    class Meta:
+        model = OrganizationInvitation
+        fields = ['email', 'role', ]
+
+
+class TextForm(forms.Form):
+    text = HTMLField(
+        help_text=_('This text will be included in the invitation mail'),
+    )
+
+
+OrganizationInvitationFormset = inlineformset_factory(
+    Organization, OrganizationInvitation, form=OrganizationInvitationForm, extra=1)
+
+
+class OrganizationInvitationFormManager(FormManager):
+    def __init__(self, user, actor, organization=None, data=None, files=None, instances=None):
+        self.organization = organization
+        self.user = user
+        self.actor = actor
+
+        if self.organization is None:
+            raise ValueError
+        if data:
+            self.forms = {
+                'text_form': TextForm(data=data),
+                'invitation_formset': OrganizationInvitationFormset(
+                    instance=organization, data=data, files=files),
+            }
+        else:
+            self.forms = {
+                'text_form': TextForm(),
+                'invitation_formset': OrganizationInvitationFormset(
+                    instance=None),
+            }
+
+    def save(self):
+        text = self.forms['text_form'].cleaned_data['text']
+        invitations = self.forms['invitation_formset']
+        invitations.instance = self.organization
+        for invitation in invitations.save(commit=False):
+            invitation.text = text
+            invitation.invitee = self.user
+            subject = _('Invitation to {organization}').format(
+                organization=invitation.organization.name,
+            )
+            try:
+                user = User.objects.get(email=invitation.email)
+                if user in self.organization.members.all():
+                    continue
+                self.organization.members.add(user, through_defaults={
+                    'role': invitation.role})
+                invitation.is_member = True
+                invitation.save()
+                Notification.build(
+                    type_=Notification.TYPE.INFO,
+                    sender=self.actor,
+                    recipient=user,
+                    header=subject,
+                    message=invitation.text,
+                    link=reverse('core:actor_profile', kwargs={
+                        'slug': invitation.organization.slug}),
+                    level=Notification.LEVEL.LOW,
+                    target=invitation,
+                )
+            except User.DoesNotExist:
+                invitation.save()
+                message = render_to_string('core/mail_invitation.html', context={
+                    'invitation': invitation,
+                    'link': build_full_url(reverse('core:register')),
+                })
+                send_mail.delay(
+                    subject=subject,
+                    message=message,
+                    recipient=[invitation.email],
+                )
+
+        return invitations
 
 
 class RoleChangeForm(forms.Form):

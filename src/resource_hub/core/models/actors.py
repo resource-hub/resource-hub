@@ -261,3 +261,26 @@ class OrganizationMember(BaseModel):
             organization=organization,
             user=user
         )
+
+
+class OrganizationInvitation(BaseModel):
+    invitee = models.ForeignKey(
+        'User',
+        on_delete=models.PROTECT,
+        related_name='invitations',
+    )
+    organization = models.ForeignKey(
+        'Organization',
+        on_delete=models.CASCADE,
+        related_name='invitations',
+    )
+    role = models.IntegerField(
+        choices=OrganizationMember.ORGANIZATION_ROLES,
+        default=OrganizationMember.MEMBER,
+    )
+    email = models.EmailField()
+    text = models.TextField()
+    is_member = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ('organization', 'email',)

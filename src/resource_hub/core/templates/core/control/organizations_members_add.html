@@ -9,18 +9,23 @@
 
 {% block content %}
 <h1>
-    {{ organization.name }}
+    {% blocktrans with organization=organization.name %}
+    Invite person to {{ organization }}
+    {% endblocktrans %}
 </h1>
-
 <div class="section-container tab-content">
     <form class="ui form" method="POST" action="">
-        {% include "_form.html" with form=member_add_form %}
-        <p>
+        {% include "_form.html" with form=text_form %}
+        <div class="field">
+            <label>{% trans 'Invitations' %}</label>
+            {% include "_formset.html" with formset=invitation_formset %}
+        </div>
+        <div class="section-container">
             <button class="ui positive right labeled icon button" type="submit">
-                {% trans 'add user' %}
-                <i class="plus icon"></i>
+                {% trans 'Invite' %}
+                <i class="mail icon"></i>
             </button>
-        </p>
+        </div>
     </form>
 </div>
 {% endblock %}

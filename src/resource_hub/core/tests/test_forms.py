@@ -6,6 +6,7 @@ from django.http.request import HttpRequest
 from django.test import TestCase
 
 from resource_hub.core.forms import *
+from resource_hub.core.tests import BaseFormTest
 
 DATA = {
     "first_name": "Test",
@@ -42,6 +43,25 @@ class TestUserBaseForm(TestCase):
     def test_valid_data(self):
         form = UserBaseForm(data=self.data)
         self.assertTrue(form.is_valid())
+
+    def test_user_invitation(self):
+        organization = Organization.objects.create(
+            name='test',
+        )
+        invitee = User.objects.create(
+            name='joe',
+            email='test@test.de',
+        )
+        OrganizationInvitation.objects.create(
+            invitee=invitee,
+            organization=organization,
+            email=self.data['email'],
+            role=OrganizationMember.MEMBER,
+        )
+        form = UserBaseForm(data=self.data)
+        self.assertTrue(form.is_valid())
+        user = form.save()
+        self.assertTrue(organization.members.get(pk=user.pk))
 
     def test_invalid_birth_data(self):
         invalid_data = self.data.copy()
@@ -108,3 +128,62 @@ class TestEmailChangeForm(TestCase):
         invalid_data['new_email2'] = 'test@test.de'
         form = EmailChangeForm(self.user, invalid_data)
         self.assertFalse(form.is_valid())
+
+
+class TestOrganizationInvitationManagementForm(BaseFormTest):
+    def setUp(self):
+        super(TestOrganizationInvitationManagementForm, self).setUp()
+        self.data = {
+            'text': '<p>Testitest</p>',
+            'invitations-TOTAL_FORMS': 1,
+            'invitations-INITIAL_FORMS': 0,
+            'invitations-MIN_NUM_FORMS': 0,
+            'invitations-MAX_NUM_FORMS': 1000,
+            'invitations-0-id': '',
+            'invitations-0-organization': self.organization.pk,
+            'invitations-0-email': self.user.email,
+            'invitations-0-role': OrganizationMember.ADMIN,
+        }
+
+    def test_inviting_user(self):
+        form = OrganizationInvitationFormManager(
+            self.user, self.user, organization=self.organization, data=self.data)
+        self.assertTrue(form.is_valid())
+        form.save()
+        invitation = OrganizationInvitation.objects.get(
+            email=self.user.email, role=OrganizationMember.ADMIN)
+        self.assertEqual(invitation.text, self.data['text'])
+        self.assertTrue(invitation.is_member)
+        self.assertTrue(self.organization.members.get(pk=self.user.pk))
+
+    def test_inviting_non_user(self):
+        invited_user = {
+            'email': 'mac@mac.de',
+            'role': OrganizationMember.MEMBER,
+        }
+        data = {
+            **self.data,
+            'invitations-TOTAL_FORMS': 2,
+            'invitations-1-id': '',
+            'invitations-1-organization': self.organization.pk,
+            'invitations-1-email': invited_user['email'],
+            'invitations-1-role': invited_user['role'],
+        }
+        form = OrganizationInvitationFormManager(
+            self.user, self.user, organization=self.organization, data=data)
+
+        self.assertTrue(form.is_valid())
+        form.save()
+        print(OrganizationInvitation.objects.all())
+        invitation = OrganizationInvitation.objects.get(
+            email=invited_user['email'], role=invited_user['role'])
+        self.assertEqual(invitation.text, data['text'])
+
+    def test_inviting_member(self):
+        self.organization.members.add(self.user, through_defaults={
+            'role': OrganizationMember.ADMIN,
+        })
+        form = OrganizationInvitationFormManager(
+            self.user, self.user, organization=self.organization, data=self.data)
+        self.assertTrue(form.is_valid())
+        form.save()
