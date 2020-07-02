@@ -1,4 +1,5 @@
 from datetime import datetime
+from decimal import Decimal
 
 from django import forms
 from django.db.models import Q
@@ -315,6 +316,7 @@ class VenueContractForm(forms.ModelForm):
     def __init__(self, venue, request, *args, **kwargs):
         super(VenueContractForm, self).__init__(*args, **kwargs)
         self.request = request
+        self.venue = venue
         self.fields['payment_method'].queryset = venue.contract_procedure.payment_methods.select_subclasses(
         ).order_by('fee_absolute_value')
 
@@ -340,7 +342,13 @@ class VenueContractForm(forms.ModelForm):
     def clean(self):
         data = super(VenueContractForm, self).clean()
         address = self.request.actor.address
-        if address.street is None or address.street_number is None or address.postal_code is None or address.city is None:
+        print(self.cleaned_data['price_profile'].discount)
+        print(self.cleaned_data['price_profile']
+              and self.cleaned_data['price_profile'].discount != Decimal('100'))
+        if (address.street is None or address.street_number is None or address.postal_code is None or address.city is None) and (
+            self.venue.price.value != Decimal(
+                '0') and (self.cleaned_data['price_profile'] and self.cleaned_data['price_profile'].discount != Decimal('100'))
+        ):
             raise forms.ValidationError(
                 _('to create bookings you need to set your billing address'), code='address-not-set')
 

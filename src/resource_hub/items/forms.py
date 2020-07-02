@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django import forms
 from django.db.models import Q
 from django.forms import inlineformset_factory
@@ -171,6 +173,7 @@ class ItemContractForm(BaseForm):
         super(ItemContractForm, self).__init__(
             request.user, request.actor, *args, **kwargs)
         self.request = request
+        self.item = item
         self.fields['payment_method'].queryset = item.contract_procedure.payment_methods.select_subclasses(
         ).order_by('fee_absolute_value')
 
@@ -208,7 +211,10 @@ class ItemContractForm(BaseForm):
     def clean(self):
         data = super(ItemContractForm, self).clean()
         address = self.request.actor.address
-        if address.street is None or address.street_number is None or address.postal_code is None or address.city is None:
+        if (address.street is None or address.street_number is None or address.postal_code is None or address.city is None) and (
+            self.item.base_price.value != Decimal(
+                '0') and (self.cleaned_data['price_profile'] and self.cleaned_data['price_profile'].discount != Decimal('100'))
+        ):
             raise forms.ValidationError(
                 _('to create bookings you need to set your billing address'), code='address-not-set')
 

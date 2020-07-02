@@ -129,7 +129,9 @@ class EventsCreate(View):
                 'The event has been created successfully. You can review it and either confirm or cancel.')
             messages.add_message(request, messages.SUCCESS, message)
             return redirect(reverse('control:finance_contracts_manage_details', kwargs={'pk': venue_contract.pk}))
-        return render(request, self.template_name, venue_contract_form.get_forms())
+        context = VenueContractFormManager(venue, request).get_forms()
+        context['venue'] = venue
+        return render(request, self.template_name, context)
 
 
 @method_decorator(login_required, name='dispatch')
