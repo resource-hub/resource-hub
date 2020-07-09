@@ -91,7 +91,8 @@
     }
 
     $(document).ready(function () {
-        create_feed('{% url "api:locations_search" %}');
+        var feed = new BlockFeed('feed', render_feed);
+        feed.create_feed('{% url "api:locations_search" %}');
     });
 </script>
 {% endblock %}

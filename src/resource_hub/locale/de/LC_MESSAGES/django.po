@@ -222,7 +222,7 @@ msgid "Bank account"
 msgstr "Bankkonto"
 
 #: core/models/actors.py:43 core/templates/core/home.html:42
-#: items/models.py:336 items/templates/items/_item_feed_renderer.html:20
+#: items/models.py:336 items/templates/items/_render_item_feed.html:20
 #: venues/models.py:64 venues/models.py:231 venues/models.py:274
 #: venues/templates/venues/_venue_feed_renderer.html:20
 msgid "Thumbnail"
@@ -1204,7 +1204,7 @@ msgstr "Website"
 #: core/templates/core/actor_profile.html:36
 #: core/templates/core/control/organizations_profile.html:23
 #: core/templates/core/home.html:32
-#: items/templates/items/_item_feed_renderer.html:10
+#: items/templates/items/_render_item_feed.html:10
 #: venues/templates/venues/_venue_feed_renderer.html:10
 msgid "Logo"
 msgstr "Logo"
@@ -1440,7 +1440,7 @@ msgid "Data privacy statement"
 msgstr "Datenschutzerklärung"
 
 #: core/templates/core/home.html:25 core/templates/core/home.html:38
-#: items/templates/items/_item_feed_renderer.html:16 templates/_map.html:50
+#: items/templates/items/_render_item_feed.html:16 templates/_map.html:50
 #: venues/templates/venues/_venue_feed_renderer.html:16
 msgid "Details"
 msgstr "Details"

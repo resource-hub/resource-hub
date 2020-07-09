@@ -6,12 +6,13 @@
 <script>
     $(document).ready(function () {
         var endpoint = "{% url 'api:items' %}";
-        create_feed(endpoint, null, '#item-feed');
+        var item_feed = new BlockFeed('item-feed', render_item_feed);
+        item_feed.create_feed(endpoint);
 
         $('#filter-form').on('submit', function (e) {
             e.preventDefault();
             var name = $(this).find("input[name='search_query']").val();
-            create_feed(endpoint, { name: name }, '#item-feed');
+            item_feed.create_feed(endpoint, { name: name });
         });
     });
 </script>

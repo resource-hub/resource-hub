@@ -18,59 +18,66 @@
 
 {% addtoblock 'js' %}
 <script>
-    var next = '';
+    class BlockFeed {
+        constructor(feed_id, _feed_renderer) {
+            this.next = '';
+            this.feed_id = '#' + feed_id;
+            this._feed_renderer = _feed_renderer;
 
-    function load_feed(url, _feed_renderer, feed_id, append = false) {
-        $(feed_id + ' .controls .load-more').addClass('invisible');
-        add_loader(feed_id + ' .controls .feed-loader');
-        $.ajax({
-            'url': url,
-            'type': 'GET',
-            'dataType': 'JSON'
-        }).done(function (data) {
-            remove_loader(feed_id + ' .controls .feed-loader');
-            var feed = _feed_renderer(data.results);
-
-            if (data.next) {
-                $(feed_id + ' .controls .load-more').removeClass('invisible');
-                next = data.next;
-            }
-            if (!append) {
-                $(feed_id + ' .feed-container').html("");
-
-                if (feed) {
-                    $(feed_id + ' .controls .none-found').addClass('hidden');
-                } else {
-                    $(feed_id + ' .controls .none-found').removeClass('hidden');
+            var self = this;
+            $(this.feed_id + ' .controls .load-more').on('click', function () {
+                if (self.next) {
+                    self.load_feed(self.next, true);
                 }
             }
-            $(feed_id + ' .feed-container').append(feed);
-            if (typeof feed_listeners !== 'undefined') {
-                feed_listeners();
-            }
-            $('.thumbnail').on('load', function () {
-                $('.placeholder').hide();
-            });
-            $('.fluid.card .image').dimmer({ on: 'hover' });
-        });
-    }
-    function create_feed(endpoint, params = null, feed_id = '#feed') {
-        var query = "";
-        if (params) {
-            for (const [key, value] of Object.entries(params)) {
-                query += key + '=' + value + '&';
-            }
+            );
         }
-        var url = endpoint + "?" + query;
-        load_feed(url, render_feed, feed_id);
-    }
+        load_feed(url, append = false) {
+            var self = this;
 
-    $(document).ready(function () {
-        $('{% if feed_id %}#{{ feed_id }}{% else %}#feed{% endif %}' + ' .controls .load-more').on('click', function () {
-            if (next) {
-                load_feed(next, render_feed, '{% if feed_id %}#{{ feed_id }}{% else %}#feed{% endif %}', true);
+            $(this.feed_id + ' .controls .load-more').addClass('invisible');
+            add_loader(this.feed_id + ' .controls .feed-loader');
+            $.ajax({
+                'url': url,
+                'type': 'GET',
+                'dataType': 'JSON'
+            }).done(function (data) {
+                remove_loader(self.feed_id + ' .controls .feed-loader');
+                var feed = self._feed_renderer(data.results);
+
+                if (data.next) {
+                    $(self.feed_id + ' .controls .load-more').removeClass('invisible');
+                    self.next = data.next;
+                }
+                if (!append) {
+                    $(self.feed_id + ' .feed-container').html("");
+
+                    if (feed) {
+                        $(self.feed_id + ' .controls .none-found').addClass('hidden');
+                    } else {
+                        $(self.feed_id + ' .controls .none-found').removeClass('hidden');
+                    }
+                }
+                $(self.feed_id + ' .feed-container').append(feed);
+                if (typeof feed_listeners !== 'undefined') {
+                    feed_listeners();
+                }
+                $('.thumbnail').on('load', function () {
+                    $('.placeholder').hide();
+                });
+                $('.fluid.card .image').dimmer({ on: 'hover' });
+            });
+        }
+        create_feed(endpoint, params = null) {
+            var query = "";
+            if (params) {
+                for (const [key, value] of Object.entries(params)) {
+                    query += key + '=' + value + '&';
+                }
             }
-        });
-    });
+            var url = endpoint + "?" + query;
+            this.load_feed(url);
+        }
+    }
 </script>
 {% endaddtoblock %}

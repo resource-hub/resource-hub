@@ -6,12 +6,13 @@
 <script>
     $(document).ready(function () {
         var endpoint = "{% url 'api:venues' %}";
-        create_feed(endpoint, null, '#venue-feed');
+        var venue_feed = new BlockFeed('venue-feed', render_venue_feed);
+        venue_feed.create_feed(endpoint);
 
         $('#filter-form').on('submit', function (e) {
             e.preventDefault();
             var name = $(this).find("input[name='search_query']").val();
-            create_feed(endpoint, { name: name }, '#venue-feed');
+            venue_feed.create_feed(endpoint, { name: name });
         });
     });
 </script>
