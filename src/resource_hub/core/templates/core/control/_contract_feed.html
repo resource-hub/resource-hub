@@ -18,7 +18,7 @@
     </div>
 </script>
 <script>
-    function render_feed(data) {
+    function render_contract_feed(data) {
         var template = document.getElementById("template");
         var templateHtml = template.innerHTML;
         var feed = "";
@@ -36,7 +36,8 @@
         return feed;
     }
     $(document).ready(function () {
-        create_feed("{% url 'api:contracts_list' %}", { type: '{{ type }}' });
+        var contract_feed = new BlockFeed("{% url 'api:contracts_list' %}", 'feed', render_contract_feed);
+        contract_feed.create_feed({ type: '{{ type }}' });
     });
 </script>
 {% endaddtoblock %}
