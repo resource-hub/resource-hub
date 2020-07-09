@@ -55,7 +55,7 @@
 </script>
 
 <script>
-    function render_feed(data) {
+    function render_location_feed(data) {
         var feed = "";
         var template = document.getElementById("location-item-template");
         var templateHtml = template.innerHTML;
@@ -91,8 +91,8 @@
     }
 
     $(document).ready(function () {
-        var feed = new BlockFeed('feed', render_feed);
-        feed.create_feed('{% url "api:locations_search" %}');
+        var feed = new BlockFeed('{% url "api:locations_search" %}', 'feed', render_location_feed);
+        feed.create_feed();
     });
 </script>
 {% endblock %}

@@ -5,14 +5,13 @@
 {% addtoblock 'js' %}
 <script>
     $(document).ready(function () {
-        var endpoint = "{% url 'api:venues' %}";
-        var venue_feed = new BlockFeed('venue-feed', render_venue_feed);
-        venue_feed.create_feed(endpoint);
+        var venue_feed = new BlockFeed("{% url 'api:venues' %}", 'venue-feed', render_venue_feed);
+        venue_feed.create_feed();
 
         $('#filter-form').on('submit', function (e) {
             e.preventDefault();
             var name = $(this).find("input[name='search_query']").val();
-            venue_feed.create_feed(endpoint, { name: name });
+            venue_feed.create_feed({ name: name });
         });
     });
 </script>

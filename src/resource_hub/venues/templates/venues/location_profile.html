@@ -7,8 +7,8 @@
 {% addtoblock 'js' %}
 <script>
     $(document).ready(function () {
-        var venue_feed = new BlockFeed('venue-feed', render_venue_feed);
-        venue_feed.create_feed('{% url "api:venues" %}', { id: '{{ location.id }}' });
+        var venue_feed = new BlockFeed('{% url "api:venues" %}', 'venue-feed', render_venue_feed);
+        venue_feed.create_feed({ id: '{{ location.id }}' });
     });
 </script>
 {% endaddtoblock %}

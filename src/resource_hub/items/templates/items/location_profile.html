@@ -6,7 +6,7 @@
 {% include 'items/_item_feed_renderer.html' %}
 <script>
     $(document).ready(function () {
-        var item_feed = new BlockFeed('item-feed', render_item_feed);
-        item_feed.create_feed('{% url "api:items" %}', { id: '{{ location.id }}' });
+        var item_feed = new BlockFeed('{% url "api:items" %}', 'item-feed', render_item_feed);
+        item_feed.create_feed({ id: '{{ location.id }}' });
     });
 </script>

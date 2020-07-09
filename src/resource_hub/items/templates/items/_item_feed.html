@@ -5,14 +5,13 @@
 {% addtoblock 'js' %}
 <script>
     $(document).ready(function () {
-        var endpoint = "{% url 'api:items' %}";
-        var item_feed = new BlockFeed('item-feed', render_item_feed);
-        item_feed.create_feed(endpoint);
+        var item_feed = new BlockFeed("{% url 'api:items' %}", 'item-feed', render_item_feed);
+        item_feed.create_feed();
 
         $('#filter-form').on('submit', function (e) {
             e.preventDefault();
             var name = $(this).find("input[name='search_query']").val();
-            item_feed.create_feed(endpoint, { name: name });
+            item_feed.create_feed({ name: name });
         });
     });
 </script>
