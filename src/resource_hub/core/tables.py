@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 
 import django_tables2 as tables
 from django_tables2.utils import Accessor as A
+from resource_hub.core.utils import normalize_fraction, round_decimal
 
 from .forms import OrganizationMember
 
@@ -138,9 +139,30 @@ class ClaimTable(tables.Table):
     discounted_net = tables.Column(verbose_name=_('Discounted net'))
     tax_rate = tables.Column(verbose_name=_('Tax (%)'))
     gross = tables.Column(verbose_name=_(
-        'Gross'), footer=lambda table: sum(x.gross for x in table.data))
+        'Gross'), footer=lambda table: round_decimal(sum(x.gross for x in table.data)))
     currency = tables.Column(verbose_name=_(
         'Currency'), footer=create_footer)
+
+    def render_quantity(self, value, record):
+        return normalize_fraction(value)
+
+    def render_price(self, value, record):
+        return round_decimal(value, currency=record.currency)
+
+    def render_discount(self, value, record):
+        return normalize_fraction(value)
+
+    def render_tax_rate(self, value, record):
+        return normalize_fraction(value)
+
+    def render_net(self, value, record):
+        return round_decimal(value, currency=record.currency)
+
+    def render_gross(self, value, record):
+        return round_decimal(value, currency=record.currency)
+
+    def render_discounted_net(self, value, record):
+        return round_decimal(value, currency=record.currency)
 
     class Meta:
         attrs = {
