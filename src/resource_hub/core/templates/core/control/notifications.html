@@ -11,7 +11,7 @@
 
 {% block content %}
 <h1>{% trans 'Notifications' %}</h1>
-{% include '_block_feed.html' with custom_class='ui feed' %}
+{% include '_block_feed.html' with custom_class='ui feed' feed_id='notification-feed' %}
 
 {% addtoblock 'js' %}
 <script id="notification-template" type="text/template">
@@ -64,7 +64,7 @@
             }
         });
     }
-    function render_feed(data) {
+    function render_notification_feed(data) {
         var template = document.getElementById("notification-template").innerHTML;
         var feed = '';
         $.each(data, function (i, notification) {
@@ -87,7 +87,8 @@
         });
     }
     $(document).ready(function () {
-        create_feed("{% url 'api:notifications_list' %}");
+        var notification_feed = new BlockFeed("{% url 'api:notifications_list' %}", 'notification-feed', render_notification_feed);
+        notification_feed.create_feed();
 
         $('#mark_all_read').on('click', function () {
             $(this).prop('disabled', true);
