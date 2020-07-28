@@ -65,7 +65,7 @@ class CoreModule(BaseModule):
         first_child = reverse('control:account_settings',
                               kwargs={'scope': 'info'})
         root = get_parent(first_child)
-        return [
+        result = [
             {
                 'header': _('Account'),
                 'url': os.path.dirname(root),
@@ -140,20 +140,7 @@ class CoreModule(BaseModule):
                     *additional_finance_items,
                 ]
             },
-            {
-                'header': _('Organizations'),
-                'url': get_parent(reverse('control:organizations_manage')),
-                'sub_items': [
-                    {
-                        'header': _('Manage'),
-                        'url': reverse('control:organizations_manage'),
-                    },
-                    {
-                        'header': _('Create'),
-                        'url': reverse('control:organizations_create'),
-                    }
-                ]
-            },
+
             {
                 'header': _('Locations'),
                 'url': get_parent(reverse('control:locations_manage')),
@@ -169,3 +156,22 @@ class CoreModule(BaseModule):
                 ]
             },
         ]
+        # organizations tab only visible if user
+        if request.user.pk == request.actor.pk:
+            result.append(
+                {
+                    'header': _('Organizations'),
+                    'url': get_parent(reverse('control:organizations_manage')),
+                    'sub_items': [
+                        {
+                            'header': _('Manage'),
+                            'url': reverse('control:organizations_manage'),
+                        },
+                        {
+                            'header': _('Create'),
+                            'url': reverse('control:organizations_create'),
+                        }
+                    ]
+                },
+            )
+        return result
