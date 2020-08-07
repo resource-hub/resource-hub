@@ -50,7 +50,7 @@ demo:
     - scp demo.env demo@${DEMO_SERVER_IP}:${DEMO_PATH}/.env
     - ssh demo@${DEMO_SERVER_IP} "chmod 600 ${DEMO_PATH}/.env"
     - rm demo.env
-    - scp docker-compose.demo.yml demo@${DEMO_SERVER_IP}:${DEMO_PATH}/docker-compose.yml
+    - scp docker-compose.deploy.yml demo@${DEMO_SERVER_IP}:${DEMO_PATH}/docker-compose.yml
     - ssh demo@${DEMO_SERVER_IP} "cd ${DEMO_PATH} && docker-compose stop && docker login -u gitlab-ci-token -p ${CI_JOB_TOKEN} registry.gitlab.com && docker pull ${CONTAINER_TEST_IMAGE} && docker-compose -f docker-compose.yml up -d"
 
 deploy:
@@ -70,5 +70,5 @@ deploy:
     - scp deploy.env deploy@${DEPLOY_SERVER_IP}:${DEPLOY_PATH}/.env
     - ssh deploy@${DEPLOY_SERVER_IP} "chmod 600 ${DEPLOY_PATH}/.env"
     - rm deploy.env
-    - scp docker-compose.demo.yml deploy@${DEPLOY_SERVER_IP}:${DEPLOY_PATH}/docker-compose.yml
+    - scp docker-compose.deploy.yml deploy@${DEPLOY_SERVER_IP}:${DEPLOY_PATH}/docker-compose.yml
     - ssh deploy@${DEPLOY_SERVER_IP} "cd ${DEPLOY_PATH} && docker-compose stop && docker login -u gitlab-ci-token -p ${CI_JOB_TOKEN} registry.gitlab.com && docker pull ${CONTAINER_TEST_IMAGE} && docker-compose -f docker-compose.yml up -d"
