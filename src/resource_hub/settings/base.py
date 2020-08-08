@@ -72,9 +72,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # third party
     'django_extensions',
-    'django_tables2',
+    'django_ical',
     'django_rq',
     'django_summernote',
+    'django_tables2',
     'djangoformsetjs',
     'imagekit',
     'recurrence',

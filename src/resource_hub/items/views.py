@@ -2,12 +2,14 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.db.models import Q
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
 from django.views import View
 
+from django_ical.utils import build_rrule_from_recurrences_rrule
+from django_ical.views import ICalFeed
 from resource_hub.core.decorators import owner_required
 from resource_hub.core.views import TableView
 
@@ -147,6 +149,12 @@ class ItemsDetails(View):
         return render(request, 'items/item_details.html', context)
 
 
+class ItemBookings(View):
+    def get(self, request, pk):
+        item_booking = get_object_or_404(ItemBooking, pk=pk)
+        return redirect(reverse('control:finance_contracts_manage_details', kwargs={'pk': item_booking.contract.pk}))
+
+
 @method_decorator(login_required, name='dispatch')
 class ItemBookingsCreate(View):
     template_name = 'items/item_bookings_create.html'
@@ -222,3 +230,28 @@ class ContractProceduresEdit(View):
             messages.add_message(request, messages.SUCCESS, message)
             return redirect(reverse('control:finance_contract_procedures_manage'))
         return render(request, self.template_name, contract_procedure_form.get_forms())
+
+
+class ICSFeed(ICalFeed):
+    file_name = "feed.ics"
+
+    def get_object(self, request, *args, **kwargs):
+        return ItemBooking.objects.filter(item__slug=kwargs['item_slug'], item__owner__slug=kwargs['owner_slug'])
+
+    def items(self, obj):
+        return obj
+
+    def item_title(self, item):
+        return item.item.name
+
+    def item_description(self, item):
+        return item.item.description
+
+    def item_start_datetime(self, item):
+        return item.dtstart
+
+    def item_end_datetime(self, item):
+        return item.dtend
+
+    def item_link(self, item):
+        return reverse('items:bookings', kwargs={'pk': item.pk})

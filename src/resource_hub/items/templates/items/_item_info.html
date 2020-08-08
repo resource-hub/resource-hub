@@ -83,3 +83,8 @@
         {{ item.description|safe }}
     </div>
 </div>
+<a class="ui right labeled right floated icon button"
+    href="{% url 'items:ics_feed' owner_slug=item.owner.slug item_slug=item.slug %}">
+    <i class="rss icon"></i>
+    {% trans 'Subscribe' %}
+</a>

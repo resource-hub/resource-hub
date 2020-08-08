@@ -63,6 +63,7 @@ bleach = "*"
 django-formset-js-improved = "*"
 reportlab = "*"
 sepaxml = "*"
+django-ical = "*"
 
 [requires]
 python_version = "*"

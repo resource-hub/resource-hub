@@ -1,59 +1,63 @@
 -i https://pypi.org/simple
-accesscontrol==4.1
-acquisition==4.6
-asgiref==3.2.7
+accesscontrol==4.2; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'
+acquisition==4.6; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'
+asgiref==3.2.10
 attrs==19.3.0
 authencoding==4.1
-autobahn==20.4.2
+autobahn==20.7.1
 automat==20.2.0
-beautifulsoup4==4.9.0
-bleach==3.1.4
+beautifulsoup4==4.9.1
+bleach==3.1.5
 btrees==4.7.2
-certifi==2020.4.5.1
-cffi==1.14.0
-chameleon==3.7.0
+certifi==2020.6.20
+cffi==1.14.1
+chameleon==3.8.1
 chardet==3.0.4
-click==7.1.1
+click==7.1.2
 constantly==15.1.0
-coverage==5.1
-croniter==0.3.31
-cryptography==2.9
+coverage==5.2.1
+croniter==0.3.34; python_version >= '2.6' and python_version not in '3.0, 3.1, 3.2, 3.3'
+cryptography==3.0
 daphne==2.5.0
 datetime==4.3
 django-appconf==1.0.4
 django-classy-tags==1.0.0
 django-countries==6.1.2
-django-extensions==2.2.9
+django-extensions==3.0.4
 django-formset-js-improved==0.5.0.2
+django-ical==1.7.1
 django-imagekit==4.0.2
-django-ipware==2.1.0
+django-ipware==3.0.1
 django-jquery-js==3.1.1
 django-model-utils==4.0.0
-django-recurrence==1.10.2
-django-redis==4.11.0
-django-rq==2.3.1
+django-recurrence==1.10.3
+django-redis==4.12.1
+django-rq==2.3.2
 django-sekizai==1.1.0
 django-tables2==2.3.1
-django==3.0.5
-djangorestframework==3.11.0
-documenttemplate==3.2.2
-elementpath==1.4.3
+django==3.0.9
+djangorestframework==3.11.1
+documenttemplate==3.3; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'
+elementpath==1.4.6
 extensionclass==4.4
 git+https://github.com/campfireman/django-summernote.git@2ec3d9b8f646f10acfc8131990deb98b44943254#egg=django-summernote
-hyperlink==19.0.0
+hyperlink==20.0.1
+icalendar==4.0.6; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'
 idna==2.8
 incremental==17.5.0
 iso3166==1.0.1
 multimapping==4.1
+natsort==7.0.1; python_version >= '3.4'
+packaging==20.4; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'
 pastedeploy==2.1.0
 persistence==3.0
 persistent==4.6.4
 pilkit==2.0
-pillow==7.1.1
+pillow==7.2.0
 psycopg2-binary==2.8.5
 pyasn1-modules==0.2.8
 pyasn1==0.4.8
-pycountry==19.8.18
+pycountry==20.7.3
 pycparser==2.20
 pydot==1.4.1
 pyhamcrest==2.0.2
@@ -61,36 +65,36 @@ pyopenssl==19.1.0
 pyparsing==2.4.7
 python-dateutil==2.8.1
 python-gettext==4.0
-pytz==2019.3
-redis==3.4.1
-reportlab==3.5.42
+pytz==2020.1
+redis==3.5.3
+reportlab==3.5.47
 requests==2.22
 restrictedpython==5.0
-roman==3.2
-rq-scheduler==0.9.1
-rq==1.3.0
-schwifty==2020.4.1
-sepaxml==2.2.0
+roman==3.3; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'
+rq-scheduler==0.10.0
+rq==1.5.0
+schwifty==2020.8.0
+sepaxml==2.3.0
 service-identity==18.1.0
-six==1.14.0
-soupsieve==2.0
+six==1.15.0
+soupsieve==2.0.1; python_version >= '3.5'
 sqlparse==0.3.1
 text-unidecode==1.3
 transaction==3.0.0
 twisted[tls]==20.3.0
 txaio==20.4.1
-urllib3==1.25.8
-waitress==1.4.3
+urllib3==1.25.10
+waitress==1.4.4; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'
 webencodings==0.5.1
-webob==1.8.6
-webtest==2.0.34
+webob==1.8.6; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'
+webtest==2.0.35
 wsgiproxy2==0.4.6
-xmlschema==1.1.2
-z3c.pt==3.3.0
+xmlschema==1.2.2
+z3c.pt==3.3.0; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'
 zc.lockfile==2.0
 zconfig==3.5.0
 zexceptions==4.1
-zodb==5.5.1
+zodb==5.6.0; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'
 zodbpickle==2.0.0
 zope.annotation==4.7.0
 zope.browser==2.3
@@ -98,39 +102,39 @@ zope.browsermenu==4.4
 zope.browserpage==4.4.0
 zope.browserresource==4.4
 zope.cachedescriptors==4.3.1
-zope.component==4.6.1
+zope.component==4.6.2
 zope.configuration==4.4.0
-zope.container==4.4.0
+zope.container==4.4.0; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'
 zope.contentprovider==4.2.1
 zope.contenttype==4.5.0
 zope.deferredimport==4.3.1
 zope.deprecation==4.4.0
 zope.dottedname==4.3
 zope.event==4.4
-zope.exceptions==4.3
-zope.filerepresentation==5.0.0
+zope.exceptions==4.4
+zope.filerepresentation==5.0.0; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'
 zope.globalrequest==1.5
-zope.hookable==5.0.1
+zope.hookable==5.0.1; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'
 zope.i18n[zcml]==4.7.0
 zope.i18nmessageid==5.0.1
-zope.interface==5.1.0
+zope.interface==5.1.0; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'
 zope.lifecycleevent==4.3
 zope.location==4.2
 zope.pagetemplate==4.5.0
 zope.processlifetime==2.3.0
 zope.proxy==4.3.5
 zope.ptresource==4.2.0
-zope.publisher==5.2.0
+zope.publisher==5.2.1; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'
 zope.schema==6.0.0
-zope.security==5.1.1
+zope.security==5.1.1; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'
 zope.sequencesort==4.1.2
-zope.site==4.3.0
+zope.site==4.3.0; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'
 zope.size==4.3
 zope.structuredtext==4.3
 zope.tal==4.4
-zope.tales==5.0.2
+zope.tales==5.1; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'
 zope.testbrowser==5.5.1
 zope.testing==4.7
-zope.traversing==4.4.1
+zope.traversing==4.4.1; python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4'
 zope.viewlet==4.2.1
-zope==4.4
+zope==4.5
