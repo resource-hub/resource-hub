@@ -55,6 +55,7 @@ demo:
 
 deploy:
   stage: deploy
+  when: manual
   tags:
     - shell
   only:
