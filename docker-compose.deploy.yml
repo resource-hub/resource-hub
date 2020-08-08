@@ -8,7 +8,7 @@ services:
 
   worker:
     environment:
-      DJANGO_SETTINGS_MODULE: resource_hub.settings.demo
+      DJANGO_SETTINGS_MODULE: resource_hub.settings.deploy
     env_file:
       - .env
     volumes:
@@ -21,7 +21,7 @@ services:
 
   scheduler:
     environment:
-      DJANGO_SETTINGS_MODULE: resource_hub.settings.demo
+      DJANGO_SETTINGS_MODULE: resource_hub.settings.deploy
     env_file:
       - .env
     restart: on-failure
@@ -33,7 +33,7 @@ services:
   app:
     image: registry.gitlab.com/resource-hub/resource-hub:master
     environment:
-      DJANGO_SETTINGS_MODULE: resource_hub.settings.demo
+      DJANGO_SETTINGS_MODULE: resource_hub.settings.deploy
     env_file: .env
     volumes:
       - ${DEMO_PATH}/static:/site/src/static
