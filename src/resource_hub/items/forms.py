@@ -47,12 +47,13 @@ class ItemForm(forms.ModelForm):
         )
 
         # inital values
-        self.initial['owner'] = self.actor
-        if contract_procedures:
-            self.initial['contract_procedure'] = contract_procedures[0]
+        if kwargs['instance'] is None:
+            self.initial['owner'] = self.actor
+            if contract_procedures:
+                self.initial['contract_procedure'] = contract_procedures[0]
 
-        if self.fields['location'].queryset:
-            self.initial['location'] = self.fields['location'].queryset[0]
+            if self.fields['location'].queryset:
+                self.initial['location'] = self.fields['location'].queryset[0]
 
     state = forms.ChoiceField(
         choices=Item.STATES,

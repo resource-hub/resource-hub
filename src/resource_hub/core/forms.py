@@ -1,6 +1,7 @@
 import re
 from datetime import datetime
 
+import bleach
 import requests
 from django import forms
 from django.conf import settings
@@ -13,7 +14,6 @@ from django.template.loader import render_to_string
 from django.utils.dateparse import parse_date
 from django.utils.translation import gettext_lazy as _
 
-import bleach
 from resource_hub.core.utils import get_authorized_actors
 from schwifty import BIC, IBAN
 
@@ -40,7 +40,8 @@ class BaseForm(forms.ModelForm):
             self.fields['owner'].queryset = get_authorized_actors(
                 self.user,
             )
-            self.initial['owner'] = self.actor
+            if instance is None:
+                self.initial['owner'] = self.actor
 
     def _update_attrs(self, fields):
         for field, val in fields.items():
