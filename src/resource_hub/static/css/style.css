@@ -568,8 +568,11 @@ tr.selectable {
     --orange: #fd971f;
     --teal: #66d9ef;
   }
-  a, b, p, span {
+  b, p, span {
     color: var(--text-color) !important;
+  }
+  a, nav span.text {
+    color: var(--green) !important;
   }
   h1, h2, h3, h4, h5, h6, label, strong, .header {
     color: var(--green) !important;
