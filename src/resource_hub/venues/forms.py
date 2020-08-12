@@ -177,7 +177,7 @@ class EventForm(forms.ModelForm):
         self.fields['venues'].queryset = Venue.objects.filter(
             contract_procedure=venue.contract_procedure
         )
-        if kwargs['instance'] is None:
+        if 'instance' in kwargs and kwargs['instance'] is None:
             self.initial['venues'] = venue
 
     class Meta:

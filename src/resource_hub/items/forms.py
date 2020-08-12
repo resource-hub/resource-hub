@@ -47,7 +47,7 @@ class ItemForm(forms.ModelForm):
         )
 
         # inital values
-        if kwargs['instance'] is None:
+        if 'instance' in kwargs and kwargs['instance'] is None:
             self.initial['owner'] = self.actor
             if contract_procedures:
                 self.initial['contract_procedure'] = contract_procedures[0]
