@@ -1,10 +1,7 @@
 {% load i18n %}
 <div class="ui list">
   <div class="item">
-    <a
-      href="{% url 'core:actor_profile' slug=contract.creditor.slug %}"
-      target="_blank"
-    >
+    <a href="{% url 'core:actor_profile' slug=actor.slug %}" target="_blank">
       {{ actor.name }}
     </a>
   </div>
