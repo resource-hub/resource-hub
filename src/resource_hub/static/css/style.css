@@ -559,7 +559,7 @@ tr.selectable {
 @media (prefers-color-scheme: dark) {
   :root {
     --bg-color: #272822;
-    --bg-shade: #1f201a;
+    --bg-shade: #010101;
     --bg-contrast: #373844;
     --text-color: #ffffff;
     --line-color: #666;
