@@ -23,6 +23,11 @@
             </nav>
             <h1>{{ item.name }}</h1>
             {% include 'items/_item_info.html' %}
+            <a class="ui right labeled right floated icon button"
+                href="{% url 'items:ics_feed' owner_slug=item.owner.slug item_slug=item.slug %}">
+                <i class="rss icon"></i>
+                {% trans 'Subscribe' %}
+            </a>
 
         </div>
         <div class="eight wide column">
