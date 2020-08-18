@@ -18,7 +18,7 @@ Each individual contract is a state machine. The states represent the different 
 .. figure:: figures/statemachine-state-graph.png
 
 **********
-Deployment
+Service Infrastructure
 **********
 
 Currently the application is deployed in a container.
