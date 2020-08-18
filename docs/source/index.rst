@@ -11,6 +11,7 @@ Welcome to Resource Hub's documentation!
    :caption: Contents:
 
    architecture
+   deployment
 
 
 
