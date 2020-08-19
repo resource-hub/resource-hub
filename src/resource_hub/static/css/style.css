@@ -620,6 +620,9 @@ tr.selectable {
   tr.td:hover {
     color: var(--red) !important;
   }
+  .ui.button, .ui.tag {
+    color: var(--text-color) !important;
+  }
   /**
       * leaflet 
       */
