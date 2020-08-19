@@ -119,7 +119,7 @@
 <form id="choices" class="small-container" method="POST">
     {% csrf_token %}
     <div class="ui slider checkbox">
-        <input type="checkbox" name="terms" required>
+        <input id="terms_checkbox" type="checkbox" name="terms" required>
         <label for="terms">
             <b>
                 {% trans 'I fully understand and agree to the given terms and conditions.' %}
@@ -127,7 +127,7 @@
         </label>
     </div>
     <div class="section-container">
-        <button class="ui negative right labeled icon button" name="choice" value="cancel" type="submit">
+        <button id="cancel_button" class="ui negative right labeled icon button" name="choice" value="cancel">
             {% trans 'Cancel' %}
             <i class="close icon"></i>
         </button>
@@ -143,6 +143,9 @@
 {% block scripts %}
 <script>
     $(document).ready(function () {
+        $('#cancel_button').on('click', function () {
+            $('#terms_checkbox').prop('required', false);
+        });
         if ($('#timer').length) {
             const START = $('#timer').text().trim().replace(/(\r\n|\n|\r)/gm, "");
             let time = START.split(':').map(function (x) {
