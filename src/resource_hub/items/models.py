@@ -12,7 +12,7 @@ from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
 from resource_hub.core.models import (Actor, BaseModel, BaseStateMachine,
                                       Claim, Contract, ContractProcedure,
-                                      Gallery, Location, Price)
+                                      Gallery, Location, Notification, Price)
 from resource_hub.core.utils import get_valid_slug
 
 
@@ -66,28 +66,23 @@ class ItemContract(Contract):
             }
         )
 
-    def _send_running_notification(self, request):
+    def _get_waiting_notification_msg(self):
+        return self.note
+
+    def _get_running_notification_msg(self):
         item_instructions = ''
-        item_attachments = []
         for item in self.items.all():
             item_instructions += item.instructions
-            if item.attachment:
-                item_attachments.append(item.attachment.path)
-        message = '{} \n {} \n {} \n'.format(
-            self.note,
+        return '{} \n {} \n'.format(
             self.contract_procedure.notes,
             item_instructions).replace("\n", "<br />\n")
-        self._send_state_notification(
-            sender=self.creditor,
-            recipient=self.debitor,
-            header=_('{creditor} accepted {contract}'.format(
-                creditor=self.creditor,
-                contract=self.verbose_name,
-            )),
-            message=message,
-            request=request,
-            attachments=item_attachments,
-        )
+
+    def _get_running_notification_attachments(self):
+        item_attachments = []
+        for item in self.items.all():
+            if item.attachment:
+                item_attachments.append(item.attachment.path)
+        return item_attachments
 
     def purge(self):
         super(ItemContract, self).purge()

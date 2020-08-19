@@ -254,7 +254,7 @@ class BaseContract(BaseStateMachine):
     def set_cancelled(self) -> None:
         raise NotImplementedError()
 
-    def set_declined(self) -> None:
+    def set_declined(self, request) -> None:
         raise NotImplementedError()
 
     def set_waiting(self, request) -> None:
@@ -353,10 +353,10 @@ class Contract(BaseContract):
         return
     # notifications
 
-    def _send_state_notification(self, sender, recipient, header, message='', attachments=None, request=None):
+    def _send_state_notification(self, type_, sender, recipient, header, message='', attachments=None, request=None):
         if self.creditor != self.debitor:
             return Notification.build(
-                type_=Notification.TYPE.CONTRACT,
+                type_=type_,
                 sender=sender,
                 recipient=recipient,
                 header=header,
@@ -368,8 +368,12 @@ class Contract(BaseContract):
                 attachments=attachments,
             )
 
+    def _get_waiting_notification_msg(self):
+        return ''
+
     def _send_waiting_notification(self, request):
         self._send_state_notification(
+            type_=Notification.TYPE.CONTRACT_CREATED,
             sender=self.debitor,
             recipient=self.creditor,
             header=_('{debitor} created {contract}'.format(
@@ -377,21 +381,51 @@ class Contract(BaseContract):
                 contract=self.verbose_name,
             )),
             request=request,
+            message=self._get_waiting_notification_msg(),
         )
+
+    def _get_running_notification_msg(self):
+        return self.contract_procedure.notes
+
+    def _get_running_notification_attachments(self):
+        return None
 
     def _send_running_notification(self, request):
         self._send_state_notification(
+            type_=Notification.TYPE.CONTRACT_ACCEPTED,
             sender=self.creditor,
             recipient=self.debitor,
             header=_('{creditor} accepted {contract}'.format(
                 creditor=self.creditor,
                 contract=self.verbose_name,
             )),
-            message=self.contract_procedure.notes,
+            message=self._get_running_notification_msg(),
+            request=request,
+            attachments=self._get_running_notification_attachments(),
+        )
+
+    def _send_declined_notification(self, request):
+        self._send_state_notification(
+            type_=Notification.TYPE.CONTRACT_DECLINED,
+            sender=self.creditor,
+            recipient=self.debitor,
+            header=_('{creditor} declined {contract}'.format(
+                creditor=self.creditor,
+                contract=self.verbose_name,
+            )),
             request=request,
         )
 
-    # def _send_terminated_notification(self, request):
+    def _send_terminated_notification(self, initiator, reciever):
+        self._send_state_notification(
+            type_=Notification.TYPE.CONTRACT_TERMINATED,
+            sender=initiator,
+            recipient=reciever,
+            header=_('{initiator} terminated {contract}'.format(
+                initiator=initiator,
+                contract=self.verbose_name,
+            )),
+        )
 
     def purge(self) -> None:
         self.claim_set.all().soft_delete()
@@ -446,17 +480,10 @@ class Contract(BaseContract):
         self.purge()
         self.save()
 
-    def set_declined(self) -> None:
+    def set_declined(self, request) -> None:
         self.move_to(self.STATE.DECLINED)
         self.save()
-        self._send_state_notification(
-            sender=self.creditor,
-            recipient=self.debitor,
-            header=_('{creditor} declined {contract}'.format(
-                creditor=self.creditor,
-                contract=self.verbose_name,
-            ))
-        )
+        self._send_declined_notification(request)
 
     def set_terminated(self, initiator) -> None:
         self.move_to(self.STATE.TERMINATED)
@@ -468,14 +495,7 @@ class Contract(BaseContract):
         Claim.objects.filter(query).update(state=Claim.STATE.TERMINATED)
         self.save()
         reciever = self.creditor if self.debitor == initiator else self.debitor
-        self._send_state_notification(
-            sender=initiator,
-            recipient=reciever,
-            header=_('{initiator} terminated {contract}'.format(
-                initiator=initiator,
-                contract=self.verbose_name,
-            )),
-        )
+        self._send_terminated_notification(initiator, reciever)
 
     def claim_factory(self, **kwargs):
         if self.is_self_dealing:

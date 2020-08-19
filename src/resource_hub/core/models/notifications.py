@@ -35,12 +35,20 @@ class Notification(BaseStateMachine):
         '''
         INFO = 'i'
         ACTION = 'a'
+        CONTRACT_CREATED = 'cc'
+        CONTRACT_TERMINATED = 'ct'
+        CONTRACT_DECLINED = 'cd'
+        CONTRACT_ACCEPTED = 'ca'
         CONTRACT = 'c'
         MONETARY = 'm'
 
     TYPES = [
         (TYPE.INFO, _('info')),
         (TYPE.ACTION, _('action')),
+        (TYPE.CONTRACT_CREATED, _('contract created')),
+        (TYPE.CONTRACT_TERMINATED, _('contract terminated')),
+        (TYPE.CONTRACT_DECLINED, _('contract declined')),
+        (TYPE.CONTRACT_ACCEPTED, _('contract accepted')),
         (TYPE.CONTRACT, _('contract')),
         (TYPE.MONETARY, _('monetary')),
     ]
@@ -49,6 +57,10 @@ class Notification(BaseStateMachine):
     TYPE_ICON_MAP = {
         TYPE.INFO: 'info circle',
         TYPE.ACTION: 'bolt',
+        TYPE.CONTRACT_CREATED: 'exclamation',
+        TYPE.CONTRACT_TERMINATED: 'times',
+        TYPE.CONTRACT_DECLINED: 'times',
+        TYPE.CONTRACT_ACCEPTED: 'handshake',
         TYPE.CONTRACT: 'handshake',
         TYPE.MONETARY: 'file alternate outline',
         'default': 'info circle',
