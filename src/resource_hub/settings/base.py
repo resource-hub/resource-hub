@@ -103,7 +103,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # custom middleware
     'resource_hub.core.middleware.ActorMiddleware',
-    # 'resource_hub.core.middleware.LocaleMiddleware',
 ]
 
 

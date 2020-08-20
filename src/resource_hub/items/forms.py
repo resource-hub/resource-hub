@@ -210,10 +210,8 @@ class ItemContractForm(BaseForm):
         if item.owner == self.request.actor or item.self_pickup == Item.SELF_PICKUP.ALLOWED or (item.SELF_PICKUP.LIMITED and (item.self_pickup == Item.SELF_PICKUP.LIMITED and item.contract_procedure.self_pickup_group.filter(query).exists())):
             self.fields['note'].disabled = True
         else:
-            with language('de'):
-                print(translation.get_language())
-                self.initial['note'] = gettext(
-                    'Hey, I\'d like to lend your %(item)s. I would like to pick it up at: TIME') % {'item': item.name}
+            self.initial['note'] = gettext(
+                'Hey, I\'d like to lend your %(item)s. I would like to pick it up at: TIME') % {'item': item.name}
 
     def clean(self):
         data = super(ItemContractForm, self).clean()
