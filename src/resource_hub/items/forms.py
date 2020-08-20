@@ -3,7 +3,10 @@ from decimal import Decimal
 from django import forms
 from django.db.models import Q
 from django.forms import inlineformset_factory
+from django.utils import translation
+from django.utils.text import format_lazy
 from django.utils.timezone import get_current_timezone
+from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
 from resource_hub.core.fields import HTMLField
@@ -11,7 +14,8 @@ from resource_hub.core.forms import (BaseForm, ContractProcedureForm,
                                      FormManager, GalleryImageFormSet,
                                      PriceForm, PriceProfileFormSet)
 from resource_hub.core.models import Gallery, Price, PriceProfile
-from resource_hub.core.utils import get_authorized_actors, timespan_conflict
+from resource_hub.core.utils import (get_authorized_actors, language,
+                                     timespan_conflict)
 
 from .models import (Item, ItemBooking, ItemContract, ItemContractProcedure,
                      ItemPrice)
@@ -206,8 +210,10 @@ class ItemContractForm(BaseForm):
         if item.owner == self.request.actor or item.self_pickup == Item.SELF_PICKUP.ALLOWED or (item.SELF_PICKUP.LIMITED and (item.self_pickup == Item.SELF_PICKUP.LIMITED and item.contract_procedure.self_pickup_group.filter(query).exists())):
             self.fields['note'].disabled = True
         else:
-            self.initial['note'] = _(
-                'Hey, I\'d like to lend your {item}. I would like to pick it up at: TIME'.format(item=item.name))
+            with language('de'):
+                print(translation.get_language())
+                self.initial['note'] = gettext(
+                    'Hey, I\'d like to lend your %(item)s. I would like to pick it up at: TIME') % {'item': item.name}
 
     def clean(self):
         data = super(ItemContractForm, self).clean()
@@ -289,8 +295,8 @@ class ItemBookingForm(forms.ModelForm):
                     booking.dtstart = booking.dtstart.astimezone(client_tz)
                     booking.dtend = booking.dtend.astimezone(client_tz)
                     conflicts.append(
-                        _('There is a missing quantity of {} with booking on {} to {}'.format(
-                            delta, booking.dtstart.strftime('%c'), booking.dtend.strftime('%c')))
+                        _('There is a missing quantity of %(delta)s with booking on %(start)s to %(end)s') % {
+                            'delta': delta, 'start': booking.dtstart.strftime('%c'), 'end': booking.dtend.strftime('%c')}
                     )
             if conflicts:
                 raise forms.ValidationError(conflicts)

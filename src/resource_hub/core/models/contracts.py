@@ -376,10 +376,10 @@ class Contract(BaseContract):
             type_=Notification.TYPE.CONTRACT_CREATED,
             sender=self.debitor,
             recipient=self.creditor,
-            header=_('{debitor} created {contract}'.format(
-                debitor=self.debitor,
-                contract=self.verbose_name,
-            )),
+            header=_('%(debitor)s created %(contract)s') % {
+                'debitor': self.debitor,
+                'contract': self.verbose_name,
+            },
             request=request,
             message=self._get_waiting_notification_msg(),
         )
@@ -395,10 +395,10 @@ class Contract(BaseContract):
             type_=Notification.TYPE.CONTRACT_ACCEPTED,
             sender=self.creditor,
             recipient=self.debitor,
-            header=_('{creditor} accepted {contract}'.format(
-                creditor=self.creditor,
-                contract=self.verbose_name,
-            )),
+            header=_('%(debitor)s accepted %(contract)s') % {
+                'debitor': self.debitor,
+                'contract': self.verbose_name,
+            },
             message=self._get_running_notification_msg(),
             request=request,
             attachments=self._get_running_notification_attachments(),
@@ -409,10 +409,10 @@ class Contract(BaseContract):
             type_=Notification.TYPE.CONTRACT_DECLINED,
             sender=self.creditor,
             recipient=self.debitor,
-            header=_('{creditor} declined {contract}'.format(
-                creditor=self.creditor,
-                contract=self.verbose_name,
-            )),
+            header=_('%(debitor)s declined %(contract)s') % {
+                'debitor': self.debitor,
+                'contract': self.verbose_name,
+            },
             request=request,
         )
 
@@ -421,10 +421,10 @@ class Contract(BaseContract):
             type_=Notification.TYPE.CONTRACT_TERMINATED,
             sender=initiator,
             recipient=reciever,
-            header=_('{initiator} terminated {contract}'.format(
-                initiator=initiator,
-                contract=self.verbose_name,
-            )),
+            header=_('%(initiator)s terminated %(contract)s') % {
+                'debitor': self.debitor,
+                'contract': self.verbose_name,
+            },
         )
 
     def purge(self) -> None:

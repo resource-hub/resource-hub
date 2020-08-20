@@ -387,10 +387,10 @@ class VenueContract(Contract):
             type_=Notification.TYPE.CONTRACT,
             sender=self.debitor,
             recipient=self.creditor,
-            header='{debitor} created Event: {event}'.format(
-                debitor=self.debitor,
-                event=self.event.name
-            ),
+            header=_('%(debitor)s created Event: %(event)s') % {
+                'debitor': self.debitor,
+                'event': self.event.name
+            },
             link=reverse('control:finance_contracts_manage_details',
                          kwargs={'pk': self.pk}),
             level=Notification.LEVEL.MEDIUM,

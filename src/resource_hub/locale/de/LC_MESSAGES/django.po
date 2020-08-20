@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-01 16:25+0200\n"
+"POT-Creation-Date: 2020-08-20 17:51+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,157 +28,161 @@ msgstr ""
 msgid "Resend mail"
 msgstr "Mail erneut versenden"
 
-#: core/fields.py:35 core/tables.py:143 plugins/sepa/tables.py:28
+#: core/fields.py:35 core/tables.py:144 plugins/sepa/tables.py:28
 msgid "Currency"
 msgstr "Währung"
 
-#: core/forms.py:118 core/tables.py:86
+#: core/forms.py:119 core/tables.py:87
 msgid "First name"
 msgstr "Vorname"
 
-#: core/forms.py:119 core/tables.py:88
+#: core/forms.py:120 core/tables.py:89
 msgid "Last name"
 msgstr "Nachname"
 
-#: core/forms.py:143
+#: core/forms.py:144
 msgid "Are you older than the oldest person ever alive?"
 msgstr "Bist du älter als der älteste Mensch, der jemals gelebt hat?"
 
-#: core/forms.py:148
+#: core/forms.py:149
 msgid "You have to be older than 16 to sign up"
 msgstr "Du musst älter als 16 Jahre alt sein, um dich anmelden zu können"
 
-#: core/forms.py:164
+#: core/forms.py:165
 msgid "Organization name"
 msgstr "Organisationsname"
 
-#: core/forms.py:164
+#: core/forms.py:165
 msgid "Please include your legal form"
 msgstr "Bitte die Rechtsform angeben"
 
-#: core/forms.py:166
+#: core/forms.py:167
 msgid "This is the mail will be displayed on bills and on the profile"
 msgstr "Diese Email wird auf Rechnungen und dem Profil angezeigt"
 
-#: core/forms.py:177
+#: core/forms.py:178
 msgid "This organization name already exists"
 msgstr "Dieser Organisationsname existiert bereits"
 
-#: core/forms.py:182
+#: core/forms.py:183
 msgid "For organizations, a public email is required"
 msgstr "Bei Organisationen ist eine öffentliche Email notwendig"
 
-#: core/forms.py:213
+#: core/forms.py:214
 msgid "Invalid postal code"
 msgstr "Ungültige Postleitzahl"
 
-#: core/forms.py:225
+#: core/forms.py:226
 msgid "Put in trash"
 msgstr "In den Papierkorb"
 
-#: core/forms.py:226
+#: core/forms.py:227
 msgid "Restore from trash"
 msgstr "Aus dem Papierkorb wiederherstellen"
 
-#: core/forms.py:242
+#: core/forms.py:243
 msgid "In trash"
 msgstr "Im Papierkorb"
 
-#: core/forms.py:251
-msgid "There have to be at most {} entries per page"
-msgstr "Es dürfen maximal {} Einträge pro Seite existieren"
+#: core/forms.py:252
+#, python-format
+msgid "There have to be at most %(count)d entries per page"
+msgstr "Es dürfen maximal %(count)d Einträge pro Seite existieren"
 
-#: core/forms.py:254
-msgid "There has to be at least {} entry per page"
-msgstr "Es müssen mindestens {} Einträge pro Seite existieren"
+#: core/forms.py:255
+#, fuzzy, python-format
+#| msgid "There has to be at least {} entry per page"
+msgid "There has to be at least %(count)d entry per page"
+msgstr "Es müssen mindestens %(count)d Einträge pro Seite existieren"
 
-#: core/forms.py:276 core/models/base.py:148
+#: core/forms.py:277 core/models/base.py:148
 msgid "Account holder"
 msgstr "Kontoinhaber"
 
-#: core/forms.py:277 core/models/base.py:154
+#: core/forms.py:278 core/models/base.py:154
 msgid "IBAN"
 msgstr "IBAN"
 
-#: core/forms.py:278 core/models/base.py:160
+#: core/forms.py:279 core/models/base.py:160
 msgid "BIC"
 msgstr "BIC"
 
-#: core/forms.py:291
+#: core/forms.py:292
 msgid "Invalid IBAN: "
 msgstr "Ungültige IBAN: "
 
-#: core/forms.py:301
+#: core/forms.py:302
 msgid "Invalid BIC: "
 msgstr "Ungültige BIC: "
 
-#: core/forms.py:407
+#: core/forms.py:408
 msgid "New email-address"
 msgstr "Neue E-Mailadresse"
 
-#: core/forms.py:410
+#: core/forms.py:411
 msgid "New email-address confirmation"
 msgstr "Bestätigung neuer E-Mailadresse"
 
-#: core/forms.py:413 core/templates/core/control/account_security.html:11
+#: core/forms.py:414 core/templates/core/control/account_security.html:11
 msgid "Password"
 msgstr "Passwort"
 
-#: core/forms.py:424
+#: core/forms.py:425
 msgid "The email-addresses do not match"
 msgstr "Die E-Mailadressen stimmen nicht überein"
 
-#: core/forms.py:430
+#: core/forms.py:431
 msgid "The new email is identical to the old one"
 msgstr "Die neue E-Mailadresse ist identisch zu der Neuen"
 
-#: core/forms.py:444
+#: core/forms.py:445
 msgid "The password is incorrect"
 msgstr "Das Passwort ist inkorrekt"
 
-#: core/forms.py:509
+#: core/forms.py:510
 msgid "Apply discounts from prices profiles?"
 msgstr "Rabatte der Preisprofile anwenden?"
 
-#: core/forms.py:518
+#: core/forms.py:519
 msgid "When left empty, the discount is visible for everyone"
 msgstr "Wenn leer, ist der Rabatt für alle sichtbar"
 
-#: core/forms.py:587
+#: core/forms.py:588
 msgid "The user does not exist."
 msgstr "Der Nutzer existiert nicht"
 
-#: core/forms.py:593
+#: core/forms.py:594
 msgid "User is already a member"
 msgstr "Der Nutzer ist bereits ein Mitglied"
 
-#: core/forms.py:613
+#: core/forms.py:614
 msgid "This text will be included in the invitation mail"
 msgstr "Dieser Text wird in der Bestätigungsmail inkludiert"
 
-#: core/forms.py:649
-msgid "Invitation to {organization}"
-msgstr "Einladung {organization}"
+#: core/forms.py:650
+#, python-format
+msgid "Invitation to %(organization)s"
+msgstr "Einladung %(organization)s"
 
-#: core/forms.py:700
+#: core/forms.py:701
 msgid "Actor does not exist"
 msgstr "Der Akteur existiert nicht"
 
-#: core/forms.py:708
+#: core/forms.py:709
 msgid "Actor not associated with user"
 msgstr "Der Akteur ist nicht mit dem User assoziiert"
 
-#: core/forms.py:719
+#: core/forms.py:720
 msgid ""
 "You can use this search field for the address to autofill the location data!"
 msgstr ""
 "Du kannst dieses Feld verwenden, um die Adresse automatisch auszufüllen!"
 
-#: core/forms.py:757
+#: core/forms.py:758
 msgid "In what part of the software is the issue or your request?"
 msgstr "Auf welchen Teil der Software bezieht sich das Anliegen?"
 
-#: core/forms.py:762
+#: core/forms.py:763
 msgid ""
 "Short description of the problem or the feature you want to see implemented"
 msgstr "Kurze Beschreibung des Problems oder des Features"
@@ -195,125 +199,129 @@ msgstr "Das request Objekt muss gesetzt sein"
 msgid "The passed request object is not an instance of HttpRequest"
 msgstr "Das übergebene objekt ist keine Instanz von HttpRequest"
 
-#: core/models/actors.py:18 core/models/base.py:204 core/models/contracts.py:30
-#: core/models/contracts.py:624 core/tables.py:63 core/tables.py:112
+#: core/models/actors.py:20 core/models/base.py:204 core/models/contracts.py:30
+#: core/models/contracts.py:644 core/tables.py:64 core/tables.py:113
 #: core/templates/core/control/finance_contracts_manage_details.html:61
-#: items/models.py:237 items/tables.py:11 venues/models.py:48
+#: items/models.py:232 items/tables.py:11 venues/models.py:48
 #: venues/models.py:137 venues/models.py:153 venues/models.py:180
 #: venues/models.py:266 venues/tables.py:11
 #: venues/templates/venues/_contract_overview.html:9
 msgid "Name"
 msgstr "Name"
 
-#: core/models/actors.py:24 core/models/base.py:193 items/models.py:225
+#: core/models/actors.py:26 core/models/base.py:193 items/models.py:220
 #: venues/models.py:44 venues/models.py:171
 msgid "Slug"
 msgstr "Slug"
 
-#: core/models/actors.py:30 core/models/base.py:198
+#: core/models/actors.py:32 core/models/base.py:198
 #: core/templates/core/_location_info.html:6
 msgid "Address"
 msgstr "Adresse"
 
-#: core/models/actors.py:36
+#: core/models/actors.py:38
 #: core/templates/core/control/account_settings.html:11
 #: core/templates/core/register.html:23
 msgid "Bank account"
 msgstr "Bankkonto"
 
-#: core/models/actors.py:43 core/templates/core/home.html:42
-#: items/models.py:336 items/templates/items/_render_item_feed.html:20
+#: core/models/actors.py:45 core/templates/core/home.html:42
+#: items/models.py:331 items/templates/items/_item_feed_renderer.html:20
 #: venues/models.py:64 venues/models.py:231 venues/models.py:274
 #: venues/templates/venues/_venue_feed_renderer.html:20
 msgid "Thumbnail"
 msgstr "Thumbnail"
 
-#: core/models/actors.py:75
+#: core/models/actors.py:77
 msgid "Telephone (private)"
 msgstr "Telefonnummer (öffentlich)"
 
-#: core/models/actors.py:81
+#: core/models/actors.py:83
 msgid "Telephone (public)"
 msgstr "Telefonnummer (öffentlich)"
 
-#: core/models/actors.py:86
+#: core/models/actors.py:88
 msgid "Email (public)"
 msgstr "E-Mail (öffentlich)"
 
-#: core/models/actors.py:91
+#: core/models/actors.py:93
 msgid "Website"
 msgstr "Website"
 
-#: core/models/actors.py:96
+#: core/models/actors.py:98
 msgid "Info text"
 msgstr "Infotext"
 
-#: core/models/actors.py:103
+#: core/models/actors.py:105
+msgid "Language"
+msgstr "Sprache"
+
+#: core/models/actors.py:111
 msgid "Tax-ID"
 msgstr "Steuernummer"
 
-#: core/models/actors.py:109
+#: core/models/actors.py:117
 msgid "VAT-ID"
 msgstr "Umsatzsteuer-ID: %s"
 
-#: core/models/actors.py:114
+#: core/models/actors.py:122
 msgid "Invoice numbers prefix"
 msgstr "Rechnungsnummerpräfix"
 
-#: core/models/actors.py:119
+#: core/models/actors.py:127
 msgid "Invoice numbers prefix (cancellations)"
 msgstr "Rechnungsnummerpräfix (Stornierung)"
 
-#: core/models/actors.py:125
+#: core/models/actors.py:133
 msgid "Invoice introductory text"
 msgstr "Rechnungseinleitungstext"
 
-#: core/models/actors.py:131
+#: core/models/actors.py:139
 msgid "Invoice additional text"
 msgstr "zusätzlicher Rechnungstext"
 
-#: core/models/actors.py:137
+#: core/models/actors.py:145
 msgid "Invoice footer text"
 msgstr "Text Rechnungsseitenboden"
 
-#: core/models/actors.py:144
+#: core/models/actors.py:152
 msgid "Invoice logo image"
 msgstr "Rechnungslogo"
 
-#: core/models/actors.py:166
+#: core/models/actors.py:174
 #: core/templates/core/control/account_security.html:8
 msgid "Email"
 msgstr "E-Mail"
 
-#: core/models/actors.py:170
+#: core/models/actors.py:178
 msgid "Birth date"
 msgstr "Geburtsdatum"
 
-#: core/models/actors.py:175
+#: core/models/actors.py:183
 msgid "Verified?"
 msgstr "Verifiziert?"
 
-#: core/models/actors.py:222
+#: core/models/actors.py:230
 msgid "member"
 msgstr "Mitglied"
 
-#: core/models/actors.py:223
+#: core/models/actors.py:231
 msgid "administrator"
 msgstr "Administrator"
 
-#: core/models/actors.py:224
+#: core/models/actors.py:232
 msgid "owner"
 msgstr "Besitzer"
 
-#: core/models/actors.py:231
+#: core/models/actors.py:239
 msgid "Organization"
 msgstr "Organisation"
 
-#: core/models/actors.py:236 core/models/contracts.py:276
+#: core/models/actors.py:244 core/models/contracts.py:276
 msgid "User"
 msgstr "Nutzer"
 
-#: core/models/actors.py:242
+#: core/models/actors.py:250
 msgid "Role"
 msgstr "Rolle"
 
@@ -361,7 +369,7 @@ msgstr "Stadt"
 msgid "Country"
 msgstr "Land"
 
-#: core/models/base.py:209 core/models/finance.py:111 items/models.py:242
+#: core/models/base.py:209 core/models/finance.py:111 items/models.py:237
 #: items/templates/items/_item_info.html:78
 #: items/templates/items/_item_info.html:81 venues/models.py:51
 #: venues/models.py:184 venues/templates/venues/_contract_overview.html:23
@@ -398,14 +406,14 @@ msgstr ""
 "Anderen Nutzern erlauben Informationen mit diesem Standort zu verknüpfen"
 
 #: core/models/base.py:255 core/models/contracts.py:87
-#: core/models/contracts.py:635 core/tables.py:55 core/tables.py:157
-#: items/models.py:385 venues/models.py:103 venues/tables.py:16
+#: core/models/contracts.py:655 core/tables.py:56 core/tables.py:179
+#: items/models.py:380 venues/models.py:103 venues/tables.py:16
 msgid "Owner"
 msgstr "Besitzer"
 
-#: core/models/base.py:282 items/models.py:349
+#: core/models/base.py:282 items/models.py:344
 #: items/templates/items/control/_item_form.html:7
-#: items/templates/items/item_details.html:37 venues/models.py:87
+#: items/templates/items/item_details.html:42 venues/models.py:87
 #: venues/templates/venues/control/_venue_form.html:15
 #: venues/templates/venues/venue_details.html:42
 msgid "Gallery"
@@ -481,7 +489,7 @@ msgstr "Wähle ein Zahlungsmittel für diesen Veranstaltungsort"
 msgid "Payment methods"
 msgstr "Zahlungsmethode"
 
-#: core/models/contracts.py:71 core/models/contracts.py:601
+#: core/models/contracts.py:71 core/models/contracts.py:621
 msgid "Tax rate applied in percent"
 msgstr "Steuersatz in Prozent"
 
@@ -522,11 +530,11 @@ msgstr "abgebrochen"
 msgid "declined"
 msgstr "abgelehnt"
 
-#: core/models/contracts.py:126 core/models/contracts.py:556
+#: core/models/contracts.py:126 core/models/contracts.py:576
 msgid "terminated"
 msgstr "gekündigt"
 
-#: core/models/contracts.py:141 items/models.py:220 venues/models.py:176
+#: core/models/contracts.py:141 items/models.py:215 venues/models.py:176
 msgid "UUID"
 msgstr ""
 
@@ -588,96 +596,96 @@ msgstr "IP"
 msgid "IP routable"
 msgstr "IP routable"
 
-#: core/models/contracts.py:288 core/models/contracts.py:544
+#: core/models/contracts.py:288 core/models/contracts.py:564
 msgid "Timestamp"
 msgstr "Timestamp"
 
-#: core/models/contracts.py:310 core/models/contracts.py:540
-#: core/models/contracts.py:566 items/models.py:419 items/tables.py:29
+#: core/models/contracts.py:310 core/models/contracts.py:560
+#: core/models/contracts.py:586 items/models.py:414 items/tables.py:29
 msgid "Contract"
 msgstr "Vertrag"
 
-#: core/models/contracts.py:375
-#, python-brace-format
-msgid "{debitor} created {contract}"
-msgstr "{debitor} erstellte {contract}"
+#: core/models/contracts.py:379
+#, python-format
+msgid "%(debitor)s created %(contract)s"
+msgstr "%(debitor)s erstellte %(contract)s"
 
-#: core/models/contracts.py:386 items/models.py:83
-#, python-brace-format
-msgid "{creditor} accepted {contract}"
-msgstr "{creditor} hat {contract} akzeptiert"
+#: core/models/contracts.py:398
+#, python-format
+msgid "%(debitor)s accepted %(contract)s"
+msgstr "%(debitor)s hat %(contract)s akzeptiert"
 
-#: core/models/contracts.py:455
-#, python-brace-format
-msgid "{creditor} declined {contract}"
-msgstr "{creditor} hat {contract} abgelehnt"
+#: core/models/contracts.py:412
+#, python-format
+msgid "%(debitor)s declined %(contract)s"
+msgstr "%(debitor)s hat %(contract)s abgelehnt"
 
-#: core/models/contracts.py:474
-#, python-brace-format
-msgid "{initiator} terminated {contract}"
-msgstr "{initiator} hat {contract} gekündigt"
+#: core/models/contracts.py:424
+#, python-format
+msgid "%(initiator)s terminated %(contract)s"
+msgstr "%(initiator)s hat %(contract)s gekündigt"
 
-#: core/models/contracts.py:555
+#: core/models/contracts.py:575
 msgid "closed"
 msgstr "abgeschlossen"
 
-#: core/models/contracts.py:570 core/tables.py:130 items/models.py:46
-#: items/models.py:411 items/models.py:425 items/tables.py:30
+#: core/models/contracts.py:590 core/tables.py:131 items/models.py:46
+#: items/models.py:406 items/models.py:420 items/tables.py:30
 msgid "Item"
 msgstr "Gegenstand"
 
-#: core/models/contracts.py:575 core/tables.py:133 items/models.py:276
-#: items/models.py:437 venues/models.py:297
+#: core/models/contracts.py:595 core/tables.py:134 items/models.py:271
+#: items/models.py:432 venues/models.py:297
 msgid "Quantity"
 msgstr "Menge"
 
-#: core/models/contracts.py:579 core/tables.py:134 items/models.py:282
+#: core/models/contracts.py:599 core/tables.py:135 items/models.py:277
 #: items/templates/items/_item_info.html:64
 msgid "Unit"
 msgstr "Einheit"
 
-#: core/models/contracts.py:584 core/models/finance.py:82 venues/models.py:81
+#: core/models/contracts.py:604 core/models/finance.py:82 venues/models.py:81
 #: venues/models.py:294 venues/templates/venues/control/_venue_form.html:7
 msgid "Price"
 msgstr "Preis"
 
-#: core/models/contracts.py:590 core/tables.py:136
+#: core/models/contracts.py:610 core/tables.py:137
 msgid "Net"
 msgstr "Netto"
 
-#: core/models/contracts.py:593 core/models/finance.py:114
+#: core/models/contracts.py:613 core/models/finance.py:114
 msgid "Discount"
 msgstr "Rabatt"
 
-#: core/models/contracts.py:598 core/tables.py:138
+#: core/models/contracts.py:618 core/tables.py:139
 msgid "Discounted net"
 msgstr "Ermässigtes Netto"
 
-#: core/models/contracts.py:606 core/tables.py:141
+#: core/models/contracts.py:626 core/tables.py:142
 msgid "Gross"
 msgstr "Brutto"
 
-#: core/models/contracts.py:609 core/tables.py:131
+#: core/models/contracts.py:629 core/tables.py:132
 msgid "Performance period start"
 msgstr "Leistungszeitraumsbeginn"
 
-#: core/models/contracts.py:612 core/tables.py:132
+#: core/models/contracts.py:632 core/tables.py:133
 msgid "Performance period end"
 msgstr "Leistungszeitraumsende"
 
-#: core/models/contracts.py:620
+#: core/models/contracts.py:640
 msgid "Condition"
 msgstr "Allgemeine Geschäftsbedingungen"
 
-#: core/models/contracts.py:630
+#: core/models/contracts.py:650
 msgid "Comment"
 msgstr "Kommentar"
 
-#: core/models/contracts.py:690
+#: core/models/contracts.py:710
 msgid "Prepayment?"
 msgstr "Vorkasse?"
 
-#: core/models/contracts.py:692
+#: core/models/contracts.py:712
 msgid ""
 "If activated, claims within the following settlement interval are charged in "
 "advance"
@@ -685,27 +693,27 @@ msgstr ""
 "Wenn aktiviert, werden die Forderungen innerhalb des nächsten "
 "Abrechnungsintervalls im voraus verlangt"
 
-#: core/models/contracts.py:696
+#: core/models/contracts.py:716
 msgid "Absolute fee"
 msgstr "Absolute Gebühr"
 
-#: core/models/contracts.py:697
+#: core/models/contracts.py:717
 msgid "A constant value that is added to every transaction"
 msgstr "Ein konstanter Wert, der jeder Transaktion hinzuaddiert wird"
 
-#: core/models/contracts.py:701
+#: core/models/contracts.py:721
 msgid "Relative fee (%)"
 msgstr "Relative Gebühr"
 
-#: core/models/contracts.py:703
+#: core/models/contracts.py:723
 msgid "A relative value that is based on the total value of a transaction"
 msgstr "Ein relativer Wert, der auf dem Gesamtwert der Transaktion basiert"
 
-#: core/models/contracts.py:707
+#: core/models/contracts.py:727
 msgid "Tax rate applied to payement fee (%)"
 msgstr "Bei der Gebühr angewandter Steuersatz (%)"
 
-#: core/models/contracts.py:711
+#: core/models/contracts.py:731
 msgid "(prepayment)"
 msgstr "(Vorkasse)"
 
@@ -737,7 +745,7 @@ msgstr "Adresse"
 msgid "Discounts"
 msgstr "Rabatte"
 
-#: core/models/finance.py:99 items/models.py:295 venues/models.py:98
+#: core/models/finance.py:99 items/models.py:290 venues/models.py:98
 msgid "Contract procedure"
 msgstr "Vertragsprozedur"
 
@@ -747,23 +755,23 @@ msgctxt "invoice"
 msgid "Tax ID: %s"
 msgstr "Steuernummer: %s"
 
-#: core/models/invoices.py:106 core/models/invoices.py:280
+#: core/models/invoices.py:106 core/models/invoices.py:281
 #, python-format
 msgctxt "invoice"
 msgid "VAT-ID: %s"
 msgstr "Umsatzsteuer-ID: %s"
 
 #: core/models/invoices.py:222
-#, python-brace-format
-msgid "{creditor} created invoice {no}"
-msgstr "{creditor} hat Rechnung {no} erstellt"
+#, python-format
+msgid "%(creditor)s created invoice %(no)s"
+msgstr "%(creditor)s hat Rechnung %(no)s erstellt"
 
 #: core/models/invoices.py:226
-#, python-brace-format
-msgid "{creditor} has created a new invoice. See the attached file."
-msgstr "{creditor} hat eine neue Rechnung erstellt. Siehe Anhang."
+#, python-format
+msgid "%(creditor)s has created a new invoice. See the attached file."
+msgstr "%(creditor)s hat eine neue Rechnung erstellt. Siehe Anhang."
 
-#: core/models/invoices.py:262
+#: core/models/invoices.py:263
 #, python-brace-format
 msgctxt "invoice"
 msgid ""
@@ -777,7 +785,7 @@ msgstr ""
 "{i.street}\n"
 "{i.postal_code} {i.city}"
 
-#: core/models/invoices.py:335
+#: core/models/invoices.py:336
 msgid "tax rate applied in percent"
 msgstr "Steuersatz in Prozent"
 
@@ -797,59 +805,75 @@ msgstr "hoch"
 msgid "critical"
 msgstr "kritisch"
 
-#: core/models/notifications.py:42
+#: core/models/notifications.py:46
 msgid "info"
 msgstr "Info"
 
-#: core/models/notifications.py:43
+#: core/models/notifications.py:47
 msgid "action"
 msgstr "Aktion"
 
-#: core/models/notifications.py:44
+#: core/models/notifications.py:48
+msgid "contract created"
+msgstr "Vertrag erstellt"
+
+#: core/models/notifications.py:49
+msgid "contract terminated"
+msgstr "Vertrag gekündigt"
+
+#: core/models/notifications.py:50
+msgid "contract declined"
+msgstr "Vertrag abgelehnt"
+
+#: core/models/notifications.py:51
+msgid "contract accepted"
+msgstr "Vertrag akzeptiert"
+
+#: core/models/notifications.py:52
 msgid "contract"
 msgstr "Vertrag"
 
-#: core/models/notifications.py:45
+#: core/models/notifications.py:53
 msgid "monetary"
 msgstr "monetär"
 
-#: core/models/notifications.py:75 core/tables.py:49 core/tables.py:156
+#: core/models/notifications.py:87 core/tables.py:50 core/tables.py:178
 msgid "Type"
 msgstr "Typ"
 
-#: core/models/notifications.py:82
+#: core/models/notifications.py:94
 msgid "Sender"
 msgstr "Absender"
 
-#: core/models/notifications.py:88
+#: core/models/notifications.py:100
 msgid "Recipient"
 msgstr "Empfänger"
 
-#: core/models/notifications.py:92
+#: core/models/notifications.py:104
 msgid "Header"
 msgstr "Betreff"
 
-#: core/models/notifications.py:96
+#: core/models/notifications.py:108
 msgid "Message"
 msgstr "Nachricht"
 
-#: core/models/notifications.py:99
+#: core/models/notifications.py:111
 msgid "Link"
 msgstr "Link"
 
-#: core/models/notifications.py:103
+#: core/models/notifications.py:115
 msgid "Level"
 msgstr "Level"
 
-#: core/models/notifications.py:114
+#: core/models/notifications.py:126
 msgid "Read?"
 msgstr "Gelesen?"
 
-#: core/models/notifications.py:186
+#: core/models/notifications.py:198
 msgid "Notification"
 msgstr "Benachrichtigung"
 
-#: core/models/notifications.py:190
+#: core/models/notifications.py:202
 msgid "Path"
 msgstr "Pfad"
 
@@ -893,12 +917,12 @@ msgstr "Geschuldet"
 msgid "Contract procedures"
 msgstr "Vertragsprozeduren"
 
-#: core/modules.py:103 core/modules.py:117 core/modules.py:148
-#: core/modules.py:162 items/modules.py:32 venues/modules.py:32
+#: core/modules.py:103 core/modules.py:117 core/modules.py:149
+#: core/modules.py:167 items/modules.py:32 venues/modules.py:32
 msgid "Manage"
 msgstr "Verwalten"
 
-#: core/modules.py:107 core/modules.py:152 core/modules.py:166
+#: core/modules.py:107 core/modules.py:153 core/modules.py:171
 #: core/templates/core/control/finance_contract_procedures_create.html:9
 #: core/templates/core/control/locations_create.html:8 items/modules.py:36
 #: items/templates/items/control/items_create.html:9
@@ -924,13 +948,13 @@ msgstr "Ausgehend"
 msgid "Incoming"
 msgstr "Eingehend"
 
-#: core/modules.py:144
-msgid "Organizations"
-msgstr "Organisationen"
-
-#: core/modules.py:158 core/templates/core/home.html:17
+#: core/modules.py:145 core/templates/core/home.html:17
 msgid "Locations"
 msgstr "Standorte"
+
+#: core/modules.py:163
+msgid "Organizations"
+msgstr "Organisationen"
 
 #: core/renderer.py:53
 #, python-format
@@ -1114,52 +1138,52 @@ msgstr "Enthaltene Steuern"
 msgid "Invoice Renderer"
 msgstr "Rechnungsgenerator"
 
-#: core/tables.py:21
+#: core/tables.py:22
 msgid "Select all"
-msgstr "Alle"
+msgstr "Alle auswählen"
 
-#: core/tables.py:53
+#: core/tables.py:54
 #: core/templates/core/control/finance_contracts_manage_details.html:67
 msgid "Prepayment"
 msgstr "Vorkasse"
 
-#: core/tables.py:72
+#: core/tables.py:73
 msgid "Rights"
 msgstr "Rechte"
 
-#: core/tables.py:85
+#: core/tables.py:86
 msgid "Username"
 msgstr "Nutzername"
 
-#: core/tables.py:90
+#: core/tables.py:91
 msgid "Organization Role"
 msgstr "Organisationsrolle"
 
-#: core/tables.py:135
+#: core/tables.py:136
 msgid "Price/unit"
 msgstr "Preis/Einheit"
 
-#: core/tables.py:137
+#: core/tables.py:138
 msgid "Discount (%)"
 msgstr "Rabatt (%)"
 
-#: core/tables.py:139
+#: core/tables.py:140
 msgid "Tax (%)"
 msgstr "Steuer (%)"
 
-#: core/tables.py:167
+#: core/tables.py:189
 msgid "Invoice Number"
 msgstr "Rechnungsnummer"
 
-#: core/tables.py:168
+#: core/tables.py:190
 msgid "Invoice to"
 msgstr "Rechnung an"
 
-#: core/tables.py:169
+#: core/tables.py:191
 msgid "Invoice from"
 msgstr "Rechnungs von"
 
-#: core/tables.py:170 plugins/sepa/tables.py:9
+#: core/tables.py:192 plugins/sepa/tables.py:9
 msgid "File"
 msgstr "Datei"
 
@@ -1171,7 +1195,7 @@ msgstr "Deine aktuelle Rolle ist"
 msgid "The actions you take will be attributed to this entity!"
 msgstr "Deine Handlungen werden dieser Entität zugeordnet"
 
-#: core/templates/core/_location_info.html:3 items/models.py:266
+#: core/templates/core/_location_info.html:3 items/models.py:261
 #: items/tables.py:17 venues/models.py:56
 msgid "Location"
 msgstr "Standort"
@@ -1204,7 +1228,7 @@ msgstr "Website"
 #: core/templates/core/actor_profile.html:36
 #: core/templates/core/control/organizations_profile.html:23
 #: core/templates/core/home.html:32
-#: items/templates/items/_render_item_feed.html:10
+#: items/templates/items/_item_feed_renderer.html:10
 #: venues/templates/venues/_venue_feed_renderer.html:10
 msgid "Logo"
 msgstr "Logo"
@@ -1275,7 +1299,7 @@ msgid "Claims"
 msgstr "Forderungen"
 
 #: core/templates/core/control/finance_contracts_manage_details.html:75
-#: items/models.py:203
+#: items/models.py:198
 msgid "days"
 msgstr "Tage"
 
@@ -1400,7 +1424,6 @@ msgstr ""
 "    Person zu %(organization)s einladen\n"
 "    "
 
-
 #: core/templates/core/control/organizations_members_add.html:20
 msgid "Invitations"
 msgstr "Einladungen"
@@ -1440,12 +1463,12 @@ msgid "Data privacy statement"
 msgstr "Datenschutzerklärung"
 
 #: core/templates/core/home.html:25 core/templates/core/home.html:38
-#: items/templates/items/_render_item_feed.html:16 templates/_map.html:50
+#: items/templates/items/_item_feed_renderer.html:16 templates/_map.html:50
 #: venues/templates/venues/_venue_feed_renderer.html:16
 msgid "Details"
 msgstr "Details"
 
-#: core/templates/core/imprint.html:6 templates/_footer.html:18
+#: core/templates/core/imprint.html:6 templates/_footer.html:19
 msgid "Imprint"
 msgstr "Impressum"
 
@@ -1486,7 +1509,8 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"    Du wurdest von %(invitee)s eingeladen, %(organization)s beizutreten. Clicke\n"
+"    Du wurdest von %(invitee)s eingeladen, %(organization)s beizutreten. "
+"Clicke\n"
 "    auf diesen Link\n"
 "    und folge der Einladung:\n"
 "    <br />\n"
@@ -1621,9 +1645,9 @@ msgid "You are already logged in."
 msgstr "Du bist bereits eingeloggt"
 
 #: core/views/auth.py:64
-#, python-brace-format
-msgid "{name} welcome to Resouce Hub!"
-msgstr "{name}, wilkommen bei Resource Hub!"
+#, python-format
+msgid "%(name)s welcome to Resouce Hub!"
+msgstr "%(name)s, wilkommen bei Resource Hub!"
 
 #: core/views/auth.py:76
 msgid "Welcome to Resource Hub!"
@@ -1669,29 +1693,34 @@ msgstr "Deine Änderungen wurden erfolgreich gespeichert"
 msgid "The configuration for {} has been saved"
 msgstr "Die Einstellungen für {} wurden gespeichert"
 
-#: core/views/control.py:277 plugins/sepa/views.py:47
-msgid "{} has been canceled"
-msgstr "{} wurde abgebrochen"
+#: core/views/control.py:277
+#, python-format
+msgid "%(contract)s has been canceled"
+msgstr "%(contract)s wurde abgebrochen"
 
-#: core/views/control.py:284 plugins/sepa/views.py:53
-msgid "{} has been confirmed"
-msgstr "{} wurde bestätigt"
+#: core/views/control.py:284
+#, python-format
+msgid "%(contract)s has been confirmed"
+msgstr "%(contract)s wurde bestätigt"
 
 #: core/views/control.py:287 core/views/control.py:300 plugins/sepa/views.py:56
 msgid "Invalid Choice"
 msgstr "Ungültige Auswahl"
 
 #: core/views/control.py:292
-msgid "{} has been declined"
-msgstr "{} wurde abgelehnt"
+#, python-format
+msgid "%(contract)s has been declined"
+msgstr "%(contract)s wurde abgelehnt"
 
 #: core/views/control.py:297
-msgid "{} has been accepted"
-msgstr "{} wurde angenommen"
+#, python-format
+msgid "%(contract)s has been accepted"
+msgstr "%(contract)s wurde angenommen"
 
 #: core/views/control.py:305
-msgid "{} has been terminated"
-msgstr "{} wurde gekündigt"
+#, python-format
+msgid "%(contract)s has been terminated"
+msgstr "%(contract)s wurde gekündigt"
 
 #: core/views/control.py:314
 msgid "Manage contract procedures"
@@ -1737,22 +1766,23 @@ msgstr "Anfangs- oder Endparameter nicht gesetzt"
 msgid "start or end parameter not valid iso_8601 string"
 msgstr "Start- oder Endparameter kein gültiger iso_8601 string"
 
-#: items/forms.py:67 venues/forms.py:42
+#: items/forms.py:74 venues/forms.py:43
 msgid "Do you want to use the platform's booking logic?"
 msgstr "Willst du die Buchungslogik der Plattform verwenden?"
 
-#: items/forms.py:206
-#, python-brace-format
-msgid "Hey, I'd like to lend your {item}. I would like to pick it up at: TIME"
+#: items/forms.py:216
+#, python-format
+msgid ""
+"Hey, I'd like to lend your %(item)s. I would like to pick it up at: TIME"
 msgstr ""
-"Hey, ich würde gerne dein/e {item} ausleihen. Ich würde es um ZEIT abholen "
+"Hey, ich würde gerne dein/e %(item)s ausleihen. Ich würde es um ZEIT abholen "
 "wollen."
 
-#: items/forms.py:213 venues/forms.py:345
+#: items/forms.py:226 venues/forms.py:354
 msgid "to create bookings you need to set your billing address"
 msgstr "Um Buchungen zu erstellen muss deine Rechnungsadresse gesetzt sein"
 
-#: items/forms.py:219 venues/forms.py:351
+#: items/forms.py:232 venues/forms.py:360
 msgid ""
 "Available discounts granted to certain groups and entities. The discounts "
 "will be applied to the base prices below."
@@ -1760,25 +1790,29 @@ msgstr ""
 "Verfügbare Rabatte für bestimmte Gruppen und Entitäten. Die Rabatte werden "
 "auf den Basispreis angewandt."
 
-#: items/forms.py:233
+#: items/forms.py:246
 msgid "Start date has to be set"
 msgstr "Anfangsdarum muss gesetzt sein"
 
-#: items/forms.py:253
+#: items/forms.py:266
 msgid "End date has to be after start date"
 msgstr "Enddatum muss muss nach dem Anfangsdatum liegen"
 
-#: items/forms.py:256
+#: items/forms.py:269
 msgid "End date has to be set"
 msgstr "Enddatum muss gesetzt sein"
 
-#: items/forms.py:269
+#: items/forms.py:282
 msgid "Booking exeeds maximum duration"
 msgstr "Die Buchungs überschreitet die maximale Leihdauer"
 
-#: items/forms.py:285
-msgid "There is a missing quantity of {} with booking on {} to {}"
-msgstr "Es fehlt eine Menge von {} wegen einer Buchung vom {} zum {}"
+#: items/forms.py:298
+#, python-format
+msgid ""
+"There is a missing quantity of %(delta)s with booking on %(start)s to %(end)s"
+msgstr ""
+"Es fehlt eine Menge von %(delta)s wegen einer Buchung vom %(start)s zum "
+"%(end)s"
 
 #: items/models.py:24
 msgid "The group granted self pickup if item's self pickup is limited"
@@ -1803,163 +1837,165 @@ msgid ""
 "This message will be sent to the owner. This allows to negiotate pickup "
 "times etc."
 msgstr ""
+"Diese Nachricht wird dem Besitzer zugestellt. So können Abholzeiten etc. "
+"verhandelt werden."
 
 #: items/models.py:58
 msgid "Item booking"
 msgstr "Leihe"
 
-#: items/models.py:166
+#: items/models.py:161
 msgid "available"
 msgstr "verfügbar"
 
-#: items/models.py:167
+#: items/models.py:162
 msgid "lent"
 msgstr "ausgeliehen"
 
-#: items/models.py:168
+#: items/models.py:163
 msgid "defect"
 msgstr "defekt"
 
-#: items/models.py:169
+#: items/models.py:164
 msgid "hidden"
 msgstr "nicht sichtbar"
 
-#: items/models.py:189
+#: items/models.py:184
 msgid "vehicles"
 msgstr "Fahrzeuge"
 
-#: items/models.py:190
+#: items/models.py:185
 msgid "tools"
 msgstr "Werkzeuge"
 
-#: items/models.py:191
+#: items/models.py:186
 msgid "electronics"
 msgstr "Elektronische Geräte"
 
-#: items/models.py:192
+#: items/models.py:187
 msgid "photography"
 msgstr "Photographie"
 
-#: items/models.py:193
+#: items/models.py:188
 msgid "video"
 msgstr "Video"
 
-#: items/models.py:194
+#: items/models.py:189
 msgid "other"
 msgstr "andere"
 
-#: items/models.py:202
+#: items/models.py:197
 msgid "hours"
 msgstr "Stunden"
 
-#: items/models.py:212
+#: items/models.py:207
 msgid "not allowed"
 msgstr "nicht erlaubt"
 
-#: items/models.py:213
+#: items/models.py:208
 msgid "limited"
 msgstr "limitiert"
 
-#: items/models.py:214
+#: items/models.py:209
 msgid "allowed"
 msgstr "erlaubt"
 
-#: items/models.py:232
+#: items/models.py:227
 msgid "Custom ID"
 msgstr "Individuelle ID"
 
-#: items/models.py:233
+#: items/models.py:228
 msgid "ID field for bardcodes etc."
 msgstr "ID Feld für Barcodes etc."
 
-#: items/models.py:248 items/templates/items/_item_info.html:17
+#: items/models.py:243 items/templates/items/_item_info.html:17
 msgid "Manufacturer"
 msgstr "Hersteller"
 
-#: items/models.py:254 items/templates/items/_item_info.html:25
+#: items/models.py:249 items/templates/items/_item_info.html:25
 msgid "Model"
 msgstr "Modell"
 
-#: items/models.py:260 items/templates/items/_item_info.html:33
+#: items/models.py:255 items/templates/items/_item_info.html:33
 #: items/templates/items/_item_info.html:41
 msgid "Serial number"
 msgstr "Seriennummer"
 
-#: items/models.py:272
+#: items/models.py:267
 msgid "Location code"
 msgstr "Standorthinweis"
 
-#: items/models.py:289 items/templates/items/_item_info.html:52
+#: items/models.py:284 items/templates/items/_item_info.html:52
 #: venues/templates/venues/venue_details.html:25
 msgid "Base price"
 msgstr "Basispreis"
 
-#: items/models.py:299
+#: items/models.py:294
 msgid "Maximum duration"
 msgstr "Maximale Leihdauer"
 
-#: items/models.py:301
+#: items/models.py:296
 msgid "Maximimum duration the item can be lent. Value of 0 means unlimited."
 msgstr "Maximale Leihdauer. Ein Wert von 0 bedeutet unbegrenzt"
 
-#: items/models.py:307 items/templates/items/_item_info.html:58
+#: items/models.py:302 items/templates/items/_item_info.html:58
 msgid "Self pickup"
 msgstr "Selbstabholung"
 
-#: items/models.py:312
+#: items/models.py:307
 msgid "Damages"
 msgstr "Schäden"
 
-#: items/models.py:318 items/templates/items/_item_info.html:7
+#: items/models.py:313 items/templates/items/_item_info.html:7
 #: venues/models.py:211 venues/templates/venues/_contract_overview.html:13
 msgid "Category"
 msgstr "Kategorie"
 
-#: items/models.py:323
+#: items/models.py:318
 msgid "Instructions"
 msgstr "Hinweise und Anleitung"
 
-#: items/models.py:325
+#: items/models.py:320
 msgid "These instructions will be included in the confirmation mail text"
 msgstr "Diese Anweisungen werden in der Bestätigungsmail inkludiert"
 
-#: items/models.py:330
+#: items/models.py:325
 msgid "Attachment"
 msgstr "Anhang"
 
-#: items/models.py:331
+#: items/models.py:326
 msgid "This file will be attached to the confirmation mail"
 msgstr "Diese Datei wird der Bestätigungsmail angehängt"
 
-#: items/models.py:354
+#: items/models.py:349
 msgid "Purchase date"
 msgstr "Kaufdatum"
 
-#: items/models.py:360
+#: items/models.py:355
 msgid "Purchase price"
 msgstr "Kaufpreis"
 
-#: items/models.py:366
+#: items/models.py:361
 msgid "Replacement price"
 msgstr "Erstattungskosten"
 
-#: items/models.py:372
+#: items/models.py:367
 msgid "Donation"
 msgstr "Spende"
 
-#: items/models.py:378
+#: items/models.py:373
 msgid "Original owner"
 msgstr "Ursprünglicher Besitzer"
 
-#: items/models.py:379
+#: items/models.py:374
 msgid "Which entity bought or donated the item?"
 msgstr "Welche Entität hat den Gegenstand gekauft oder gespendet?"
 
-#: items/models.py:428 items/tables.py:33 venues/models.py:187
+#: items/models.py:423 items/tables.py:33 venues/models.py:187
 msgid "Start"
 msgstr "Start"
 
-#: items/models.py:432 items/tables.py:34 venues/models.py:191
+#: items/models.py:427 items/tables.py:34 venues/models.py:191
 msgid "End"
 msgstr "Ende"
 
@@ -1977,8 +2013,9 @@ msgid "Bookings debited"
 msgstr "Leihen geschuldet"
 
 #: items/serializers.py:39
-msgid "Quantity: {}"
-msgstr "Menge: {}"
+#, python-format
+msgid "Quantity: %(quantity)d"
+msgstr "Menge: %(quantity)d"
 
 #: items/templates/items/_contract_overview.html:4
 msgid "Item details"
@@ -2084,23 +2121,27 @@ msgstr ""
 msgid "Lend"
 msgstr "Leihen"
 
-#: items/views.py:32
+#: items/templates/items/item_details.html:29
+msgid "Subscribe"
+msgstr "Abonnieren"
+
+#: items/views.py:34
 msgid "Manage items"
 msgstr "Gegenstände verwalten"
 
-#: items/views.py:49
+#: items/views.py:51
 msgid "Credited item bookings"
 msgstr "Geleistete Leihen"
 
-#: items/views.py:67
+#: items/views.py:69
 msgid "Debited item bookings"
 msgstr "Geschuldete Leihen"
 
-#: items/views.py:133
+#: items/views.py:135
 msgid "The item has been updated"
 msgstr "Der Gegenstand wurde geupdated"
 
-#: items/views.py:170 venues/views.py:129
+#: items/views.py:178 venues/views.py:129
 msgid ""
 "The event has been created successfully. You can review it and either "
 "confirm or cancel."
@@ -2108,11 +2149,11 @@ msgstr ""
 "Die Veranstaltung wurde erfolgreich erstellt. Du kannst sie prüfen und dann "
 "entweder bestätigen oder ablehnen."
 
-#: items/views.py:192 venues/views.py:155
+#: items/views.py:200 venues/views.py:157
 msgid "The event contract procedure has been saved successfully"
 msgstr "Die Vertragsprozedur wurde erfolgreich gespeichert"
 
-#: items/views.py:221 venues/views.py:184
+#: items/views.py:229 venues/views.py:186
 msgid "The changes have been saved"
 msgstr "Die Änderungen wurden gespeichert"
 
@@ -2134,19 +2175,25 @@ msgid "%(name)s has been confirmed successfully"
 msgstr "%(name)s wurde erfolgreich bestätigt"
 
 #: plugins/bank_transfer/models.py:65
-#, python-brace-format
+#, fuzzy, python-format
+#| msgid ""
+#| "Please make a SEPA credit transfer of the above mentioned gross amount to "
+#| "the following account: \n"
+#| " %(account_holder)s \n"
+#| " %(iban)s \n"
+#| " %(bic)s"
 msgid ""
 "Please make a SEPA credit transfer of the above mentioned gross amount to "
 "the following account: \n"
-" {account_holder} \n"
-" {iban} \n"
-" {bic}"
+" %(account_holder)s \n"
+" %(iban)s \n"
+" %(bic)s"
 msgstr ""
 "Bitte überweise per SEPA Überweisung den oben genannten Bruttobetrag an "
 "folgendes Konto:the following account: \n"
-" {account_holder} \n"
-" {iban} \n"
-" {bic}"
+" %(account_holder)s \n"
+" %(iban) \n"
+" %(bic)"
 
 #: plugins/sepa/models.py:26
 msgid "SEPA Mandate"
@@ -2173,24 +2220,25 @@ msgstr "Diese Rechnung wurde durch SEPA Lastschrift beglichen"
 msgid "Batch booking"
 msgstr "Buchungen bündeln"
 
-#: plugins/sepa/models.py:249
+#: plugins/sepa/models.py:250
 msgid "SEPA Direct Debit initiated"
 msgstr "SEPA Lastschrift initiiert"
 
-#: plugins/sepa/models.py:251
-#, python-brace-format
+#: plugins/sepa/models.py:252
+#, python-format
 msgid ""
-"{creditor} with the creditor identifier \n"
-"                    {creditor_id} is going to debit your account {iban} \n"
-"                    with an amount of {amount} {currency} on the  \n"
-"                    {collection_date}. This transaction is based \n"
-"                    on the mandate with the reference {mandate_id}."
+"%(creditor)s with the creditor identifier \n"
+"                    %(creditor_id)s is going to debit your account %(iban)s\n"
+"                    with an amount of %(amount)s %(currency)s on the  \n"
+"                    %(collection_date)s. This transaction is based \n"
+"                    on the mandate with the reference %(mandate_id)s."
 msgstr ""
-"{creditor} mit der Gläubiger ID \n"
-"                    {creditor_id} wird das Konto {iban} \n"
-"                    mit einem Betrag von {amount} {currency} am \n"
-"                    {collection_date} belasten. Diese Transaktion basiert \n"
-"                    auf dem Mandat mit der Referenz {mandate_id}."
+"%(creditor)s mit der Gläubiger ID \n"
+"                    %(creditor_id)s wird das Konto %(iban)s \n"
+"                    mit einem Betrag von %(amount)s %(currency)s am \n"
+"                    %(collection_date)s belasten. Diese Transaktion "
+"basiert \n"
+"                    auf dem Mandat mit der Referenz %(mandate_id)s."
 
 #: plugins/sepa/signals.py:21
 msgid "SEPA"
@@ -2276,28 +2324,38 @@ msgstr ""
 msgid "Terms and conditions "
 msgstr "Allgemeine Geschäftsbedigungen"
 
+#: plugins/sepa/views.py:47
+#, python-format
+msgid "%(mandate)s has been canceled"
+msgstr "%(mandate)s wurde abgebrochen"
+
+#: plugins/sepa/views.py:53
+#, python-format
+msgid "%(mandate)s has been confirmed"
+msgstr "%(mandate)s wurde bestätigt"
+
 #: plugins/sepa/views.py:63
 msgid "SEPA Direct Debit XML files"
 msgstr "SEPA Lastschrift XML Dateien"
 
 #: plugins/sepa/views.py:119
-#, python-brace-format
-msgid "Successfully created {count} XML file(s)"
-msgstr "Erfolgreich {count} XML Dateie(n) erstellt"
+#, python-format
+msgid "Successfully created %(count)d XML file(s)"
+msgstr "Erfolgreich %(count)d XML Dateie(n) erstellt"
 
 #: plugins/sepa/views.py:127
 msgid "Open SEPA Direct Debit payments"
 msgstr "Offene SEPA Lastschriftzahlungen"
 
-#: settings/base.py:177
+#: settings/base.py:179
 msgid "English"
 msgstr "Englisch"
 
-#: settings/base.py:178
+#: settings/base.py:180
 msgid "Deutsch"
 msgstr "Deutsch"
 
-#: settings/base.py:202
+#: settings/base.py:206
 msgid "Euro (EUR)"
 msgstr "Euro (EUR)"
 
@@ -2323,31 +2381,31 @@ msgstr "mehr laden"
 msgid "There are unsaved changes. Do you want to continue?"
 msgstr "Es gibt noch ungespeicherte Veränderungen. Möchtest du fortfahren?"
 
-#: templates/_footer.html:15
+#: templates/_footer.html:16
 msgid "General"
 msgstr "Allgemein"
 
-#: templates/_footer.html:19
+#: templates/_footer.html:20
 msgid "Terms"
 msgstr "AGB"
 
-#: templates/_footer.html:20
+#: templates/_footer.html:21
 msgid "Privacy"
 msgstr "Datenschutz"
 
-#: templates/_footer.html:25
+#: templates/_footer.html:26
 msgid "Software"
 msgstr "Software"
 
-#: templates/_footer.html:29
+#: templates/_footer.html:30
 msgid "Repository"
 msgstr "Repository"
 
-#: templates/_footer.html:30
+#: templates/_footer.html:31
 msgid "Report bug"
 msgstr "Bug melden"
 
-#: templates/_footer.html:37
+#: templates/_footer.html:38
 msgid "in cooperation with &lt;3"
 msgstr "In Zusammenarbeit mit &lt;3"
 
@@ -2412,45 +2470,45 @@ msgstr "nach oben gehen"
 msgid "No venue corresponds to the given id"
 msgstr "Kein Veranstaltungsort korrespondiert mit der gegebenen ID"
 
-#: venues/forms.py:164
+#: venues/forms.py:165
 msgid "Start of the event"
 msgstr "Anfang der Veranstaltung"
 
-#: venues/forms.py:167
+#: venues/forms.py:168
 msgid "End of the event"
 msgstr "Ende der Veranstaltung"
 
-#: venues/forms.py:186
+#: venues/forms.py:188
 msgid "Recurs on"
 msgstr "Wiederholt sich am"
 
-#: venues/forms.py:187
+#: venues/forms.py:189
 msgid "Event name"
 msgstr "Veranstaltungsname"
 
-#: venues/forms.py:190
+#: venues/forms.py:192
 msgid "If available you can book several venues at once"
 msgstr "Wenn möglich, kannst du mehrere Veranstaltungen gleichzeitig buchen"
 
-#: venues/forms.py:191
+#: venues/forms.py:193
 msgid "List the event in public feeds and show its content to third parties?"
 msgstr ""
 "Die Veranstaltung in öffentlichen Feeds anzeigen und den Inahlt Dritten "
 "anzeigen?"
 
-#: venues/forms.py:203
+#: venues/forms.py:205
 msgid "Start of event is after end of event"
 msgstr "Anfang ist nach dem Ende der Veranstaltung"
 
-#: venues/forms.py:207
+#: venues/forms.py:209
 msgid "Start of event is equal to end"
 msgstr "Anfang ist gleich dem Ende"
 
-#: venues/forms.py:250
+#: venues/forms.py:252
 msgid "There is a conflict with {}@{} at {} to {}"
 msgstr "Es gibt einen Konflikt mit {}@{} am {} bis {}"
 
-#: venues/forms.py:266
+#: venues/forms.py:268
 msgid "The recurrence has to be limited"
 msgstr "Die Wiederholung muss zeitlich begrenzt sein"
 
@@ -2510,6 +2568,10 @@ msgstr "Ausstattung"
 msgid "Venue booking"
 msgstr "Veranstaltungsortbuchung"
 
+#: venues/models.py:390
+msgid "%(debitor)s created Event: %(event)s"
+msgstr "%(debitor)s erstellte %(contract)s"
+
 #: venues/templates/venues/_contract_overview.html:4
 msgid "Event details"
 msgstr "Veranstaltungsdetails"
@@ -2549,6 +2611,21 @@ msgstr "Veranstaltungsorte verwalten"
 #: venues/views.py:92
 msgid "The venue has been updated"
 msgstr "Dieser Veranstaltungsort wurde geupdated"
+
+#~ msgid "{} has been declined"
+#~ msgstr "{} wurde abgelehnt"
+
+#~ msgid "{} has been accepted"
+#~ msgstr "{} wurde angenommen"
+
+#~ msgid "{} has been terminated"
+#~ msgstr "{} wurde gekündigt"
+
+#~ msgid "Quantity: {}"
+#~ msgstr "Menge: {}"
+
+#~ msgid "test ENG"
+#~ msgstr "test DE"
 
 #~ msgid "add user"
 #~ msgstr "Nutzer hinzufügen"

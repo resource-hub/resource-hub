@@ -61,9 +61,9 @@ class Register(View):
                 type_=Notification.TYPE.INFO,
                 sender=None,
                 recipient=new_user,
-                header=_('{name} welcome to Resouce Hub!'.format(
-                    name=new_user.first_name
-                )),
+                header=_('%(name)s welcome to Resouce Hub!') % {
+                    'name': new_user.first_name
+                },
                 message='',
                 link='',
                 level=Notification.LEVEL.LOW,

@@ -44,14 +44,14 @@ class SEPAMandateDetails(View):
             if choice == 'cancel':
                 with transaction.atomic():
                     mandate.set_cancelled()
-                message = _('{} has been canceled'.format(
-                    mandate.verbose_name))
+                message = _('%(mandate)s has been canceled') % {
+                    mandate.verbose_name}
             elif choice == 'confirm':
                 with transaction.atomic():
                     mandate.set_running(request)
                     contract.set_waiting(request)
-                message = _('{} has been confirmed'.format(
-                    mandate.verbose_name))
+                message = _('%(mandate)s has been confirmed') % {
+                    mandate.verbose_name}
             else:
                 message = _('Invalid Choice')
 
@@ -116,9 +116,9 @@ class XMLFilesCreate(View):
                     xml_file.bic = method.bank_account.bic
                     xml_file.save()
                     xml_file.create_xml(payments)
-                message = _('Successfully created {count} XML file(s)'.format(
-                    count=count
-                ))
+                message = _('Successfully created %(count)d XML file(s)') % {
+                    'count': count
+                }
         messages.add_message(request, messages.SUCCESS, message)
         return redirect(reverse('control:finance_sepa_files_manage'))
 

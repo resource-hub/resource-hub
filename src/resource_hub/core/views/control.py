@@ -274,36 +274,36 @@ class FinanceContractsManageDetails(View):
             if choice == 'cancel':
                 with transaction.atomic():
                     contract.set_cancelled()
-                message = _('{} has been canceled'.format(
-                    contract.verbose_name))
+                message = _('%(contract)s has been canceled') % {
+                    'contract': contract.verbose_name}
             elif choice == 'confirm':
                 with transaction.atomic():
                     if contract.payment_method.is_prepayment:
                         return get_subobject_or_404(PaymentMethod, pk=contract.payment_method.pk).initialize(contract, request)
                     contract.set_waiting(request)
-                message = _('{} has been confirmed'.format(
-                    contract.verbose_name))
+                message = _('%(contract)s has been confirmed') % {
+                    'contract': contract.verbose_name}
             else:
                 message = _('Invalid Choice')
         else:
             if choice == 'decline':
                 with transaction.atomic():
                     contract.set_declined(request)
-                message = _('{} has been declined'.format(
-                    contract.verbose_name))
+                message = _('%(contract)s has been declined') % {
+                    'contract': contract.verbose_name}
             elif choice == 'accept':
                 with transaction.atomic():
                     contract.set_running(request)
-                message = _('{} has been accepted'.format(
-                    contract.verbose_name))
+                message = _('%(contract)s has been accepted') % {
+                    'contract': contract.verbose_name}
             else:
                 message = _('Invalid Choice')
 
         if choice == 'terminate':
             with transaction.atomic():
                 contract.set_terminated(actor)
-            message = _('{} has been terminated'.format(
-                contract.verbose_name))
+            message = _('%(contract)s has been terminated') % {
+                'contract': contract.verbose_name}
 
         messages.add_message(request, messages.SUCCESS, message)
         return redirect(reverse('control:finance_contracts_manage_details', kwargs={'pk': pk}))

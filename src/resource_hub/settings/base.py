@@ -103,6 +103,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # custom middleware
     'resource_hub.core.middleware.ActorMiddleware',
+    # 'resource_hub.core.middleware.LocaleMiddleware',
 ]
 
 
@@ -178,6 +179,8 @@ LANGUAGES = (
     (('en'), _('English')),
     (('de'), _('Deutsch')),
 )
+
+DEFAULT_LANGUAGE = 'de'
 
 DATETIME_INPUT_FORMATS = [
     '%d.%m.%Y %H:%M',

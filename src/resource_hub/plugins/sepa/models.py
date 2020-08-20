@@ -179,6 +179,7 @@ class SEPADirectDebitXML(BaseModel):
     )
     currency = CurrencyField()
     file = models.FileField(upload_to=sepaxml_filename)
+
     @property
     def prefix(self):
         return 'SEPA-DD'
@@ -248,19 +249,19 @@ class SEPADirectDebitXML(BaseModel):
                 recipient=payment.debitor,
                 header=_('SEPA Direct Debit initiated'),
                 message=_(
-                    '''{creditor} with the creditor identifier 
-                    {creditor_id} is going to debit your account {iban} 
-                    with an amount of {amount} {currency} on the  
-                    {collection_date}. This transaction is based 
-                    on the mandate with the reference {mandate_id}.'''.format(
-                        creditor=payment.creditor.name,
-                        creditor_id=self.creditor_identifier,
-                        iban=payment.iban[:-6] + 'XXXXXX',
-                        amount=payment.value,
-                        currency=payment.currency,
-                        collection_date=self.collection_date,
-                        mandate_id=str(payment.mandate.uuid),
-                    )),
+                    '''%(creditor)s with the creditor identifier 
+                    %(creditor_id)s is going to debit your account %(iban)s
+                    with an amount of %(amount)s %(currency)s on the  
+                    %(collection_date)s. This transaction is based 
+                    on the mandate with the reference %(mandate_id)s.''') % {
+                        'creditor': payment.creditor.name,
+                        'creditor_id': self.creditor_identifier,
+                        'iban': payment.iban[:-6] + 'XXXXXX',
+                        'amount': payment.value,
+                        'currency': payment.currency,
+                        'collection_date': self.collection_date,
+                        'mandate_id': str(payment.mandate.uuid),
+                },
                 link='',
                 level=Notification.LEVEL.MEDIUM,
                 target=self,

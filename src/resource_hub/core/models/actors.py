@@ -1,7 +1,9 @@
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from django_countries.fields import CountryField
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
 from model_utils.managers import InheritanceManager
@@ -96,6 +98,12 @@ class Actor(BaseModel):
         verbose_name=_('Info text'),
     )
     # setting fields
+    language = models.CharField(
+        max_length=3,
+        choices=settings.LANGUAGES,
+        default=settings.DEFAULT_LANGUAGE,
+        verbose_name=_('Language'),
+    )
     tax_id = models.CharField(
         max_length=30,
         null=True,

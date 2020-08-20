@@ -7,8 +7,8 @@ from django.db.models.functions import Cast
 from django.shortcuts import reverse
 from django.utils import timezone
 from django.utils.crypto import get_random_string
-from django.utils.translation import pgettext
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import pgettext
 
 import pycountry
 from django_countries.fields import CountryField
@@ -219,12 +219,12 @@ class Invoice(BaseModel):
             type_=Notification.TYPE.MONETARY,
             sender=self.contract.creditor,
             recipient=self.contract.debitor,
-            header=_('{creditor} created invoice {no}'.format(
-                creditor=self.contract.creditor.name,
-                no=self.full_invoice_no,
-            )),
-            message=_('{creditor} has created a new invoice. See the attached file.'.format(
-                creditor=self.contract.creditor.name)),
+            header=_('%(creditor)s created invoice %(no)s') % {
+                'creditor': self.contract.creditor.name,
+                'no': self.full_invoice_no,
+            },
+            message=_('%(creditor)s has created a new invoice. See the attached file.') % {
+                'creditor': self.contract.creditor.name},
             link=reverse('control:finance_invoices_incoming'),
             level=Notification.LEVEL.MEDIUM,
             target=self,
@@ -238,7 +238,8 @@ class Invoice(BaseModel):
         invoice.contract = contract
         creditor = contract.creditor
         debitor = contract.debitor
-        with language(creditor.address.country.code):
+        with language(creditor.language):
+            invoice.locale = creditor.language
             invoice.invoice_from = '{} {}'.format(
                 creditor.address.street, creditor.address.street_number)
             invoice.invoice_from_name = creditor.name

@@ -36,7 +36,7 @@ class ItemBookingSerializer(serializers.ModelSerializer):
     end = serializers.SerializerMethodField()
 
     def get_title(self, obj):
-        return _('Quantity: {}'.format(obj.quantity))
+        return _('Quantity: %(quantity)d') % {'quantity': obj.quantity}
 
     def get_start(self, obj):
         return obj.dtstart

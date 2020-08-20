@@ -111,7 +111,7 @@ class ActorForm(forms.ModelForm):
 
     class Meta:
         model = Actor
-        fields = ['image', 'telephone_public', 'telephone_private',
+        fields = ['image', 'language', 'telephone_public', 'telephone_private',
                   'email_public', 'website', 'info_text']
 
 
@@ -249,10 +249,10 @@ class BaseFilterForm(forms.Form):
             per_page = settings.DEFAULT_PER_PAGE
         if per_page > settings.MAX_PER_PAGE:
             raise forms.ValidationError(
-                _('There have to be at most {} entries per page'.format(settings.MAX_PER_PAGE)), code='max-per-page')
+                _('There have to be at most %(count)d entries per page') % {'count': settings.MAX_PER_PAGE}, code='max-per-page')
         if per_page < settings.MIN_PER_PAGE:
             raise forms.ValidationError(
-                _('There has to be at least {} entry per page'.format(settings.MIN_PER_PAGE)), code='min-per-page')
+                _('There has to be at least %(count)d entry per page') % {'count': settings.MIN_PER_PAGE}, code='min-per-page')
         return per_page
 
 
@@ -647,9 +647,9 @@ class OrganizationInvitationFormManager(FormManager):
         for invitation in invitations.save(commit=False):
             invitation.text = text
             invitation.invitee = self.user
-            subject = _('Invitation to {organization}').format(
-                organization=invitation.organization.name,
-            )
+            subject = _('Invitation to %(organization)s') % {
+                'organization': invitation.organization.name,
+            }
             try:
                 user = User.objects.get(email=invitation.email)
                 if user in self.organization.members.all():
