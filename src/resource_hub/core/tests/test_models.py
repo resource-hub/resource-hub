@@ -225,6 +225,7 @@ class TestContract(BaseContractTest):
         )
 
     def test_send_state_notifications(self):
+        type_ = Notification.TYPE.CONTRACT
         sender = self.contract.creditor
         recipient = self.contract.debitor
         header = 'test'
@@ -240,7 +241,7 @@ class TestContract(BaseContractTest):
         self.contract.debitor = self.contract.creditor
         self.contract.save()
         notification = self.contract._send_state_notification(
-            sender, recipient, header, message
+            type_, sender, recipient, header, message
         )
         self.assertIsNone(notification)
 
