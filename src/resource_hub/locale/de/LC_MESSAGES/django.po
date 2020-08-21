@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-20 17:51+0200\n"
+"POT-Creation-Date: 2020-08-21 11:39+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -80,109 +80,116 @@ msgstr "In den Papierkorb"
 msgid "Restore from trash"
 msgstr "Aus dem Papierkorb wiederherstellen"
 
-#: core/forms.py:243
+#: core/forms.py:231
+msgid "Action"
+msgstr "Aktion"
+
+#: core/forms.py:241
+msgid "Per Page"
+msgstr "Pro Seite"
+
+#: core/forms.py:245
 msgid "In trash"
 msgstr "Im Papierkorb"
 
-#: core/forms.py:252
+#: core/forms.py:254
 #, python-format
 msgid "There have to be at most %(count)d entries per page"
 msgstr "Es dürfen maximal %(count)d Einträge pro Seite existieren"
 
-#: core/forms.py:255
-#, fuzzy, python-format
-#| msgid "There has to be at least {} entry per page"
+#: core/forms.py:257
+#, python-format
 msgid "There has to be at least %(count)d entry per page"
 msgstr "Es müssen mindestens %(count)d Einträge pro Seite existieren"
 
-#: core/forms.py:277 core/models/base.py:148
+#: core/forms.py:279 core/models/base.py:148
 msgid "Account holder"
 msgstr "Kontoinhaber"
 
-#: core/forms.py:278 core/models/base.py:154
+#: core/forms.py:280 core/models/base.py:154
 msgid "IBAN"
 msgstr "IBAN"
 
-#: core/forms.py:279 core/models/base.py:160
+#: core/forms.py:281 core/models/base.py:160
 msgid "BIC"
 msgstr "BIC"
 
-#: core/forms.py:292
+#: core/forms.py:294
 msgid "Invalid IBAN: "
 msgstr "Ungültige IBAN: "
 
-#: core/forms.py:302
+#: core/forms.py:304
 msgid "Invalid BIC: "
 msgstr "Ungültige BIC: "
 
-#: core/forms.py:408
+#: core/forms.py:410
 msgid "New email-address"
 msgstr "Neue E-Mailadresse"
 
-#: core/forms.py:411
+#: core/forms.py:413
 msgid "New email-address confirmation"
 msgstr "Bestätigung neuer E-Mailadresse"
 
-#: core/forms.py:414 core/templates/core/control/account_security.html:11
+#: core/forms.py:416 core/templates/core/control/account_security.html:11
 msgid "Password"
 msgstr "Passwort"
 
-#: core/forms.py:425
+#: core/forms.py:427
 msgid "The email-addresses do not match"
 msgstr "Die E-Mailadressen stimmen nicht überein"
 
-#: core/forms.py:431
+#: core/forms.py:433
 msgid "The new email is identical to the old one"
 msgstr "Die neue E-Mailadresse ist identisch zu der Neuen"
 
-#: core/forms.py:445
+#: core/forms.py:447
 msgid "The password is incorrect"
 msgstr "Das Passwort ist inkorrekt"
 
-#: core/forms.py:510
+#: core/forms.py:512
 msgid "Apply discounts from prices profiles?"
 msgstr "Rabatte der Preisprofile anwenden?"
 
-#: core/forms.py:519
+#: core/forms.py:521
 msgid "When left empty, the discount is visible for everyone"
 msgstr "Wenn leer, ist der Rabatt für alle sichtbar"
 
-#: core/forms.py:588
+#: core/forms.py:590
 msgid "The user does not exist."
 msgstr "Der Nutzer existiert nicht"
 
-#: core/forms.py:594
+#: core/forms.py:596
 msgid "User is already a member"
 msgstr "Der Nutzer ist bereits ein Mitglied"
 
-#: core/forms.py:614
+#: core/forms.py:616
 msgid "This text will be included in the invitation mail"
 msgstr "Dieser Text wird in der Bestätigungsmail inkludiert"
 
-#: core/forms.py:650
+#: core/forms.py:652
 #, python-format
 msgid "Invitation to %(organization)s"
 msgstr "Einladung %(organization)s"
 
-#: core/forms.py:701
+#: core/forms.py:703
 msgid "Actor does not exist"
 msgstr "Der Akteur existiert nicht"
 
-#: core/forms.py:709
+#: core/forms.py:711
 msgid "Actor not associated with user"
 msgstr "Der Akteur ist nicht mit dem User assoziiert"
 
-#: core/forms.py:720
+#: core/forms.py:722
 msgid ""
 "You can use this search field for the address to autofill the location data!"
 msgstr ""
 "Du kannst dieses Feld verwenden, um die Adresse automatisch auszufüllen!"
 
-#: core/forms.py:758
+#: core/forms.py:760
 msgid "In what part of the software is the issue or your request?"
 msgstr "Auf welchen Teil der Software bezieht sich das Anliegen?"
 
-#: core/forms.py:763
+#: core/forms.py:765
 msgid ""
 "Short description of the problem or the feature you want to see implemented"
 msgstr "Kurze Beschreibung des Problems oder des Features"
@@ -611,14 +618,12 @@ msgid "%(debitor)s created %(contract)s"
 msgstr "%(debitor)s erstellte %(contract)s"
 
 #: core/models/contracts.py:398
-#, python-format
-msgid "%(debitor)s accepted %(contract)s"
-msgstr "%(debitor)s hat %(contract)s akzeptiert"
+msgid "%(creditor)s accepted %(contract)s"
+msgstr "%(creditor)s hat %(contract)s akzeptiert"
 
 #: core/models/contracts.py:412
-#, python-format
-msgid "%(debitor)s declined %(contract)s"
-msgstr "%(debitor)s hat %(contract)s abgelehnt"
+msgid "%(creditor)s declined %(contract)s"
+msgstr "%(creditor)s hat %(contract)s abgelehnt"
 
 #: core/models/contracts.py:424
 #, python-format
@@ -1619,8 +1624,7 @@ msgstr ""
 msgid "report"
 msgstr "melden"
 
-#: core/templates/core/table_view.html:45 items/templates/items/index.html:14
-#: venues/templates/venues/index.html:14
+#: core/templates/core/table_view.html:45 venues/templates/venues/index.html:14
 msgid "filter"
 msgstr "filtern"
 
@@ -1770,7 +1774,7 @@ msgstr "Start- oder Endparameter kein gültiger iso_8601 string"
 msgid "Do you want to use the platform's booking logic?"
 msgstr "Willst du die Buchungslogik der Plattform verwenden?"
 
-#: items/forms.py:216
+#: items/forms.py:214
 #, python-format
 msgid ""
 "Hey, I'd like to lend your %(item)s. I would like to pick it up at: TIME"
@@ -1778,11 +1782,11 @@ msgstr ""
 "Hey, ich würde gerne dein/e %(item)s ausleihen. Ich würde es um ZEIT abholen "
 "wollen."
 
-#: items/forms.py:226 venues/forms.py:354
+#: items/forms.py:224 venues/forms.py:354
 msgid "to create bookings you need to set your billing address"
 msgstr "Um Buchungen zu erstellen muss deine Rechnungsadresse gesetzt sein"
 
-#: items/forms.py:232 venues/forms.py:360
+#: items/forms.py:230 venues/forms.py:360
 msgid ""
 "Available discounts granted to certain groups and entities. The discounts "
 "will be applied to the base prices below."
@@ -1790,23 +1794,23 @@ msgstr ""
 "Verfügbare Rabatte für bestimmte Gruppen und Entitäten. Die Rabatte werden "
 "auf den Basispreis angewandt."
 
-#: items/forms.py:246
+#: items/forms.py:244
 msgid "Start date has to be set"
 msgstr "Anfangsdarum muss gesetzt sein"
 
-#: items/forms.py:266
+#: items/forms.py:264
 msgid "End date has to be after start date"
 msgstr "Enddatum muss muss nach dem Anfangsdatum liegen"
 
-#: items/forms.py:269
+#: items/forms.py:267
 msgid "End date has to be set"
 msgstr "Enddatum muss gesetzt sein"
 
-#: items/forms.py:282
+#: items/forms.py:280
 msgid "Booking exeeds maximum duration"
 msgstr "Die Buchungs überschreitet die maximale Leihdauer"
 
-#: items/forms.py:298
+#: items/forms.py:296
 #, python-format
 msgid ""
 "There is a missing quantity of %(delta)s with booking on %(start)s to %(end)s"
@@ -2097,9 +2101,17 @@ msgstr "Keine assoziierten Veranstaltungsort gefunden"
 msgid "create one!"
 msgstr "Erstellen!"
 
+#: items/templates/items/index.html:6
+msgid "Filters"
+msgstr "Filter"
+
 #: items/templates/items/index.html:9 venues/templates/venues/index.html:9
 msgid "search..."
 msgstr "suchen..."
+
+#: items/templates/items/index.html:14
+msgid "Filter"
+msgstr "Filtern"
 
 #: items/templates/items/item_bookings_create.html:18
 msgid "Create item booking"
@@ -2347,15 +2359,15 @@ msgstr "Erfolgreich %(count)d XML Dateie(n) erstellt"
 msgid "Open SEPA Direct Debit payments"
 msgstr "Offene SEPA Lastschriftzahlungen"
 
-#: settings/base.py:179
+#: settings/base.py:178
 msgid "English"
 msgstr "Englisch"
 
-#: settings/base.py:180
+#: settings/base.py:179
 msgid "Deutsch"
 msgstr "Deutsch"
 
-#: settings/base.py:206
+#: settings/base.py:205
 msgid "Euro (EUR)"
 msgstr "Euro (EUR)"
 
@@ -2570,7 +2582,7 @@ msgstr "Veranstaltungsortbuchung"
 
 #: venues/models.py:390
 msgid "%(debitor)s created Event: %(event)s"
-msgstr "%(debitor)s erstellte %(contract)s"
+msgstr "%(debitor)s hat das Event %(event)s erstellt"
 
 #: venues/templates/venues/_contract_overview.html:4
 msgid "Event details"

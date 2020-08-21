@@ -228,6 +228,7 @@ class TableActionForm(forms.Form):
     ]
     action = forms.ChoiceField(
         choices=ACTIONS,
+        label=_('Action'),
     )
 
 
@@ -237,6 +238,7 @@ class BaseFilterForm(forms.Form):
         initial=settings.DEFAULT_PER_PAGE,
         min_value=1,
         max_value=settings.MAX_PER_PAGE,
+        label=_('Per Page'),
     )
     is_deleted = forms.BooleanField(
         required=False,
