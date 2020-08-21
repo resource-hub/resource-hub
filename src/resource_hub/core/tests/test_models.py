@@ -231,7 +231,7 @@ class TestContract(BaseContractTest):
         header = 'test'
         message = 'test'
         notification = self.contract._send_state_notification(
-            type_, sender, recipient, header, message
+            type_, sender, recipient, header, message=message
         )
         self.assertEqual(notification.sender, sender)
         self.assertEqual(notification.recipient, recipient)
