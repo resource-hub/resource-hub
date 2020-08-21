@@ -395,8 +395,8 @@ class Contract(BaseContract):
             type_=Notification.TYPE.CONTRACT_ACCEPTED,
             sender=self.creditor,
             recipient=self.debitor,
-            header=_('%(debitor)s accepted %(contract)s') % {
-                'debitor': self.debitor,
+            header=_('%(creditor)s accepted %(contract)s') % {
+                'creditor': self.creditor,
                 'contract': self.verbose_name,
             },
             message=self._get_running_notification_msg(),
@@ -409,8 +409,8 @@ class Contract(BaseContract):
             type_=Notification.TYPE.CONTRACT_DECLINED,
             sender=self.creditor,
             recipient=self.debitor,
-            header=_('%(debitor)s declined %(contract)s') % {
-                'debitor': self.debitor,
+            header=_('%(creditor)s declined %(contract)s') % {
+                'creditor': self.creditor,
                 'contract': self.verbose_name,
             },
             request=request,
@@ -422,7 +422,7 @@ class Contract(BaseContract):
             sender=initiator,
             recipient=reciever,
             header=_('%(initiator)s terminated %(contract)s') % {
-                'debitor': self.debitor,
+                'initiator': initiator,
                 'contract': self.verbose_name,
             },
         )
