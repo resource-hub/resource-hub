@@ -233,10 +233,21 @@ class ContractProceduresEdit(View):
 
 
 class ICSFeed(ICalFeed):
-    file_name = "feed.ics"
+    file_name = 'feed.ics'
 
     def get_object(self, request, *args, **kwargs):
-        return ItemBooking.objects.filter(item__slug=kwargs['item_slug'], item__owner__slug=kwargs['owner_slug'])
+        try:
+            item = Item.objects.get(
+                slug=kwargs['item_slug'], owner__slug=kwargs['owner_slug'])
+            self.title = item.name
+            self.product_id = '-//{domain}/items/{owner}/{item}/EN'.format(
+                domain=request.META['HTTP_HOST'],
+                owner=kwargs['owner_slug'],
+                item=kwargs['item_slug'],
+            )
+            return ItemBooking.objects.filter(item=item)
+        except ItemBooking.DoesNotExist:
+            return []
 
     def items(self, obj):
         return obj
