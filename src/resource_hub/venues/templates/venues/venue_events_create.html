@@ -11,6 +11,9 @@
 {% block not_in_container %}
 <div class="main container large">
     <div class="ui stackable two column grid">
+        <div class="seven wide column">
+            {% include 'venues/_venue_calendar.html' with venue=venue %}
+        </div>
         <div class="nine wide column">
             {% url 'venues:venue_details' venue_slug=venue.slug location_slug=venue.location.slug as url %}
             {% include '_back_button.html' with url=url %}
@@ -29,9 +32,6 @@
                     <i class="zoom-in icon"></i>
                 </button>
             </form>
-        </div>
-        <div class="seven wide column">
-            {% include 'venues/_venue_calendar.html' with venue=venue %}
         </div>
     </div>
 </div>

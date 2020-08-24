@@ -11,6 +11,10 @@
 {% block not_in_container %}
 <div class="main container large">
     <div class="ui stackable two column grid">
+        <div class="seven wide column">
+            <div class="ui horizontal section divider">{% trans 'Availability' %}</div>
+            {% include 'items/_item_calendar.html' with item=item %}
+        </div>
         <div class="nine wide column">
             {% url 'items:details' item_slug=item.slug owner_slug=item.owner.slug as url %}
             {% include '_back_button.html' with url=url %}
@@ -31,10 +35,6 @@
                     </button>
                 </div>
             </form>
-        </div>
-        <div class="seven wide column">
-            <div class="ui horizontal section divider">{% trans 'Availability' %}</div>
-            {% include 'items/_item_calendar.html' with item=item %}
         </div>
     </div>
 </div>
