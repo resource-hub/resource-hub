@@ -343,9 +343,6 @@ class VenueContractForm(forms.ModelForm):
     def clean(self):
         data = super(VenueContractForm, self).clean()
         address = self.request.actor.address
-        print(self.cleaned_data['price_profile'].discount)
-        print(self.cleaned_data['price_profile']
-              and self.cleaned_data['price_profile'].discount != Decimal('100'))
         if (address.street is None or address.street_number is None or address.postal_code is None or address.city is None) and (
             self.venue.price.value != Decimal(
                 '0') and (self.cleaned_data['price_profile'] and self.cleaned_data['price_profile'].discount != Decimal('100'))
@@ -500,7 +497,6 @@ class BaseEquipmentFormset(BaseInlineFormSet):
                     form.save()
                     first = True
                     for nested_form in form.nested.save(commit=True):
-                        print('nested')
                         if first:
                             first = False
                             form.instance.price = nested_form.price_ptr
