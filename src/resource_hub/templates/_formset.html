@@ -143,6 +143,7 @@
                 <td colspan="{{ child_form.visible_fields|length|add:'-1' }}">
                     <div class="nested-formset" data-formset-prefix="{{ child_form.prefix }}">
                         {{ formset.nested_empty_management_form }}
+                        {{ formset.nested_non_form_errors }}
 
                         <table class="ui table nested-data-formset-body">
                             

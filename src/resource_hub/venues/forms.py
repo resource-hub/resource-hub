@@ -109,9 +109,9 @@ class VenueFormManager(FormManager):
                 if first:
                     new_venue.price = price
                     first = False
-            self.forms['price_formset'].save()
             self.forms['equipment_formset'].instance = new_venue
             self.forms['equipment_formset'].save()
+            self.forms['price_formset'].save()
         new_venue.save()
         return new_venue
 
@@ -429,13 +429,29 @@ class EquipmentForm(forms.ModelForm):
                   'thumbnail_original', ]
 
 
+class OverridenBaseFormset(BaseInlineFormSet):
+    @property
+    def empty_form(self):
+        form = self.form(
+            auto_id=self.auto_id,
+            prefix=self.add_prefix(str(0)),
+            empty_permitted=True,
+            use_required_attribute=False,
+            **self.get_form_kwargs(None)
+        )
+        self.add_fields(form, None)
+        return form
+
+
 EquipmentPriceFormset = inlineformset_factory(
     Equipment,
     EquipmentPrice,
     form=PriceForm,
-    extra=0,
+    formset=OverridenBaseFormset,
+    extra=1,
     min_num=1,
-    can_order=True,
+    max_num=1,
+    can_order=False,
 )
 
 
@@ -455,7 +471,8 @@ class BaseEquipmentFormset(BaseInlineFormSet):
             files=form.files if form.is_bound else None,
             prefix='equipment-price-%s-%s' % (
                 form.prefix,
-                EquipmentPriceFormset.get_default_prefix()),
+                EquipmentPriceFormset.get_default_prefix(),
+            )
         )
 
         self.nested_empty_form = form.nested.empty_form
@@ -463,7 +480,6 @@ class BaseEquipmentFormset(BaseInlineFormSet):
 
     def is_valid(self):
         result = super(BaseEquipmentFormset, self).is_valid()
-
         if self.is_bound:
             for form in self.forms:
                 if hasattr(form, 'nested'):
@@ -471,19 +487,27 @@ class BaseEquipmentFormset(BaseInlineFormSet):
         return result
 
     def save(self, commit=True):
-        result = super(BaseEquipmentFormset, self).save(commit=commit)
+        result = super(BaseEquipmentFormset, self).save(commit=False)
         for form in self.forms:
             if hasattr(form, 'nested'):
-                if not self._should_delete_form(form):
-                    form.nested.instance = form.instance
+                form.nested.instance = form.instance
+                if self._should_delete_form(form):
+                    form.instance.price = None
+                    form.instance.save()
+                    EquipmentPrice.objects.filter(
+                        equipment_ptr=form.instance.pk).delete()
+                else:
+                    form.save()
                     first = True
-                    for nested_form in form.nested.save(commit=False):
+                    for nested_form in form.nested.save(commit=True):
+                        print('nested')
                         if first:
                             first = False
                             form.instance.price = nested_form.price_ptr
                             form.instance.save()
-                    if commit:
-                        form.nested.save()
+            else:
+                form.save()
+        super(BaseEquipmentFormset, self).save(commit=True)
         return result
 
 
@@ -494,4 +518,6 @@ EquipmentFormset = inlineformset_factory(
     form=EquipmentForm,
     min_num=0,
     extra=0,
+
+
 )
