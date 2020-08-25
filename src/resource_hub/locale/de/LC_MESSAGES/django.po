@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-21 11:39+0200\n"
+"POT-Creation-Date: 2020-08-25 09:57+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -380,6 +380,8 @@ msgstr "Land"
 #: items/templates/items/_item_info.html:78
 #: items/templates/items/_item_info.html:81 venues/models.py:51
 #: venues/models.py:184 venues/templates/venues/_contract_overview.html:23
+#: venues/templates/venues/_venue_info.html:18
+#: venues/templates/venues/_venue_info.html:21
 msgid "Description"
 msgstr "Beschreibung"
 
@@ -420,9 +422,9 @@ msgstr "Besitzer"
 
 #: core/models/base.py:282 items/models.py:344
 #: items/templates/items/control/_item_form.html:7
-#: items/templates/items/item_details.html:42 venues/models.py:87
+#: items/templates/items/item_details.html:41 venues/models.py:87
 #: venues/templates/venues/control/_venue_form.html:15
-#: venues/templates/venues/venue_details.html:42
+#: venues/templates/venues/venue_details.html:35
 msgid "Gallery"
 msgstr "Gallerie"
 
@@ -618,10 +620,12 @@ msgid "%(debitor)s created %(contract)s"
 msgstr "%(debitor)s erstellte %(contract)s"
 
 #: core/models/contracts.py:398
+#, python-format
 msgid "%(creditor)s accepted %(contract)s"
 msgstr "%(creditor)s hat %(contract)s akzeptiert"
 
 #: core/models/contracts.py:412
+#, python-format
 msgid "%(creditor)s declined %(contract)s"
 msgstr "%(creditor)s hat %(contract)s abgelehnt"
 
@@ -1782,11 +1786,11 @@ msgstr ""
 "Hey, ich würde gerne dein/e %(item)s ausleihen. Ich würde es um ZEIT abholen "
 "wollen."
 
-#: items/forms.py:224 venues/forms.py:354
+#: items/forms.py:224 venues/forms.py:351
 msgid "to create bookings you need to set your billing address"
 msgstr "Um Buchungen zu erstellen muss deine Rechnungsadresse gesetzt sein"
 
-#: items/forms.py:230 venues/forms.py:360
+#: items/forms.py:230 venues/forms.py:357
 msgid ""
 "Available discounts granted to certain groups and entities. The discounts "
 "will be applied to the base prices below."
@@ -1930,7 +1934,7 @@ msgid "Location code"
 msgstr "Standorthinweis"
 
 #: items/models.py:284 items/templates/items/_item_info.html:52
-#: venues/templates/venues/venue_details.html:25
+#: venues/templates/venues/_venue_info.html:8
 msgid "Base price"
 msgstr "Basispreis"
 
@@ -2113,27 +2117,28 @@ msgstr "suchen..."
 msgid "Filter"
 msgstr "Filtern"
 
-#: items/templates/items/item_bookings_create.html:18
-msgid "Create item booking"
-msgstr "Gegenstand leihen"
-
-#: items/templates/items/item_bookings_create.html:29
-msgid "Check booking"
-msgstr "Leihe prüfen"
-
-#: items/templates/items/item_bookings_create.html:36
+#: items/templates/items/item_bookings_create.html:15
 msgid "Availability"
 msgstr "Verfügbarkeit"
 
-#: items/templates/items/item_details.html:16 templates/_back_button.html:4
-msgid "Back"
-msgstr ""
+#: items/templates/items/item_bookings_create.html:22
+msgid "Create item booking"
+msgstr "Gegenstand leihen"
 
-#: items/templates/items/item_details.html:20
+#: items/templates/items/item_bookings_create.html:33
+msgid "Check booking"
+msgstr "Leihe prüfen"
+
+#: items/templates/items/item_details.html:15
 msgid "Lend"
 msgstr "Leihen"
 
-#: items/templates/items/item_details.html:29
+#: items/templates/items/item_details.html:20 templates/_back_button.html:4
+#: venues/templates/venues/venue_details.html:22
+msgid "Back"
+msgstr "Zurück"
+
+#: items/templates/items/item_details.html:28
 msgid "Subscribe"
 msgstr "Abonnieren"
 
@@ -2187,13 +2192,7 @@ msgid "%(name)s has been confirmed successfully"
 msgstr "%(name)s wurde erfolgreich bestätigt"
 
 #: plugins/bank_transfer/models.py:65
-#, fuzzy, python-format
-#| msgid ""
-#| "Please make a SEPA credit transfer of the above mentioned gross amount to "
-#| "the following account: \n"
-#| " %(account_holder)s \n"
-#| " %(iban)s \n"
-#| " %(bic)s"
+#, python-format
 msgid ""
 "Please make a SEPA credit transfer of the above mentioned gross amount to "
 "the following account: \n"
@@ -2204,8 +2203,8 @@ msgstr ""
 "Bitte überweise per SEPA Überweisung den oben genannten Bruttobetrag an "
 "folgendes Konto:the following account: \n"
 " %(account_holder)s \n"
-" %(iban) \n"
-" %(bic)"
+" %(iban)s \n"
+" %(bic)s"
 
 #: plugins/sepa/models.py:26
 msgid "SEPA Mandate"
@@ -2425,7 +2424,7 @@ msgstr "In Zusammenarbeit mit &lt;3"
 msgid "Form contains errors!"
 msgstr "Das Formular enthält Fehler!"
 
-#: templates/_formset.html:89 templates/_formset.html:181
+#: templates/_formset.html:88 templates/_formset.html:181
 #: templates/_formset.html:216
 msgid "Add another"
 msgstr "Weiteren hinzufügen"
@@ -2581,6 +2580,7 @@ msgid "Venue booking"
 msgstr "Veranstaltungsortbuchung"
 
 #: venues/models.py:390
+#, python-format
 msgid "%(debitor)s created Event: %(event)s"
 msgstr "%(debitor)s hat das Event %(event)s erstellt"
 
@@ -2604,15 +2604,17 @@ msgstr "Veranstaltungsort erstellen"
 msgid "Edit venue"
 msgstr "Veranstaltungsort bearbeiten"
 
-#: venues/templates/venues/venue_details.html:32
-msgid "book"
-msgstr "buchen"
+#: venues/templates/venues/venue_details.html:16
+#, fuzzy
+#| msgid "Bookable?"
+msgid "Book"
+msgstr "Buchbar?"
 
-#: venues/templates/venues/venue_events_create.html:18
+#: venues/templates/venues/venue_events_create.html:21
 msgid "Create event"
 msgstr "Veranstaltung erstellen"
 
-#: venues/templates/venues/venue_events_create.html:28
+#: venues/templates/venues/venue_events_create.html:31
 msgid "Check event"
 msgstr "Veranstaltung prüfen"
 
@@ -2623,6 +2625,9 @@ msgstr "Veranstaltungsorte verwalten"
 #: venues/views.py:92
 msgid "The venue has been updated"
 msgstr "Dieser Veranstaltungsort wurde geupdated"
+
+#~ msgid "book"
+#~ msgstr "buchen"
 
 #~ msgid "{} has been declined"
 #~ msgstr "{} wurde abgelehnt"
