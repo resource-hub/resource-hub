@@ -2605,10 +2605,8 @@ msgid "Edit venue"
 msgstr "Veranstaltungsort bearbeiten"
 
 #: venues/templates/venues/venue_details.html:16
-#, fuzzy
-#| msgid "Bookable?"
 msgid "Book"
-msgstr "Buchbar?"
+msgstr "Buchen"
 
 #: venues/templates/venues/venue_events_create.html:21
 msgid "Create event"
