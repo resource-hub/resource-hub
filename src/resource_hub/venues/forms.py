@@ -38,7 +38,7 @@ class VenueForm(BaseForm):
     class Meta:
         model = Venue
         fields = ['name', 'description', 'location',
-                  'thumbnail_original', 'owner', 'bookable', 'contract_procedure', ]
+                  'thumbnail_original', 'size', 'usage_types', 'owner', 'bookable', 'contract_procedure', ]
         help_texts = {
             'bookable': _('Do you want to use the platform\'s booking logic?'),
         }
@@ -177,8 +177,7 @@ class EventForm(forms.ModelForm):
         self.fields['venues'].queryset = Venue.objects.filter(
             contract_procedure=venue.contract_procedure
         )
-        if 'instance' in kwargs and kwargs['instance'] is None:
-            self.initial['venues'] = venue
+        self.initial['venues'] = [venue, ]
 
     class Meta:
         model = Event
@@ -336,6 +335,9 @@ class VenueContractForm(forms.ModelForm):
         ).distinct()
         self.fields['price_profile'].queryset = price_profiles.order_by(
             '-discount')
+        self.fields['equipment'].queryset = Equipment.objects.filter(
+            venue__contract_procedure=venue.contract_procedure)
+
         if self.fields['price_profile'].queryset:
             self.initial['price_profile'] = self.fields['price_profile'].queryset[0]
             self.initial['payment_method'] = self.fields['payment_method'].queryset[0]
@@ -352,7 +354,7 @@ class VenueContractForm(forms.ModelForm):
 
     class Meta:
         model = VenueContract
-        fields = ['price_profile', 'payment_method', ]
+        fields = ['price_profile', 'payment_method', 'equipment', ]
         help_texts = {
             'price_profile': _('Available discounts granted to certain groups and entities. The discounts will be applied to the base prices below.')
         }
@@ -415,7 +417,8 @@ VenuePriceFormset = inlineformset_factory(
     form=PriceForm,
     extra=0,
     min_num=1,
-    can_order=True,
+    max_num=1,
+    can_order=False,
 )
 
 

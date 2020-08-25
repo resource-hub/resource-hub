@@ -1,5 +1,6 @@
 import uuid
 
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.db.models import Q
 from django.shortcuts import reverse
@@ -9,6 +10,7 @@ from django.utils.translation import gettext_lazy as _
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
 from recurrence.fields import RecurrenceField
+from resource_hub.core.fields import MultipleChoiceArrayField
 from resource_hub.core.models import (Actor, BaseModel, Claim, Contract,
                                       ContractProcedure, Gallery, Location,
                                       Notification, Price)
@@ -36,7 +38,14 @@ class VenueContractProcedure(ContractProcedure):
 
 class Venue(BaseModel):
     """describing locations."""
+    class USAGE_TYPE:
+        OTHER = 'o'
+        WORKSHOP = 'w'
 
+    USAGE_TYPES = [
+        (USAGE_TYPE.OTHER, _('other')),
+        (USAGE_TYPE.WORKSHOP, _('workshop')),
+    ]
     # Fields
     slug = models.SlugField(
         db_index=True,
@@ -73,6 +82,20 @@ class Venue(BaseModel):
             'quality': 70,
         }
     )
+    size = models.PositiveIntegerField(
+        verbose_name=_('Room size (squaremeters)'),
+        default=10,
+    )
+    usage_types = MultipleChoiceArrayField(
+        models.CharField(
+            choices=USAGE_TYPES,
+            default=USAGE_TYPE.OTHER,
+            max_length=3,
+            verbose_name=_('Usage type'),
+        ),
+        verbose_name=_('Usage types'),
+        help_text=_('Describe which activites are possible'),
+    )
     price = models.ForeignKey(
         Price,
         on_delete=models.PROTECT,
@@ -96,6 +119,7 @@ class Venue(BaseModel):
         blank=True,
         on_delete=models.PROTECT,
         verbose_name=_('Contract procedure'),
+        related_name='venues',
     )
     owner = models.ForeignKey(
         Actor,
@@ -269,6 +293,7 @@ class Equipment(models.Model):
         Venue,
         on_delete=models.PROTECT,
         verbose_name=_('Venue'),
+        related_name='equipment',
     )
     thumbnail_original = models.ImageField(
         verbose_name=_('Thumbnail'),
@@ -310,6 +335,24 @@ class EquipmentPrice(Price):
     )
 
 
+class EquipmentBooking(BaseModel):
+    # fields
+    contract = models.ForeignKey(
+        'VenueContract',
+        on_delete=models.PROTECT,
+        verbose_name=_('Contract'),
+    )
+    equipment = models.ForeignKey(
+        'Equipment',
+        on_delete=models.PROTECT,
+        verbose_name=_('Equipment'),
+    )
+    quantity = models.PositiveIntegerField(
+        default=1,
+        verbose_name=_('Quantity'),
+    )
+
+
 class VenueContract(Contract):
     event = models.OneToOneField(
         Event,
@@ -319,7 +362,10 @@ class VenueContract(Contract):
     equipment = models.ManyToManyField(
         Equipment,
         blank=True,
+        through='EquipmentBooking',
         verbose_name=_('Equipment'),
+        help_text=_('Services or additional equipment for the venue'),
+
     )
 
     # attributes

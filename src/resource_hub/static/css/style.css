@@ -70,6 +70,10 @@
   color: #db2828 !important;
 }
 
+.ui.label>.delete.icon {
+  color: #db2828 !important;
+}
+
 /**
   *
   * Photoswipe 
@@ -577,12 +581,12 @@ tr.selectable {
   h1, h2, h3, h4, h5, h6, label, strong, .header {
     color: var(--green) !important;
   }
-  body, nav, .ui.card, .ui.sidebar, .ui.segment, .ui.table, .ui.dropdown, .ui.pointing.dropdown>.menu::after, .ui.modal {
+  body, nav, .ui.card, .ui.sidebar, .ui.segment, .ui.table, .ui.pointing.dropdown>.menu::after, .ui.modal {
     background-color: var(--bg-color) !important;
     color: var(--text-color) !important;
     border-top: var(--line-color) !important;
   }
-  input, textarea, select, th {
+  input, textarea, select, th, .ui.selection.multiple, .ui.selection.dropdown .menu>.item {
     background-color: var(--bg-contrast) !important;
     color: var(--text-color) !important;
   }
@@ -614,7 +618,7 @@ tr.selectable {
   .back.button, .pagination>li>a {
     background-color: var(--orange) !important;
   }
-  .navigation-bar, .ui.footer, .ui.dropdown {
+  .navigation-bar, .ui.footer {
     background-color: var(--bg-shade) !important;
   }
   tr.td:hover {
