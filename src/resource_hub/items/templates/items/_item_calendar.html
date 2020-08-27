@@ -68,7 +68,7 @@
             <i class="rss icon"></i>
         </button>
         <input id="value-to-copy" type="text"
-            value="{{ request.scheme }}://{{ request.get_host }}{% url 'items:ics_feed' owner_slug=item.owner.slug item_slug=item.slug %}">
+            value="{{ request.scheme }}://{{ request.get_host }}{% url 'api:items_ics_feed' owner_slug=item.owner.slug item_slug=item.slug %}">
     </div>
     <div>
         <span class="help">{% trans 'Add this iCal-feed to your calendar app (Google calendar, Nextcloud etc.)' %}

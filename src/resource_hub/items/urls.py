@@ -9,6 +9,8 @@ app_name = 'items'
 api_urls.register([
     path('items/', api.Items.as_view(), name='items'),
     path('items/<int:pk>/bookings/', api.Bookings.as_view(), name='item_bookings'),
+    path('items/<slug:owner_slug>/<slug:item_slug>/feed.ics',
+         api.ICSFeed(), name='items_ics_feed'),
 ])
 
 control_urls.register([
@@ -30,8 +32,6 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('<slug:owner_slug>/<slug:item_slug>/',
          views.ItemsDetails.as_view(), name='details'),
-    path('<slug:owner_slug>/<slug:item_slug>/feed.ics',
-         views.ICSFeed(), name='ics_feed'),
     path('<slug:owner_slug>/<slug:item_slug>/book',
          views.ItemBookingsCreate.as_view(), name='book'),
     path('bookings/<int:pk>/', views.ItemBookings.as_view(),

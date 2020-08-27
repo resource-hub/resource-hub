@@ -8,8 +8,6 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
 from django.views import View
 
-from django_ical.utils import build_rrule_from_recurrences_rrule
-from django_ical.views import ICalFeed
 from resource_hub.core.decorators import owner_required
 from resource_hub.core.views import TableView
 
@@ -230,39 +228,3 @@ class ContractProceduresEdit(View):
             messages.add_message(request, messages.SUCCESS, message)
             return redirect(reverse('control:finance_contract_procedures_manage'))
         return render(request, self.template_name, contract_procedure_form.get_forms())
-
-
-class ICSFeed(ICalFeed):
-    file_name = 'feed.ics'
-
-    def get_object(self, request, *args, **kwargs):
-        try:
-            item = Item.objects.get(
-                slug=kwargs['item_slug'], owner__slug=kwargs['owner_slug'])
-            self.title = item.name
-            self.product_id = '-//{domain}/items/{owner}/{item}/EN'.format(
-                domain=request.META['HTTP_HOST'],
-                owner=kwargs['owner_slug'],
-                item=kwargs['item_slug'],
-            )
-            return ItemBooking.objects.filter(item=item)
-        except ItemBooking.DoesNotExist:
-            return []
-
-    def items(self, obj):
-        return obj
-
-    def item_title(self, item):
-        return item.item.name
-
-    def item_description(self, item):
-        return item.item.description
-
-    def item_start_datetime(self, item):
-        return item.dtstart
-
-    def item_end_datetime(self, item):
-        return item.dtend
-
-    def item_link(self, item):
-        return reverse('items:bookings', kwargs={'pk': item.pk})

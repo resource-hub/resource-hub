@@ -1,9 +1,11 @@
 from datetime import datetime
 
+import dateutil.parser
 from django.db.models import F, Q
 from django.utils.translation import gettext_lazy as _
 
-import dateutil.parser
+from django_ical.utils import build_rrule_from_recurrences_rrule
+from django_ical.views import ICalFeed
 from resource_hub.core.models import Contract
 from resource_hub.core.views.api import (LargeResultsSetPagination,
                                          SmallResultsSetPagination)
@@ -64,3 +66,39 @@ class Bookings(generics.ListCreateAPIView):
             dtend__gt=start,
             dtstart__lt=end,
         )
+
+
+class ICSFeed(ICalFeed):
+    file_name = 'feed.ics'
+
+    def get_object(self, request, *args, **kwargs):
+        try:
+            item = Item.objects.get(
+                slug=kwargs['item_slug'], owner__slug=kwargs['owner_slug'])
+            self.title = item.name
+            self.product_id = '-//{domain}/items/{owner}/{item}/EN'.format(
+                domain=request.META['HTTP_HOST'],
+                owner=kwargs['owner_slug'],
+                item=kwargs['item_slug'],
+            )
+            return ItemBooking.objects.filter(item=item)
+        except ItemBooking.DoesNotExist:
+            return []
+
+    def items(self, obj):
+        return obj
+
+    def item_title(self, item):
+        return item.item.name
+
+    def item_description(self, item):
+        return item.item.description
+
+    def item_start_datetime(self, item):
+        return item.dtstart
+
+    def item_end_datetime(self, item):
+        return item.dtend
+
+    def item_link(self, item):
+        return reverse('items:bookings', kwargs={'pk': item.pk})
