@@ -533,15 +533,15 @@ class OrganizationFormManager(FormManager):
             self.forms = {
                 'organization_form': OrganizationForm(
                     data=data, files=files),
-                'address_form': AddressForm(
+                'address_form': AddressFormNonRequired(
                     user, actor, data=data),
-                'bank_account_form': BankAccountForm(data),
+                'bank_account_form': BankAccountFormNonRequired(data),
             }
         else:
             self.forms = {
                 'organization_form': OrganizationForm(),
-                'address_form': AddressForm(user, actor),
-                'bank_account_form': BankAccountForm(),
+                'address_form': AddressFormNonRequired(user, actor),
+                'bank_account_form': BankAccountFormNonRequired(),
             }
 
     def save(self):
