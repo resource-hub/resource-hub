@@ -70,3 +70,9 @@ $(".admin-sidebar-header").on("click", function (e) {
     $(this).parent(".item").addClass("collapsed");
   }
 });
+
+function copy(that) {
+  var value = document.getElementById("value-to-copy");
+  value.select();
+  document.execCommand("copy", false);
+}

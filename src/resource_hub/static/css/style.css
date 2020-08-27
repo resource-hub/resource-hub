@@ -514,6 +514,15 @@ tr.selectable {
   cursor: pointer;
 }
 
+.help {
+  font-size: 80%;
+  color: grey;
+}
+
+.right.floated {
+  float: right;
+}
+
 /**
   *
   * Mobile
