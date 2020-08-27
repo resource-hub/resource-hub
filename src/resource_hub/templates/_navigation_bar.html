@@ -39,7 +39,7 @@
         </div>
         <div class="ui pointing dropdown" style="margin-top: 9px;">
             <span>
-                {{ actor.name }}
+                {{ actor.name|truncatechars:20 }}
                 <div id="notification_indicator" class="hidden mini floating ui red msg label"></div>
             </span>
             <i class="dropdown icon"></i>
