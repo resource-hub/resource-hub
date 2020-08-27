@@ -76,3 +76,7 @@ function copy(that) {
   value.select();
   document.execCommand("copy", false);
 }
+
+$(".copy.button").popup({
+  on: "click",
+});
