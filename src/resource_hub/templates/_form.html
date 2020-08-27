@@ -22,7 +22,7 @@
     </label>
     {{ field }}
     {% if field.help_text %}
-    <small style="color: grey">{{ field.help_text }}</small>
+    <span class="help">{{ field.help_text }}</span>
     {% endif %}
     {% for error in field.errors %}
     <div class="ui pointing red basic label">{{ error }}</div>
