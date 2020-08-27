@@ -367,8 +367,9 @@ class Contract(BaseContract):
                 target=self,
                 attachments=attachments,
             )
+        return None
 
-    def _get_waiting_notification_msg(self):
+    def _get_waiting_notification_msg(self) -> str:
         return ''
 
     def _send_waiting_notification(self, request):
@@ -384,11 +385,11 @@ class Contract(BaseContract):
             message=self._get_waiting_notification_msg(),
         )
 
-    def _get_running_notification_msg(self):
+    def _get_running_notification_msg(self) -> str:
         return self.contract_procedure.notes
 
-    def _get_running_notification_attachments(self):
-        return None
+    def _get_running_notification_attachments(self) -> list:
+        return []
 
     def _send_running_notification(self, request):
         self._send_state_notification(

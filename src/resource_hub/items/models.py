@@ -78,7 +78,8 @@ class ItemContract(Contract):
             item_instructions).replace("\n", "<br />\n")
 
     def _get_running_notification_attachments(self):
-        item_attachments = []
+        item_attachments = super(
+            ItemContract, self)._get_running_notification_attachments()
         for item in self.items.all():
             if item.attachment:
                 item_attachments.append(item.attachment.path)
