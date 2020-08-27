@@ -36,6 +36,10 @@ class VenueContractProcedure(ContractProcedure):
         return reverse('control:venues_contract_procedures_edit', kwargs={'pk': self.pk})
 
 
+def get_default_usage():
+    return [Venue.USAGE_TYPE.OTHER]
+
+
 class Venue(BaseModel):
     """describing locations."""
     class USAGE_TYPE:
@@ -89,10 +93,9 @@ class Venue(BaseModel):
     usage_types = MultipleChoiceArrayField(
         models.CharField(
             choices=USAGE_TYPES,
-            default=USAGE_TYPE.OTHER,
             max_length=3,
-            verbose_name=_('Usage type'),
         ),
+        default=get_default_usage,
         verbose_name=_('Usage types'),
         help_text=_('Describe which activites are possible'),
     )
