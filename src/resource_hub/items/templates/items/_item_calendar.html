@@ -61,16 +61,16 @@
 
 <div class="calendar" id='calendar'></div>
 <div class="section-container">
-    <div class="ui action input">
+    <div class="ui left action input">
+        <button class="ui teal left labeled icon button" data-tooltip="{% trans 'Copy link' %}" onclick="copy(this)">
+            {% trans 'Subscribe' %}
+            <i class="rss icon"></i>
+        </button>
         <input id="value-to-copy" type="text"
             value="{{ request.get_host }}{% url 'items:ics_feed' owner_slug=item.owner.slug item_slug=item.slug %}">
-        <button class="ui teal right labeled icon button" data-tooltip="{% trans 'Copy link' %}" onclick="copy(this)">
-            <i class="rss icon"></i>
-            {% trans 'Subscribe' %}
-        </button>
     </div>
     <div>
-        <span class="help">{% trans 'Add this iCal link to your calendar-app (Google calendar, Nextcloud etc.)' %}
+        <span class="help">{% trans 'Add this iCal-feed to your calendar app (Google calendar, Nextcloud etc.)' %}
         </span>
     </div>
 </div>
