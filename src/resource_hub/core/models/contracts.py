@@ -633,6 +633,27 @@ class Claim(BaseStateMachine):
         verbose_name=_('Performance period end'),
     )
 
+    @classmethod
+    def build(cls, contract, item, quantity, unit, price, start, end):
+        net = quantity * float(price.value)
+        discounted_net = contract.price_profile.apply(
+            net) if contract.price_profile else net
+        gross = contract.contract_procedure.apply_tax(discounted_net)
+        return cls.objects.create(
+            contract=contract,
+            item=item,
+            quantity=quantity,
+            unit=unit,
+            price=price.value,
+            currency=price.currency,
+            net=net,
+            discounted_net=discounted_net,
+            tax_rate=contract.contract_procedure.tax_rate,
+            gross=gross,
+            period_start=start,
+            period_end=end,
+        )
+
 
 class Trigger(BaseModel):
     condition = models.CharField(

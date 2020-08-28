@@ -344,11 +344,13 @@ class EquipmentBooking(BaseModel):
         'VenueContract',
         on_delete=models.PROTECT,
         verbose_name=_('Contract'),
+        related_name='equipment_bookings',
     )
     equipment = models.ForeignKey(
         'Equipment',
         on_delete=models.PROTECT,
         verbose_name=_('Equipment'),
+        related_name='equipment_bookings',
     )
     quantity = models.PositiveIntegerField(
         default=1,
@@ -397,12 +399,8 @@ class VenueContract(Contract):
                 start = occurrence[0]
                 end = occurrence[1]
                 delta = ((end - start).total_seconds())/3600
-                net = delta * float(venue.price.value)
-                discounted_net = self.price_profile.apply(
-                    net) if self.price_profile else net
-                gross = self.contract_procedure.apply_tax(discounted_net)
 
-                Claim.objects.create(
+                claim = Claim.build(
                     contract=self,
                     item='{}@{}'.format(
                         self.event.name,
@@ -410,18 +408,28 @@ class VenueContract(Contract):
                     ),
                     quantity=delta,
                     unit='h',
-                    price=venue.price.value,
-                    currency=venue.price.currency,
-                    net=net,
-                    discount=self.price_profile.discount if self.price_profile else 0,
-                    discounted_net=discounted_net,
-                    tax_rate=self.contract_procedure.tax_rate,
-                    gross=gross,
-                    period_start=start,
-                    period_end=end,
+                    price=venue.price,
+                    start=start,
+                    end=end,
+                )
+                net_total += claim.net
+
+        for booking in self.equipment_bookings.all():
+            for occurrence in occurrences:
+                equipment = booking.equipment
+                Claim.build(
+                    contract=self,
+                    item='{}@{}'.format(
+                        equipment.name,
+                        equipment.venue.name,
+                    ),
+                    quantity=booking.quantity,
+                    unit='u',
+                    price=equipment.price,
+                    start=occurrence[0],
+                    end=occurrence[1],
                 )
 
-                net_total += net
         self.create_fee_claims(net_total, venue.price.currency, start, end)
 
     # state setters
