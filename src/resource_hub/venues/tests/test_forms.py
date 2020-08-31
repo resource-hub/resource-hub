@@ -7,23 +7,17 @@ from django.utils.timezone import get_current_timezone
 
 from recurrence.models import Recurrence
 from resource_hub.core.models import Actor, Address, Location
-from resource_hub.core.tests import BaseFormTest
 
 from ..forms import EventForm
 from ..models import Event, Venue
+from . import BaseVenueTest
 
 TEST_IMAGE = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII='
 
 
-class TestEventForm(BaseFormTest):
+class TestEventForm(BaseVenueTest):
     def setUp(self):
         super(TestEventForm, self).setUp()
-        self.venue = Venue.objects.create(
-            name='Venue',
-            description='nice',
-            location=self.location,
-            owner=self.user,
-        )
 
         Event.objects.create(
             name='event',

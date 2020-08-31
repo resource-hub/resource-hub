@@ -6,7 +6,7 @@ from django.http.request import HttpRequest
 from django.test import TestCase
 
 from resource_hub.core.forms import *
-from resource_hub.core.tests import BaseFormTest
+from resource_hub.core.tests import BaseTest
 
 DATA = {
     "first_name": "Test",
@@ -130,7 +130,7 @@ class TestEmailChangeForm(TestCase):
         self.assertFalse(form.is_valid())
 
 
-class TestOrganizationInvitationManagementForm(BaseFormTest):
+class TestOrganizationInvitationManagementForm(BaseTest):
     def setUp(self):
         super(TestOrganizationInvitationManagementForm, self).setUp()
         self.data = {
@@ -174,7 +174,6 @@ class TestOrganizationInvitationManagementForm(BaseFormTest):
 
         self.assertTrue(form.is_valid())
         form.save()
-        print(OrganizationInvitation.objects.all())
         invitation = OrganizationInvitation.objects.get(
             email=invited_user['email'], role=invited_user['role'])
         self.assertEqual(invitation.text, data['text'])

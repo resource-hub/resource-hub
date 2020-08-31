@@ -6,14 +6,14 @@ from ..models import Address, Location, Organization, User
 from .test_views import LoginTestMixin
 
 
-class BaseFormTest(TestCase):
+class BaseTest(TestCase):
     view_name = 'empty'
     kwargs = None
 
     def setUp(self):
-        if self.__class__ == BaseFormTest:
+        if self.__class__ == BaseTest:
             raise SkipTest('Abstract test')
-        super(BaseFormTest, self).setUp()
+        super(BaseTest, self).setUp()
         self.user = User.objects.create(
             username='Joe',
             email='joe@joe.de',

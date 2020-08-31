@@ -269,20 +269,11 @@ class EventForm(forms.ModelForm):
         dtstart = self.cleaned_data.get('dtstart')
         dtend = self.cleaned_data.get('dtend')
         recurrences.dtstart = dtstart
-        dates = recurrences.occurrences()
         if not self.errors:
-            for date in dates:
-                # get last occurrence and apply times to dates
-
-                occurrence_start = datetime.combine(
-                    date.date(), dtstart.time(), dtstart.tzinfo)
-                occurrence_end = datetime.combine(
-                    date.date(), dtend.time(), dtend.tzinfo)
-                self.occurrences.append(
-                    (occurrence_start, occurrence_end)
-                )
-                self.dtlast = occurrence_end
-
+            occurrences = Event.build_occurrences(
+                recurrences.occurrences(), dtstart, dtend)
+            self.occurrences = occurrences['occurrences']
+            self.dtlast = occurrences['dtlast']
             conflicts = []
             for venue in self.cleaned_data['venues']:
                 conflicts = conflicts + self._find_conflicts(

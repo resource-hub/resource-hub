@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime
 
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
@@ -284,6 +285,30 @@ class Event(BaseModel):
             self.slug = get_valid_slug(self, self.name)
         super(Event, self).save(*args, **kwargs)
 
+    @classmethod
+    def build_occurrences(cls, dates: list, dtstart, dtend) -> dict:
+        result = {
+            'occurrences': [],
+            'dtlast': None
+        }
+        for date in dates:
+            # get last occurrence and apply times to dates
+
+            occurrence_start = datetime.combine(
+                date.date(), dtstart.time(), dtstart.tzinfo)
+            occurrence_end = datetime.combine(
+                date.date(), dtend.time(), dtend.tzinfo)
+            result['occurrences'].append(
+                (occurrence_start, occurrence_end)
+            )
+            result['dtlast'] = occurrence_end
+
+        return result
+
+    @property
+    def occurrences(self) -> list:
+        return self.build_occurrences(self.recurrences.occurrences(), self.dtstart, self.dtend)['occurrences']
+
 
 class Equipment(models.Model):
     # fields
@@ -399,7 +424,6 @@ class VenueContract(Contract):
                 start = occurrence[0]
                 end = occurrence[1]
                 delta = ((end - start).total_seconds())/3600
-
                 claim = Claim.build(
                     contract=self,
                     item='{}@{}'.format(
