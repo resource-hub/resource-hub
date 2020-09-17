@@ -16,7 +16,7 @@ from django_countries.fields import CountryField
 from ..fields import CurrencyField, PercentField
 from ..renderer import InvoiceRenderer
 from ..settings import COUNTRIES_WITH_STATE_IN_ADDRESS
-from ..utils import language
+from ..utils import build_full_url, language
 from .base import BaseModel
 from .notifications import Notification
 
@@ -225,7 +225,7 @@ class Invoice(BaseModel):
             },
             message=_('%(creditor)s has created a new invoice. See the attached file.') % {
                 'creditor': self.contract.creditor.name},
-            link=reverse('control:finance_invoices_incoming'),
+            link=build_full_url(reverse('control:finance_invoices_incoming')),
             level=Notification.LEVEL.MEDIUM,
             target=self,
             attachments=[self.file.path, ],
