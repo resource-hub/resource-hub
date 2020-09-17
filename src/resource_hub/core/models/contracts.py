@@ -1,8 +1,9 @@
 import uuid
 from datetime import timedelta
+from decimal import Decimal
 
 from django.db import models, transaction
-from django.db.models import Min, Q
+from django.db.models import Min, Q, Sum
 from django.http import HttpResponse
 from django.shortcuts import reverse
 from django.utils import timezone
@@ -421,7 +422,7 @@ class Contract(BaseContract):
             )
 
     def _send_terminated_notification(self, initiator, reciever):
-        with language(self.reciever.language):
+        with language(reciever.language):
             self._send_state_notification(
                 type_=Notification.TYPE.CONTRACT_TERMINATED,
                 sender=initiator,
@@ -539,11 +540,12 @@ class Contract(BaseContract):
             ) if self.payment_method.is_prepayment else now
         open_claims = self.claim_set.filter(
             state=Claim.STATE.PENDING, period_end__lte=selector)
+        total = open_claims.aggregate(Sum('gross'))['gross__sum']
         if open_claims:
             with transaction.atomic():
                 payment_method = PaymentMethod.objects.get_subclass(
                     pk=self.payment_method.pk)
-                if self.contract_procedure.is_invoicing:
+                if self.contract_procedure.is_invoicing and total > Decimal('0.0'):
                     invoice = Invoice.build(self, open_claims)
                     invoice.create_pdf()
                 else:

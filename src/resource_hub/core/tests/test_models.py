@@ -1,4 +1,5 @@
 from datetime import timedelta
+from decimal import Decimal
 
 from django.db.models import Min
 from django.test import Client, TestCase
@@ -197,6 +198,15 @@ class TestContract(BaseContractTest):
         self.assertEqual(
             len(Invoice.objects.filter(contract=self.contract)),
             1
+        )
+
+    def test_skip_invoice_creation(self):
+        self.create_claims()
+        self.contract.claim_set.update(gross=Decimal('0.0'))
+        self.contract.settle_claims()
+        self.assertEqual(
+            len(Invoice.objects.filter(contract=self.contract)),
+            0
         )
 
     def test_self_dealing(self):
