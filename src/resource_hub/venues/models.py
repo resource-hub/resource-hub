@@ -15,7 +15,7 @@ from resource_hub.core.fields import MultipleChoiceArrayField
 from resource_hub.core.models import (Actor, BaseModel, Claim, Contract,
                                       ContractProcedure, Gallery, Location,
                                       Notification, Price)
-from resource_hub.core.utils import get_valid_slug
+from resource_hub.core.utils import get_valid_slug, language
 
 
 class VenueContractProcedure(ContractProcedure):
@@ -464,20 +464,21 @@ class VenueContract(Contract):
 
     def set_waiting(self, request):
         super(VenueContract, self).set_waiting(request)
-        Notification.build(
-            type_=Notification.TYPE.CONTRACT,
-            sender=self.debitor,
-            recipient=self.creditor,
-            header=_('%(debitor)s created Event: %(event)s') % {
-                'debitor': self.debitor,
-                'event': self.event.name
-            },
-            link=reverse('control:finance_contracts_manage_details',
-                         kwargs={'pk': self.pk}),
-            level=Notification.LEVEL.MEDIUM,
-            message='',
-            target=self,
-        )
+        with language(self.creditor.language):
+            Notification.build(
+                type_=Notification.TYPE.CONTRACT,
+                sender=self.debitor,
+                recipient=self.creditor,
+                header=_('%(debitor)s created Event: %(event)s') % {
+                    'debitor': self.debitor,
+                    'event': self.event.name
+                },
+                link=reverse('control:finance_contracts_manage_details',
+                             kwargs={'pk': self.pk}),
+                level=Notification.LEVEL.MEDIUM,
+                message='',
+                target=self,
+            )
 
     def set_terminated(self, initiator):
         super(VenueContract, self).set_terminated(initiator)

@@ -1529,7 +1529,7 @@ msgstr ""
 
 #: core/templates/core/mail_notification.html:13
 msgid "See this link for further information: "
-msgstr "Dieser Link bietet mehr Informationen"
+msgstr "Folge diesem Link für mehr Informationen: "
 
 #: core/templates/core/mail_verification.html:9
 msgid ""

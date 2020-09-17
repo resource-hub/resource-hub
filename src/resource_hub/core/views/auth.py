@@ -19,6 +19,7 @@ from resource_hub.core.forms import RoleChangeForm, UserFormManager
 from resource_hub.core.jobs import send_mail
 from resource_hub.core.models import Notification, User
 from resource_hub.core.tokens import TokenGenerator
+from resource_hub.core.utils import language
 
 
 def send_verification_mail(user, request):
@@ -56,20 +57,20 @@ class Register(View):
         if (user_form.is_valid()):
             with transaction.atomic():
                 new_user = user_form.save()
-
-            Notification.build(
-                type_=Notification.TYPE.INFO,
-                sender=None,
-                recipient=new_user,
-                header=_('%(name)s welcome to Resouce Hub!') % {
-                    'name': new_user.first_name
-                },
-                message='',
-                link='',
-                level=Notification.LEVEL.LOW,
-                target=new_user,
-            )
-            send_verification_mail(new_user, request)
+            with language(new_user.language):
+                Notification.build(
+                    type_=Notification.TYPE.INFO,
+                    sender=None,
+                    recipient=new_user,
+                    header=_('%(name)s welcome to Resouce Hub!') % {
+                        'name': new_user.first_name
+                    },
+                    message='',
+                    link='',
+                    level=Notification.LEVEL.LOW,
+                    target=new_user,
+                )
+                send_verification_mail(new_user, request)
             login(request, new_user)
 
             message = _(

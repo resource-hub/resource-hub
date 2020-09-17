@@ -215,21 +215,22 @@ class Invoice(BaseModel):
             fname, ftype, fcontent = InvoiceRenderer().generate(self)
             self.file.save(fname, ContentFile(fcontent))
             self.save()
-        Notification.build(
-            type_=Notification.TYPE.MONETARY,
-            sender=self.contract.creditor,
-            recipient=self.contract.debitor,
-            header=_('%(creditor)s created invoice %(no)s') % {
-                'creditor': self.contract.creditor.name,
-                'no': self.full_invoice_no,
-            },
-            message=_('%(creditor)s has created a new invoice. See the attached file.') % {
-                'creditor': self.contract.creditor.name},
-            link=build_full_url(reverse('control:finance_invoices_incoming')),
-            level=Notification.LEVEL.MEDIUM,
-            target=self,
-            attachments=[self.file.path, ],
-        )
+            Notification.build(
+                type_=Notification.TYPE.MONETARY,
+                sender=self.contract.creditor,
+                recipient=self.contract.debitor,
+                header=_('%(creditor)s created invoice %(no)s') % {
+                    'creditor': self.contract.creditor.name,
+                    'no': self.full_invoice_no,
+                },
+                message=_('%(creditor)s has created a new invoice. See the attached file.') % {
+                    'creditor': self.contract.creditor.name},
+                link=build_full_url(
+                    reverse('control:finance_invoices_incoming')),
+                level=Notification.LEVEL.MEDIUM,
+                target=self,
+                attachments=[self.file.path, ],
+            )
         return self.file.name
 
     @classmethod

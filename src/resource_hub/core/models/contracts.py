@@ -10,7 +10,7 @@ from django.utils.translation import gettext_lazy as _
 
 from ipware import get_client_ip
 from model_utils.managers import InheritanceManager
-from resource_hub.core.utils import build_full_url
+from resource_hub.core.utils import build_full_url, language
 
 from ..fields import CurrencyField, PercentField
 from .base import BaseModel, BaseStateMachine
@@ -373,17 +373,18 @@ class Contract(BaseContract):
         return ''
 
     def _send_waiting_notification(self, request):
-        self._send_state_notification(
-            type_=Notification.TYPE.CONTRACT_CREATED,
-            sender=self.debitor,
-            recipient=self.creditor,
-            header=_('%(debitor)s created %(contract)s') % {
-                'debitor': self.debitor,
-                'contract': self.verbose_name,
-            },
-            request=request,
-            message=self._get_waiting_notification_msg(),
-        )
+        with language(self.creditor.language):
+            self._send_state_notification(
+                type_=Notification.TYPE.CONTRACT_CREATED,
+                sender=self.debitor,
+                recipient=self.creditor,
+                header=_('%(debitor)s created %(contract)s') % {
+                    'debitor': self.debitor,
+                    'contract': self.verbose_name,
+                },
+                request=request,
+                message=self._get_waiting_notification_msg(),
+            )
 
     def _get_running_notification_msg(self) -> str:
         return self.contract_procedure.notes
@@ -392,41 +393,44 @@ class Contract(BaseContract):
         return []
 
     def _send_running_notification(self, request):
-        self._send_state_notification(
-            type_=Notification.TYPE.CONTRACT_ACCEPTED,
-            sender=self.creditor,
-            recipient=self.debitor,
-            header=_('%(creditor)s accepted %(contract)s') % {
-                'creditor': self.creditor,
-                'contract': self.verbose_name,
-            },
-            message=self._get_running_notification_msg(),
-            request=request,
-            attachments=self._get_running_notification_attachments(),
-        )
+        with language(self.debitor.language):
+            self._send_state_notification(
+                type_=Notification.TYPE.CONTRACT_ACCEPTED,
+                sender=self.creditor,
+                recipient=self.debitor,
+                header=_('%(creditor)s accepted %(contract)s') % {
+                    'creditor': self.creditor,
+                    'contract': self.verbose_name,
+                },
+                message=self._get_running_notification_msg(),
+                request=request,
+                attachments=self._get_running_notification_attachments(),
+            )
 
     def _send_declined_notification(self, request):
-        self._send_state_notification(
-            type_=Notification.TYPE.CONTRACT_DECLINED,
-            sender=self.creditor,
-            recipient=self.debitor,
-            header=_('%(creditor)s declined %(contract)s') % {
-                'creditor': self.creditor,
-                'contract': self.verbose_name,
-            },
-            request=request,
-        )
+        with language(self.debitor.language):
+            self._send_state_notification(
+                type_=Notification.TYPE.CONTRACT_DECLINED,
+                sender=self.creditor,
+                recipient=self.debitor,
+                header=_('%(creditor)s declined %(contract)s') % {
+                    'creditor': self.creditor,
+                    'contract': self.verbose_name,
+                },
+                request=request,
+            )
 
     def _send_terminated_notification(self, initiator, reciever):
-        self._send_state_notification(
-            type_=Notification.TYPE.CONTRACT_TERMINATED,
-            sender=initiator,
-            recipient=reciever,
-            header=_('%(initiator)s terminated %(contract)s') % {
-                'initiator': initiator,
-                'contract': self.verbose_name,
-            },
-        )
+        with language(self.reciever.language):
+            self._send_state_notification(
+                type_=Notification.TYPE.CONTRACT_TERMINATED,
+                sender=initiator,
+                recipient=reciever,
+                header=_('%(initiator)s terminated %(contract)s') % {
+                    'initiator': initiator,
+                    'contract': self.verbose_name,
+                },
+            )
 
     def purge(self) -> None:
         self.claim_set.all().soft_delete()

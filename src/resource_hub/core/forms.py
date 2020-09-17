@@ -1,7 +1,6 @@
 import re
 from datetime import datetime
 
-import bleach
 import requests
 from django import forms
 from django.conf import settings
@@ -14,6 +13,7 @@ from django.template.loader import render_to_string
 from django.utils.dateparse import parse_date
 from django.utils.translation import gettext_lazy as _
 
+import bleach
 from resource_hub.core.utils import get_authorized_actors
 from schwifty import BIC, IBAN
 
@@ -24,7 +24,7 @@ from .models import (Actor, Address, BankAccount, BaseModel, ContractProcedure,
                      Notification, Organization, OrganizationInvitation,
                      OrganizationMember, PaymentMethod, Price, PriceProfile,
                      User)
-from .utils import build_full_url
+from .utils import build_full_url, language
 from .widgets import IBANInput, UISearchField
 
 
@@ -649,39 +649,40 @@ class OrganizationInvitationFormManager(FormManager):
         for invitation in invitations.save(commit=False):
             invitation.text = text
             invitation.invitee = self.user
-            subject = _('Invitation to %(organization)s') % {
-                'organization': invitation.organization.name,
-            }
-            try:
-                user = User.objects.get(email=invitation.email)
-                if user in self.organization.members.all():
-                    continue
-                self.organization.members.add(user, through_defaults={
-                    'role': invitation.role})
-                invitation.is_member = True
-                invitation.save()
-                Notification.build(
-                    type_=Notification.TYPE.INFO,
-                    sender=self.actor,
-                    recipient=user,
-                    header=subject,
-                    message=invitation.text,
-                    link=reverse('core:actor_profile', kwargs={
-                        'slug': invitation.organization.slug}),
-                    level=Notification.LEVEL.LOW,
-                    target=invitation,
-                )
-            except User.DoesNotExist:
-                invitation.save()
-                message = render_to_string('core/mail_invitation.html', context={
-                    'invitation': invitation,
-                    'link': build_full_url(reverse('core:register')),
-                })
-                send_mail.delay(
-                    subject=subject,
-                    message=message,
-                    recipient=[invitation.email],
-                )
+            with language(self.user.language):
+                subject = _('Invitation to %(organization)s') % {
+                    'organization': invitation.organization.name,
+                }
+                try:
+                    user = User.objects.get(email=invitation.email)
+                    if user in self.organization.members.all():
+                        continue
+                    self.organization.members.add(user, through_defaults={
+                        'role': invitation.role})
+                    invitation.is_member = True
+                    invitation.save()
+                    Notification.build(
+                        type_=Notification.TYPE.INFO,
+                        sender=self.actor,
+                        recipient=user,
+                        header=subject,
+                        message=invitation.text,
+                        link=reverse('core:actor_profile', kwargs={
+                            'slug': invitation.organization.slug}),
+                        level=Notification.LEVEL.LOW,
+                        target=invitation,
+                    )
+                except User.DoesNotExist:
+                    invitation.save()
+                    message = render_to_string('core/mail_invitation.html', context={
+                        'invitation': invitation,
+                        'link': build_full_url(reverse('core:register')),
+                    })
+                    send_mail.delay(
+                        subject=subject,
+                        message=message,
+                        recipient=[invitation.email],
+                    )
 
         return invitations
 

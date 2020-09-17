@@ -6,6 +6,8 @@ from django.db import models
 from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 
+from resource_hub.core.utils import language
+
 from .actors import Actor
 from .base import BaseModel, BaseStateMachine
 
