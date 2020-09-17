@@ -2046,11 +2046,11 @@ msgstr "Woche"
 
 #: items/templates/items/_item_calendar.html:65
 msgid "Link copied!"
-msgstr ""
+msgstr "Link kopiert!"
 
 #: items/templates/items/_item_calendar.html:66
 msgid "Copy link"
-msgstr ""
+msgstr "Link kopieren"
 
 #: items/templates/items/_item_calendar.html:67
 msgid "Subscribe"
@@ -2059,7 +2059,7 @@ msgstr "Abonnieren"
 #: items/templates/items/_item_calendar.html:74
 msgid ""
 "Add this iCal-feed to your calendar app (Google calendar, Nextcloud etc.)"
-msgstr ""
+msgstr "Füge diesen Link deiner Kalenderapp (Google Calendar, Nextcloud etc.) hinzu"
 
 #: items/templates/items/_item_info.html:11
 msgid "Available quantity"
@@ -2560,14 +2560,12 @@ msgid "Room size (squaremeters)"
 msgstr ""
 
 #: venues/models.py:100
-#, fuzzy
-#| msgid "Manage items"
 msgid "Usage types"
-msgstr "Gegenstände verwalten"
+msgstr "Verwendungsarten"
 
 #: venues/models.py:101
 msgid "Describe which activites are possible"
-msgstr ""
+msgstr "Beschreibe welche Aktivitäten möglich sind"
 
 #: venues/models.py:118
 msgid "Bookable?"
@@ -2610,7 +2608,7 @@ msgstr "Veranstaltung"
 
 #: venues/models.py:397
 msgid "Services or additional equipment for the venue"
-msgstr ""
+msgstr "Dienstleistungen oder zusätzliche Ausstattung für den Veranstaltungsort"
 
 #: venues/models.py:404
 msgid "Venue booking"
