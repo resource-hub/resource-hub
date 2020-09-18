@@ -269,7 +269,7 @@ msgstr "Steuernummer"
 
 #: core/models/actors.py:117
 msgid "VAT-ID"
-msgstr "Umsatzsteuer-ID: %s"
+msgstr "Umsatzsteuer-ID"
 
 #: core/models/actors.py:122
 msgid "Invoice numbers prefix"
