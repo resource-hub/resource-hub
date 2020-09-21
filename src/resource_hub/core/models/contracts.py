@@ -13,6 +13,7 @@ from ipware import get_client_ip
 from model_utils.managers import InheritanceManager
 from resource_hub.core.utils import build_full_url, language
 
+from ..events import InvoiceCreatedEvent, StateChangedEvent
 from ..fields import CurrencyField, PercentField
 from .base import BaseModel, BaseStateMachine
 from .invoices import Invoice
@@ -135,6 +136,20 @@ class BaseContract(BaseStateMachine):
         STATE.DISPUTING: {STATE.RUNNING, STATE.FINALIZED, },
     }
 
+    class EVENT:
+        STATE_CHANGED = 's'
+        INVOICE_CREATED = 'i'
+
+    EVENTS = [
+        (EVENT.STATE_CHANGED, _('state changed')),
+        (EVENT.INVOICE_CREATED, _('invoice created')),
+    ]
+
+    EVENT_CLASSES = {
+        EVENT.STATE_CHANGED: StateChangedEvent,
+        EVENT.INVOICE_CREATED: InvoiceCreatedEvent,
+    }
+
     # fields
     uuid = models.UUIDField(
         default=uuid.uuid4,
@@ -232,8 +247,9 @@ class BaseContract(BaseStateMachine):
     def is_self_dealing(self):
         return self.creditor == self.debitor
 
-    def call_triggers(self, state):
-        pass
+    def emit_event(self, event, **kwargs):
+        for trigger in self.contract_procedure.triggers.filter(event=event).select_subclasses():
+            trigger.call(self.EVENT_CLASSES[event](*kwargs))
 
     def create_confirmation(self, request):
         self.confirmation = DeclarationOfIntent.create(
@@ -661,12 +677,7 @@ class Claim(BaseStateMachine):
         )
 
 
-class Trigger(BaseModel):
-    condition = models.CharField(
-        choices=Contract.STATES,
-        max_length=2,
-        verbose_name=_('Condition'),
-    )
+class BaseTrigger(BaseModel):
     name = models.CharField(
         max_length=64,
         verbose_name=_('Name'),
@@ -688,14 +699,6 @@ class Trigger(BaseModel):
 
     # attributes
     @property
-    def fixed_condtion(self) -> bool:
-        return False
-
-    @property
-    def default_condition(self) -> str:
-        raise NotImplementedError()
-
-    @property
     def verbose_name(self) -> str:
         raise NotImplementedError()
 
@@ -709,9 +712,6 @@ class Trigger(BaseModel):
         }
 
     # methods
-    def callback(self) -> None:
-        raise NotImplementedError()
-
     def form(self):
         raise NotImplementedError()
 
@@ -719,18 +719,20 @@ class Trigger(BaseModel):
         return '{}: {} ({})'.format(self.verbose_name, self.name, self.comment)
 
 
-class ContractTrigger(Trigger):
-    # attributes
-    @staticmethod
-    def fixed_condtion() -> bool:
-        return False
+class ContractTrigger(BaseTrigger):
+    # fields
+    event = models.CharField(
+        max_length=5,
+        null=False,
+        choices=Contract.EVENTS,
+    )
 
-    @staticmethod
-    def default_condition() -> str:
-        return Contract.STATE.RUNNING
+    # methods
+    def call(self, event) -> None:
+        raise NotImplementedError()
 
 
-class PaymentMethod(Trigger):
+class PaymentMethod(BaseTrigger):
     # fields
     currency = CurrencyField()
     is_prepayment = models.BooleanField(
