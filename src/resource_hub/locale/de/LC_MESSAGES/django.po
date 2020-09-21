@@ -54,7 +54,7 @@ msgstr "Du musst älter als 16 Jahre alt sein, um dich anmelden zu können"
 
 #: core/forms.py:176
 msgid "Username or email"
-msgstr "Nutzername oder email"
+msgstr "Nutzername oder E-Mail"
 
 #: core/forms.py:181
 msgid "Organization name"
