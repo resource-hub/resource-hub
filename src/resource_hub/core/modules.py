@@ -119,7 +119,7 @@ class CoreModule(BaseModule):
                             },
                             {
                                 'header': _('Add'),
-                                'url': reverse('control:finance_payment_methods_add'),
+                                'url': reverse('control:finance_payment_methods_add', kwargs={'scope': 'bnk'}),
                             }
                         ]
                     },

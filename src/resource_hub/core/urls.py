@@ -18,6 +18,8 @@ finance_urls.register([
     ), name='finance_payment_methods_edit'),
     path('payment-methods/add/',
          control.FinancePaymentMethodsAdd.as_view(), name='finance_payment_methods_add'),
+    path('payment-methods/add/<str:scope>/',
+         control.FinancePaymentMethodsAdd.as_view(), name='finance_payment_methods_add'),
     path('contracts/credited/', control.FinanceContractsCredited.as_view(),
          name='finance_contracts_credited'),
     path('contracts/debited/', control.FinanceContractsDebited.as_view(),

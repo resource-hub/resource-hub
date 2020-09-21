@@ -12,6 +12,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
+from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from django.views import View
 
@@ -185,13 +186,15 @@ class FinancePaymentMethodsAdd(View):
             )
         return payment_methods_list
 
-    def get(self, request):
+    def get(self, request, scope):
+        payment_methods = self.get_payment_methods()
         context = {
-            'payment_methods': self.get_payment_methods(),
+            'payment_methods': payment_methods,
+            'scope': scope,
         }
         return render(request, self.template_name, context)
 
-    def post(self, request):
+    def post(self, request, scope):
         payment_methods = self.get_payment_methods(data=request.POST)
         for payment_method in payment_methods:
             form = payment_method['form']
@@ -201,9 +204,10 @@ class FinancePaymentMethodsAdd(View):
                     str(payment_method['name'])
                 ))
                 messages.add_message(request, messages.SUCCESS, message)
-                return redirect(reverse('control:finance_payment_methods_add'))
+                return redirect(reverse('control:finance_payment_methods_add'), kwargs={'scope': payment_method['prefix']})
         context = {
             'payment_methods': payment_methods,
+            'scope': scope,
         }
         return render(request, self.template_name, context)
 

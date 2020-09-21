@@ -3,15 +3,25 @@
 
 {% block content %}
 <h1>{% trans 'Add payment method' %}</h1>
-{% include 'core/_identity.html' with actor=actor %}
-{% for payment_method in payment_methods %}
-<h2>{{ payment_method.name }}</h2>
-<form class="ui form" method="POST">
-    {% include '_form.html' with form=payment_method.form %}
-    <button class="ui positive right labeled icon button" type="submit">
-        {% trans 'Add' %}
-        <i class="plus icon"></i>
-    </button>
-</form>
-{% endfor %}
+<div id="secondary-menu" class="ui secondary pointing menu">
+    {% for payment_method in payment_methods %}
+    <a class="{% if payment_method.prefix == scope %}active {% endif %}item" tab-id="{{ payment_method.prefix }}">
+        {{ payment_method.name }}
+    </a>
+    {% endfor %}
+</div>
+<div class="section-container tab-content">
+    {% for payment_method in payment_methods %}
+    <div id="{{ payment_method.prefix }}" class="{% if payment_method.prefix == scope %}active {% endif %}tab">
+        <form class="ui form" method="POST">
+            {% include '_form.html' with form=payment_method.form %}
+            {% include 'core/_identity.html' with actor=actor %}
+            <button class="ui positive right labeled icon button" type="submit">
+                {% trans 'Add' %}
+                <i class="plus icon"></i>
+            </button>
+        </form>
+    </div>
+    {% endfor %}
+</div>
 {% endblock %}
