@@ -204,7 +204,7 @@ class FinancePaymentMethodsAdd(View):
                     str(payment_method['name'])
                 ))
                 messages.add_message(request, messages.SUCCESS, message)
-                return redirect(reverse('control:finance_payment_methods_add'), kwargs={'scope': payment_method['prefix']})
+                return redirect(reverse('control:finance_payment_methods_add', kwargs={'scope': payment_method['prefix']}))
         context = {
             'payment_methods': payment_methods,
             'scope': scope,
