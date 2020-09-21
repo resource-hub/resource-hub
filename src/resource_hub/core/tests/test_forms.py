@@ -63,7 +63,13 @@ class TestUserBaseForm(TestCase):
         user = form.save()
         self.assertTrue(organization.members.get(pk=user.pk))
 
-    def test_invalid_birth_data(self):
+    def test_email_as_username(self):
+        invalid_data = self.data.copy()
+        invalid_data['username'] = 'test@email.de'
+        form = UserBaseForm(data=invalid_data)
+        self.assertFalse(form.is_valid())
+
+    def test_invalid_birth_date(self):
         invalid_data = self.data.copy()
         invalid_data['birth_date'] = '1880-01-01'
         form = UserBaseForm(data=invalid_data)

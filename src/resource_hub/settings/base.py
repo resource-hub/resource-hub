@@ -147,6 +147,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = ['resource_hub.core.backends.CustomAuthBackend']
 
 # Database
 

@@ -15,7 +15,8 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.utils.translation import gettext_lazy as _
 from django.views import View
 
-from resource_hub.core.forms import RoleChangeForm, UserFormManager
+from resource_hub.core.forms import (CustomAuthenticationForm, RoleChangeForm,
+                                     UserFormManager)
 from resource_hub.core.jobs import send_mail
 from resource_hub.core.models import Notification, User
 from resource_hub.core.tokens import TokenGenerator
@@ -114,11 +115,16 @@ class VerificationResend(View):
         return redirect(reverse('control:account_verification_resend'))
 
 
+class CustomLoginView(LoginView):
+    def get_form_class(self):
+        return CustomAuthenticationForm
+
+
 def custom_login(request):
     if request.user.is_authenticated:
         return redirect(reverse('control:home'))
 
-    return LoginView.as_view(
+    return CustomLoginView.as_view(
         template_name='core/login.html')(request)
 
 

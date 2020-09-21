@@ -1,19 +1,21 @@
 import re
 from datetime import datetime
 
+import bleach
 import requests
 from django import forms
 from django.conf import settings
 from django.contrib.auth import update_session_auth_hash
-from django.contrib.auth.forms import PasswordChangeForm, UserCreationForm
+from django.contrib.auth.forms import (AuthenticationForm, PasswordChangeForm,
+                                       UserCreationForm, UsernameField)
 from django.contrib.auth.hashers import check_password
+from django.core.validators import validate_email
 from django.forms import inlineformset_factory
 from django.shortcuts import reverse
 from django.template.loader import render_to_string
 from django.utils.dateparse import parse_date
 from django.utils.translation import gettext_lazy as _
 
-import bleach
 from resource_hub.core.utils import get_authorized_actors
 from schwifty import BIC, IBAN
 
@@ -131,6 +133,15 @@ class UserBaseForm(UserCreationForm):
     def clean_info_text(self):
         return bleach.clean(self.cleaned_data['info_text'])
 
+    def clean_username(self):
+        username = self.cleaned_data['username']
+        try:
+            validate_email(username)
+        except forms.ValidationError:
+            return username
+        raise forms.ValidationError(
+            _('You can\'t use an email as username'), code='email-as-username')
+
     def clean_birth_date(self):
         OLDEST_PERSON = 44694
         MINIMUM_AGE = 2555
@@ -158,6 +169,11 @@ class UserBaseForm(UserCreationForm):
                 invitation.is_member = True
                 invitation.save()
         return user
+
+
+class CustomAuthenticationForm(AuthenticationForm):
+    username = UsernameField(widget=forms.TextInput(
+        attrs={'autofocus': True}), label=_('Username or email'))
 
 
 class OrganizationForm(forms.ModelForm):
