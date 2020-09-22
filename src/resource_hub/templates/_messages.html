@@ -3,7 +3,18 @@
     {% for message in messages %}
     <div class="ui {% if message.tags %}{{ message.tags }}{% endif %} message">
         <i class="close icon"></i>
-        {{ message }}
+        <div class="inline">
+            {% if message.level == DEFAULT_MESSAGE_LEVELS.INFO %}
+            <i class="info circle icon"></i>
+            {% elif message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+            <i class="check circle icon"></i>
+            {% elif message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}
+            <i class="exclamation circle icon"></i>
+            {% elif message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+            <i class="times circle icon"></i>
+            {% endif %}
+            {{ message }}
+        </div>
     </div>
     {% endfor %}
 </div>
