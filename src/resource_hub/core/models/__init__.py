@@ -7,4 +7,4 @@ from .contracts import (BaseTrigger, Claim, Contract, ContractProcedure,
                         SettlementLog)
 from .finance import Payment, Price, PriceProfile
 from .invoices import Invoice, InvoicePosition, invoice_filename, today
-from .notifications import Notification
+from .notifications import Notification, NotificationAttachment

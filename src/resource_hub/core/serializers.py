@@ -1,9 +1,11 @@
+from django.conf import settings
 from django.shortcuts import reverse
+
 from resource_hub.core.models import (Actor, Address, Contract, Location,
                                       Notification, User)
 from rest_framework import serializers
 
-from .models import OrganizationMember
+from .models import NotificationAttachment, OrganizationMember
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -85,9 +87,25 @@ class LocationSerializer(serializers.ModelSerializer):
                   'longitude', 'address', 'owner', 'thumbnail', 'location_link', ]
 
 
+class AttachmentSerializer(serializers.ModelSerializer):
+    path = serializers.SerializerMethodField()
+    filename = serializers.SerializerMethodField()
+
+    def get_path(self, obj):
+        return settings.MEDIA_URL + obj.path.replace(settings.MEDIA_ROOT, '').lstrip('/')
+
+    def get_filename(self, obj):
+        return obj.path[(obj.path.rfind('/') + 1):]
+
+    class Meta:
+        model = NotificationAttachment
+        fields = ['pk', 'path', 'filename', ]
+
+
 class NotificationSerializer(serializers.ModelSerializer):
     sender = ActorSerializer()
     typ = serializers.SerializerMethodField()
+    attachments = AttachmentSerializer(many=True, read_only=True)
 
     def get_typ(self, obj):
         return obj.get_type_icon(obj.typ)
@@ -95,7 +113,7 @@ class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
         fields = ['pk', 'typ', 'sender', 'recipient', 'header', 'message', 'link',
-                  'level', 'is_read', 'created_at', ]
+                  'level', 'is_read', 'attachments', 'created_at', ]
 
 
 class OrganizationMemberSerializer(serializers.ModelSerializer):
