@@ -8,16 +8,7 @@
 {% block main %}
 <div class="admin wrapper">
     <div class="main container">
-        {% if messages %}
-        <div class="messages">
-            {% for message in messages %}
-            <div class="ui {% if message.tags %} {{ message.tags }}  {% endif %} message">
-                <i class="close icon"></i>
-                {{ message }}
-            </div>
-            {% endfor %}
-        </div>
-        {% endif %}
+        {% include "_messages.html" %}
         {% if not user.is_verified %}
         <div class="messages">
             <div class="ui info message">
