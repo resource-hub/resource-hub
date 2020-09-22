@@ -331,6 +331,10 @@ class Contract(BaseContract):
         return self.state == self.STATE.PENDING
 
     @property
+    def is_waiting(self) -> bool:
+        return self.state == self.STATE.WAITING
+
+    @property
     def expiration_period(self) -> int:
         return 30
 
@@ -486,8 +490,8 @@ class Contract(BaseContract):
             self.set_initial_settlement_log()
         self.save()
         self._send_running_notification(request)
-    # final states
 
+    # final states
     def set_finalized(self) -> None:
         self.move_to(self.STATE.FINALIZED)
         self.save()

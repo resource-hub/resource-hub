@@ -255,6 +255,10 @@ class FinanceContractsManageDetails(View):
             contract.payment_method = PaymentMethod.objects.get_subclass(
                 pk=contract.payment_method.pk)
 
+        if (contract.is_pending or contract.is_waiting) and contract.claim_set.filter(period_start__lt=timezone.now()).exists():
+            message = _('This contract contains claims that are in the past')
+            messages.add_message(request, messages.WARNING, message)
+
         context = {
             'contract': contract,
             'is_debitor': is_debitor,
