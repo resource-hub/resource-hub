@@ -607,6 +607,19 @@ class Claim(BaseStateMachine):
         STATE.PENDING: {STATE.SETTLED, STATE.TERMINATED}
     }
 
+    class UNIT:
+        PIECE = 'u'
+        MINUTE = 'm'
+        HOUR = 'h'
+        DAY = 'd'
+
+    UNITS = [
+        (UNIT.PIECE, _('piece(s)')),
+        (UNIT.MINUTE, _('minute(s)')),
+        (UNIT.HOUR, _('hour(s)')),
+        (UNIT.DAY, _('day(s)')),
+    ]
+
     contract = models.ForeignKey(
         Contract,
         on_delete=models.PROTECT,
@@ -623,6 +636,7 @@ class Claim(BaseStateMachine):
     )
     unit = models.CharField(
         max_length=5,
+        choices=UNITS,
         verbose_name=_('Unit'),
     )
     price = models.DecimalField(

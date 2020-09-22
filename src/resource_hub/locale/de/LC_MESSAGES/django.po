@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-21 12:35+0200\n"
+"POT-Creation-Date: 2020-09-22 10:25+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,12 +19,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: control/templates/control/__base.html:24
+#: control/templates/control/__base.html:15
 msgid "Please verify your account with the email that you have recieved."
 msgstr ""
 "Bitte verifiziere deinen Account mit Hilfe der Email, die du erhalten hast."
 
-#: control/templates/control/__base.html:26
+#: control/templates/control/__base.html:17
 msgid "Resend mail"
 msgstr "Mail erneut versenden"
 
@@ -214,8 +214,8 @@ msgstr "Das request Objekt muss gesetzt sein"
 msgid "The passed request object is not an instance of HttpRequest"
 msgstr "Das übergebene objekt ist keine Instanz von HttpRequest"
 
-#: core/models/actors.py:20 core/models/base.py:204 core/models/contracts.py:31
-#: core/models/contracts.py:672 core/tables.py:64 core/tables.py:113
+#: core/models/actors.py:20 core/models/base.py:204 core/models/contracts.py:32
+#: core/models/contracts.py:701 core/tables.py:64 core/tables.py:113
 #: core/templates/core/control/finance_contracts_manage_details.html:61
 #: items/models.py:233 items/tables.py:11 venues/models.py:62
 #: venues/models.py:165 venues/models.py:181 venues/models.py:208
@@ -332,7 +332,7 @@ msgstr "Besitzer"
 msgid "Organization"
 msgstr "Organisation"
 
-#: core/models/actors.py:244 core/models/contracts.py:277
+#: core/models/actors.py:244 core/models/contracts.py:293
 msgid "User"
 msgstr "Nutzer"
 
@@ -422,8 +422,8 @@ msgid "Allow other users to link information to this location"
 msgstr ""
 "Anderen Nutzern erlauben Informationen mit diesem Standort zu verknüpfen"
 
-#: core/models/base.py:255 core/models/contracts.py:88
-#: core/models/contracts.py:683 core/tables.py:56 core/tables.py:179
+#: core/models/base.py:255 core/models/contracts.py:89
+#: core/models/contracts.py:712 core/tables.py:56 core/tables.py:179
 #: items/models.py:381 venues/models.py:131 venues/tables.py:16
 msgid "Owner"
 msgstr "Besitzer"
@@ -440,47 +440,47 @@ msgstr "Gallerie"
 msgid "Caption"
 msgstr "Bildunterschrift"
 
-#: core/models/contracts.py:24
+#: core/models/contracts.py:25
 msgid "weekly"
 msgstr "wöchentlich"
 
-#: core/models/contracts.py:25
+#: core/models/contracts.py:26
 msgid "biweekly"
 msgstr "zweiwöchentlich"
 
-#: core/models/contracts.py:26
+#: core/models/contracts.py:27
 msgid "monthly"
 msgstr "monatlich"
 
-#: core/models/contracts.py:32
+#: core/models/contracts.py:33
 msgid "Give the procedure a name so you can identify it easier"
 msgstr "Gib der Prozedur einen Namen, damit man sie besser identifizieren kann"
 
-#: core/models/contracts.py:36
+#: core/models/contracts.py:37
 msgid "Auto accept"
 msgstr "Automatisch annehmen"
 
-#: core/models/contracts.py:37
+#: core/models/contracts.py:38
 msgid "Automatically accept the booking?"
 msgstr "Automatisch die Buchung akzeptieren?"
 
-#: core/models/contracts.py:42
+#: core/models/contracts.py:43
 msgid "Create invoices"
 msgstr "Rechnungen erstellen"
 
-#: core/models/contracts.py:43
+#: core/models/contracts.py:44
 msgid "Create invoices upon settlement of claims"
 msgstr "Rechnungen nach Erfüllung der Forderungen erstellen"
 
-#: core/models/contracts.py:48
+#: core/models/contracts.py:49
 msgid "terms and conditions"
 msgstr "Allgemeine Geschäftsbedingungen"
 
-#: core/models/contracts.py:52
+#: core/models/contracts.py:53
 msgid "Termination period (days)"
 msgstr "Kündigungsfrist (in Tagen)"
 
-#: core/models/contracts.py:54
+#: core/models/contracts.py:55
 msgid ""
 "Upon termination all claims within the termination period will be charged "
 "regardlessly"
@@ -488,222 +488,242 @@ msgstr ""
 "Nach Kündigung werden alle Forderungen innerhalb der Kündigungsfrist "
 "trotzdem verlangt"
 
-#: core/models/contracts.py:59
+#: core/models/contracts.py:60
 msgid "Notes"
 msgstr "Anmerkungen"
 
-#: core/models/contracts.py:61
+#: core/models/contracts.py:62
 msgid ""
 "This text will be added to the notification when a contract starts running"
 msgstr ""
 "Dieser Text wird der Benachrichtigung hinzugefügt wenn ein Vertrag läuft"
 
-#: core/models/contracts.py:67
+#: core/models/contracts.py:68
 msgid "Choose the payment methods you want to use for this venue"
 msgstr "Wähle ein Zahlungsmittel für diesen Veranstaltungsort"
 
-#: core/models/contracts.py:68 core/modules.py:113 core/views/control.py:112
+#: core/models/contracts.py:69 core/modules.py:113 core/views/control.py:113
 msgid "Payment methods"
 msgstr "Zahlungsmethode"
 
-#: core/models/contracts.py:72 core/models/contracts.py:628
+#: core/models/contracts.py:73 core/models/contracts.py:662
 msgid "Tax rate applied in percent"
 msgstr "Steuersatz in Prozent"
 
-#: core/models/contracts.py:77
+#: core/models/contracts.py:78
 #: core/templates/core/control/finance_contracts_manage_details.html:73
 msgid "Settlement interval"
 msgstr "Abrechnungsintervall"
 
-#: core/models/contracts.py:83
+#: core/models/contracts.py:84
 msgid "Triggers"
 msgstr "Trigger"
 
-#: core/models/contracts.py:120
+#: core/models/contracts.py:121
 msgid "waiting"
 msgstr "wartend"
 
-#: core/models/contracts.py:121
+#: core/models/contracts.py:122
 msgid "running"
 msgstr "läuft"
 
-#: core/models/contracts.py:122
+#: core/models/contracts.py:123
 msgid "disputing"
 msgstr "im Streit"
 
-#: core/models/contracts.py:123 core/models/finance.py:22
+#: core/models/contracts.py:124 core/models/finance.py:22
 msgid "finalized"
 msgstr "abgeschlossen"
 
-#: core/models/contracts.py:124
+#: core/models/contracts.py:125
 msgid "expired"
 msgstr "abgelaufen"
 
-#: core/models/contracts.py:125 core/models/finance.py:24
+#: core/models/contracts.py:126 core/models/finance.py:24
 msgid "canceled"
 msgstr "abgebrochen"
 
-#: core/models/contracts.py:126
+#: core/models/contracts.py:127
 msgid "declined"
 msgstr "abgelehnt"
 
-#: core/models/contracts.py:127 core/models/contracts.py:583
+#: core/models/contracts.py:128 core/models/contracts.py:603
 msgid "terminated"
 msgstr "gekündigt"
 
-#: core/models/contracts.py:142 items/models.py:216 venues/models.py:204
-msgid "UUID"
-msgstr ""
+#: core/models/contracts.py:144
+msgid "state changed"
+msgstr "Zustand geändert am"
 
-#: core/models/contracts.py:148
+#: core/models/contracts.py:145
+msgid "invoice created"
+msgstr "Rechnungsdatum"
+
+#: core/models/contracts.py:157 items/models.py:216 venues/models.py:204
+msgid "UUID"
+msgstr "UUID"
+
+#: core/models/contracts.py:163
 msgid "Contract Procedure"
 msgstr "Vertragsprozedur"
 
-#: core/models/contracts.py:152 core/templates/core/terms_and_conditions.html:6
+#: core/models/contracts.py:167 core/templates/core/terms_and_conditions.html:6
 msgid "Terms and conditions"
 msgstr "allgemeine Geschäftsbedingungen"
 
-#: core/models/contracts.py:156
+#: core/models/contracts.py:171
 msgid "Termination period"
 msgstr "Kündigungsfrist (in Tagen)"
 
-#: core/models/contracts.py:163 core/models/finance.py:44
+#: core/models/contracts.py:178 core/models/finance.py:44
 #: core/templates/core/control/finance_contracts_manage_details.html:40
 #: plugins/sepa/templates/sepa/control/sepa_mandate.html:15
 msgid "Creditor"
 msgstr "Leistender"
 
-#: core/models/contracts.py:170 core/models/finance.py:38
+#: core/models/contracts.py:185 core/models/finance.py:38
 #: core/templates/core/control/finance_contracts_manage_details.html:44
 #: items/tables.py:32 items/tables.py:42 plugins/sepa/tables.py:26
 #: plugins/sepa/templates/sepa/control/sepa_mandate.html:19
 msgid "Debitor"
 msgstr "Schuldner"
 
-#: core/models/contracts.py:175
+#: core/models/contracts.py:190
 msgid "Is fixed term"
 msgstr "Fester Zeitraum"
 
-#: core/models/contracts.py:181 core/models/finance.py:66
+#: core/models/contracts.py:196 core/models/finance.py:66
 #: core/templates/core/control/finance_contracts_manage_details.html:57
 msgid "Payment method"
 msgstr "Zahlungsmethode"
 
-#: core/models/contracts.py:188
+#: core/models/contracts.py:203
 msgid "Price profile"
 msgstr "Preisprofil"
 
-#: core/models/contracts.py:195
+#: core/models/contracts.py:210
 msgid "Confirmation"
 msgstr "Bestätigung"
 
-#: core/models/contracts.py:202
+#: core/models/contracts.py:217
 msgid "Acceptance"
 msgstr "Annahme"
 
-#: core/models/contracts.py:209
+#: core/models/contracts.py:224
 msgid "Created by"
 msgstr "Erstellt am"
 
-#: core/models/contracts.py:281
+#: core/models/contracts.py:297
 msgid "IP"
 msgstr "IP"
 
-#: core/models/contracts.py:285
+#: core/models/contracts.py:301
 msgid "IP routable"
 msgstr "IP routable"
 
-#: core/models/contracts.py:289 core/models/contracts.py:571
+#: core/models/contracts.py:305 core/models/contracts.py:591
 msgid "Timestamp"
 msgstr "Timestamp"
 
-#: core/models/contracts.py:311 core/models/contracts.py:567
-#: core/models/contracts.py:593 items/models.py:415 items/tables.py:29
+#: core/models/contracts.py:327 core/models/contracts.py:587
+#: core/models/contracts.py:626 items/models.py:415 items/tables.py:29
 #: venues/models.py:371
 msgid "Contract"
 msgstr "Vertrag"
 
-#: core/models/contracts.py:382
+#: core/models/contracts.py:402
 #, python-format
 msgid "%(debitor)s created %(contract)s"
 msgstr "%(debitor)s erstellte %(contract)s"
 
-#: core/models/contracts.py:402
+#: core/models/contracts.py:422
 #, python-format
 msgid "%(creditor)s accepted %(contract)s"
 msgstr "%(creditor)s hat %(contract)s akzeptiert"
 
-#: core/models/contracts.py:417
+#: core/models/contracts.py:437
 #, python-format
 msgid "%(creditor)s declined %(contract)s"
 msgstr "%(creditor)s hat %(contract)s abgelehnt"
 
-#: core/models/contracts.py:430
+#: core/models/contracts.py:450
 #, python-format
 msgid "%(initiator)s terminated %(contract)s"
 msgstr "%(initiator)s hat %(contract)s gekündigt"
 
-#: core/models/contracts.py:582
+#: core/models/contracts.py:602
 msgid "closed"
 msgstr "abgeschlossen"
 
-#: core/models/contracts.py:597 core/tables.py:131 items/models.py:46
+#: core/models/contracts.py:617
+msgid "piece(s)"
+msgstr "Stk."
+
+#: core/models/contracts.py:618
+msgid "minute(s)"
+msgstr "Minute(n)"
+
+#: core/models/contracts.py:619
+msgid "hour(s)"
+msgstr "Stunde(n)"
+
+#: core/models/contracts.py:620
+msgid "day(s)"
+msgstr "Tag(e)"
+
+#: core/models/contracts.py:630 core/tables.py:131 items/models.py:46
 #: items/models.py:407 items/models.py:421 items/tables.py:30
 msgid "Item"
 msgstr "Gegenstand"
 
-#: core/models/contracts.py:602 core/tables.py:134 items/models.py:272
+#: core/models/contracts.py:635 core/tables.py:134 items/models.py:272
 #: items/models.py:433 venues/models.py:350 venues/models.py:382
 msgid "Quantity"
 msgstr "Menge"
 
-#: core/models/contracts.py:606 core/tables.py:135 items/models.py:278
+#: core/models/contracts.py:640 core/tables.py:135 items/models.py:278
 #: items/templates/items/_item_info.html:64
 msgid "Unit"
 msgstr "Einheit"
 
-#: core/models/contracts.py:611 core/models/finance.py:82 venues/models.py:108
+#: core/models/contracts.py:645 core/models/finance.py:82 venues/models.py:108
 #: venues/models.py:347 venues/templates/venues/control/_venue_form.html:7
 msgid "Price"
 msgstr "Preis"
 
-#: core/models/contracts.py:617 core/tables.py:137
+#: core/models/contracts.py:651 core/tables.py:137
 msgid "Net"
 msgstr "Netto"
 
-#: core/models/contracts.py:620 core/models/finance.py:114
+#: core/models/contracts.py:654 core/models/finance.py:114
 msgid "Discount"
 msgstr "Rabatt"
 
-#: core/models/contracts.py:625 core/tables.py:139
+#: core/models/contracts.py:659 core/tables.py:139
 msgid "Discounted net"
 msgstr "Ermässigtes Netto"
 
-#: core/models/contracts.py:633 core/tables.py:142
+#: core/models/contracts.py:667 core/tables.py:142
 msgid "Gross"
 msgstr "Brutto"
 
-#: core/models/contracts.py:636 core/tables.py:132
+#: core/models/contracts.py:670 core/tables.py:132
 msgid "Performance period start"
 msgstr "Leistungszeitraumsbeginn"
 
-#: core/models/contracts.py:639 core/tables.py:133
+#: core/models/contracts.py:673 core/tables.py:133
 msgid "Performance period end"
 msgstr "Leistungszeitraumsende"
 
-#: core/models/contracts.py:668
-msgid "Condition"
-msgstr "Allgemeine Geschäftsbedingungen"
-
-#: core/models/contracts.py:678
+#: core/models/contracts.py:707
 msgid "Comment"
 msgstr "Kommentar"
 
-#: core/models/contracts.py:738
+#: core/models/contracts.py:758
 msgid "Prepayment?"
 msgstr "Vorkasse?"
 
-#: core/models/contracts.py:740
+#: core/models/contracts.py:760
 msgid ""
 "If activated, claims within the following settlement interval are charged in "
 "advance"
@@ -711,27 +731,27 @@ msgstr ""
 "Wenn aktiviert, werden die Forderungen innerhalb des nächsten "
 "Abrechnungsintervalls im voraus verlangt"
 
-#: core/models/contracts.py:744
+#: core/models/contracts.py:764
 msgid "Absolute fee"
 msgstr "Absolute Gebühr"
 
-#: core/models/contracts.py:745
+#: core/models/contracts.py:765
 msgid "A constant value that is added to every transaction"
 msgstr "Ein konstanter Wert, der jeder Transaktion hinzuaddiert wird"
 
-#: core/models/contracts.py:749
+#: core/models/contracts.py:769
 msgid "Relative fee (%)"
 msgstr "Relative Gebühr"
 
-#: core/models/contracts.py:751
+#: core/models/contracts.py:771
 msgid "A relative value that is based on the total value of a transaction"
 msgstr "Ein relativer Wert, der auf dem Gesamtwert der Transaktion basiert"
 
-#: core/models/contracts.py:755
+#: core/models/contracts.py:775
 msgid "Tax rate applied to payement fee (%)"
 msgstr "Bei der Gebühr angewandter Steuersatz (%)"
 
-#: core/models/contracts.py:759
+#: core/models/contracts.py:779
 msgid "(prepayment)"
 msgstr "(Vorkasse)"
 
@@ -950,7 +970,7 @@ msgid "Create"
 msgstr "Erstellen"
 
 #: core/modules.py:121
-#: core/templates/core/control/finance_payment_methods_add.html:12
+#: core/templates/core/control/finance_payment_methods_add.html:20
 msgid "Add"
 msgstr "Hinzufügen"
 
@@ -1678,96 +1698,100 @@ msgstr "Dein Konto wurde erfolgreich verifiziert"
 msgid "Your verification-link is invalid!"
 msgstr "Dein Verifizierungslink is ungültig!"
 
-#: core/views/control.py:62
+#: core/views/control.py:63
 msgid "Your email has been updated successfully."
 msgstr "Deine E-Mailadresse wurde erfolgreich geändert."
 
-#: core/views/control.py:65
+#: core/views/control.py:66
 msgid "Your password has been updated successfully."
 msgstr "Dein Passwort wurde erfolgreich geändert."
 
-#: core/views/control.py:87 core/views/control.py:479
+#: core/views/control.py:88 core/views/control.py:487
 msgid "Your info has been updated"
 msgstr "Deine Informationen wurden erfolgreich geändert."
 
-#: core/views/control.py:90 core/views/control.py:482
+#: core/views/control.py:91 core/views/control.py:490
 msgid "Your address has been updated"
 msgstr "Deine Adresse wurde geändert"
 
-#: core/views/control.py:93 core/views/control.py:485
+#: core/views/control.py:94 core/views/control.py:493
 msgid "Your bank account has been updated"
 msgstr "Dein Bankkonto wurde geändert"
 
-#: core/views/control.py:96
+#: core/views/control.py:97
 msgid "Your bank invoicing settings have been updated"
 msgstr "Deine Rechnungseinstellungen wurden geändert"
 
-#: core/views/control.py:155
+#: core/views/control.py:156
 msgid "Your changes have been saved successfully"
 msgstr "Deine Änderungen wurden erfolgreich gespeichert"
 
-#: core/views/control.py:200
+#: core/views/control.py:203
 msgid "The configuration for {} has been saved"
 msgstr "Die Einstellungen für {} wurden gespeichert"
 
-#: core/views/control.py:277
+#: core/views/control.py:259
+msgid "This contract contains claims that are in the past"
+msgstr "Dieser Vertrag enthält Forderungen, die in der Vergangenheit liegen"
+
+#: core/views/control.py:285
 #, python-format
 msgid "%(contract)s has been canceled"
 msgstr "%(contract)s wurde abgebrochen"
 
-#: core/views/control.py:284
+#: core/views/control.py:292
 #, python-format
 msgid "%(contract)s has been confirmed"
 msgstr "%(contract)s wurde bestätigt"
 
-#: core/views/control.py:287 core/views/control.py:300 plugins/sepa/views.py:56
+#: core/views/control.py:295 core/views/control.py:308 plugins/sepa/views.py:56
 msgid "Invalid Choice"
 msgstr "Ungültige Auswahl"
 
-#: core/views/control.py:292
+#: core/views/control.py:300
 #, python-format
 msgid "%(contract)s has been declined"
 msgstr "%(contract)s wurde abgelehnt"
 
-#: core/views/control.py:297
+#: core/views/control.py:305
 #, python-format
 msgid "%(contract)s has been accepted"
 msgstr "%(contract)s wurde angenommen"
 
-#: core/views/control.py:305
+#: core/views/control.py:313
 #, python-format
 msgid "%(contract)s has been terminated"
 msgstr "%(contract)s wurde gekündigt"
 
-#: core/views/control.py:314
+#: core/views/control.py:322
 msgid "Manage contract procedures"
 msgstr "Vertragsprozeduren verwalten"
 
-#: core/views/control.py:346
+#: core/views/control.py:354
 msgid "Outgoing invoices"
 msgstr "Ausgehende Rechnungen"
 
-#: core/views/control.py:365
+#: core/views/control.py:373
 msgid "Incoming invoices"
 msgstr "Eingehende Rechnungen"
 
-#: core/views/control.py:392
+#: core/views/control.py:400
 msgid "Manage your organizations"
 msgstr "Deine Organisationen verwalten"
 
-#: core/views/control.py:438
+#: core/views/control.py:446
 msgid "The organization has been registered"
 msgstr "Die Organisation wurde registriert"
 
-#: core/views/control.py:545
+#: core/views/control.py:553
 msgid "User has been added to "
 msgstr "Der Nutzer wurde hinzugefügt zu "
 
-#: core/views/control.py:568
+#: core/views/control.py:576
 msgid "The location has been created"
 msgstr "Der Standort wurde erstellt"
 
-#: core/views/control.py:577
+#: core/views/control.py:585
 msgid "Manage locations"
 msgstr "Standorte verwalten"
 
@@ -2668,6 +2692,9 @@ msgstr "Veranstaltungsorte verwalten"
 #: venues/views.py:92
 msgid "The venue has been updated"
 msgstr "Dieser Veranstaltungsort wurde geupdated"
+
+#~ msgid "Condition"
+#~ msgstr "Allgemeine Geschäftsbedingungen"
 
 #~ msgid "book"
 #~ msgstr "buchen"
