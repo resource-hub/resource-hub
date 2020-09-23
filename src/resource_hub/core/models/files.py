@@ -1,4 +1,5 @@
 import string
+from tempfile import TemporaryFile
 
 from django.core.files import File as DjFile
 from django.db import models
@@ -70,6 +71,6 @@ class ICSFile(File):
                 **item,
             )
         filename = 'feed.ics'
-        with open(filename, 'wb+') as f:
+        with TemporaryFile(mode='wb+') as f:
             feed.write(f, 'utf-8')
             self.file.save(filename, DjFile(f))

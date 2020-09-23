@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
 from decimal import Decimal
 
 from django.conf import settings
@@ -8,9 +8,9 @@ from django.test import Client, TestCase
 from django.utils import timezone
 
 from resource_hub.core.models import (Address, BankAccount, Claim, Contract,
-                                      ContractProcedure, File, Invoice,
-                                      Location, Notification, Organization,
-                                      PaymentMethod, User)
+                                      ContractProcedure, File, ICSFile,
+                                      Invoice, Location, Notification,
+                                      Organization, PaymentMethod, User)
 
 
 class TestLocations(TestCase):
@@ -301,3 +301,28 @@ class TestNotification(TestCase):
         Notification.send_open_mails()
         for notification in Notification.objects.all():
             self.assertEqual(notification.state, Notification.STATE.SENT)
+
+
+class TestICSFile(TestCase):
+    def setUp(self):
+        actor, actor2 = create_users()
+        self.file = ICSFile.objects.create(
+            owner=actor,
+        )
+
+    def test_creating_file(self):
+        self.file.set_meta(
+            title='test',
+            link='test',
+            language='en',
+            description='test',
+        )
+        NO_ITEMS = 2
+        for i in range(1, NO_ITEMS):
+            self.file.add_item(
+                title='test' + str(i),
+                link='test' + str(i),
+                description='test' + str(i),
+                start_datetime=datetime.now(),
+                end_datetime=datetime.now() + timedelta(days=1),
+            )
