@@ -10,6 +10,7 @@ from resource_hub.core.utils import language
 
 from .actors import Actor
 from .base import BaseModel, BaseStateMachine
+from .files import File
 
 
 class Notification(BaseStateMachine):
@@ -139,12 +140,9 @@ class Notification(BaseStateMachine):
 
     def send_mail(self, connection=None):
         from ..jobs import send_mail
-        attachments_qs = NotificationAttachment.objects.filter(
-            notification=self
-        )
         attachments = []
-        for attachment in attachments_qs:
-            attachments.append(attachment.path)
+        for attachment in self.attachments.all():
+            attachments.append(attachment.file.file.path)
 
         if self.level > Notification.LEVEL.LOW:
             recipient = Actor.objects.get_subclass(pk=self.recipient.pk)
@@ -179,7 +177,7 @@ class Notification(BaseStateMachine):
         if attachments:
             for attachment in attachments:
                 notification.attachments.create(
-                    path=attachment,
+                    file=attachment,
                 )
         return notification
 
@@ -199,7 +197,9 @@ class NotificationAttachment(BaseModel):
         related_name='attachments',
         verbose_name=_('Notification'),
     )
-    path = models.CharField(
-        max_length=255,
-        verbose_name=_('Path'),
+    file = models.ForeignKey(
+        'File',
+        null=True,
+        on_delete=models.PROTECT,
+        related_name='notification_attachments',
     )

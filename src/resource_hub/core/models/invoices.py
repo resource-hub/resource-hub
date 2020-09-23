@@ -17,25 +17,19 @@ from ..fields import CurrencyField, PercentField
 from ..renderer import InvoiceRenderer
 from ..settings import COUNTRIES_WITH_STATE_IN_ADDRESS
 from ..utils import build_full_url, language
-from .base import BaseModel
+from .files import File
 from .notifications import Notification
-
-
-def invoice_filename(instance, filename: str) -> str:
-    secret = get_random_string(
-        length=16, allowed_chars=string.ascii_letters + string.digits)
-    return 'invoices/{cred}/{con}/{no}--{secret}.{ext}'.format(
-        cred=instance.contract.creditor.slug, con=instance.contract.uuid,
-        no=instance.number, secret=secret,
-        ext=filename.split('.')[-1]
-    )
 
 
 def today():
     return timezone.now().date()
 
 
-class Invoice(BaseModel):
+def invoice_filename():
+    pass
+
+
+class Invoice(File):
     '''
     thanks to https://github.com/pretix/pretix/blob/master/src/pretix/base/models/invoices.py
     '''
@@ -78,14 +72,20 @@ class Invoice(BaseModel):
     foreign_currency_rate_date = models.DateField(null=True, blank=True)
     shredded = models.BooleanField(default=False)
 
-    file = models.FileField(null=True, blank=True,
-                            upload_to=invoice_filename, max_length=255)
     internal_reference = models.TextField(blank=True)
     custom_field = models.CharField(max_length=255, null=True)
 
     @staticmethod
     def _to_numeric_invoice_number(number):
         return '{:05d}'.format(int(number))
+
+    @property
+    def directory(self) -> str:
+        return 'invoices'
+
+    @property
+    def identifier(self) -> str:
+        return self.number
 
     @property
     def full_invoice_from(self):
@@ -229,17 +229,18 @@ class Invoice(BaseModel):
                     reverse('control:finance_invoices_incoming')),
                 level=Notification.LEVEL.MEDIUM,
                 target=self,
-                attachments=[self.file.path, ],
+                attachments=[self, ],
             )
         return self.file.name
 
     @classmethod
-    def build(cls, contract, claims):
+    def build(cls, contract, claims, owner):
         invoice = cls()
+        invoice.owner = owner
         invoice.contract = contract
         creditor = contract.creditor
         debitor = contract.debitor
-        with language(creditor.language):
+        with language(owner.language):
             invoice.locale = creditor.language
             invoice.invoice_from = '{} {}'.format(
                 creditor.address.street, creditor.address.street_number)

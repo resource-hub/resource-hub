@@ -5,6 +5,7 @@ from .base import (Address, BankAccount, BaseModel, BaseStateMachine, Gallery,
 from .contracts import (BaseTrigger, Claim, Contract, ContractProcedure,
                         ContractTrigger, DeclarationOfIntent, PaymentMethod,
                         SettlementLog)
+from .files import File, ICSFile
 from .finance import Payment, Price, PriceProfile
 from .invoices import Invoice, InvoicePosition, invoice_filename, today
 from .notifications import Notification, NotificationAttachment

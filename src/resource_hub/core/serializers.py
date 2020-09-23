@@ -92,10 +92,10 @@ class AttachmentSerializer(serializers.ModelSerializer):
     filename = serializers.SerializerMethodField()
 
     def get_path(self, obj):
-        return settings.MEDIA_URL + obj.path.replace(settings.MEDIA_ROOT, '').lstrip('/')
+        return obj.file.path
 
     def get_filename(self, obj):
-        return obj.path[(obj.path.rfind('/') + 1):]
+        return obj.file.filename
 
     class Meta:
         model = NotificationAttachment

@@ -11,9 +11,10 @@ from django.utils.translation import gettext_lazy as _
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
 from resource_hub.core.models import (Actor, BaseModel, BaseStateMachine,
-                                      Claim, Contract, ContractProcedure,
-                                      Gallery, Location, Notification, Price)
-from resource_hub.core.utils import get_valid_slug
+                                      Claim, Contract, ContractProcedure, File,
+                                      Gallery, ICSFile, Location, Notification,
+                                      Price)
+from resource_hub.core.utils import get_valid_slug, language
 
 
 class ItemContractProcedure(ContractProcedure):
@@ -83,7 +84,35 @@ class ItemContract(Contract):
         for item in self.items.all():
             if item.attachment:
                 item_attachments.append(item.attachment.path)
+        item_attachments.append(self._create_ics_file())
         return item_attachments
+
+    def _create_ics_file(self):
+        link = reverse('control:finance_contracts_manage_details',
+                       kwargs={'pk': self.pk})
+        reciever = self.debitor
+        with language(reciever.language):
+            file = ICSFile.objects.create(
+                owner=reciever,
+            )
+            file.set_meta(
+                title=_('Item rental %(contract)s') % {'contract': self.uuid},
+                link=link,
+                language=reciever.language,
+                description=_('An item rental on resource hub'),
+            )
+            for booking in self.bookings.all():
+                file.add_item(
+                    title=_('Rental of %(item)s') % {
+                        'item': booking.item.name,
+                    },
+                    link=link,
+                    description=_('An item rental on resource hub'),
+                    start_datetime=booking.dtstart,
+                    end_datetime=booking.dtend,
+                )
+            file.create_file()
+            return file
 
     def purge(self):
         super(ItemContract, self).purge()

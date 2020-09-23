@@ -566,7 +566,7 @@ class Contract(BaseContract):
                 payment_method = PaymentMethod.objects.get_subclass(
                     pk=self.payment_method.pk)
                 if self.contract_procedure.is_invoicing and total > Decimal('0.0'):
-                    invoice = Invoice.build(self, open_claims)
+                    invoice = Invoice.build(self, open_claims, self.creditor)
                     invoice.create_pdf()
                 else:
                     invoice = None

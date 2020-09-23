@@ -1,9 +1,7 @@
-import string
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.utils.crypto import get_random_string
 from django.utils.translation import gettext_lazy as _
 
 from django_countries.fields import CountryField
@@ -295,35 +293,3 @@ class OrganizationInvitation(BaseModel):
 
     class Meta:
         unique_together = ('organization', 'email',)
-
-
-def actorfile_filename(instance, filename: str) -> str:
-    secret = get_random_string(
-        length=16,
-        allowed_chars=string.ascii_letters + string.digits,
-    )
-    return 'files/{actor_pk}/{file_pk}--{secret}.{ext}'.format(
-        actor_pk=instance.actor.pk,
-        file_pk=instance.pk,
-        secret=secret,
-        ext=filename.split('.')[-1],
-    )
-
-
-class ActorFile(BaseModel):
-    '''
-    A class for linking various files to actors for making sure they get deleted when the user leaves
-    '''
-
-    # fields
-    actor = models.ForeignKey(
-        'Actor',
-        on_delete=models.CASCADE,
-        related_name='files',
-        verbose_name=_('actor'),
-    )
-    file = models.FileField(
-        upload_to=actorfile_filename,
-        verbose_name=_('file'),
-        max_length=255,
-    )

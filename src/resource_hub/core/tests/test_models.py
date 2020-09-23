@@ -1,13 +1,15 @@
 from datetime import timedelta
 from decimal import Decimal
 
+from django.conf import settings
+from django.core.files import File as DjFile
 from django.db.models import Min
 from django.test import Client, TestCase
 from django.utils import timezone
 
 from resource_hub.core.models import (Address, BankAccount, Claim, Contract,
-                                      ContractProcedure, Invoice, Location,
-                                      Notification, Organization,
+                                      ContractProcedure, File, Invoice,
+                                      Location, Notification, Organization,
                                       PaymentMethod, User)
 
 
@@ -278,6 +280,11 @@ class TestContract(BaseContractTest):
 class TestNotification(TestCase):
     def setUp(self):
         actor, actor2 = create_users()
+        with open(settings.MEDIA_ROOT + '/images/default.png', 'rb') as image:
+            file = File.objects.create(
+                owner=actor,
+            )
+            file.file.save('default.png', DjFile(image))
         Notification.build(
             type_=Notification.TYPE.INFO,
             sender=actor,
@@ -287,8 +294,7 @@ class TestNotification(TestCase):
             link='',
             level=Notification.LEVEL.MEDIUM,
             target=actor,
-            attachments=['media/images/default.png',
-                         'media/images/logo.png'],
+            attachments=[file, ]
         )
 
     def test_send_open_mails(self):
