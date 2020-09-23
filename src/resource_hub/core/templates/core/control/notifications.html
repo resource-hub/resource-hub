@@ -86,6 +86,7 @@
         var attachment_template = document.getElementById("attachment-template").innerHTML;
         var attachment_wrapper_template = document.getElementById("attachment-wrapper-template").innerHTML;
         var feed = '';
+
         $.each(data, function (i, notification) {
             var read_flag = notification['is_read'] ? 'read' : 'not_read';
             var attachments = '';

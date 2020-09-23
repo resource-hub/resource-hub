@@ -8,7 +8,7 @@ from django.forms.models import BaseInlineFormSet
 from django.utils.timezone import get_current_timezone
 from django.utils.translation import gettext_lazy as _
 
-from resource_hub.core.fields import HTMLField
+from resource_hub.core.fields import CustomMultipleChoiceField, HTMLField
 from resource_hub.core.forms import (BaseForm, ContractProcedureForm,
                                      FormManager, GalleryImageFormSet,
                                      PriceForm, PriceProfileFormSet)

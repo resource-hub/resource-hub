@@ -11,7 +11,8 @@ from django.utils.translation import gettext_lazy as _
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
 from recurrence.fields import RecurrenceField
-from resource_hub.core.fields import MultipleChoiceArrayField
+from resource_hub.core.fields import (CustomManyToManyField,
+                                      MultipleChoiceArrayField)
 from resource_hub.core.models import (Actor, BaseModel, Claim, Contract,
                                       ContractProcedure, Gallery, Location,
                                       Notification, Price)
@@ -238,7 +239,7 @@ class Event(BaseModel):
         blank=True,
         verbose_name=_('Category'),
     )
-    venues = models.ManyToManyField(
+    venues = CustomManyToManyField(
         Venue,
         verbose_name=_('Venues'),
     )
@@ -271,8 +272,8 @@ class Event(BaseModel):
         related_name='event_updated_by',
         verbose_name=_('Updated by'),
     )
-
     # Metadata
+
     class Meta:
         ordering = ['name']
 

@@ -3,8 +3,8 @@ from django import forms
 from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
 from django.core.validators import MaxValueValidator, MinValueValidator
-from django.db.models import CharField, DecimalField
-from django.forms import MultipleChoiceField
+from django.db.models import CharField, DecimalField, ManyToManyField
+from django.forms import ModelMultipleChoiceField, MultipleChoiceField
 from django.utils.translation import gettext_lazy as _
 
 from django_summernote.fields import SummernoteTextFormField
@@ -37,6 +37,12 @@ class CustomMultipleChoiceField(MultipleChoiceField):
         super(CustomMultipleChoiceField, self).__init__(*args, **kwargs)
         self.widget.attrs.update({'class': 'ui fluid normal dropdown'})
 
+
+class CustomModelMultipleChoiceField(ModelMultipleChoiceField):
+    def __init__(self, *args, **kwargs):
+        super(CustomModelMultipleChoiceField, self).__init__(*args, **kwargs)
+        self.widget.attrs.update({'class': 'ui fluid normal dropdown'})
+
 # model fields
 
 
@@ -64,3 +70,11 @@ class MultipleChoiceArrayField(ArrayField):
         if isinstance(res, list):
             value = [self.base_field.to_python(val) for val in res]
         return value
+
+
+class CustomManyToManyField(ManyToManyField):
+    def formfield(self, **kwargs):
+        defaults = {
+            'form_class': CustomModelMultipleChoiceField,
+        }
+        return super(CustomManyToManyField, self).formfield(**defaults)
