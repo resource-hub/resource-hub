@@ -20,6 +20,8 @@ from resource_hub.core.models import (Actor, BankAccount, BaseModel, Contract,
 from resource_hub.core.utils import language, round_decimal
 from sepaxml import SepaDD
 
+from .settings import SCHEMA
+
 
 class SEPAMandate(Contract):
     @property
@@ -205,7 +207,7 @@ class SEPADirectDebitXML(File):
         ).aggregate(
             max=Max('xml_no')
         )['max'] or 0
-        return xml_number + 1
+        return int(xml_number) + 1
 
     def save(self, *args, **kwargs):
         self.owner = self.creditor
@@ -232,7 +234,7 @@ class SEPADirectDebitXML(File):
             "creditor_id": self.creditor_identifier,
             "currency": self.currency,
             "instrument": "COR1",
-        }, schema="pain.008.003.02", clean=True)
+        }, schema=SCHEMA, clean=True)
 
         for payment in payments:
             xml_file.add_payment(

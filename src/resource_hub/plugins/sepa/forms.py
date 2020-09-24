@@ -1,10 +1,14 @@
+import re
+
 from django import forms
 from django.forms.models import model_to_dict
+from django.utils.translation import gettext_lazy as _
 
 from resource_hub.core.forms import BankAccountForm
 from resource_hub.core.models import BankAccount
 
 from .models import SEPA, SEPADirectDebitXML
+from .settings import SCHEMA
 
 
 class SEPAForm(BankAccountForm):
@@ -24,6 +28,14 @@ class SEPAForm(BankAccountForm):
         model = SEPA
         fields = ['name', 'comment', 'creditor_id', 'is_prepayment', 'account_holder', 'iban', 'bic',
                   'currency', 'fee_absolute_value', 'fee_relative_value', 'fee_tax_rate', ]
+
+    def clean_creditor_id(self):
+        ''' use regex from schema pain.008.003.02 '''
+        creditor_id = self.cleaned_data['creditor_id']
+        if re.match(r"[a-zA-Z]{2,2}[0-9]{2,2}([A-Za-z0-9]|[\\+|\\?|/|\\-|:|\\(|\\)|\\.|,|']){3,3}([A-Za-z0-9]|[\\+|\\?|/|\\-|:|\\(|\\)|\\.|,|']){1,28}", creditor_id):
+            return creditor_id
+        raise forms.ValidationError(
+            _('Not a valid creditor ID. Please refer to %(schema)s') % {'schema': SCHEMA}, code='invalid-creditor-id')
 
     def save(self, request=None, commit=True):
         new_sepa = super(SEPAForm, self).save(
