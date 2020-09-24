@@ -146,11 +146,12 @@ class Notification(BaseStateMachine):
 
         if self.level > Notification.LEVEL.LOW:
             recipient = Actor.objects.get_subclass(pk=self.recipient.pk)
-            message = render_to_string('core/mail_notification.html', context={
-                'recipient': recipient,
-                'link': self.link,
-                'message': self.message,
-            })
+            with language(recipient.language):
+                message = render_to_string('core/mail_notification.html', context={
+                    'recipient': recipient,
+                    'link': self.link,
+                    'message': self.message,
+                })
             send_mail(
                 subject=self.header,
                 message=message,
