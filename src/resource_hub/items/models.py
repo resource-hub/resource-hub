@@ -81,9 +81,6 @@ class ItemContract(Contract):
     def _get_running_notification_attachments(self):
         item_attachments = super(
             ItemContract, self)._get_running_notification_attachments()
-        for item in self.items.all():
-            if item.attachment:
-                item_attachments.append(item.attachment.path)
         item_attachments.append(self._create_ics_file())
         return item_attachments
 
@@ -348,12 +345,6 @@ class Item(BaseStateMachine):
         verbose_name=_('Instructions'),
         help_text=_(
             'These instructions will be included in the confirmation mail text'),
-    )
-    attachment = models.FileField(
-        null=True,
-        blank=True,
-        verbose_name=_('Attachment'),
-        help_text=_('This file will be attached to the confirmation mail'),
     )
     thumbnail_original = models.ImageField(
         null=False,
