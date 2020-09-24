@@ -1,3 +1,4 @@
+import os
 import string
 from tempfile import TemporaryFile
 
@@ -50,6 +51,18 @@ class File(BaseModel):
     @property
     def identifier(self) -> str:
         return self.pk
+
+    @property
+    def filename(self):
+        return os.path.basename(self.file.name)
+
+    @property
+    def url(self):
+        return self.file.url
+
+    @property
+    def path(self):
+        return self.file.path
 
 
 class ICSFile(File):

@@ -142,7 +142,7 @@ class Notification(BaseStateMachine):
         from ..jobs import send_mail
         attachments = []
         for attachment in self.attachments.all():
-            attachments.append(attachment.file.file.path)
+            attachments.append(attachment.file.path)
 
         if self.level > Notification.LEVEL.LOW:
             recipient = Actor.objects.get_subclass(pk=self.recipient.pk)

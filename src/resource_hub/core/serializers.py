@@ -92,7 +92,7 @@ class AttachmentSerializer(serializers.ModelSerializer):
     filename = serializers.SerializerMethodField()
 
     def get_path(self, obj):
-        return obj.file.path
+        return obj.file.url
 
     def get_filename(self, obj):
         return obj.file.filename
