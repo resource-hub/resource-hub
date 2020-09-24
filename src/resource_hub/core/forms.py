@@ -677,17 +677,18 @@ class OrganizationInvitationFormManager(FormManager):
                         'role': invitation.role})
                     invitation.is_member = True
                     invitation.save()
-                    Notification.build(
-                        type_=Notification.TYPE.INFO,
-                        sender=self.actor,
-                        recipient=user,
-                        header=subject,
-                        message=invitation.text,
-                        link=reverse('core:actor_profile', kwargs={
-                            'slug': invitation.organization.slug}),
-                        level=Notification.LEVEL.LOW,
-                        target=invitation,
-                    )
+                    with language(user.language):
+                        Notification.build(
+                            type_=Notification.TYPE.INFO,
+                            sender=self.actor,
+                            recipient=user,
+                            header=subject,
+                            message=invitation.text,
+                            link=reverse('core:actor_profile', kwargs={
+                                'slug': invitation.organization.slug}),
+                            level=Notification.LEVEL.LOW,
+                            target=invitation,
+                        )
                 except User.DoesNotExist:
                     invitation.save()
                     message = render_to_string('core/mail_invitation.html', context={

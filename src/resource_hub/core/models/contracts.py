@@ -376,18 +376,19 @@ class Contract(BaseContract):
 
     def _send_state_notification(self, type_, sender, recipient, header, message='', attachments=None, request=None):
         if self.creditor != self.debitor:
-            return Notification.build(
-                type_=type_,
-                sender=sender,
-                recipient=recipient,
-                header=header,
-                message=message,
-                link=build_full_url(reverse('control:finance_contracts_manage_details',
-                                            kwargs={'pk': self.pk}), request=request),
-                level=Notification.LEVEL.MEDIUM,
-                target=self,
-                attachments=attachments,
-            )
+            with language(recipient.language):
+                return Notification.build(
+                    type_=type_,
+                    sender=sender,
+                    recipient=recipient,
+                    header=header,
+                    message=message,
+                    link=build_full_url(reverse('control:finance_contracts_manage_details',
+                                                kwargs={'pk': self.pk}), request=request),
+                    level=Notification.LEVEL.MEDIUM,
+                    target=self,
+                    attachments=attachments,
+                )
         return None
 
     def _get_waiting_notification_msg(self) -> str:
