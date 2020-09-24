@@ -15,8 +15,9 @@ from django.utils.translation import gettext_lazy as _
 
 from resource_hub.core.fields import CurrencyField
 from resource_hub.core.models import (Actor, BankAccount, BaseModel, Contract,
-                                      Notification, Payment, PaymentMethod)
-from resource_hub.core.utils import round_decimal
+                                      File, Notification, Payment,
+                                      PaymentMethod)
+from resource_hub.core.utils import language, round_decimal
 from sepaxml import SepaDD
 
 
@@ -152,7 +153,7 @@ def sepaxml_filename(instance, filename: str) -> str:
     )
 
 
-class SEPADirectDebitXML(BaseModel):
+class SEPADirectDebitXML(File):
     creditor = models.ForeignKey(
         Actor,
         on_delete=models.PROTECT,
@@ -178,7 +179,14 @@ class SEPADirectDebitXML(BaseModel):
         verbose_name=_('Batch booking'),
     )
     currency = CurrencyField()
-    file = models.FileField(upload_to=sepaxml_filename)
+
+    @property
+    def directory(self):
+        return 'sepaxml'
+
+    @property
+    def identifier(self):
+        return self.number
 
     @property
     def prefix(self):
@@ -200,6 +208,7 @@ class SEPADirectDebitXML(BaseModel):
         return xml_number + 1
 
     def save(self, *args, **kwargs):
+        self.owner = self.creditor
         if not self.xml_no:
             for i in range(10):
                 self.xml_no = self._get_xml_number()
@@ -243,29 +252,30 @@ class SEPADirectDebitXML(BaseModel):
             payment.state = SEPADirectDebitPayment.STATE.FINALIZED
             payment.paymenent_date = self.collection_date
 
-            Notification.build(
-                type_=Notification.TYPE.MONETARY,
-                sender=payment.creditor,
-                recipient=payment.debitor,
-                header=_('SEPA Direct Debit initiated'),
-                message=_(
-                    '''%(creditor)s with the creditor identifier 
-                    %(creditor_id)s is going to debit your account %(iban)s
-                    with an amount of %(amount)s %(currency)s on the  
-                    %(collection_date)s. This transaction is based 
-                    on the mandate with the reference %(mandate_id)s.''') % {
-                        'creditor': payment.creditor.name,
-                        'creditor_id': self.creditor_identifier,
-                        'iban': payment.iban[:-6] + 'XXXXXX',
-                        'amount': payment.value,
-                        'currency': payment.currency,
-                        'collection_date': self.collection_date,
-                        'mandate_id': str(payment.mandate.uuid),
-                },
-                link='',
-                level=Notification.LEVEL.MEDIUM,
-                target=self,
-            )
+            with language(payment.debitor.language):
+                Notification.build(
+                    type_=Notification.TYPE.MONETARY,
+                    sender=payment.creditor,
+                    recipient=payment.debitor,
+                    header=_('SEPA Direct Debit initiated'),
+                    message=_(
+                        '''%(creditor)s with the creditor identifier 
+                        %(creditor_id)s is going to debit your account %(iban)s
+                        with an amount of %(amount)s %(currency)s on the  
+                        %(collection_date)s. This transaction is based 
+                        on the mandate with the reference %(mandate_id)s.''') % {
+                            'creditor': payment.creditor.name,
+                            'creditor_id': self.creditor_identifier,
+                            'iban': payment.iban[:-6] + 'XXXXXX',
+                            'amount': payment.value,
+                            'currency': payment.currency,
+                            'collection_date': self.collection_date,
+                            'mandate_id': str(payment.mandate.uuid),
+                    },
+                    link='',
+                    level=Notification.LEVEL.MEDIUM,
+                    target=self,
+                )
             payment.save()
 
         self.file.save('test.xml', ContentFile(

@@ -56,6 +56,16 @@ class ICSFile(File):
     meta = {}
     items = []
 
+    @property
+    def directory(self):
+        return 'ics'
+
+    @property
+    def identifier(self):
+        return 'calendar-{pk}'.format(
+            pk=self.pk
+        )
+
     def set_meta(self, **meta):
         self.meta = meta
 
