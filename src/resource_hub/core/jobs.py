@@ -51,31 +51,34 @@ def expire_contracts():
 
 
 @job('default')
-def send_mail(subject, message, recipient, attachments=None, connection=None):
+def send_mail(subject, message, recipients, attachments=None, connection=None):
     '''
     :param connection can only be used if job is executed synchonously
     as connection objects cannot be pickled by RQ
     '''
-    if connection:
-        email = mail.EmailMultiAlternatives(
-            subject,
-            message,
-            to=recipient,
-            connection=connection,
-        )
 
-    else:
-        email = mail.EmailMultiAlternatives(
-            subject,
-            message,
-            to=recipient,
-        )
-    email.attach_alternative(message, 'text/html')
-    if attachments:
-        for attachment in attachments:
-            email.attach_file(attachment)
+    # loop through recipients bc django class is not sending to multiple recipients
+    for recipient in recipients:
+        if connection:
+            email = mail.EmailMultiAlternatives(
+                subject,
+                message,
+                to=[recipient, ],
+                connection=connection,
+            )
 
-    email.send(fail_silently=False)
+        else:
+            email = mail.EmailMultiAlternatives(
+                subject,
+                message,
+                to=[recipient, ],
+            )
+        email.attach_alternative(message, 'text/html')
+        if attachments:
+            for attachment in attachments:
+                email.attach_file(attachment)
+
+        email.send(fail_silently=False)
 
 
 @job('high')

@@ -1,0 +1,25 @@
+{% extends "control/__base.html" %}
+{% load i18n %}
+
+{% block content %}
+<h1>{% trans 'Notification settings' %}</h1>
+
+
+<form class="ui form" method="POST">
+    {% include "_form.html" with form=notification_level_form %}
+
+    {% if organization_notification_recipient_formset %}
+    <div class="field">
+        <label>{% trans 'Notification recipients' %}</label>
+        {% include "_formset.html" with formset=organization_notification_recipient_formset %}
+        <span
+            class="help">{% trans 'By default notifications will be sent to the public email of the organization.' %}</span>
+    </div>
+    {% endif %}
+    <button class="ui positive right labeled icon button">
+        <i class="save icon"></i>
+        {% trans 'Save' %}
+    </button>
+</form>
+
+{% endblock %}

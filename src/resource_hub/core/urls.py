@@ -33,7 +33,6 @@ finance_urls.register([
     path('invoices/incoming/', control.FinanceInvoicesIncoming.as_view(),
          name='finance_invoices_incoming'),
 ])
-
 control_urls.register([
     # account
     path('', control.Home.as_view(), name='home'),
@@ -43,6 +42,9 @@ control_urls.register([
     path('account/security/<str:scope>/',
          control.AccountSecurity.as_view(),
          name='account_security'),
+    path('account/notifications/settings/',
+         control.NotificationsSettings.as_view(),
+         name='notifications_settings'),
     path('account/verification/resend', auth.VerificationResend.as_view(),
          name='account_verification_resend'),
 

@@ -11,6 +11,7 @@ from model_utils.managers import InheritanceManager
 
 from ..utils import get_valid_slug
 from .base import BaseModel
+from .constants import LEVEL, LEVELS
 
 
 class Actor(BaseModel):
@@ -152,6 +153,13 @@ class Actor(BaseModel):
         default='images/logo.png',
         verbose_name=_('Invoice logo image'),
     )
+    notification_level = models.IntegerField(
+        choices=LEVELS,
+        default=LEVEL.MEDIUM,
+        verbose_name=_('Notification level'),
+        help_text=_(
+            'You will be notified via email about notifications with the selected level and above'),
+    )
 
     @property
     def notification_recipients(self) -> list:
@@ -159,7 +167,7 @@ class Actor(BaseModel):
     # Metadata
 
     class Meta:
-        ordering = ['id']
+        ordering = ['id', ]
 
     # Methods
     def __str__(self):
@@ -207,6 +215,8 @@ class Organization(Actor):
 
     @property
     def notification_recipients(self) -> list:
+        if self.notification_recipient_set.exists():
+            return list(Organization.objects.get(pk=2).notification_recipient_set.all().values_list('email', flat=True))
         return [self.email_public, ]
     # Methods
 
@@ -217,6 +227,15 @@ class Organization(Actor):
         if not self.pk:
             self.slug = get_valid_slug(Actor(), self.name)
         super(Organization, self).save(*args, **kwargs)
+
+
+class OrganizationNotificationRecipient(BaseModel):
+    organization = models.ForeignKey(
+        Organization,
+        on_delete=models.CASCADE,
+        related_name='notification_recipient_set'
+    )
+    email = models.EmailField()
 
 
 class OrganizationMember(BaseModel):

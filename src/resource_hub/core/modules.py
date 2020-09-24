@@ -74,6 +74,10 @@ class CoreModule(BaseModule):
                         'header': _('Settings'),
                         'url': first_child,
                     },
+                    {
+                        'header': _('Notifications'),
+                        'url': reverse('control:notifications_settings'),
+                    },
                     user_settings
                 ]
             },

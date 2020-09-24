@@ -10,26 +10,14 @@ from resource_hub.core.utils import language
 
 from .actors import Actor
 from .base import BaseModel, BaseStateMachine
+from .constants import LEVEL, LEVELS
 from .files import File
 
 
 class Notification(BaseStateMachine):
-    class LEVEL:
-        '''
-        the level of a message is the basis for user
-        notification preferences
-        '''
-        LOW = 0  # info
-        MEDIUM = 1  # action required, mail
-        HIGH = 2  # warning
-        CRITICAL = 3  # mandatory information
-
-    LEVELS = [
-        (LEVEL.LOW, _('low')),
-        (LEVEL.MEDIUM, _('medium')),
-        (LEVEL.HIGH, _('high')),
-        (LEVEL.CRITICAL, _('critical')),
-    ]
+    # import constants from external module to avoid circular import with actors module
+    LEVEL = LEVEL
+    LEVELS = LEVELS
 
     class TYPE:
         '''
@@ -143,9 +131,9 @@ class Notification(BaseStateMachine):
         attachments = []
         for attachment in self.attachments.all():
             attachments.append(attachment.file.path)
+        recipient = Actor.objects.get_subclass(pk=self.recipient.pk)
 
-        if self.level > Notification.LEVEL.LOW:
-            recipient = Actor.objects.get_subclass(pk=self.recipient.pk)
+        if self.level >= recipient.notification_level:
             with language(recipient.language):
                 message = render_to_string('core/mail_notification.html', context={
                     'recipient': recipient,
@@ -155,7 +143,7 @@ class Notification(BaseStateMachine):
             send_mail(
                 subject=self.header,
                 message=message,
-                recipient=recipient.notification_recipients,
+                recipients=recipient.notification_recipients,
                 attachments=attachments,
                 connection=connection,
             )

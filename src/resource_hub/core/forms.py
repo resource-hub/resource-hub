@@ -16,6 +16,7 @@ from django.template.loader import render_to_string
 from django.utils.dateparse import parse_date
 from django.utils.translation import gettext_lazy as _
 
+from resource_hub.core.models import OrganizationNotificationRecipient
 from resource_hub.core.utils import get_authorized_actors
 from schwifty import BIC, IBAN
 
@@ -78,12 +79,17 @@ class FormManager():
         self.user = user
         self.actor = actor
         for k, form in self.forms.items():
-            instance = instances[k] if instances else None
+            if isinstance(instances, dict):
+                instance = instances[k] if instances else None
+            else:
+                instance = instances
 
+            print(type(form).__name__)
             # check if reference has bin initiazlied already
             if not callable(form):
                 form = form.__class__
 
+            # print(type(form).__name__)
             self.forms[k] = form(
                 self.user,
                 self.actor,
@@ -627,6 +633,60 @@ class OrganizationInvitationForm(forms.ModelForm):
         fields = ['email', 'role', ]
 
 
+class NotificationLevelForm(forms.ModelForm):
+    owner_editable = False
+
+    class Meta:
+        model = Actor
+        fields = ['notification_level', ]
+
+
+class OrganizationNotificationRecipientForm(forms.ModelForm):
+    class Meta:
+        model = OrganizationNotificationRecipient
+        fields = ['email', ]
+
+
+OrganizationNotificationRecipientFormset = inlineformset_factory(
+    Organization, OrganizationNotificationRecipient, form=OrganizationNotificationRecipientForm, extra=1)
+
+
+class NotificationsSettingsFormManager(FormManager):
+    def __init__(self, user, actor, data=None, files=None, instances=None):
+        self.user = user
+        self.actor = actor
+        if user.pk != actor.pk:
+            instances = Organization.objects.get(pk=instances.pk)
+
+        if data:
+            self.forms = {
+                'notification_level_form': NotificationLevelForm(
+                    data=data,
+                    instance=instances,
+                ),
+            }
+            if user.pk != actor.pk:
+                self.forms['organization_notification_recipient_formset'] = OrganizationNotificationRecipientFormset(
+                    data=data,
+                    instance=instances,
+                )
+        else:
+            self.forms = {
+                'notification_level_form': NotificationLevelForm(
+                    instance=instances,
+                ),
+            }
+            if user.pk != actor.pk:
+                self.forms['organization_notification_recipient_formset'] = OrganizationNotificationRecipientFormset(
+                    instance=instances,
+                )
+
+    def save(self, commit=True):
+        self.forms['notification_level_form'].save()
+        if 'organization_notification_recipient_formset' in self.forms:
+            self.forms['organization_notification_recipient_formset'].save()
+
+
 class TextForm(forms.Form):
     text = HTMLField(
         help_text=_('This text will be included in the invitation mail'),
@@ -698,7 +758,7 @@ class OrganizationInvitationFormManager(FormManager):
                     send_mail.delay(
                         subject=subject,
                         message=message,
-                        recipient=[invitation.email],
+                        recipients=[invitation.email],
                     )
 
         return invitations

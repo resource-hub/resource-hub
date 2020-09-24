@@ -396,6 +396,36 @@ class Notifications(View):
 
 
 @method_decorator(login_required, name='dispatch')
+class NotificationsSettings(View):
+    template_name = 'core/control/notifications_settings.html'
+
+    def get(self, request):
+        notifications_form = NotificationsSettingsFormManager(
+            request.user,
+            request.actor,
+            instances=request.actor,
+        )
+        return render(request, self.template_name, notifications_form.get_forms())
+
+    def post(self, request):
+        notifications_form = NotificationsSettingsFormManager(
+            request.user,
+            request.actor,
+            data=request.POST,
+            files=request.FILES,
+            instances=request.actor,
+        )
+
+        if notifications_form.is_valid():
+            with transaction.atomic():
+                notifications_form.save()
+            message = _('The settings have been saved')
+            messages.add_message(request, messages.SUCCESS, message)
+            return redirect(reverse('control:notifications_settings'))
+        return render(request, self.template_name, notifications_form.get_forms())
+
+
+@method_decorator(login_required, name='dispatch')
 class OrganizationsManage(TableView):
     header = _('Manage your organizations')
     class_ = Organization
