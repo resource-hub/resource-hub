@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-24 17:54+0200\n"
+"POT-Creation-Date: 2020-09-24 18:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -304,10 +304,8 @@ msgid "Invoice logo image"
 msgstr "Rechnungslogo"
 
 #: core/models/actors.py:159
-#, fuzzy
-#| msgid "Notification"
 msgid "Notification level"
-msgstr "Benachrichtigung"
+msgstr "Benachrichtigungslevel"
 
 #: core/models/actors.py:161
 msgid ""
@@ -953,7 +951,7 @@ msgstr "Einstellungen"
 
 #: core/modules.py:78 core/templates/core/control/notifications.html:13
 msgid "Notifications"
-msgstr "Benachrichtigung"
+msgstr "Benachrichtigungen"
 
 #: core/modules.py:85
 msgid "Finanace"
@@ -1456,7 +1454,10 @@ msgstr "Benachrichtigungsempfänger"
 msgid ""
 "By default notifications will be sent to the public email of the "
 "organization."
-msgstr "Standardmäßig werden Benachrichtigungen an die öffentliche Email der Organisation verschickt. Eine Eintragung in diesem Feld überschreibt dieses Verhalten"
+msgstr ""
+"Standardmäßig werden Benachrichtigungen an die öffentliche Email der "
+"Organisation verschickt. Eine Eintragung in diesem Feld überschreibt dieses "
+"Verhalten"
 
 #: core/templates/core/control/organizations_create.html:6
 msgid "create organization"
@@ -1921,6 +1922,7 @@ msgid "Item booking"
 msgstr "Leihe"
 
 #: items/models.py:96
+#, python-format
 msgid "Item rental %(contract)s"
 msgstr "Leihe von %(contract)s"
 
@@ -2328,6 +2330,7 @@ msgid "SEPA Direct Debit initiated"
 msgstr "SEPA Lastschrift initiiert"
 
 #: plugins/sepa/models.py:264
+#, python-format
 msgid ""
 "%(creditor)s with the creditor identifier \n"
 "                        %(creditor_id)s is going to debit your account "
