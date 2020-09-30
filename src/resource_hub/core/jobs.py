@@ -25,6 +25,12 @@ def init_schedule():
         args=[],
         interval=60,
     )
+    scheduler.schedule(
+        scheduled_time=datetime.utcnow(),
+        func=publish_contract_events,
+        args=[],
+        interval=60,
+    )
     # settle claims
     scheduler.schedule(
         scheduled_time=datetime.utcnow(),
@@ -93,3 +99,8 @@ def settle_claims():
                 Max('timestamp'))
             if timezone.now() - timedelta(days=contract.contract_procedure.settlement_interval) < last_settlement['timestamp__max']:
                 contract.settle_claims()
+
+
+@job('high')
+def publish_contract_events():
+    Contract.publish_events()

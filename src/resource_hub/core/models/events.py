@@ -1,5 +1,4 @@
-import logging
-from datetime import datetime
+import uuid
 
 from django.db import models
 from django.forms import model_to_dict
@@ -14,7 +13,7 @@ def get_types() -> list:
 TYPES = get_types()
 
 
-class Event(BaseStateMachine):
+class BaseEvent(BaseStateMachine):
     class STATE(BaseStateMachine.STATE):
         PUBLISHED = 'ps'
 
@@ -30,16 +29,10 @@ class Event(BaseStateMachine):
     # unique char, that identifies the event type
     TYPE = 'ba_ev'
 
+    uuid = models.UUIDField(
+        default=uuid.uuid4,
+    )
     context = models.JSONField()
-
-    @classmethod
-    def build(cls, **kwargs) -> dict:
-        Event.objects.create(
-            context=cls.build_context(*kwargs),
-        )
-
-    def build_context(self, **kwargs) -> dict:
-        raise NotImplementedError
 
     @property
     def verbose_name(self):
@@ -49,31 +42,57 @@ class Event(BaseStateMachine):
     def type_(self):
         return self.TYPE
 
+    def set_published(self):
+        self.move_to(self.STATE.PUBLISHED)
 
-class BaseContractEvent(Event):
+    @classmethod
+    def build_context(cls, kwargs) -> dict:
+        raise NotImplementedError
+
+    @classmethod
+    def build(cls, **kwargs) -> dict:
+        cls.objects.create(
+            context=cls.build_context(kwargs),
+        )
+
+    class Meta:
+        abstract = True
+
+
+class ContractEvent(BaseEvent):
     contract = models.ForeignKey(
         'Contract',
         on_delete=models.CASCADE,
         related_name='events',
     )
 
-    class Meta:
-        abstract = True
+    @classmethod
+    def build(cls, contract, **kwargs) -> dict:
+        cls.objects.create(
+            contract=contract,
+            context=cls.build_context(kwargs),
+        )
+
+    @classmethod
+    def build_context(cls, kwargs):
+        return {}
 
 
-class StateChangedEvent(BaseContractEvent):
+class StateChangedEvent(ContractEvent):
     TYPE = 'st_ev'
 
-    def build_context(self, **kwargs) -> dict:
+    @classmethod
+    def build_context(cls, kwargs) -> dict:
         return {
             'new_state': kwargs['new_state'],
         }
 
 
-class InvoiceCreatedEvent(BaseContractEvent):
+class InvoiceCreatedEvent(ContractEvent):
     TYPE = 'ic_ev'
 
-    def build_context(self, **kwargs) -> dict:
+    @classmethod
+    def build_context(cls, kwargs) -> dict:
         return {
             'invoice': model_to_dict(kwargs['invoice']),
             'positions': kwargs['invoice'].positions.values()

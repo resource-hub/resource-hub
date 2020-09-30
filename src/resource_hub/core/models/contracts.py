@@ -1,5 +1,6 @@
+import logging
 import uuid
-from datetime import timedelta
+from datetime import datetime, timedelta
 from decimal import Decimal
 
 from django.db import models, transaction
@@ -369,10 +370,7 @@ class Contract(BaseContract):
         self.settlement_logs.create(
             timestamp=smallest_start['period_start__min'])
 
-    def call_triggers(self, state):
-        return
     # notifications
-
     def _send_state_notification(self, type_, sender, recipient, header, message='', attachments=None, request=None):
         if self.creditor != self.debitor:
             with language(recipient.language):
@@ -459,9 +457,12 @@ class Contract(BaseContract):
     # state setters
     def move_to(self, state):
         super(Contract, self).move_to(state)
-        self.call_triggers(state)
+        StateChangedEvent.build(
+            contract=self,
+            new_state=state,
+        )
 
-    # active states
+   # active states
     def set_pending(self, *args, **kwargs) -> None:
         self.move_to(self.STATE.PENDING)
         self.save()
@@ -581,6 +582,10 @@ class Contract(BaseContract):
         for event in events:
             for trigger in event.contract.contract_procedure.triggers.filter(event=event.type_).select_subclasses():
                 trigger.call(event)
+            logging.info('[%s] Published %s (%s)',
+                         datetime.now(),
+                         event.verbose_name, event.uuid)
+            event.set_published()
 
 
 class SettlementLog(BaseModel):
