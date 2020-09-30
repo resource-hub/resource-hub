@@ -8,14 +8,13 @@ from django.http import HttpResponse
 from django.shortcuts import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-
 from ipware import get_client_ip
 from model_utils.managers import InheritanceManager
 from resource_hub.core.utils import build_full_url, language
 
-from ..events import InvoiceCreatedEvent, StateChangedEvent
 from ..fields import CurrencyField, PercentField
 from .base import BaseModel, BaseStateMachine
+from .events import ContractEvent, InvoiceCreatedEvent, StateChangedEvent
 from .invoices import Invoice
 from .notifications import Notification
 
@@ -459,12 +458,8 @@ class Contract(BaseContract):
 
     # state setters
     def move_to(self, state):
-        if self.state in self.STATE_GRAPH and state in self.STATE_GRAPH[self.state]:
-            self.call_triggers(state)
-            self.state = state
-        else:
-            raise ValueError('Cannot move from state {} to state {}'.format(
-                self.get_state_display(), state))
+        super(Contract, self).move_to(state)
+        self.call_triggers(state)
 
     # active states
     def set_pending(self, *args, **kwargs) -> None:
@@ -578,6 +573,14 @@ class Contract(BaseContract):
             if not self.claim_set.filter(state=Claim.STATE.PENDING).exists():
                 self.set_finalized()
         self.settlement_logs.create()
+
+    @classmethod
+    def publish_events(cls):
+        events = ContractEvent.objects.filter(
+            state=ContractEvent.STATE.PENDING)
+        for event in events:
+            for trigger in event.contract.contract_procedure.triggers.filter(event=event.type_).select_subclasses():
+                trigger.call(event)
 
 
 class SettlementLog(BaseModel):

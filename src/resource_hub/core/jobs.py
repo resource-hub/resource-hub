@@ -1,10 +1,9 @@
 from datetime import datetime, timedelta
 
+import django_rq
 from django.core import mail
 from django.db.models import Max
 from django.utils import timezone
-
-import django_rq
 from django_rq import job
 from resource_hub.core.models import Contract, Notification
 
