@@ -565,6 +565,10 @@ class Contract(BaseContract):
                 if self.contract_procedure.is_invoicing and total > Decimal('0.0'):
                     invoice = Invoice.build(self, open_claims, self.creditor)
                     invoice.create_pdf()
+                    InvoiceCreatedEvent.build(
+                        contract=self,
+                        invoice=invoice,
+                    )
                 else:
                     invoice = None
 
