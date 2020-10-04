@@ -7,7 +7,6 @@ from django.forms import inlineformset_factory
 from django.forms.models import BaseInlineFormSet
 from django.utils.timezone import get_current_timezone
 from django.utils.translation import gettext_lazy as _
-
 from resource_hub.core.fields import CustomMultipleChoiceField, HTMLField
 from resource_hub.core.forms import (BaseForm, ContractProcedureForm,
                                      FormManager, GalleryImageFormSet,
@@ -107,7 +106,7 @@ class VenueFormManager(FormManager):
             self.forms['price_formset'].instance = new_venue
             for price in self.forms['price_formset'].save(commit=False):
                 if first:
-                    new_venue.price = price
+                    new_venue.base_price = price
                     first = False
             self.forms['equipment_formset'].instance = new_venue
             self.forms['equipment_formset'].save()
@@ -128,7 +127,7 @@ class VenueContractProcedureForm(ContractProcedureForm):
         if commit:
             new_venue_contract_procedure.save()
             self.save_m2m()
-            for venue in new_venue_contract_procedure.venues.all():
+            for venue in new_venue_contract_procedure.venue_set.all():
                 venue.contract_procedure = new_venue_contract_procedure
         return new_venue_contract_procedure
 
@@ -337,7 +336,7 @@ class VenueContractForm(forms.ModelForm):
         data = super(VenueContractForm, self).clean()
         address = self.request.actor.address
         if (address.street is None or address.street_number is None or address.postal_code is None or address.city is None) and (
-            self.venue.price.value != Decimal(
+            self.venue.base_price.value != Decimal(
                 '0') and (self.cleaned_data['price_profile'] and self.cleaned_data['price_profile'].discount != Decimal('100'))
         ):
             raise forms.ValidationError(

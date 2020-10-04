@@ -7,15 +7,14 @@ from django.db.models import Q
 from django.shortcuts import reverse
 from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
-
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
 from recurrence.fields import RecurrenceField
 from resource_hub.core.fields import (CustomManyToManyField,
                                       MultipleChoiceArrayField)
-from resource_hub.core.models import (Actor, BaseModel, Claim, Contract,
-                                      ContractProcedure, Gallery, Location,
-                                      Notification, Price)
+from resource_hub.core.models import (Actor, BaseAsset, BaseModel, Claim,
+                                      Contract, ContractProcedure, Gallery,
+                                      Location, Notification, Price)
 from resource_hub.core.utils import get_valid_slug, language
 
 
@@ -42,7 +41,7 @@ def get_default_usage():
     return [Venue.USAGE_TYPE.OTHER]
 
 
-class Venue(BaseModel):
+class Venue(BaseAsset):
     """describing locations."""
     class USAGE_TYPE:
         OTHER = 'o'
@@ -53,40 +52,10 @@ class Venue(BaseModel):
         (USAGE_TYPE.WORKSHOP, _('workshop')),
     ]
     # Fields
-    slug = models.SlugField(
-        db_index=True,
-        max_length=50,
-        verbose_name=_('Slug'),
-    )
-    name = models.CharField(
-        max_length=128,
-        verbose_name=_('Name'),
-    )
-    description = models.TextField(
-        verbose_name=_('Description'),
-    )
-    location = models.ForeignKey(
-        Location,
-        on_delete=models.CASCADE,
-        verbose_name=_('Location'),
-        help_text=_('All public and current role\'s locations'),
-    )
-    thumbnail_original = models.ImageField(
-        null=True,
-        blank=False,
-        upload_to='images/',
-        default='images/default.png',
-        verbose_name=_('Thumbnail'),
-    )
-    thumbnail = ImageSpecField(
-        source='thumbnail_original',
-        processors=[
-            ResizeToFill(400, 400),
-        ],
-        format='JPEG',
-        options={
-            'quality': 70,
-        }
+    contract_procedure = models.ForeignKey(
+        ContractProcedure,
+        on_delete=models.PROTECT,
+        verbose_name=_('Contract procedure'),
     )
     size = models.PositiveIntegerField(
         verbose_name=_('Room size (squaremeters)'),
@@ -101,30 +70,9 @@ class Venue(BaseModel):
         verbose_name=_('Usage types'),
         help_text=_('Describe which activites are possible'),
     )
-    price = models.ForeignKey(
-        Price,
-        on_delete=models.PROTECT,
-        null=True,
-        blank=True,
-        verbose_name=_('Price'),
-    )
-    gallery = models.ForeignKey(
-        Gallery,
-        on_delete=models.SET_NULL,
-        null=True,
-        verbose_name=_('Gallery'),
-    )
     bookable = models.BooleanField(
         default=True,
         verbose_name=_('Bookable?'),
-    )
-    contract_procedure = models.ForeignKey(
-        ContractProcedure,
-        null=True,
-        blank=True,
-        on_delete=models.PROTECT,
-        verbose_name=_('Contract procedure'),
-        related_name='venues',
     )
     owner = models.ForeignKey(
         Actor,
@@ -433,7 +381,7 @@ class VenueContract(Contract):
                     ),
                     quantity=delta,
                     unit='h',
-                    price=venue.price,
+                    price=venue.base_price,
                     start=start,
                     end=end,
                 )
@@ -455,7 +403,8 @@ class VenueContract(Contract):
                     end=occurrence[1],
                 )
 
-        self.create_fee_claims(net_total, venue.price.currency, start, end)
+        self.create_fee_claims(
+            net_total, venue.base_price.currency, start, end)
 
     # state setters
 

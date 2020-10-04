@@ -1,5 +1,4 @@
 import datetime
-import uuid
 
 from django.db import models
 from django.db.models import Q
@@ -7,13 +6,12 @@ from django.shortcuts import reverse
 from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
-from resource_hub.core.models import (Actor, BaseModel, BaseStateMachine,
-                                      Claim, Contract, ContractProcedure, File,
-                                      Gallery, ICSFile, Location, Notification,
-                                      Price)
+from resource_hub.core.models import (Actor, AssetMixin, BaseModel,
+                                      BaseStateMachine, Claim, Contract,
+                                      ContractProcedure, File, Gallery,
+                                      ICSFile, Location, Notification, Price)
 from resource_hub.core.utils import get_valid_slug, language
 
 
@@ -177,7 +175,7 @@ class ItemContract(Contract):
         self.bookings.filter(dtend__gte=timezone.now()).soft_delete()
 
 
-class Item(BaseStateMachine):
+class Item(AssetMixin, BaseStateMachine):
     class STATE:
         AVAILABLE = 'a'
         LENT = 'l'
@@ -236,15 +234,10 @@ class Item(BaseStateMachine):
         (SELF_PICKUP.ALLOWED, _('allowed')),
     ]
 
-    uuid = models.UUIDField(
-        default=uuid.uuid4,
-        editable=False,
-        verbose_name=_('UUID'),
-    )
-    slug = models.SlugField(
-        db_index=True,
-        max_length=50,
-        verbose_name=_('Slug'),
+    contract_procedure = models.ForeignKey(
+        ContractProcedure,
+        on_delete=models.PROTECT,
+        verbose_name=_('Contract procedure'),
     )
     custom_id = models.CharField(
         max_length=100,
@@ -253,15 +246,6 @@ class Item(BaseStateMachine):
         blank=True,
         verbose_name=_('Custom ID'),
         help_text=_('ID field for bardcodes etc.'),
-    )
-    name = models.CharField(
-        max_length=64,
-        verbose_name=_('Name'),
-    )
-    description = models.TextField(
-        null=True,
-        blank=True,
-        verbose_name=_('Description'),
     )
     manufacturer = models.CharField(
         max_length=64,
@@ -281,12 +265,6 @@ class Item(BaseStateMachine):
         blank=True,
         verbose_name=_('Serial number'),
     )
-    location = models.ForeignKey(
-        Location,
-        on_delete=models.PROTECT,
-        related_name='items',
-        verbose_name=_('Location'),
-    )
     location_code = models.CharField(
         max_length=255,
         null=True,
@@ -302,19 +280,6 @@ class Item(BaseStateMachine):
         choices=UNITS,
         default=UNIT.DAYS,
         verbose_name=_('Unit'),
-    )
-    base_price = models.ForeignKey(
-        Price,
-        null=True,
-        on_delete=models.PROTECT,
-        related_name='item_base_price',
-        verbose_name=_('Base price'),
-    )
-    contract_procedure = models.ForeignKey(
-        ItemContractProcedure,
-        on_delete=models.PROTECT,
-        related_name='items',
-        verbose_name=_('Contract procedure'),
     )
     maximum_duration = models.IntegerField(
         default=0,
@@ -345,24 +310,6 @@ class Item(BaseStateMachine):
         verbose_name=_('Instructions'),
         help_text=_(
             'These instructions will be included in the confirmation mail text'),
-    )
-    thumbnail_original = models.ImageField(
-        null=False,
-        upload_to='images/',
-        verbose_name=_('Thumbnail'),
-        default='images/default.png',
-    )
-    thumbnail = ImageSpecField(
-        source='thumbnail_original',
-        processors=[ResizeToFill(300, 300)],
-        format='JPEG',
-        options={'quality': 70},
-    )
-    gallery = models.ForeignKey(
-        Gallery,
-        on_delete=models.SET_NULL,
-        null=True,
-        verbose_name=_('Gallery'),
     )
     purchase_date = models.DateField(
         null=True,
@@ -420,7 +367,7 @@ class Item(BaseStateMachine):
 
 
 class ItemPrice(Price):
-    item = models.ForeignKey(
+    item_ptr = models.ForeignKey(
         Item,
         on_delete=models.PROTECT,
         related_name='prices',
