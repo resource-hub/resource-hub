@@ -18,57 +18,35 @@ from resource_hub.core.models import (Actor, BaseAsset, BaseModel, Claim,
 from resource_hub.core.utils import get_valid_slug, language
 
 
-class VenueContractProcedure(ContractProcedure):
-    venues = models.ManyToManyField(
-        'Venue',
-        verbose_name=_('Venues'),
+class WorkshopContractProcedure(ContractProcedure):
+    workshops = models.ManyToManyField(
+        'Workshop',
+        verbose_name=_('Workshop'),
     )
 
     @property
     def type_name(self):
-        return _('Venue contract procedure')
+        return _('Workshop contract procedure')
 
     @property
     def form_link(self):
-        return reverse('control:venues_contract_procedures_create')
+        return reverse('control:workshops_contract_procedures_create')
 
     @property
     def edit_link(self):
-        return reverse('control:venues_contract_procedures_edit', kwargs={'pk': self.pk})
+        return reverse('control:workshops_contract_procedures_edit', kwargs={'pk': self.pk})
 
 
-def get_default_usage():
-    return [Venue.USAGE_TYPE.OTHER]
+class Workshop(BaseAsset):
 
-
-class Venue(BaseAsset):
-    """describing locations."""
-    class USAGE_TYPE:
-        OTHER = 'o'
-        WORKSHOP = 'w'
-
-    USAGE_TYPES = [
-        (USAGE_TYPE.OTHER, _('other')),
-        (USAGE_TYPE.WORKSHOP, _('workshop')),
-    ]
     # Fields
     contract_procedure = models.ForeignKey(
         ContractProcedure,
         on_delete=models.PROTECT,
         verbose_name=_('Contract procedure'),
     )
-    size = models.PositiveIntegerField(
-        verbose_name=_('Room size (squaremeters)'),
-        default=10,
-    )
-    usage_types = MultipleChoiceArrayField(
-        models.CharField(
-            choices=USAGE_TYPES,
-            max_length=3,
-        ),
-        default=get_default_usage,
-        verbose_name=_('Usage types'),
-        help_text=_('Describe which activites are possible'),
+    workplaces = models.PositiveIntegerField(
+        default=1,
     )
     bookable = models.BooleanField(
         default=True,
@@ -95,143 +73,41 @@ class Venue(BaseAsset):
         if not self.pk:
             self.slug = get_valid_slug(
                 self, self.name, Q(location=self.location))
-        super(Venue, self).save(*args, **kwargs)
+        super(Workshop, self).save(*args, **kwargs)
 
 
-class VenuePrice(Price):
-    venue_ptr = models.ForeignKey(
-        Venue,
+class WorkshopPrice(Price):
+    workshop_ptr = models.ForeignKey(
+        Workshop,
         on_delete=models.PROTECT,
-        related_name='venue_price'
+        related_name='workshop_price'
     )
 
 
-class EventTag(models.Model):
-    name = models.CharField(
-        max_length=64,
-        unique=True,
-        verbose_name=_('Name'),
-    )
-
-    # Metadata
-    class Meta:
-        ordering = ['name']
-
-    # Methods
-    def __str__(self):
-        return self.name
-
-
-class EventCategory(models.Model):
-    name = models.CharField(
-        max_length=64,
-        unique=True,
-        verbose_name=_('Name'),
-    )
-
-    # Metadata
-    class Meta:
-        ordering = ['name']
-
-    # Methods
-    def __str__(self):
-        return self.name
-
-
-class Event(BaseModel):
+class WorkshopBooking(BaseModel):
     # fields
-    slug = models.SlugField(
-        unique=True,
-        db_index=True,
-        max_length=50,
-        verbose_name=_('Slug'),
-    )
-    uuid = models.UUIDField(
-        default=uuid.uuid4,
-        editable=False,
-        verbose_name=_('UUID'),
-    )
-    name = models.CharField(
-        max_length=128,
-        verbose_name=_('Name'),
-    )
-    description = models.CharField(
-        max_length=128,
-        verbose_name=_('Description'),
-    )
     dtstart = models.DateTimeField(
         verbose_name=_('Start'),
-
     )
     dtend = models.DateTimeField(
         verbose_name=_('End'),
 
     )
     dtlast = models.DateTimeField()
-    organizer = models.ForeignKey(
-        Actor,
-        on_delete=models.CASCADE,
-        related_name='event_actor',
-        verbose_name=_('Organizer'),
-    )
-    tags = models.ManyToManyField(
-        EventTag,
-        blank=True,
-        verbose_name=_('Tags'),
-    )
-    category = models.ForeignKey(
-        EventCategory,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        verbose_name=_('Category'),
-    )
-    venues = CustomManyToManyField(
-        Venue,
-        verbose_name=_('Venues'),
-    )
-    is_public = models.BooleanField(
-        default=True,
-        blank=True,
-        verbose_name=_('Public?'),
-    )
     recurrences = RecurrenceField(
         null=False,
         blank=True,
         include_dtstart=True,
         verbose_name=_('Recurrences'),
     )
-    thumbnail_original = models.ImageField(
-        null=False,
-        upload_to='images/',
-        verbose_name=_('Thumbnail'),
+    workplaces = models.PositiveIntegerField(
+        default=1,
     )
-    thumbnail = ImageSpecField(
-        source='thumbnail_original',
-        processors=[ResizeToFill(300, 300)],
-        format='JPEG',
-        options={'quality': 70},
+    workshops = CustomManyToManyField(
+        Workshop,
+        verbose_name=_('Workshop'),
     )
-    updated_by = models.ForeignKey(
-        Actor,
-        on_delete=models.SET_NULL,
-        null=True,
-        related_name='event_updated_by',
-        verbose_name=_('Updated by'),
-    )
-    # Metadata
-
-    class Meta:
-        ordering = ['name']
-
     # Methods
-    def __str__(self):
-        return self.name
-
-    def save(self, *args, **kwargs):
-        if not self.pk:
-            self.slug = get_valid_slug(self, self.name)
-        super(Event, self).save(*args, **kwargs)
 
     @classmethod
     def build_occurrences(cls, dates: list, dtstart, dtend) -> dict:
@@ -258,17 +134,17 @@ class Event(BaseModel):
         return self.build_occurrences(self.recurrences.occurrences(), self.dtstart, self.dtend)['occurrences']
 
 
-class Equipment(models.Model):
+class WorkshopEquipment(models.Model):
     # fields
     name = models.CharField(
         max_length=128,
         unique=True,
         verbose_name=_('Name'),
     )
-    venue = models.ForeignKey(
-        Venue,
+    workshop = models.ForeignKey(
+        Workshop,
         on_delete=models.PROTECT,
-        verbose_name=_('Venue'),
+        verbose_name=_('Workshop'),
         related_name='equipment',
     )
     thumbnail_original = models.ImageField(
@@ -300,12 +176,12 @@ class Equipment(models.Model):
 
     # methods
     def __str__(self):
-        return '{}@{} ({})'.format(self.name, self.venue.name, self.price)
+        return '{}@{} ({})'.format(self.name, self.workshop.name, self.price)
 
 
-class EquipmentPrice(Price):
+class WorkshopEquipmentPrice(Price):
     equipment_ptr = models.ForeignKey(
-        Equipment,
+        WorkshopEquipment,
         on_delete=models.PROTECT,
         related_name='equipment_price'
     )
@@ -314,15 +190,15 @@ class EquipmentPrice(Price):
 class EquipmentBooking(BaseModel):
     # fields
     contract = models.ForeignKey(
-        'VenueContract',
+        'WorkshopContract',
         on_delete=models.PROTECT,
         verbose_name=_('Contract'),
         related_name='equipment_bookings',
     )
     equipment = models.ForeignKey(
-        'Equipment',
+        'WorkshopEquipment',
         on_delete=models.PROTECT,
-        verbose_name=_('Equipment'),
+        verbose_name=_('WorkshopEquipment'),
         related_name='equipment_bookings',
     )
     quantity = models.PositiveIntegerField(
@@ -331,30 +207,30 @@ class EquipmentBooking(BaseModel):
     )
 
 
-class VenueContract(Contract):
-    event = models.OneToOneField(
-        Event,
+class WorkshopContract(Contract):
+    booking = models.OneToOneField(
+        WorkshopBooking,
         on_delete=models.PROTECT,
         verbose_name=_('Event'),
     )
-    equipment = models.ManyToManyField(
-        Equipment,
+    equipment = CustomManyToManyField(
+        WorkshopEquipment,
         blank=True,
         through='EquipmentBooking',
-        verbose_name=_('Equipment'),
-        help_text=_('Services or additional equipment for the venue'),
+        verbose_name=_('WorkshopEquipment'),
+        help_text=_('Services or additional equipment for the workshop'),
 
     )
 
     # attributes
     @property
     def verbose_name(self):
-        return _('Venue booking')
+        return _('Workshop booking')
 
     @property
     def overview(self):
         return render_to_string(
-            'venues/_contract_overview.html',
+            'workshops/_contract_overview.html',
             context={
                 'contract': self,
             }
@@ -362,25 +238,24 @@ class VenueContract(Contract):
 
     # methods
     def claim_factory(self, **kwargs):
-        super(VenueContract, self).claim_factory(**kwargs)
+        super(WorkshopContract, self).claim_factory(**kwargs)
         occurrences = kwargs.get('occurrences', None)
         if not occurrences:
             raise ValueError('no occurrences passed')
         net_total = 0
-        for venue in self.event.venues.all():
+        for workshop in self.booking.workshops.all():
             for occurrence in occurrences:
                 start = occurrence[0]
                 end = occurrence[1]
                 delta = ((end - start).total_seconds())/3600
                 claim = Claim.build(
                     contract=self,
-                    item='{}@{}'.format(
-                        self.event.name,
-                        venue.name
+                    item='{}'.format(
+                        workshop.name
                     ),
                     quantity=delta,
                     unit='h',
-                    price=venue.base_price,
+                    price=workshop.base_price,
                     start=start,
                     end=end,
                 )
@@ -393,7 +268,7 @@ class VenueContract(Contract):
                     contract=self,
                     item='{}@{}'.format(
                         equipment.name,
-                        equipment.venue.name,
+                        equipment.workshop.name,
                     ),
                     quantity=booking.quantity,
                     unit='u',
@@ -403,24 +278,23 @@ class VenueContract(Contract):
                 )
 
         self.create_fee_claims(
-            net_total, venue.base_price.currency, start, end)
+            net_total, workshop.base_price.currency, start, end)
 
     # state setters
 
     def purge(self):
-        super(VenueContract, self).purge()
-        self.event.soft_delete()
+        super(WorkshopContract, self).purge()
+        self.booking.soft_delete()
 
     def set_waiting(self, request):
-        super(VenueContract, self).set_waiting(request)
+        super(WorkshopContract, self).set_waiting(request)
         with language(self.creditor.language):
             Notification.build(
                 type_=Notification.TYPE.CONTRACT,
                 sender=self.debitor,
                 recipient=self.creditor,
-                header=_('%(debitor)s created Event: %(event)s') % {
+                header=_('%(debitor)s created Booking') % {
                     'debitor': self.debitor,
-                    'event': self.event.name
                 },
                 link=reverse('control:finance_contracts_manage_details',
                              kwargs={'pk': self.pk}),
@@ -430,5 +304,5 @@ class VenueContract(Contract):
             )
 
     def set_terminated(self, initiator):
-        super(VenueContract, self).set_terminated(initiator)
-        self.event.soft_delete()
+        super(WorkshopContract, self).set_terminated(initiator)
+        self.booking.soft_delete()

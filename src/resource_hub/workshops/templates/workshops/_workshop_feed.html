@@ -1,0 +1,18 @@
+{% load i18n %}
+{% load sekizai_tags %}
+
+{% include 'workshops/_workshop_feed_renderer.html' %}
+{% addtoblock 'js' %}
+<script>
+    $(document).ready(function () {
+        var workshop_feed = new BlockFeed("{% url 'api:workshops' %}", 'workshop-feed', render_workshop_feed);
+        workshop_feed.create_feed();
+
+        $('#filter-form').on('submit', function (e) {
+            e.preventDefault();
+            var name = $(this).find("input[name='search_query']").val();
+            workshop_feed.create_feed({ name: name });
+        });
+    });
+</script>
+{% endaddtoblock %}

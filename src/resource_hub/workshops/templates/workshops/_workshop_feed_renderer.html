@@ -1,0 +1,53 @@
+{% load i18n %}
+{% load sekizai_tags %}
+
+{% include '_block_feed.html' with blocks='three' feed_id='workshop-feed' %}
+{% addtoblock 'js' %}
+<script id="workshop-item-template" type="text/template">
+    <div class="column">
+        <a id='card' class="ui fluid card" href="%workshop_link%">
+            <div class="content">
+                <img class="ui avatar image" src="%owner_thumbnail%" alt="{% trans 'Logo' %}"> %owner_name%
+            </div>
+            <div class="blurring dimmable image">
+                <div class="ui dimmer">
+                    <div class="content">
+                        <div class="center">
+                            <div class="ui inverted button">{% trans 'Details' %}</div>
+                        </div>
+                    </div>
+                </div>
+                <img class="thumbnail" src="%workshop_thumbnail%" alt="{% trans 'Thumbnail' %}">
+            </div>
+            <div class="ui placeholder">
+                <div class="square image"></div>
+            </div>
+            <div class="content">
+                <div class="header">%name%</div>
+                <div class="meta">
+                    <p><i class="location arrow icon"></i> %location_name%</p>
+                    <p><i class="map marker alternate icon"></i> %address_string%</p>
+                </div>
+            </div>
+        </a>
+    </div>
+</script>
+<script>
+    function render_workshop_feed(data) {
+        var template = document.getElementById("workshop-item-template");
+        var templateHtml = template.innerHTML;
+        var feed = '';
+        $.each(data, function (i, workshop) {
+            feed += templateHtml
+                .replace(/%workshop_link%/g, workshop['workshop_link'])
+                .replace(/%owner_name%/g, workshop.owner['name'])
+                .replace(/%owner_thumbnail%/g, workshop.owner['thumbnail'])
+                .replace(/%workshop_thumbnail%/g, workshop['thumbnail'])
+                .replace(/%name%/g, workshop['name'])
+                .replace(/%location_name%/g, workshop.location.name)
+                .replace(/%address_string%/g, workshop.location.address['address_string']);
+        });
+        return feed;
+    }
+</script>
+{% endaddtoblock %}

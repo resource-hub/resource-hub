@@ -1,0 +1,11 @@
+{% extends 'control/__base.html' %}
+{% load i18n %}
+{% block content %}
+<h1>
+    {% trans 'Edit workshop contract procedure' %}
+</h1>
+<div class="section-container tab-content">
+    {% trans 'Save' as action %}
+    {% include 'workshops/control/_contract_procedure_form.html' with action=action %}
+</div>
+{% endblock %}

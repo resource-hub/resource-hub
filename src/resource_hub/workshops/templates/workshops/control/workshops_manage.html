@@ -1,0 +1,27 @@
+{% extends 'control/__base.html' %}
+{% load i18n %}
+{% load django_tables2 %}
+
+{% block content %}
+<h1>
+    {% trans 'manage' %}
+</h1>
+<div class="section-container tab-content">
+    <h3>
+        {% trans 'your workshops' %}
+    </h3>
+    <div>
+        {% if workshops_table %}
+        {% render_table workshops_table %}
+        {% else %}
+        <p>
+            {% trans 'no associated workshops found' %}
+        </p>
+        <a class="ui positive right labeled icon button" href="{% url 'control:workshops_create' %}">
+            {% trans 'create one!' %}
+            <i class="child icon"></i>
+        </a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

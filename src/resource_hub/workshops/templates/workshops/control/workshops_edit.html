@@ -1,0 +1,14 @@
+{% extends 'control/__base.html' %}
+{% load i18n %}
+
+{% block content %}
+{% url 'control:workshops_manage' as url %}
+{% include '_back_button.html' with url=url %}
+<h1>
+    {% trans 'Edit workshop' %}
+</h1>
+<div class="section-container tab-content">
+    {% trans 'Save' as action %}
+    {% include 'workshops/control/_workshop_form.html' with workshop_form=workshop_form workshop_procedure_form=workshop_procedure_form action=action %}
+</div>
+{% endblock %}

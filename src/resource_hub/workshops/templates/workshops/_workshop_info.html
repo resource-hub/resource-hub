@@ -1,0 +1,25 @@
+{% load i18n %}
+
+<div class="ui stackable two column grid">
+    <div class="column">
+        <div class="ui list">
+            {% if workshop.bookable %}
+            <div class="header">
+                {% trans 'Base price' %}
+            </div>
+            {{ workshop.base_price }}
+            {% endif %}
+        </div>
+    </div>
+    <div class="column">
+        <div class="ui list">
+        </div>
+    </div>
+    <!-- <div class="header">{% trans 'Description' %}</div> -->
+    <div>
+        <div class="header">
+            {% trans 'Description' %}
+        </div>
+        {{ workshop.description|safe }}
+    </div>
+</div>

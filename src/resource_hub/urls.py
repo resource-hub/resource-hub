@@ -21,6 +21,7 @@ urlpatterns = [
     path('control/', include('resource_hub.control.urls')),
     path('venues/', include('resource_hub.venues.urls')),
     path('items/', include('resource_hub.items.urls')),
+    path('workshops/', include('resource_hub.workshops.urls')),
 
     # external apps
     path('admin/', admin.site.urls),

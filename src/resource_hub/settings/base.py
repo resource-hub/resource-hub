@@ -1,8 +1,3 @@
-"""
-Django 3.0
-
-"""
-
 import os
 import sys
 
@@ -89,6 +84,7 @@ INSTALLED_APPS = [
     'resource_hub.plugins.bank_transfer',
     'resource_hub.plugins.sepa',
     'resource_hub.venues',
+    'resource_hub.workshops',
 ]
 
 MIDDLEWARE = [

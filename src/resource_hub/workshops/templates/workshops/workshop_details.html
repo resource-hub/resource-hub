@@ -1,0 +1,48 @@
+{% extends 'core/__base.html' %}
+{% load i18n %}
+
+{% block not_in_container %}
+<div class="container">
+    <div class="location-image" style="background-image: url('{{ workshop.thumbnail_original.url }}')">
+    </div>
+</div>
+<div class="main container large">
+    <div class="ui stackable two column grid">
+        <div class="eight wide column">
+            <nav class="button-navigation">
+                {% if workshop.bookable %}
+                <a class="ui right labeled positive icon button"
+                    href="{% url 'workshops:events_create' workshop_slug=workshop.slug location_slug=workshop.location.slug %}">
+                    {% trans 'Book' %}
+                    <i class="calendar alternate outline icon"></i>
+                </a>
+                {% endif %}
+                <a class="ui labeled right floated icon back button" href="{% url 'items:index' %}">
+                    <i class="left arrow icon"></i>
+                    {% trans 'Back' %}
+                </a>
+            </nav>
+            <h1>{{ workshop.name }}</h1>
+            {% include 'workshops/_workshop_info.html' with workshop=workshop %}
+        </div>
+        <div class="eight wide column">
+            {% include 'core/_location_info.html' with location=workshop.location %}
+        </div>
+    </div>
+
+    <div class="section-container">
+        {% if workshop.gallery.images.all %}
+        <h2>{% trans 'Gallery' %}</h2>
+        {% include '_gallery.html' with gallery=workshop.gallery.images.all %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function () {
+        $('.fluid.card .image').dimmer({ on: 'hover' });
+    })
+</script>
+{% endblock %}

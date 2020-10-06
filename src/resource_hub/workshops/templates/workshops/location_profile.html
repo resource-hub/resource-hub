@@ -1,0 +1,14 @@
+{% load i18n %}
+{% load sekizai_tags %}
+
+<div class="ui horizontal section divider">{% trans 'Workshops' %}</div>
+
+{% include 'workshops/_workshop_feed_renderer.html' %}
+{% addtoblock 'js' %}
+<script>
+    $(document).ready(function () {
+        var workshop_feed = new BlockFeed('{% url "api:workshops" %}', 'workshop-feed', render_workshop_feed);
+        workshop_feed.create_feed({ id: '{{ location.id }}' });
+    });
+</script>
+{% endaddtoblock %}
