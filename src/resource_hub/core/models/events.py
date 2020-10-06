@@ -93,7 +93,10 @@ class InvoiceCreatedEvent(ContractEvent):
 
     @classmethod
     def build_context(cls, kwargs) -> dict:
+        invoice = model_to_dict(kwargs['invoice'])
+        invoice.pop('file')
+        invoice.pop('locale')
         return {
-            'invoice': model_to_dict(kwargs['invoice']),
-            'positions': kwargs['invoice'].positions.values()
+            # 'invoice': invoice,
+            # 'positions': kwargs['invoice'].positions.values()
         }

@@ -1,7 +1,6 @@
 import django.contrib.auth.views as dj_auth
 from django.urls import include, path, re_path
 from django.views.i18n import JavaScriptCatalog
-
 from resource_hub.api.urls import api_urls
 from resource_hub.control.urls import control_urls
 from resource_hub.core.views import api, auth, control, site
@@ -122,13 +121,13 @@ urlpatterns = [
     path('login/', auth.custom_login, name='login'),
     path('logout/', dj_auth.LogoutView.as_view(
         template_name='core/logout.html'), name='logout'),
-    re_path(r'^verify/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+    re_path(r'^verify/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,32})/$',
             auth.Verify.as_view(), name='verify'),
     path('password/reset/', dj_auth.PasswordResetView.as_view(
         template_name='core/password_reset.html', success_url='/password/reset/done/', email_template_name='core/mail_password_reset.html'), name='password_reset'),
     path('password/reset/done/', dj_auth.PasswordResetDoneView.as_view(
         template_name='core/password_reset_done.html', ), name='password_reset_done'),
-    re_path(r'^password/reset/confirm/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$', dj_auth.PasswordResetConfirmView.as_view(
+    re_path(r'^password/reset/confirm/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,32})/$', dj_auth.PasswordResetConfirmView.as_view(
         template_name='core/password_reset_confirm.html', success_url='/password/reset/complete/'), name='password_reset_confirm'),
     path('password/reset/complete/', dj_auth.PasswordResetCompleteView.as_view(
         template_name='core/password_reset_complete.html')),

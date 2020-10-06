@@ -15,9 +15,10 @@ class BaseVenueTest(BaseTest):
         self.venue = Venue.objects.create(
             name='Venue',
             description='nice',
+            contract_procedure=self.contract_procedure,
             location=self.location,
             owner=self.user,
-            price=Price.objects.create(
+            base_price=Price.objects.create(
                 value=Decimal('10'),
                 discounts=True,
             ),

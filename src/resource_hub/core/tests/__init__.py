@@ -2,7 +2,7 @@ from unittest import SkipTest
 
 from django.test import TestCase
 
-from ..models import Address, Location, Organization, User
+from ..models import Address, ContractProcedure, Location, Organization, User
 from .test_views import LoginTestMixin
 
 
@@ -35,5 +35,8 @@ class BaseTest(TestCase):
             address=self.address,
             latitude=53.00,
             longitude=9.0,
+            owner=self.user,
+        )
+        self.contract_procedure = ContractProcedure.objects.create(
             owner=self.user,
         )
