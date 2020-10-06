@@ -82,6 +82,7 @@ INSTALLED_APPS = [
     'resource_hub.control',
     'resource_hub.items',
     'resource_hub.plugins.bank_transfer',
+    'resource_hub.plugins.cash',
     'resource_hub.plugins.sepa',
     'resource_hub.venues',
     'resource_hub.workshops',
