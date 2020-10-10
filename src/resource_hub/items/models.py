@@ -235,7 +235,7 @@ class Item(AssetMixin, BaseStateMachine):
     ]
 
     contract_procedure = models.ForeignKey(
-        ContractProcedure,
+        ItemContractProcedure,
         on_delete=models.PROTECT,
         verbose_name=_('Contract procedure'),
     )

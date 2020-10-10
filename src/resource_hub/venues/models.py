@@ -53,7 +53,7 @@ class Venue(BaseAsset):
     ]
     # Fields
     contract_procedure = models.ForeignKey(
-        ContractProcedure,
+        VenueContractProcedure,
         on_delete=models.PROTECT,
         verbose_name=_('Contract procedure'),
     )
