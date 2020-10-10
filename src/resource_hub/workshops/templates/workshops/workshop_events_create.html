@@ -1,6 +1,7 @@
 {% extends 'core/__base.html' %}
 {% load i18n %}
 {% load static %}
+{% load custom_tags %}
 
 {% block extra_head %}
 <link rel="stylesheet" type="text/css" href="{% static 'datetimepicker/jquery.datetimepicker.css' %}" />
@@ -12,7 +13,10 @@
 <div class="main container large">
     <div class="ui stackable two column grid">
         <div class="seven wide column">
-            {% include 'workshops/_workshop_calendar.html' with workshop=workshop %}
+            {% setvar 'Y-m-d H:i' as format %}
+            {% url 'api:workshops_event_feed' pk=workshop.pk as event_url %}
+            {% get_current_language as lang %}
+            {% include '_calendar.html' with event_url=event_url lang=lang ics_url=ics_url format=format %}
         </div>
         <div class="nine wide column">
             {% url 'workshops:workshop_details' workshop_slug=workshop.slug location_slug=workshop.location.slug as url %}

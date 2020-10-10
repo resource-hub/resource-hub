@@ -1,9 +1,9 @@
 {% extends 'core/__base.html' %}
 {% load i18n %}
 {% load static %}
+{% load custom_tags %}
 
 {% block extra_head %}
-<link rel="stylesheet" type="text/css" href="{% static 'datetimepicker/jquery.datetimepicker.css' %}" />
 <script src="{% url 'core:jsi18n' %}"></script>
 {{ event_form.media }}
 {% endblock %}
@@ -13,9 +13,14 @@
     <div class="ui stackable two column grid">
         <div class="seven wide column">
             <div class="ui horizontal section divider">{% trans 'Availability' %}</div>
-            {% include 'items/_item_calendar.html' with item=item %}
+            {% if item.unit == 'd' %}{% setvar 'Y-m-d' as format %}{% else %}{% setvar 'Y-m-d H:i' as format %}{% endif %}
+            {% url 'api:item_bookings' pk=item.pk as event_url %}
+            {% get_current_language as lang %}
+            {% url 'api:items_ics_feed' owner_slug=item.owner.slug item_slug=item.slug as ics_url %}
+            {% include '_calendar.html' with event_url=event_url lang=lang ics_url=ics_url format=format %}
         </div>
         <div class="nine wide column">
+            {% get_current_language as lang %}
             {% url 'items:details' item_slug=item.slug owner_slug=item.owner.slug as url %}
             {% include '_back_button.html' with url=url %}
             <h1>
@@ -38,47 +43,4 @@
         </div>
     </div>
 </div>
-{% endblock %}
-
-
-
-{% block scripts %}
-<script src="{% static 'datetimepicker/build/jquery.datetimepicker.full.min.js' %}"></script>
-<script>
-    function setEnd(currentDateTime) {
-        dtPickerEnd.datetimepicker({
-            minDate: currentDateTime,
-            defaultTime: currentDateTime,
-            defaultDate: currentDateTime
-        })
-    }
-    var format = "{% if item.unit == 'd' %}Y-m-d{% else %}Y-m-d H:i{% endif %}";
-    var timepicker = format == 'Y-m-d' ? false : true;
-    var locale = "{% get_current_language as LANG %}{{ LANG }}";
-    var selectedStart = null;
-    var selectedEnd = null;
-    jQuery.datetimepicker.setLocale(locale);
-    var dtPickerStart = $('#id_dtstart').datetimepicker({
-        onChangeDateTime: setEnd,
-        step: 30,
-        format: format,
-        mask: true,
-        timepicker: timepicker,
-        onSelectDate: function (currentDateTime) {
-            selectedStart = currentDateTime;
-            calendar.select(selectedStart);
-        }
-
-    });
-    var dtPickerEnd = $('#id_dtend').datetimepicker({
-        step: 30,
-        format: format,
-        mask: true,
-        timepicker: timepicker,
-        onSelectDate: function (currentDateTime) {
-            selectedEnd = currentDateTime;
-            calendar.select(selectedStart, selectedEnd);
-        }
-    });
-</script>
 {% endblock %}

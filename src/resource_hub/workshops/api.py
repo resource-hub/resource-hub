@@ -77,4 +77,4 @@ class WorkshopEvents(APIView):
                     'end': datetime.combine(o.date(), e.dtend.time(), e.dtend.tzinfo),
                 })
 
-        return Response(result)
+        return Response({'results': result})

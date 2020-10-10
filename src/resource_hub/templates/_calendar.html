@@ -1,0 +1,118 @@
+{% load i18n %}
+{% load static %}
+{% load sekizai_tags %}
+
+
+{% addtoblock 'extra_head' %}
+<link href="{% static 'fullcalendar/main.min.css' %}" rel="stylesheet">
+<link href="{% static 'fullcalendar/daygrid/main.min.css' %}" rel="stylesheet">
+<link href="{% static 'fullcalendar/timegrid/main.min.css' %}" rel="stylesheet">
+<link href="{% static 'fullcalendar/list/main.min.css' %}" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="{% static 'datetimepicker/jquery.datetimepicker.css' %}" />
+
+<script src="{% static 'fullcalendar/main.min.js' %}"></script>
+<script src="{% static 'fullcalendar/daygrid/main.min.js' %}"></script>
+<script src="{% static 'fullcalendar/timegrid/main.min.js' %}"></script>
+<script src="{% static 'fullcalendar/list/main.min.js' %}"></script>
+<script src="{% static 'fullcalendar/interaction/main.min.js' %}"></script>
+
+<script>
+    var calendar = null;
+    document.addEventListener('DOMContentLoaded', function () {
+        var locale = '{{ lang }}';
+        var calendarEl = document.getElementById('calendar');
+
+        calendar = new FullCalendar.Calendar(calendarEl, {
+            events: function (info, successCallback, failureCallback) {
+                $.get("{{ event_url }}", {
+                    start: info.startStr,
+                    end: info.endStr
+                }).done(function (data) {
+                    successCallback(
+                        data.results
+                    )
+                })
+            },
+            plugins: ['list', 'dayGrid', 'interaction'],
+            locale: locale,
+            selectable: true,
+            unselectAuto: false,
+            unselectCancel: 'fc-button ',
+            select: function (selectionInfo) {
+                dtPickerStart.datetimepicker({ value: selectionInfo.start })
+                dtPickerEnd.datetimepicker({ value: selectionInfo.end })
+            },
+            defaultView: 'dayGridMonth',
+            contentHeight: 'auto',
+            header: { left: 'title', center: '', right: 'dayGridMonth,listWeek prev,next' },
+            buttonText: {
+                'dayGridMonth': "{% trans 'month' %}",
+                'listWeek': "{% trans 'week' %}"
+
+            },
+        });
+
+        calendar.render();
+    });
+</script>
+{% endaddtoblock %}
+
+
+<div class="calendar" id='calendar'></div>
+{% if ics_url %}
+<div class="section-container">
+    <div class="ui left action input">
+        <button class="ui teal left labeled icon copy button" data-content="{% trans 'Link copied!' %}" data-tooltip="
+{% trans 'Copy link' %}" onclick="copy(this)">
+            {% trans 'Subscribe' %}
+            <i class="rss icon"></i>
+        </button>
+        <input id="value-to-copy" type="text" value="{{ request.scheme }}://{{ request.get_host }}">
+    </div>
+    <div>
+        <span class="help">{% trans 'Add this iCal-feed to your calendar app (Google calendar, Nextcloud etc.)' %}
+        </span>
+    </div>
+</div>
+{% endif %}
+
+{% addtoblock 'js' %}
+<script src="{% static 'datetimepicker/build/jquery.datetimepicker.full.min.js' %}"></script>
+<script>
+    function setEnd(currentDateTime) {
+        dtPickerEnd.datetimepicker({
+            minDate: currentDateTime,
+            defaultTime: currentDateTime,
+            defaultDate: currentDateTime
+        })
+    }
+    var format = "{{ format }}";
+    var timepicker = format == 'Y-m-d' ? false : true;
+    var locale = "{{ lang }}";
+    var selectedStart = null;
+    var selectedEnd = null;
+    jQuery.datetimepicker.setLocale(locale);
+    var dtPickerStart = $('#id_dtstart').datetimepicker({
+        onChangeDateTime: setEnd,
+        step: 30,
+        format: format,
+        mask: true,
+        timepicker: timepicker,
+        onSelectDate: function (currentDateTime) {
+            selectedStart = currentDateTime;
+            calendar.select(selectedStart);
+        }
+
+    });
+    var dtPickerEnd = $('#id_dtend').datetimepicker({
+        step: 30,
+        format: format,
+        mask: true,
+        timepicker: timepicker,
+        onSelectDate: function (currentDateTime) {
+            selectedEnd = currentDateTime;
+            calendar.select(selectedStart, selectedEnd);
+        }
+    });
+</script>
+{% endaddtoblock %}

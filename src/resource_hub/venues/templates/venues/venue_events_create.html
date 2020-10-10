@@ -1,9 +1,9 @@
 {% extends 'core/__base.html' %}
 {% load i18n %}
 {% load static %}
+{% load custom_tags %}
 
 {% block extra_head %}
-<link rel="stylesheet" type="text/css" href="{% static 'datetimepicker/jquery.datetimepicker.css' %}" />
 <script src="{% url 'core:jsi18n' %}"></script>
 {{ event_form.media }}
 {% endblock %}
@@ -12,7 +12,10 @@
 <div class="main container large">
     <div class="ui stackable two column grid">
         <div class="seven wide column">
-            {% include 'venues/_venue_calendar.html' with venue=venue %}
+            {% setvar 'Y-m-d H:i' as format %}
+            {% url 'api:venues_event_feed' pk=venue.pk as event_url %}
+            {% get_current_language as lang %}
+            {% include '_calendar.html' with event_url=event_url lang=lang ics_url=ics_url format=format %}
         </div>
         <div class="nine wide column">
             {% url 'venues:venue_details' venue_slug=venue.slug location_slug=venue.location.slug as url %}

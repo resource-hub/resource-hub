@@ -3,7 +3,6 @@ from datetime import datetime
 import dateutil.parser
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
-
 from resource_hub.core.views.api import SmallResultsSetPagination
 from resource_hub.venues.models import Event, Venue
 from resource_hub.venues.serializers import VenueSerializer
@@ -79,4 +78,4 @@ class VenueEvents(APIView):
                     'end': datetime.combine(o.date(), e.dtend.time(), e.dtend.tzinfo),
                 })
 
-        return Response(result)
+        return Response({'results': result})
