@@ -12,6 +12,16 @@ class BaseVenueTest(BaseTest):
         super(BaseVenueTest, self).setUp()
         if self.__class__ == BaseVenueTest:
             raise SkipTest('Abstract test')
+        self.contract_procedure = VenueContractProcedure.objects.create(
+            name='test contract procedure',
+            auto_accept=False,
+            is_invoicing=False,
+            terms_and_conditions='Termns',
+            termination_period=0,
+            notes='Note',
+            settlement_interval=7,
+            owner=self.user,
+        )
         self.venue = Venue.objects.create(
             name='Venue',
             description='nice',
@@ -31,16 +41,6 @@ class BaseVenueTest(BaseTest):
                 value=Decimal('10'),
                 discounts=True,
             ),
-        )
-        self.contract_procedcure = VenueContractProcedure.objects.create(
-            name='test contract procedure',
-            auto_accept=False,
-            is_invoicing=False,
-            terms_and_conditions='Termns',
-            termination_period=0,
-            notes='Note',
-            settlement_interval=7,
-            owner=self.user,
         )
         self.bank_account = BankAccount.objects.create(
             account_holder='Joe',

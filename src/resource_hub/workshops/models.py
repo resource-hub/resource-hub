@@ -243,23 +243,25 @@ class WorkshopContract(Contract):
         if not occurrences:
             raise ValueError('no occurrences passed')
         net_total = 0
-        for workshop in self.booking.workshops.all():
-            for occurrence in occurrences:
-                start = occurrence[0]
-                end = occurrence[1]
-                delta = ((end - start).total_seconds())/3600
-                claim = Claim.build(
-                    contract=self,
-                    item='{}'.format(
-                        workshop.name
-                    ),
-                    quantity=delta,
-                    unit='h',
-                    price=workshop.base_price,
-                    start=start,
-                    end=end,
-                )
-                net_total += claim.net
+        for i in range(1, self.booking.workplaces + 1):
+            for workshop in self.booking.workshops.all():
+                for occurrence in occurrences:
+                    start = occurrence[0]
+                    end = occurrence[1]
+                    delta = ((end - start).total_seconds())/3600
+                    claim = Claim.build(
+                        contract=self,
+                        item=_('%(workplace)s (Workplace %(no)d)') % {
+                            'workplace': workshop.name,
+                            'no': i,
+                        },
+                        quantity=delta,
+                        unit='h',
+                        price=workshop.base_price,
+                        start=start,
+                        end=end,
+                    )
+                    net_total += claim.net
 
         for booking in self.equipment_bookings.all():
             for occurrence in occurrences:

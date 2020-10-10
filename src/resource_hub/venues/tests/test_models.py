@@ -3,7 +3,6 @@ from decimal import Decimal
 
 from django.test import TestCase
 from django.utils import timezone
-
 from resource_hub.core.models import Claim
 from resource_hub.core.tests import BaseTest
 from resource_hub.venues.models import Event, VenueContract
@@ -28,7 +27,7 @@ class TestVenueContract(BaseVenueTest):
         )
         self.contract = VenueContract.objects.create(
             event=self.event,
-            contract_procedure=self.contract_procedcure,
+            contract_procedure=self.contract_procedure,
             payment_method=self.payment_method,
         )
         self.contract.equipment.add(self.equipment)
