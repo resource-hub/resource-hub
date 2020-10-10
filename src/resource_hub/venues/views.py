@@ -7,7 +7,6 @@ from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
 from django.views import View
-
 from resource_hub.core.decorators import owner_required
 from resource_hub.core.views import TableView
 
@@ -100,7 +99,20 @@ class VenuesDetails(View):
     def get(self, request, location_slug, venue_slug):
         venue = get_object_or_404(
             Venue, slug=venue_slug, location__slug=location_slug)
-        context = {'venue': venue}
+
+        equipment_gallery = []
+        for equipment in venue.equipment.all():
+            equipment_gallery.append(
+                {
+                    'thumbnail': equipment.thumbnail_large,
+                    'image': equipment.thumbnail_original,
+                    'caption': equipment.name,
+                }
+            )
+        context = {
+            'venue': venue,
+            'equipment_gallery': equipment_gallery
+        }
         return render(request, 'venues/venue_details.html', context)
 
 

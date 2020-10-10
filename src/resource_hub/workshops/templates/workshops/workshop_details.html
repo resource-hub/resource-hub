@@ -31,6 +31,12 @@
     </div>
 
     <div class="section-container">
+        {% if equipment_gallery %}
+        <h2>{% trans 'Equipment & Services' %}</h2>
+        {% include '_gallery.html' with gallery=equipment_gallery %}
+        {% endif %}
+    </div>
+    <div class="section-container">
         {% if workshop.gallery.images.all %}
         <h2>{% trans 'Gallery' %}</h2>
         {% include '_gallery.html' with gallery=workshop.gallery.images.all %}

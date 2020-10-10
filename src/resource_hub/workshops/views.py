@@ -99,7 +99,20 @@ class WorkshopsDetails(View):
     def get(self, request, location_slug, workshop_slug):
         workshop = get_object_or_404(
             Workshop, slug=workshop_slug, location__slug=location_slug)
-        context = {'workshop': workshop}
+        equipment_gallery = []
+        for equipment in workshop.equipment.all():
+            equipment_gallery.append(
+                {
+                    'thumbnail': equipment.thumbnail_large,
+                    'image': equipment.thumbnail_original,
+                    'caption': equipment.name,
+                }
+            )
+
+        context = {
+            'workshop': workshop,
+            'equipment_gallery': equipment_gallery,
+        }
         return render(request, 'workshops/workshop_details.html', context)
 
 

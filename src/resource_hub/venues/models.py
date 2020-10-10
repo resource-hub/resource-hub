@@ -1,3 +1,4 @@
+from resource_hub.core.fields import CustomManyToManyField
 import uuid
 from datetime import datetime
 
@@ -337,7 +338,7 @@ class VenueContract(Contract):
         on_delete=models.PROTECT,
         verbose_name=_('Event'),
     )
-    equipment = models.ManyToManyField(
+    equipment = CustomManyToManyField(
         Equipment,
         blank=True,
         through='EquipmentBooking',

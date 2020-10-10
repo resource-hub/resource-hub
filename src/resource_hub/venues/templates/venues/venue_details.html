@@ -29,7 +29,12 @@
             {% include 'core/_location_info.html' with location=venue.location %}
         </div>
     </div>
-
+    <div class="section-container">
+        {% if equipment_gallery %}
+        <h2>{% trans 'Equipment & Services' %}</h2>
+        {% include '_gallery.html' with gallery=equipment_gallery %}
+        {% endif %}
+    </div>
     <div class="section-container">
         {% if venue.gallery.images.all %}
         <h2>{% trans 'Gallery' %}</h2>
