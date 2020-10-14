@@ -26,13 +26,15 @@
     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
         var url = 'https://api.mapbox.com/styles/v1/mark-weyde/ck7qf0hz80iq31ipm6dfvk4so/tiles/256/{z}/{x}/{y}@2x?access_token={accessToken}'
     } else {
-        var url = 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}';
+        var url = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}';
     }
     var map = L.map('map').setView(position, 11.5);
     L.tileLayer(url, {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
         maxZoom: 20,
-        id: 'mapbox.streets',
+        tileSize: 512,
+        zoomOffset: -1,
+        id: 'mapbox/streets-v11',
         accessToken: '{{ MAP_API_TOKEN }}'
     }).addTo(map);
 
