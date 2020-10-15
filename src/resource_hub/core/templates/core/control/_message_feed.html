@@ -1,0 +1,26 @@
+{% load i18n %}
+
+{% if contract.messages.exists %}
+<div class="ui feed">
+    {% for message in contract.messages.all %}
+    <div class="event">
+        <div class="label">
+            <img src="{{ message.sender.thumbnail.url }}">
+        </div>
+        <div class="content">
+            <div class="date">
+                {{ message.created_at }}
+            </div>
+            <div class="summary">
+                {{ message.sender.name }}
+            </div>
+            <div class="extra text">
+                {{ message.text }}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p>{% trans 'No messages found' %}</p>
+{% endif %}

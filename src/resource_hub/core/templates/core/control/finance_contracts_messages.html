@@ -1,0 +1,22 @@
+{% extends "control/__base.html" %}
+{% load i18n %}
+
+
+{% block admin_navigation %}
+{% url 'control:finance_contracts_manage_details' pk=contract.pk as url %}
+{% include '_back_button.html' with url=url %}
+{% endblock %}
+
+{% block content %}
+<h1>{% trans 'Messages' %}</h1>
+{% include 'core/control/_message_feed.html' with messages=contract.messages %}
+
+<h2>{% trans 'Write message' %}</h2>
+<form class="ui form" method="POST">
+    {% include '_form.html' with form=contract_message_form %}
+    <button type="submit" class="ui right labeled positive icon button">
+        {% trans 'Send' %}
+        <i class="ui paper plane icon"></i>
+    </button>
+</form>
+{% endblock %}

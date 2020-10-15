@@ -15,18 +15,17 @@ from django.shortcuts import reverse
 from django.template.loader import render_to_string
 from django.utils.dateparse import parse_date
 from django.utils.translation import gettext_lazy as _
-
 from resource_hub.core.models import OrganizationNotificationRecipient
 from resource_hub.core.utils import get_authorized_actors
 from schwifty import BIC, IBAN
 
 from .fields import HTMLField
 from .jobs import send_mail
-from .models import (Actor, Address, BankAccount, BaseModel, ContractProcedure,
-                     ContractTrigger, Gallery, GalleryImage, Location,
-                     Notification, Organization, OrganizationInvitation,
-                     OrganizationMember, PaymentMethod, Price, PriceProfile,
-                     User)
+from .models import (Actor, Address, BankAccount, BaseModel, ContractMessage,
+                     ContractProcedure, ContractTrigger, Gallery, GalleryImage,
+                     Location, Notification, Organization,
+                     OrganizationInvitation, OrganizationMember, PaymentMethod,
+                     Price, PriceProfile, User)
 from .utils import build_full_url, language
 from .widgets import IBANInput, UISearchField
 
@@ -523,6 +522,30 @@ class ContractProcedureForm(forms.ModelForm):
         model = ContractProcedure
         fields = ['name', 'auto_accept', 'is_invoicing', 'terms_and_conditions', 'termination_period', 'notes',
                   'triggers', 'tax_rate', 'payment_methods', 'settlement_interval', ]
+
+
+class ContractMessageForm(forms.ModelForm):
+    def __init__(self, user, actor, contract, data=None, files=None, **kwargs):
+        super(ContractMessageForm, self).__init__(data, files, **kwargs)
+        self.user = user
+        self.actor = actor
+        self.contract = contract
+
+    def save(self, commit=True):
+        new_message = super(ContractMessageForm, self).save(commit=False)
+        new_message.sender = self.actor
+        new_message.contract = self.contract
+        if self.actor == self.contract.creditor:
+            new_message.recipient = self.contract.debitor
+        else:
+            new_message.recipient = self.contract.creditor
+        if commit:
+            new_message.save()
+        return new_message
+
+    class Meta:
+        model = ContractMessage
+        fields = ['text', ]
 
 
 class PriceForm(forms.ModelForm):

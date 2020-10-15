@@ -23,6 +23,8 @@ finance_urls.register([
          name='finance_contracts_debited'),
     path('contracts/manage/<int:pk>/', control.FinanceContractsManageDetails.as_view(),
          name='finance_contracts_manage_details'),
+    path('contracts/<int:pk>/messages/', control.FinanceContractsMessages.as_view(),
+         name='finance_contracts_messages'),
     path('contract-procedures/manage/', control.FinanceContractProceduresManage.as_view(),
          name='finance_contract_procedures_manage'),
     path('contract-procedures/create/', control.FinanceContractProceduresCreate.as_view(),

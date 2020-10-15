@@ -89,6 +89,17 @@
     </div>
     {% endif %}
 </div>
+
+<h2>{% trans 'Messages' %}</h2>
+{% include 'core/control/_message_feed.html' with messages=contract.messages %}
+<div class="section-container">
+    <a class="ui right labeled positive icon button"
+        href="{% url 'control:finance_contracts_messages' pk=contract.pk %}">
+        {% trans 'Write message' %}
+        <i class="ui envelope outline icon"></i>
+    </a>
+</div>
+
 {% if contract.state == CONTRACT_STATE.WAITING and not is_debitor %}
 {% include 'core/_identity.html' with actor=actor %}
 <form id="choices" class="small-container" method="POST">

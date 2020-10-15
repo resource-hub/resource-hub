@@ -318,6 +318,38 @@ class FinanceContractsManageDetails(View):
 
 
 @method_decorator(login_required, name='dispatch')
+class FinanceContractsMessages(View):
+    template_name = 'core/control/finance_contracts_messages.html'
+
+    def get(self, request, pk):
+        contract = get_subobject_or_404(Contract, pk=pk)
+        contract_message_form = ContractMessageForm(
+            request.user, request.actor, contract,
+        )
+        context = {
+            'contract': contract,
+            'contract_message_form': contract_message_form,
+        }
+        return render(request, self.template_name, context=context)
+
+    def post(self, request, pk):
+        contract = get_subobject_or_404(Contract, pk=pk)
+        contract_message_form = ContractMessageForm(
+            request.user, request.actor, contract,
+            data=request.POST
+        )
+        if contract_message_form.is_valid():
+            contract_message_form.save()
+            message = _('Message has been sent')
+            messages.add_message(request, messages.SUCCESS, message)
+            return redirect(reverse('control:finance_contracts_messages', kwargs={'pk': contract.pk}))
+        context = {
+            'contract': contract,
+        }
+        return render(request, self.template_name, context=context)
+
+
+@method_decorator(login_required, name='dispatch')
 class FinanceContractProceduresManage(TableView):
     header = _('Manage contract procedures')
     class_ = ContractProcedure
