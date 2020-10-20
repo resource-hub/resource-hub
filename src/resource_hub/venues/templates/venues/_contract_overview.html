@@ -25,8 +25,10 @@
             </div>
         </div>
     </div>
+    {% if contract.event.thumbnail_original %}
     <div class="column">
         <img src="{{ contract.event.thumbnail.url }}" alt="{% trans 'Venue thumbnail' %}">
     </div>
+    {% endif %}
 </div>
 {% endwith %}

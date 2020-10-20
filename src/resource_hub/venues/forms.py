@@ -181,7 +181,7 @@ class EventForm(forms.ModelForm):
     class Meta:
         model = Event
         fields = ['venues', 'name', 'description', 'dtstart', 'dtend', 'recurrences', 'thumbnail_original',
-                  'category', 'is_public', ]
+                  'is_public', ]
         labels = {
             'recurrences': _('Recurs on'),
             'name': _('Event name'),

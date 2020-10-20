@@ -1,4 +1,3 @@
-from resource_hub.core.fields import CustomManyToManyField
 import uuid
 from datetime import datetime
 
@@ -203,7 +202,8 @@ class Event(BaseModel):
         verbose_name=_('Recurrences'),
     )
     thumbnail_original = models.ImageField(
-        null=False,
+        null=True,
+        blank=True,
         upload_to='images/',
         verbose_name=_('Thumbnail'),
     )
